@@ -1,2 +1,59 @@
-import "tailwindcss" :root {
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #1e282e;
+  --secondary: #3a414d;
+  --foreground: #ffffff;
+  --muted: #435561;
+  --muted-foreground: #51656c;
+  --text: #ffffff;
+}
+
+@theme inline {
+  --font-sans: "JetBrains Mono", "Courier New", monospace;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-text: var(--text);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    html {
+      font-size: 17px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    html {
+      font-size: 17.5px;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground font-mono;
+  }
+}
+
+/* Custom letter-spacing utilities for tight uppercase headlines */
+@layer utilities {
+  .tracking-tighter {
+    letter-spacing: -0.075em;
+  }
+  .tracking-wide-caps {
+    letter-spacing: 0.06em;
+  }
+  .tracking-ultra-wide {
+    letter-spacing: 0.08em;
+  }
 }
