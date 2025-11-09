@@ -9,8 +9,8 @@ import {
 } from "../components/ui/sheet";
 
 const NAV_LINKS = [
-  { href: "#", label: "Home" },
-  { href: "#drone-grid", label: "Products" },
+  { href: "/", label: "Home" },
+  { href: "/products", label: "Products" },
   { href: "#support", label: "Support" },
 ];
 
