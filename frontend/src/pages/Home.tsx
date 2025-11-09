@@ -6,7 +6,6 @@ import VideoSection from "../../components/video-section";
 import DroneVariant from "../../components/drone-variant";
 import DroneGrid from "../../components/drone-grid";
 import GallerySection from "../../components/gallery-section";
-import Footer from "../../components/footer";
 
 export default function Home() {
   return (
@@ -19,7 +18,6 @@ export default function Home() {
       <VideoSection />
       <TeamSection />
       <DroneVariant />
-      <Footer />
     </main>
   );
 }
