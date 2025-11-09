@@ -200,22 +200,19 @@ export default function ProductDetail() {
       {
         icon: Radio,
         title: "Link Intelligence",
-        copy:
-          "Tri-band encrypted uplink mirrors the Mavic’s rock-solid transmission feel.",
+        copy: "Tri-band encrypted uplink mirrors the Mavic’s rock-solid transmission feel.",
         meta: "SkyShield Link",
       },
       {
         icon: Layers,
         title: "OmniSense Mapping",
-        copy:
-          "Neural obstacle prediction + terrain tracing for aggressive low-altitude passes.",
+        copy: "Neural obstacle prediction + terrain tracing for aggressive low-altitude passes.",
         meta: "360° coverage",
       },
       {
         icon: Sparkles,
         title: "AI Mission Stack",
-        copy:
-          "Autonomous behaviors, waypoint macros, and on-edge vision cues for rapid deployments.",
+        copy: "Autonomous behaviors, waypoint macros, and on-edge vision cues for rapid deployments.",
         meta: "Live tuning",
       },
     ];
@@ -251,26 +248,26 @@ export default function ProductDetail() {
         ) : null}
 
         {isLoading ? (
-          <div className="animate-pulse rounded-[32px] border border-white/5 bg-secondary/20 p-12 text-sm text-white/70">
+          <div className="bg-secondary/20 animate-pulse rounded-4xl border border-white/5 p-12 text-sm text-white/70">
             Syncing mission data...
           </div>
         ) : null}
 
         {product ? (
           <>
-            <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-white/15 via-white/5 to-transparent p-10 shadow-[0_30px_120px_rgba(0,0,0,0.35)]">
-              <div className="absolute -right-16 top-0 h-64 w-64 rounded-full bg-[#6ad1ff]/20 blur-3xl" />
-              <div className="absolute -left-12 -bottom-16 h-72 w-72 rounded-full bg-[#7b5bff]/20 blur-3xl" />
+            <section className="relative overflow-hidden rounded-4xl border border-white/10 bg-linear-to-br from-white/15 via-white/5 to-transparent p-10 shadow-[0_30px_120px_rgba(0,0,0,0.35)]">
+              <div className="absolute top-0 -right-16 h-64 w-64 rounded-full bg-[#6ad1ff]/20 blur-3xl" />
+              <div className="absolute -bottom-16 -left-12 h-72 w-72 rounded-full bg-[#7b5bff]/20 blur-3xl" />
               <div className="relative grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
                 <div>
                   <Link
                     to="/products"
-                    className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-white/70"
+                    className="inline-flex items-center gap-2 text-xs tracking-wide text-white/70 uppercase"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Catalog
                   </Link>
-                  <p className="mt-6 text-xs uppercase tracking-wide text-white/60">
+                  <p className="mt-6 text-xs tracking-wide text-white/60 uppercase">
                     {product.category?.name ?? "Aerial System"}
                   </p>
                   <h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
@@ -282,7 +279,7 @@ export default function ProductDetail() {
                   </p>
                   <div className="mt-10 flex flex-wrap items-center gap-6">
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-white/60">
+                      <p className="text-xs tracking-wide text-white/60 uppercase">
                         Mission-ready from
                       </p>
                       <div className="mt-2 flex items-end gap-3">
@@ -298,16 +295,16 @@ export default function ProductDetail() {
                         ) : null}
                       </div>
                     </div>
-                    <div className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-wide text-white">
+                    <div className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs tracking-wide text-white uppercase">
                       {product.available ? "Available" : "Waitlist"}
                     </div>
                   </div>
                   <div className="mt-8 flex flex-wrap gap-3">
-                    <button className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white/40 hover:bg-white/20">
+                    <button className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-semibold tracking-wide text-white uppercase transition hover:border-white/40 hover:bg-white/20">
                       Configure mission
                       <ArrowUpRight className="h-4 w-4" />
                     </button>
-                    <button className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-2 text-sm uppercase tracking-wide text-white/80 hover:border-white/30">
+                    <button className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-2 text-sm tracking-wide text-white/80 uppercase hover:border-white/30">
                       Download spec sheet
                     </button>
                   </div>
@@ -323,14 +320,8 @@ export default function ProductDetail() {
                       label="Category"
                       value={product.category?.name ?? "Unassigned"}
                     />
-                    <MetaRow
-                      label="Last Update"
-                      value={updatedDate ?? "—"}
-                    />
-                    <MetaRow
-                      label="Introduced"
-                      value={createdDate ?? "—"}
-                    />
+                    <MetaRow label="Last Update" value={updatedDate ?? "—"} />
+                    <MetaRow label="Introduced" value={createdDate ?? "—"} />
                     <MetaRow
                       label="Availability"
                       value={product.available ? "Ready to deploy" : "In queue"}
@@ -341,8 +332,8 @@ export default function ProductDetail() {
             </section>
 
             <section className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="space-y-5 rounded-[32px] border border-white/10 bg-secondary/20 p-6">
-                <div className="rounded-[24px] border border-white/10 bg-black/40 p-4">
+              <div className="bg-secondary/20 space-y-5 rounded-4xl border border-white/10 p-6">
+                <div className="rounded-3xl border border-white/10 bg-black/40 p-4">
                   {primaryImage?.url ? (
                     <img
                       src={primaryImage.url}
@@ -350,7 +341,7 @@ export default function ProductDetail() {
                       className="h-[420px] w-full rounded-[20px] object-cover"
                     />
                   ) : (
-                    <div className="flex h-[420px] items-center justify-center rounded-[20px] bg-secondary/40 text-sm text-white/70">
+                    <div className="bg-secondary/40 flex h-[420px] items-center justify-center rounded-[20px] text-sm text-white/70">
                       Visual coming soon.
                     </div>
                   )}
@@ -361,7 +352,7 @@ export default function ProductDetail() {
                       <button
                         key={image.id}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`h-20 w-28 flex-shrink-0 overflow-hidden rounded-2xl border ${
+                        className={`h-20 w-28 shrink-0 overflow-hidden rounded-2xl border ${
                           index === currentImageIndex
                             ? "border-white/60"
                             : "border-white/10"
@@ -374,15 +365,15 @@ export default function ProductDetail() {
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <div className="h-full w-full bg-secondary/40" />
+                          <div className="bg-secondary/40 h-full w-full" />
                         )}
                       </button>
                     ))}
                   </div>
                 ) : null}
               </div>
-              <div className="rounded-[32px] border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-ultra-wide text-white/60">
+              <div className="rounded-4xl border border-white/10 bg-white/5 p-6">
+                <p className="tracking-ultra-wide text-xs text-white/60 uppercase">
                   Capability Highlights
                 </p>
                 <div className="mt-6 space-y-6">
@@ -392,10 +383,12 @@ export default function ProductDetail() {
                       className="rounded-3xl border border-white/10 bg-black/40 p-5"
                     >
                       <feature.icon className="h-6 w-6 text-white/80" />
-                      <p className="mt-4 text-sm uppercase tracking-wide text-white/50">
+                      <p className="mt-4 text-sm tracking-wide text-white/50 uppercase">
                         {feature.meta}
                       </p>
-                      <h3 className="text-2xl font-semibold">{feature.title}</h3>
+                      <h3 className="text-2xl font-semibold">
+                        {feature.title}
+                      </h3>
                       <p className="mt-2 text-sm text-white/70">
                         {feature.copy}
                       </p>
@@ -406,9 +399,9 @@ export default function ProductDetail() {
             </section>
 
             {specEntries.length ? (
-              <section className="space-y-6 rounded-[32px] border border-white/10 bg-secondary/30 p-8">
+              <section className="bg-secondary/30 space-y-6 rounded-4xl border border-white/10 p-8">
                 <header>
-                  <p className="text-xs uppercase tracking-ultra-wide text-white/60">
+                  <p className="tracking-ultra-wide text-xs text-white/60 uppercase">
                     Specifications
                   </p>
                   <h2 className="mt-2 text-3xl font-semibold">
@@ -425,7 +418,7 @@ export default function ProductDetail() {
                       key={`${spec.label}-${spec.value}`}
                       className="rounded-2xl border border-white/10 bg-black/30 p-5"
                     >
-                      <dt className="text-xs uppercase tracking-wide text-white/60">
+                      <dt className="text-xs tracking-wide text-white/60 uppercase">
                         {spec.label}
                       </dt>
                       <dd className="mt-2 text-xl font-semibold text-white">
@@ -567,9 +560,9 @@ function OptionSection({ title, intro, options }: OptionSectionProps) {
   };
 
   return (
-    <section className="space-y-6 rounded-[32px] border border-white/10 bg-secondary/20 p-8">
+    <section className="bg-secondary/20 space-y-6 rounded-4xl border border-white/10 p-8">
       <header>
-        <p className="text-xs uppercase tracking-ultra-wide text-white/60">
+        <p className="tracking-ultra-wide text-xs text-white/60 uppercase">
           {title}
         </p>
         <p className="mt-1 text-sm text-white/70">{intro}</p>
@@ -582,7 +575,7 @@ function OptionSection({ title, intro, options }: OptionSectionProps) {
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-wide text-white/60">
+                <p className="text-xs tracking-wide text-white/60 uppercase">
                   {option.meta ?? title}
                 </p>
                 <h3 className="text-xl font-semibold">{option.title}</h3>
