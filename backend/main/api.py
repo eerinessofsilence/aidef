@@ -147,7 +147,7 @@ def item_list_api(request):
 
 
 @require_GET
-def item_detail_api(request, pk: int):
+def item_detail_api(request, slug: str):
     try:
         product = (
             Product.objects.select_related('category')
@@ -157,7 +157,7 @@ def item_detail_api(request, pk: int):
                 'magazine_options',
                 'product_accessories__accessory',
             )
-            .get(pk=pk, available=True)
+            .get(slug=slug, available=True)
         )
     except Product.DoesNotExist as exc:
         raise Http404('Product not found') from exc

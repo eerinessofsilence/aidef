@@ -98,14 +98,14 @@ const galleryFallback = [
 ];
 
 export default function ProductDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<ProductDetailPayload | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    if (!id) {
+    if (!slug) {
       setErrorMessage("Missing product identifier.");
       setStatus("error");
       return;
@@ -115,7 +115,7 @@ export default function ProductDetail() {
     setStatus("loading");
     axios
       .get<ProductDetailPayload>(
-        `${import.meta.env.VITE_API_URL}/items/${id}/`,
+        `${import.meta.env.VITE_API_URL}/items/${slug}/`,
         {
           signal: controller.signal,
         },
@@ -135,7 +135,7 @@ export default function ProductDetail() {
       });
 
     return () => controller.abort();
-  }, [id]);
+  }, [slug]);
 
   useEffect(() => {
     setCurrentImageIndex(0);
