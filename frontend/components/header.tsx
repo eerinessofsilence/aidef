@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <div className="container mx-auto pt-10">
-      <header className="border-border/75/75 z-50 rounded-3xl border bg-black/15 px-8 py-6 shadow-sm shadow-black backdrop-blur-md">
+      <header className="border-border/75 z-50 rounded-3xl border bg-black/10 px-8 py-6 shadow-sm shadow-black backdrop-blur-md">
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
             <img src="./logo aidef.svg" className="w-34" alt="" />
@@ -52,7 +52,7 @@ export default function Header() {
                   <button
                     key={link}
                     onClick={() => setOpen(isOpen ? false : true)}
-                    className="text-foreground hover:text-foreground/50 flex items-center font-medium transition-colors duration-300"
+                    className="text-foreground hover:text-foreground/50 flex items-center text-lg font-medium transition-colors duration-300"
                   >
                     {text}
                     <ChevronDown
@@ -93,9 +93,9 @@ export default function Header() {
           </div>
         </div>
       </header>
-      <div className="absolute top-32 right-[10%] z-50">
+      <div className="absolute top-34 right-[10%] z-50">
         <div
-          className={`border-border/75 mt-3 grid w-fit grid-cols-2 gap-x-12 gap-y-6 rounded-3xl border bg-black/25 p-8 opacity-0 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-300 ${isOpen ? "opacity-100" : ""}`}
+          className={`border-border/75 mt-3 grid w-fit grid-cols-2 gap-x-12 gap-y-6 rounded-3xl border bg-black/10 p-8 opacity-0 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-300 ${isOpen ? "opacity-100" : ""}`}
         >
           <div className="flex items-center gap-6">
             <div className="border-border/75 w-16 rounded-2xl border bg-white/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl">

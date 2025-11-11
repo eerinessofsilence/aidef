@@ -15,6 +15,7 @@ import {
 
 interface Product {
   id: number;
+  slug: string;
   name: string;
   price: number;
   discount?: number | null;
@@ -153,6 +154,7 @@ export default function Products() {
     if (status === "loading" && items.length === 0) {
       return Array.from({ length: 3 }, (_, index) => ({
         id: -(index + 1),
+        slug: "",
         name: "Loading system",
         price: 0,
         placeholder: true,
@@ -222,7 +224,7 @@ export default function Products() {
                 </div>
                 {heroProduct ? (
                   <Link
-                    to={`/products/${heroProduct.id}`}
+                    to={`/products/${heroProduct.category?.slug}`}
                     className="mt-8 inline-flex items-center gap-2 text-sm font-medium tracking-wide text-white uppercase"
                   >
                     Explore flagship
@@ -357,7 +359,7 @@ export default function Products() {
               return (
                 <Link
                   key={product.id}
-                  to={`/products/${product.id}`}
+                  to={`/products/${product.slug}`}
                   className="group flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30 hover:bg-white/10"
                 >
                   <div>
