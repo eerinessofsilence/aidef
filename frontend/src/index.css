@@ -10,6 +10,7 @@
   --muted: #435561;
   --muted-foreground: #51656c;
   --text: #ffffff;
+  --text-alt: #000000;
   --border: oklch(0.96 0.005 240);
   --border-alt: oklch(0.9 0.01 240);
 }
@@ -22,6 +23,9 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-text: var(--text);
+  --color-text-alt: var(--text-alt);
+  --color-border: var(--border);
+  --color-border-alt: var(--border-alt);
 }
 
 @layer base {
