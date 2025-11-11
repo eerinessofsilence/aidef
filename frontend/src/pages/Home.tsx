@@ -9,7 +9,7 @@ import GallerySection from "../../components/gallery-section";
 
 export default function Home() {
   return (
-    <main className="bg-background min-h-screen">
+    <main className="min-h-screen">
       <Hero />
       <MissionSection />
       <DroneGrid />

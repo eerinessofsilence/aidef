@@ -3,17 +3,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --font-sans: "Inter", system-ui, sans-serif;
   --background: #1e282e;
   --secondary: #3a414d;
   --foreground: #ffffff;
   --muted: #435561;
   --muted-foreground: #51656c;
   --text: #ffffff;
+  --border: oklch(0.96 0.005 240);
+  --border-alt: oklch(0.9 0.01 240);
 }
 
 @theme inline {
-  --font-sans: "JetBrains Mono", "Courier New", monospace;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-sans: var(--font-sans);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-secondary: var(--secondary);
@@ -28,32 +30,7 @@
     font-size: 16px;
   }
 
-  @media (max-width: 768px) {
-    html {
-      font-size: 17px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    html {
-      font-size: 17.5px;
-    }
-  }
-
   body {
-    @apply bg-background text-foreground font-mono;
-  }
-}
-
-/* Custom letter-spacing utilities for tight uppercase headlines */
-@layer utilities {
-  .tracking-tighter {
-    letter-spacing: -0.075em;
-  }
-  .tracking-wide-caps {
-    letter-spacing: 0.06em;
-  }
-  .tracking-ultra-wide {
-    letter-spacing: 0.08em;
+    @apply bg-background text-foreground font-sans;
   }
 }
