@@ -22,16 +22,40 @@ const NAV_LINKS = [
   },
 ];
 
+const NAV_BUTTONS = [
+  "./language-icon.svg",
+  "./search-icon.svg",
+  "./cart-icon.svg",
+];
+
+const MENU_BUTTONS = [
+  {
+    icon: "./nav-button-1.svg",
+    text: "Autonomous unmanned aerial vehicles",
+  },
+  {
+    icon: "./nav-button-2.svg",
+    text: "Components for UAV manufacturing",
+  },
+  {
+    icon: "./nav-button-3.svg",
+    text: "Unmanned ground vehicle",
+  },
+  {
+    icon: "./nav-button-4.svg",
+    text: "Small ARMS",
+  },
+];
 export default function Header() {
   const [open, setOpen] = useState(false);
   const isOpen = open === true;
 
   return (
-    <div className="container mx-auto pt-10">
-      <header className="border-border/75 z-50 rounded-3xl border bg-black/10 px-8 py-6 shadow-sm shadow-black backdrop-blur-md">
+    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6">
+      <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/10 via-black/10 to-white/10 px-8 py-6 shadow-sm shadow-black backdrop-blur-md">
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
-            <img src="./logo aidef.svg" className="w-34" alt="" />
+            <img src="./logo-ai-def.svg" className="w-34" alt="" />
           </a>
 
           <div className="flex items-center gap-6">
@@ -67,24 +91,15 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-6">
-            <a
-              href="#"
-              className="border-border/75 w-10 rounded-xl border bg-white/25 p-2 shadow-lg shadow-black/25 backdrop-blur-2xl"
-            >
-              <img src="./placeholder.svg" alt="" />
-            </a>
-            <a
-              href="#"
-              className="border-border/75 w-10 rounded-xl border bg-white/25 p-2 shadow-lg shadow-black/25 backdrop-blur-2xl"
-            >
-              <img src="./placeholder.svg" alt="" />
-            </a>
-            <a
-              href="#"
-              className="border-border/75 w-10 rounded-xl border bg-white/25 p-2 shadow-lg shadow-black/25 backdrop-blur-2xl"
-            >
-              <img src="./placeholder.svg" alt="" />
-            </a>
+            {NAV_BUTTONS.map((item) => (
+              <a
+                href="#"
+                className="border-border/75 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-white/15 via-white/20 to-white/25 shadow-md shadow-black/25 backdrop-blur-xl"
+              >
+                <img src={item} className="h-4.5 w-4.5" alt="" />
+              </a>
+            ))}
+
             <a href="#footer">
               <button className="text-background hover:text-foreground hover:bg-background bg-foreground hidden h-11 w-36 items-center justify-center rounded-xl font-bold uppercase transition-all duration-300 ease-in-out md:inline-flex">
                 Contact Us
@@ -93,38 +108,18 @@ export default function Header() {
           </div>
         </div>
       </header>
-      <div className="absolute top-34 right-[10%] z-50">
+      <div className="relative">
         <div
-          className={`border-border/75 mt-3 grid w-fit grid-cols-2 gap-x-12 gap-y-6 rounded-3xl border bg-black/10 p-8 opacity-0 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-300 ${isOpen ? "opacity-100" : ""}`}
+          className={`border-border/75 absolute right-0 z-50 mt-2.5 w-fit grid-cols-2 gap-x-10 gap-y-5 rounded-[20px] border bg-linear-to-b from-black/10 via-black/10 to-white/10 p-7.5 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-300 ${isOpen ? "grid opacity-100" : "hidden opacity-0"}`}
         >
-          <div className="flex items-center gap-6">
-            <div className="border-border/75 w-16 rounded-2xl border bg-white/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl">
-              <img src="./placeholder.svg" alt="" />
+          {MENU_BUTTONS.map(({ icon, text }) => (
+            <div className="flex items-center gap-5">
+              <div className="border-border/75 h-15 w-15 rounded-2xl border bg-linear-to-br from-white/15 via-white/20 to-white/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl">
+                <img src={icon} className="h-8.5 w-8.5" alt="" />
+              </div>
+              <h1 className="text-lg font-semibold">{text}</h1>
             </div>
-            <h1 className="text-xl font-bold">
-              Autonomous unmanned aerial vehicles
-            </h1>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="border-border/75 w-16 rounded-2xl border bg-white/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl">
-              <img src="./placeholder.svg" alt="" />
-            </div>
-            <h1 className="text-xl font-bold">
-              Components for UAV manufacturing
-            </h1>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="border-border/75 w-16 rounded-2xl border bg-white/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl">
-              <img src="./placeholder.svg" alt="" />
-            </div>
-            <h1 className="text-xl font-bold">Unmanned ground vehicle</h1>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="border-border/75 w-16 rounded-2xl border bg-white/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl">
-              <img src="./placeholder.svg" alt="" />
-            </div>
-            <h1 className="text-xl font-bold">Small ARMS</h1>
-          </div>
+          ))}
         </div>
       </div>
     </div>
