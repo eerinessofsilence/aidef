@@ -1,69 +1,25 @@
-const focusAreas = [
-  {
-    title: "AVIATION",
-    description:
-      "Advanced AI systems for next-generation aircraft and autonomous flight control.",
-  },
-  {
-    title: "DRONES",
-    description:
-      "Intelligent drone systems with autonomous navigation and mission planning.",
-  },
-  {
-    title: "UGV",
-    description:
-      "Unmanned ground vehicles with advanced perception and decision-making capabilities.",
-  },
-  {
-    title: "SECURITY",
-    description:
-      "AI-powered security solutions for threat detection and response systems.",
-  },
-  {
-    title: "DEFENSE",
-    description:
-      "Cutting-edge defense technologies combining AI with tactical operations.",
-  },
-  {
-    title: "AUTOMATION",
-    description:
-      "Industrial automation systems leveraging machine learning and robotics.",
-  },
-];
-
 export default function FocusAreasSection() {
   return (
-    <section id="focus" className="border-border border-t py-8">
-      <div className="container mx-auto max-md:px-8">
-        <div className="mb-3">
-          <span className="tracking-ultra-wide text-text uppercase">
-            FOCUS AREAS
-          </span>
+    <section id="focus-areas-section" className="containex mx-auto py-16">
+      <div className="container mx-auto space-y-16">
+        <div className="space-y-2">
+          <p className="text-text/75 text-center tracking-wider uppercase">
+            Focus areas
+          </p>
+          <h1 className="mb-8 text-center text-4xl leading-tight font-bold tracking-tighter capitalize md:text-5xl">
+            Ai at the core
+          </h1>
         </div>
 
-        <h2 className="mb-8 text-4xl leading-tight font-bold tracking-tighter uppercase md:text-5xl">
-          AI AT THE CORE
-        </h2>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {focusAreas.map((area) => (
-            <div className="rounded-2xl border-2 border-white/10 bg-white/5 p-6 shadow-[0_4px_30px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all duration-300 hover:bg-white/7 hover:shadow-[0_6px_40px_rgba(0,0,0,0.5)]">
-              <div
-                aria-hidden
-                className="from-primary/10 via-primary/5 pointer-events-none absolute inset-0 translate-y-full bg-linear-to-t to-transparent opacity-0 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100"
-              />
-              <div className="relative transition-transform duration-500 ease-out group-hover:-translate-y-0.5">
-                <h1 className="tracking-wide-caps text-2xl uppercase">
-                  {area.title}
-                </h1>
-              </div>
-              <div className="relative transition-transform duration-500 ease-out group-hover:-translate-y-0.5">
-                <div className="text-text group-hover:text-foreground text-lg leading-relaxed transition-colors duration-500 ease-out">
-                  {area.description}
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="grid grid-cols-3 gap-6">
+          <div className="border-border/25 space-y-6 rounded-3xl border-2 bg-black/5 p-8 shadow-lg shadow-black/50 backdrop-blur-xl">
+            <img src="./placeholder.svg" className="h-16 w-16" alt="" />
+            <h1 className="text-text text-xl font-bold">Security</h1>
+            <p className="text-text/75 text-lg">
+              AI-powered security solutions for threat detection and response
+              systems.
+            </p>
+          </div>
         </div>
       </div>
     </section>
