@@ -122,24 +122,23 @@ export default function GallerySection() {
   const activeImage = activeIndex !== null ? galleryImages[activeIndex] : null;
 
   return (
-    <section
-      id="gallery"
-      className="border-t border-white bg-[#1e282e] py-8 text-[#ffffff]"
-    >
-      <div className="container mx-auto flex w-full flex-col gap-10 max-md:px-8">
-        <header className="max-w-3xl">
-          <p className="tracking-[0.35em] uppercase">Mission Archives</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-[#ffffff] md:text-4xl lg:text-5xl">
+    <section id="gallery" className="container mx-auto py-16">
+      <div className="flex w-full flex-col gap-10">
+        <div className="space-y-6">
+          <p className="text-text/75 tracking-widest uppercase">
+            Characteristics
+          </p>
+          <h2 className="text-text text-6xl font-bold capitalize">
             Aerial perspectives from recent operations
           </h2>
-          <p className="mt-4 leading-relaxed">
+          <p className="text-text/75 max-w-3xl text-xl">
             Browse a curated selection of sorties, showcasing the clarity,
             stability, and coverage of our autonomous fleet across challenging
             environments.
           </p>
-        </header>
+        </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2">
           {galleryImages.map((image, index) => (
             <button
               key={image.alt}
