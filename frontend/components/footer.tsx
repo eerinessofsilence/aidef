@@ -2,9 +2,75 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-secondary/75 border-t-4 border-cyan-600/75 py-16"
+      className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10"
     >
-      <div className="max-w-[1700px]"></div>
+      <div className="container-big mx-auto">
+        <div className="mb-30 flex justify-between">
+          <div className="space-y-6.5">
+            <img src="./logo-ai-def.svg" className="w-42.5" alt="" />
+            <img src="./we-create-the-future.svg" className="w-43.5" alt="" />
+          </div>
+          <div className="flex flex-col space-y-5">
+            <h1 className="font-bold uppercase">Quick links</h1>
+            <a href="#">Product</a>
+            <a href="#">Services</a>
+            <a href="#">Support</a>
+          </div>
+          <div className="flex flex-col space-y-5">
+            <h1 className="font-bold uppercase">Contact</h1>
+            <p>+421 906 949 592</p>
+            <p>office@ai-def.com</p>
+          </div>
+          <div className="space-y-4">
+            <h1 className="font-bold uppercase">Adresses</h1>
+            <div className="grid grid-cols-2 gap-y-5">
+              <div className="max-w-90">
+                <h1 className="font-bold text-white/75 uppercase">
+                  Management and administration
+                </h1>
+                <p className="text-[15px] text-white/75">
+                  Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia
+                </p>
+              </div>
+              <div className="max-w-90">
+                <h1 className="font-bold text-white/75 uppercase">
+                  Prototype laboratory
+                </h1>
+                <p className="text-[15px] text-white/75">
+                  Nádražná 75/2, 907 01 Myjava, Slovakia
+                </p>
+              </div>
+              <div className="max-w-90">
+                <h1 className="font-bold text-white/75 uppercase">
+                  Headquarters & Development centre
+                </h1>
+                <p className="text-[15px] text-white/75">
+                  Staničná 267/21, 906 13 Brezová pod Bradlom
+                </p>
+              </div>
+              <div className="flex max-w-90 items-center gap-4.5">
+                <a href="">
+                  <img src="./linkedin-logo.svg" alt="" />
+                </a>
+                <a href="">
+                  <img src="./instagram-logo.svg" alt="" />
+                </a>
+                <a href="">
+                  <img src="./facebook-logo.svg" alt="" />
+                </a>
+                <a href="">
+                  <img src="./twitter-logo.svg" alt="" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p className="text-center text-white/75 uppercase">
+            © AI DEF A.S. 2025. All rights reserved.
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }
