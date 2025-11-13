@@ -38,3 +38,23 @@
     @apply bg-background text-foreground font-sans;
   }
 }
+
+.container-big {
+  width: 100%;
+
+  @media (width >= 40rem /* 640px */) {
+    max-width: 42.5rem; /* ~680px внутренней ширины */
+  }
+  @media (width >= 48rem /* 768px */) {
+    max-width: 51rem; /* ~816px */
+  }
+  @media (width >= 64rem /* 1024px */) {
+    max-width: 68rem; /* ~1088px */
+  }
+  @media (width >= 80rem /* 1280px */) {
+    max-width: 85rem; /* ~1360px */
+  }
+  @media (width >= 96rem /* 1536px */) {
+    max-width: 102rem; /* ~1632px */
+  }
+}
