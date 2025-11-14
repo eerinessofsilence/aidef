@@ -2,17 +2,17 @@ export default function OurTeamSection() {
   return (
     <section id="team" className="container mx-auto py-16">
       <div className="flex justify-between">
-        <div className="space-y-6">
-          <p className="text-text/75 tracking-widest uppercase">Our team</p>
-          <h2 className="text-4xl leading-tight font-bold capitalize md:text-5xl">
+        <div className="space-y-6 max-lg:space-y-3">
+          <p className="text-text/70 tracking-widest uppercase">Our team</p>
+          <h2 className="text-5xl font-bold capitalize max-lg:text-4xl">
             International expertise
           </h2>
-          <p className="text-text/75 text-lg leading-8">
+          <p className="text-text/70 text-lg leading-8 max-lg:text-base max-lg:leading-6 max-lg:text-balance">
             We are an international team of experts with many years of
             experience <br /> in aviation, hardware and software engineering,
             defence and security.
           </p>
-          <p className="text-text/75 text-lg">
+          <p className="text-text/70 max-lg:leading-6max-lg:text-balance text-lg leading-8 max-lg:text-base">
             We blend the experience of our senior colleagues with youthful{" "}
             <br />
             enthusiasm and passion for innovation.

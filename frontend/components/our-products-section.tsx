@@ -29,19 +29,22 @@ const PRODUCTS = [
 
 export default function OurProductsSection() {
   return (
-    <section id="our-products-section" className="container mx-auto py-16">
+    <section
+      id="our-products-section"
+      className="container mx-auto py-16 max-lg:py-8"
+    >
       <div className="space-y-8">
-        <h1 className="text-[50px] font-bold">Our Products</h1>
-        <div className="grid grid-cols-2 gap-7">
+        <h1 className="text-5xl font-bold max-lg:text-4xl">Our Products</h1>
+        <div className="grid grid-cols-2 gap-7 max-lg:grid-cols-1">
           {PRODUCTS.map(
             ({ productName, productText, productImage, productLink }) => (
               <div className="h-112.5 rounded-xl bg-white">
                 <div className="h-full space-y-2 bg-[url(./our-products-frame.png)] bg-cover bg-center px-7.5 pt-10 pb-7.5">
                   <div className="space-y-4 text-center">
-                    <h1 className="text-[50px] font-bold text-black">
+                    <h1 className="text-5xl font-bold text-black max-lg:text-4xl">
                       {productName}
                     </h1>
-                    <p className="text-background text-xl capitalize">
+                    <p className="text-background text-xl capitalize max-lg:text-lg">
                       {productText}
                     </p>
                   </div>
