@@ -122,7 +122,10 @@ export default function GallerySection() {
   const activeImage = activeIndex !== null ? galleryImages[activeIndex] : null;
 
   return (
-    <section id="gallery" className="container mx-auto py-16 max-lg:py-8">
+    <section
+      id="gallery"
+      className="container mx-auto py-16 max-lg:px-10 max-lg:py-8"
+    >
       <div className="flex w-full flex-col gap-10 max-lg:gap-5">
         <div className="space-y-6 max-lg:space-y-3">
           <p className="text-text/70 tracking-widest uppercase">

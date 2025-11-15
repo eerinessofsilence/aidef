@@ -2,21 +2,21 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10"
+      className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10 max-lg:pt-20"
     >
-      <div className="container-big mx-auto">
-        <div className="mb-30 flex justify-between">
+      <div className="container-big mx-auto max-lg:px-10">
+        <div className="mb-15 flex flex-col gap-6 lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
             <img src="./logo-ai-def.svg" className="w-42.5" alt="" />
             <img src="./we-create-the-future.svg" className="w-43.5" alt="" />
           </div>
-          <div className="flex flex-col space-y-5">
+          <div className="flex flex-col space-y-3 lg:space-y-5">
             <h1 className="font-bold uppercase">Quick links</h1>
             <a href="#">Product</a>
             <a href="#">Services</a>
             <a href="#">Support</a>
           </div>
-          <div className="flex flex-col space-y-5">
+          <div className="flex flex-col space-y-3 lg:space-y-5">
             <h1 className="font-bold uppercase">Contact</h1>
             <p>+421 906 949 592</p>
             <p>office@ai-def.com</p>

@@ -70,8 +70,6 @@ const getRadialPositions = (count: number) => {
 const Card = ({
   item,
   position,
-  onMouseMove,
-  onMouseLeave,
 }: {
   item: FocusItem;
   index: number;
@@ -81,23 +79,6 @@ const Card = ({
 }) => {
   const [transform, setTransform] = useState("translate(0, 0)");
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const moveX = (x - centerX) * 0.1;
-    const moveY = (y - centerY) * 0.1;
-    setTransform(`translate(${moveX}px, ${moveY}px)`);
-    onMouseMove(e);
-  };
-
-  const handleMouseLeave = () => {
-    setTransform("translate(0, 0)");
-    onMouseLeave();
-  };
-
   return (
     <div
       className="absolute transition-all duration-300 hover:-translate-y-0.5 hover:scale-105"
@@ -106,8 +87,6 @@ const Card = ({
         top: `${position.y}%`,
         transform: `translate(-50%, -50%) ${transform}`,
       }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       <div className="border-border/15 h-70 w-87.5 rounded-[20px] border-2 bg-white/5 p-10 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
         <img src={item.icon} className="mb-5 max-w-15" alt="" />

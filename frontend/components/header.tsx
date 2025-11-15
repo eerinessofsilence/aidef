@@ -60,7 +60,7 @@ export default function Header() {
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
 
   return (
-    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6">
+    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-lg:px-10">
       <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 px-8 py-6 shadow-sm shadow-black backdrop-blur-lg">
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
@@ -101,16 +101,26 @@ export default function Header() {
             })}
           </div>
 
-          <div className="flex items-center gap-6">
-            {NAV_BUTTONS.map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)] max-lg:hidden"
-              >
-                <img src={item} className="h-4.5 w-4.5" alt="" />
-              </a>
-            ))}
+          <div className="flex items-center gap-6 max-lg:gap-3">
+            {NAV_BUTTONS.map((item) =>
+              item !== "./language-icon.svg" ? (
+                <a
+                  key={item}
+                  href="#"
+                  className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)] max-lg:hidden"
+                >
+                  <img src={item} className="h-4.5 w-4.5" alt="" />
+                </a>
+              ) : (
+                <a
+                  key={item}
+                  href="#"
+                  className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]"
+                >
+                  <img src={item} className="h-4.5 w-4.5" alt="" />
+                </a>
+              ),
+            )}
 
             <a href="#footer" className="hidden lg:inline-flex">
               <button className="group bg-foreground text-background relative inline-flex h-10 w-30 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold uppercase transition-all duration-300 ease-in hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
@@ -191,7 +201,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4 max-lg:hidden">
             {NAV_BUTTONS.map((item) => (
               <a
                 key={item}
@@ -209,7 +219,7 @@ export default function Header() {
             onClick={handleMobileMenuLinkClick}
             className="inline-flex"
           >
-            <button className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-black text-sm font-bold text-black uppercase transition-all duration-300 ease-in hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
+            <button className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-in hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
               <span className="relative z-10 transition-transform duration-300">
                 Contact Us
               </span>

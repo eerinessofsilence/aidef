@@ -31,7 +31,7 @@ export default function OurProductsSection() {
   return (
     <section
       id="our-products-section"
-      className="container mx-auto py-16 max-lg:py-8"
+      className="container mx-auto py-16 max-lg:px-10 max-lg:py-8"
     >
       <div className="space-y-8">
         <h1 className="text-5xl font-bold max-lg:text-4xl">Our Products</h1>
