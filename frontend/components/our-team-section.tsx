@@ -1,6 +1,6 @@
 export default function OurTeamSection() {
   return (
-    <section id="team" className="container mx-auto py-16 max-lg:px-10">
+    <section id="team" className="container mx-auto py-16">
       <div className="flex justify-between max-lg:flex-col max-lg:space-y-6">
         <div className="flex flex-col space-y-6 max-lg:items-center max-lg:space-y-3 max-lg:text-center">
           <p className="text-text/70 tracking-widest uppercase">Our team</p>
@@ -31,7 +31,7 @@ export default function OurTeamSection() {
               DE
             </span>
           </div>
-          <p className="text-text/75 tracking-[0.2rem] uppercase max-lg:tracking-wide">
+          <p className="text-text/70 tracking-[0.2rem] uppercase max-xl:tracking-wide">
             Slovak-German collaboration
           </p>
           <ul className="space-y-2">

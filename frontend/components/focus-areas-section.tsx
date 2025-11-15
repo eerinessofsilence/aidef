@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 
 interface FocusItem {
   icon: string;
@@ -67,25 +67,20 @@ const getRadialPositions = (count: number) => {
   return positions;
 };
 
-const Card = ({
+const RadialCard = ({
   item,
   position,
 }: {
   item: FocusItem;
-  index: number;
   position: { x: number; y: number };
-  onMouseMove: (e: React.MouseEvent) => void;
-  onMouseLeave: () => void;
 }) => {
-  const [transform, setTransform] = useState("translate(0, 0)");
-
   return (
     <div
       className="absolute transition-all duration-300 hover:-translate-y-0.5 hover:scale-105"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
-        transform: `translate(-50%, -50%) ${transform}`,
+        transform: "translate(-50%, -50%)",
       }}
     >
       <div className="border-border/15 h-70 w-87.5 rounded-[20px] border-2 bg-white/5 p-10 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
@@ -101,7 +96,7 @@ const RadialConnectors = ({ itemCount }: { itemCount: number }) => {
   const positions = getRadialPositions(itemCount);
 
   return (
-    <svg className="pointer-events-none absolute inset-0 h-full w-full">
+    <svg className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block">
       {positions.map((pos, idx) => (
         <line
           key={idx}
@@ -122,14 +117,13 @@ export default function FocusAreas({
   items = defaultItems,
   className = "",
 }: FocusAreasProps) {
-  const [, setHoveredIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const positions = getRadialPositions(items.length);
 
   return (
     <section
       ref={containerRef}
-      className={`bg-background relative min-h-screen w-full overflow-hidden py-48 ${className}`}
+      className={`bg-background relative w-full overflow-hidden py-20 lg:py-48 ${className}`}
       style={{
         backgroundImage: backgroundImageUrl
           ? `linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url(${backgroundImageUrl})`
@@ -138,38 +132,54 @@ export default function FocusAreas({
         backgroundPosition: "center",
       }}
     >
+      {/* радиальные линии только >= 1024px */}
       <RadialConnectors itemCount={items.length} />
 
-      {/* Center crosshair */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      {/* Центр только >= 1024px */}
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:top-1/7 max-md:top-1/11">
         <img
           src="./focus-areas-core.svg"
-          className="bg-background w-50"
+          className="bg-background w-50 max-lg:w-36"
           alt=""
         />
       </div>
 
-      {/* Header */}
-      <div className="pointer-events-none absolute top-16 right-0 left-0 text-center">
-        <p className="text-xs tracking-wider text-white/75 uppercase">
+      <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/50 max-md:h-275 lg:hidden" />
+      <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 rotate-90 bg-linear-to-l via-white/50 max-md:hidden max-md:h-300 lg:hidden" />
+      {/* Header — везде */}
+      <div className="pointer-events-none absolute top-16 right-0 left-0 text-center max-lg:top-0">
+        <p className="text-xs font-medium tracking-wider text-white/75 uppercase">
           Focus areas
         </p>
-        <h1 className="text-[50px] font-bold text-white capitalize">
+        <h1 className="text-3xl font-bold text-white capitalize lg:text-[50px]">
           Ai at the core
         </h1>
       </div>
 
-      {/* Items */}
-      <div className="relative h-screen w-full">
+      {/* Десктоп: радиальная схема (>= 1024px) */}
+      <div className="relative hidden h-screen w-full lg:block">
         {items.map((item, idx) => (
-          <Card
+          <RadialCard
             key={idx}
             item={item}
-            index={idx}
             position={positions[idx] || { x: 50, y: 50 }}
-            onMouseMove={() => setHoveredIndex(idx)}
-            onMouseLeave={() => setHoveredIndex(null)}
           />
+        ))}
+      </div>
+
+      {/* Мобайл/планшет: грид (<= ~1024px) */}
+      <div className="relative z-10 mt-48 grid grid-cols-2 gap-6 px-10 pb-16 max-md:grid-cols-1 lg:hidden">
+        {items.map((item, idx) => (
+          <div
+            key={idx}
+            className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
+          >
+            <img src={item.icon} className="mb-4 h-10 w-10" alt="" />
+            <h3 className="mb-2 text-lg font-bold text-white">{item.title}</h3>
+            <p className="text-sm text-white/75 capitalize">
+              {item.description}
+            </p>
+          </div>
         ))}
       </div>
     </section>

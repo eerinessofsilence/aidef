@@ -4,8 +4,8 @@ export default function Footer() {
       id="footer"
       className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10 max-lg:pt-20"
     >
-      <div className="container-big mx-auto max-lg:px-10">
-        <div className="mb-15 flex flex-col gap-6 lg:mb-30 lg:justify-between">
+      <div className="container-big mx-auto">
+        <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
             <img src="./logo-ai-def.svg" className="w-42.5" alt="" />
             <img src="./we-create-the-future.svg" className="w-43.5" alt="" />
@@ -25,26 +25,26 @@ export default function Footer() {
             <h1 className="font-bold uppercase">Adresses</h1>
             <div className="grid grid-cols-2 gap-y-5">
               <div className="max-w-90">
-                <h1 className="font-bold text-white/75 uppercase">
+                <h1 className="text-foreground/70 font-bold uppercase">
                   Management and administration
                 </h1>
-                <p className="text-[15px] text-white/75">
+                <p className="text-foreground/70 text-[15px]">
                   Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia
                 </p>
               </div>
               <div className="max-w-90">
-                <h1 className="font-bold text-white/75 uppercase">
+                <h1 className="text-foreground/70 font-bold uppercase">
                   Prototype laboratory
                 </h1>
-                <p className="text-[15px] text-white/75">
+                <p className="text-foreground/70 text-[15px]">
                   Nádražná 75/2, 907 01 Myjava, Slovakia
                 </p>
               </div>
               <div className="max-w-90">
-                <h1 className="font-bold text-white/75 uppercase">
+                <h1 className="text-foreground/70 font-bold uppercase">
                   Headquarters & Development centre
                 </h1>
-                <p className="text-[15px] text-white/75">
+                <p className="text-foreground/70 text-[15px]">
                   Staničná 267/21, 906 13 Brezová pod Bradlom
                 </p>
               </div>
@@ -66,7 +66,7 @@ export default function Footer() {
           </div>
         </div>
         <div>
-          <p className="text-center text-white/75 uppercase">
+          <p className="text-foreground/70 text-center uppercase">
             © AI DEF A.S. 2025. All rights reserved.
           </p>
         </div>

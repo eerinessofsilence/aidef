@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <div className="bg-[url(./hero-bg.png),linear-gradient(rgba(50,150,255,0.1))] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-lg:px-10 max-lg:pt-40 max-lg:pb-15">
+    <div className="bg-[url(./hero-bg.png),linear-gradient(rgba(50,150,255,0.1))] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-lg:pt-40 max-lg:pb-15">
       <section className="container m-auto">
         <div className="lg:space-y-8">
           <div>

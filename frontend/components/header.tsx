@@ -60,7 +60,7 @@ export default function Header() {
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
 
   return (
-    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-lg:px-10">
+    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6">
       <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 px-8 py-6 shadow-sm shadow-black backdrop-blur-lg">
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
