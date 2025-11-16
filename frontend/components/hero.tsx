@@ -2,7 +2,7 @@ import LightRays from "./ui/light-rays";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[url(./hero-bg.png),linear-gradient(rgba(50,150,255,0.05))] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-[1281px]:px-10 max-lg:pt-40 max-lg:pb-15">
+    <section className="relative overflow-hidden bg-[url(/hero-bg.png),linear-gradient(rgba(50,150,255,0.05))] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-[1281px]:px-10 max-lg:pt-40 max-lg:pb-15">
       <div className="pointer-events-none absolute inset-0">
         <LightRays
           raysOrigin="top-right"

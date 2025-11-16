@@ -38,7 +38,7 @@ export default function OurProductsSection() {
         <div className="grid grid-cols-2 gap-7 max-lg:grid-cols-1">
           {PRODUCTS.map(
             ({ productName, productText, productImage, productLink }) => (
-              <div className="h-full space-y-2 rounded-[20px] bg-[url(./our-products-card-bg.svg)] bg-cover bg-center px-7.5 pt-10 pb-7.5 transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
+              <div className="h-full space-y-2 rounded-[20px] bg-[url(/our-products-card-bg.svg)] bg-cover bg-center px-7.5 pt-10 pb-7.5 transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
                 <div className="space-y-4 text-center">
                   <h1 className="text-5xl font-bold text-black max-lg:text-4xl">
                     {productName}
