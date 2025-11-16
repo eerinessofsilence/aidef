@@ -45,10 +45,6 @@ export default function DroneCarouselSection() {
     setActiveIndex((index) => (index - 1 + slideCount) % slideCount);
   }, [slideCount]);
 
-  const handleIndicatorClick = useCallback((index: number) => {
-    setActiveIndex(index);
-  }, []);
-
   return (
     <section
       id="drone-carousel-section"
