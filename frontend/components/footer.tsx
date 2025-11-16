@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10 max-lg:pt-20"
+      className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10 max-[1281px]:px-5 max-lg:pt-20"
     >
       <div className="container-big mx-auto">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">

@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import { useRef } from "react";
 
 interface FocusItem {
@@ -57,7 +56,7 @@ const defaultItems: FocusItem[] = [
 const getRadialPositions = (count: number) => {
   const positions: { x: number; y: number }[] = [];
   const angleStep = 360 / count;
-  const radius = 35;
+  const radius = 40;
   for (let i = 0; i < count; i++) {
     const angle = (i * angleStep - 90) * (Math.PI / 180);
     const x = 50 + radius * Math.cos(angle);
@@ -112,75 +111,68 @@ const RadialConnectors = ({ itemCount }: { itemCount: number }) => {
   );
 };
 
-export default function FocusAreas({
-  backgroundImageUrl,
-  items = defaultItems,
-  className = "",
-}: FocusAreasProps) {
+export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const positions = getRadialPositions(items.length);
 
   return (
     <section
       ref={containerRef}
-      className={`bg-background relative w-full overflow-hidden py-20 lg:py-48 ${className}`}
-      style={{
-        backgroundImage: backgroundImageUrl
-          ? `linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url(${backgroundImageUrl})`
-          : undefined,
-        backgroundSize: backgroundImageUrl ? "cover" : "auto",
-        backgroundPosition: "center",
-      }}
+      className={`overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat py-16 max-[1281px]:px-8`}
     >
-      {/* радиальные линии только >= 1024px */}
-      <RadialConnectors itemCount={items.length} />
+      <div className="relative container mx-auto w-full py-37.5 max-xl:py-30">
+        {/* радиальные линии только >= 1024px */}
+        <RadialConnectors itemCount={items.length} />
 
-      {/* Центр только >= 1024px */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:top-1/7 max-md:top-1/11">
-        <img
-          src="./focus-areas-core.svg"
-          className="bg-background w-50 max-lg:w-36"
-          alt=""
-        />
-      </div>
-
-      <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/50 max-md:h-275 lg:hidden" />
-      <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 rotate-90 bg-linear-to-l via-white/50 max-md:hidden max-md:h-300 lg:hidden" />
-      {/* Header — везде */}
-      <div className="pointer-events-none absolute top-16 right-0 left-0 text-center max-lg:top-0">
-        <p className="text-xs font-medium tracking-wider text-white/75 uppercase">
-          Focus areas
-        </p>
-        <h1 className="text-3xl font-bold text-white capitalize lg:text-[50px]">
-          Ai at the core
-        </h1>
-      </div>
-
-      {/* Десктоп: радиальная схема (>= 1024px) */}
-      <div className="relative hidden h-screen w-full lg:block">
-        {items.map((item, idx) => (
-          <RadialCard
-            key={idx}
-            item={item}
-            position={positions[idx] || { x: 50, y: 50 }}
+        {/* Центр только >= 1024px */}
+        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:top-1/7 max-md:top-1/11">
+          <img
+            src="./focus-areas-core.svg"
+            className="w-50 max-lg:w-36"
+            alt=""
           />
-        ))}
-      </div>
+        </div>
 
-      {/* Мобайл/планшет: грид (<= ~1024px) */}
-      <div className="relative z-10 mt-48 grid grid-cols-2 gap-6 px-10 pb-16 max-md:grid-cols-1 lg:hidden">
-        {items.map((item, idx) => (
-          <div
-            key={idx}
-            className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
-          >
-            <img src={item.icon} className="mb-4 h-10 w-10" alt="" />
-            <h3 className="mb-2 text-lg font-bold text-white">{item.title}</h3>
-            <p className="text-sm text-white/75 capitalize">
-              {item.description}
-            </p>
-          </div>
-        ))}
+        <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/50 max-md:h-275 lg:hidden" />
+        <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 rotate-90 bg-linear-to-l via-white/50 max-md:hidden max-md:h-300 lg:hidden" />
+        {/* Header — везде */}
+        <div className="pointer-events-none absolute top-0 right-0 left-0 text-center">
+          <p className="text-xs font-medium tracking-wider text-white/75 uppercase">
+            Focus areas
+          </p>
+          <h1 className="text-3xl font-bold text-white capitalize lg:text-[50px]">
+            Ai at the core
+          </h1>
+        </div>
+
+        {/* Десктоп: радиальная схема (>= 1024px) */}
+        <div className="relative hidden h-screen w-full lg:block">
+          {items.map((item, idx) => (
+            <RadialCard
+              key={idx}
+              item={item}
+              position={positions[idx] || { x: 50, y: 50 }}
+            />
+          ))}
+        </div>
+
+        {/* Мобайл/планшет: грид (<= ~1024px) */}
+        <div className="relative z-10 mt-48 grid grid-cols-2 gap-6 pb-16 max-md:grid-cols-1 lg:hidden">
+          {items.map((item, idx) => (
+            <div
+              key={idx}
+              className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
+            >
+              <img src={item.icon} className="mb-4 h-10 w-10" alt="" />
+              <h3 className="mb-2 text-lg font-bold text-white">
+                {item.title}
+              </h3>
+              <p className="text-sm text-white/75 capitalize">
+                {item.description}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

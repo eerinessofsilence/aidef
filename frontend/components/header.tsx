@@ -22,11 +22,7 @@ const NAV_LINKS = [
   },
 ];
 
-const NAV_BUTTONS = [
-  "./language-icon.svg",
-  "./search-icon.svg",
-  "./cart-icon.svg",
-];
+const NAV_BUTTONS = ["./language-icon.svg", "./search-icon.svg"];
 
 const PRODUCTS_BUTTONS = [
   {
@@ -60,14 +56,14 @@ export default function Header() {
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
 
   return (
-    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6">
-      <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 px-8 py-6 shadow-sm shadow-black backdrop-blur-lg">
+    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-[1281px]:px-10">
+      <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 px-8 py-6 shadow-sm shadow-black backdrop-blur-lg max-md:px-4 max-md:py-3">
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
-            <img src="./logo-ai-def.svg" className="w-36" alt="" />
+            <img src="./logo-ai-def.svg" className="w-36 max-md:w-30" alt="" />
           </a>
 
-          <div className="flex items-center gap-6 max-lg:hidden">
+          <div className="flex items-center gap-7.5 max-lg:hidden">
             {NAV_LINKS.map(({ link, text }) => {
               const isProducts = text === "Products";
               if (!isProducts) {
@@ -101,13 +97,13 @@ export default function Header() {
             })}
           </div>
 
-          <div className="flex items-center gap-6 max-lg:gap-3">
+          <div className="flex items-center gap-6 max-lg:gap-3 max-sm:gap-1.5">
             {NAV_BUTTONS.map((item) =>
               item !== "./language-icon.svg" ? (
                 <a
                   key={item}
                   href="#"
-                  className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)] max-lg:hidden"
+                  className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-lg:hidden"
                 >
                   <img src={item} className="h-4.5 w-4.5" alt="" />
                 </a>
@@ -115,15 +111,19 @@ export default function Header() {
                 <a
                   key={item}
                   href="#"
-                  className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]"
+                  className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)]"
                 >
                   <img src={item} className="h-4.5 w-4.5" alt="" />
                 </a>
               ),
             )}
 
-            <a href="#footer" className="hidden lg:inline-flex">
-              <button className="group bg-foreground text-background relative inline-flex h-10 w-30 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold uppercase transition-all duration-300 ease-in hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
+            <a
+              href="#footer"
+              onClick={handleMobileMenuLinkClick}
+              className="inline-flex"
+            >
+              <button className="group active:translate-y-2px relative inline-flex h-10 w-30 items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.94] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:hidden">
                 <span className="relative z-10 transition-transform duration-300">
                   Contact Us
                 </span>
@@ -135,7 +135,7 @@ export default function Header() {
               onClick={handleMobileMenuToggle}
               aria-expanded={mobileMenuIsOpen}
               aria-controls={mobileMenuId}
-              className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)] lg:hidden"
+              className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] lg:hidden"
             >
               {mobileMenuIsOpen ? (
                 <X className="h-4.5 w-4.5" />
@@ -169,7 +169,7 @@ export default function Header() {
                   : "translate-y-3 opacity-0"
               }`}
             >
-              <div className="border-border/75 h-15 w-15 rounded-2xl border bg-linear-to-br from-black/20 via-black/25 to-black/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
+              <div className="border-border/75 h-15 w-15 rounded-2xl border bg-linear-to-br from-black/20 via-black/25 to-black/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
                 <img src={icon} className="h-8.5 w-8.5" alt="" />
               </div>
               <h1 className="text-lg font-semibold">{text}</h1>
@@ -207,7 +207,7 @@ export default function Header() {
                 key={item}
                 href="#"
                 onClick={handleMobileMenuLinkClick}
-                className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/20 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]"
+                className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/20 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)]"
               >
                 <img src={item} className="h-4.5 w-4.5" alt="" />
               </a>
@@ -219,7 +219,7 @@ export default function Header() {
             onClick={handleMobileMenuLinkClick}
             className="inline-flex"
           >
-            <button className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-in hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.28),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
+            <button className="group active:translate-y-2px relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]">
               <span className="relative z-10 transition-transform duration-300">
                 Contact Us
               </span>

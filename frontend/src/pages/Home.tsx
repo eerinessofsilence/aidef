@@ -7,7 +7,7 @@ import GallerySection from "../../components/gallery-section";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="relative min-h-screen">
       <Hero />
       <DroneCarouselSection />
       <OurProductsSection />
