@@ -83,7 +83,7 @@ export default function Header() {
                     onClick={handleProductsToggle}
                     aria-expanded={productsIsOpen}
                     aria-controls={menuId}
-                    className="group text-foreground hover:text-foreground/80 relative flex items-center font-medium transition-all duration-300 ease-out will-change-transform hover:opacity-90"
+                    className="group text-foreground hover:text-foreground/80 relative flex cursor-pointer items-center font-medium transition-all duration-300 ease-out will-change-transform hover:opacity-90"
                   >
                     {text}
                     <ChevronDown
@@ -121,13 +121,9 @@ export default function Header() {
             <a
               href="#footer"
               onClick={handleMobileMenuLinkClick}
-              className="inline-flex"
+              className="group active:translate-y-2px relative inline-flex h-10 w-30 items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.94] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:hidden"
             >
-              <button className="group active:translate-y-2px relative inline-flex h-10 w-30 items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.94] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:hidden">
-                <span className="relative z-10 transition-transform duration-300">
-                  Contact Us
-                </span>
-              </button>
+              Contact Us
             </a>
 
             <button
@@ -152,11 +148,11 @@ export default function Header() {
           aria-hidden={!productsIsOpen}
           className={`border-border/75 absolute right-0 z-50 mt-2.5 grid w-fit origin-top-right transform grid-cols-2 gap-x-10 gap-y-5 overflow-hidden rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-7.5 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
             productsIsOpen
-              ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-              : "pointer-events-none -translate-y-3 scale-95 opacity-0"
+              ? "translate-y-0 scale-100 opacity-100"
+              : "-translate-y-3 scale-95 opacity-0"
           }`}
         >
-          <div className="from-foreground/30 via-foreground/5 pointer-events-none absolute inset-0 -z-10 mx-auto mt-3 h-3/4 w-[80%] rounded-[30px] bg-linear-to-b to-transparent opacity-40 blur-3xl" />
+          <div className="from-foreground/30 via-foreground/5 absolute inset-0 -z-10 mx-auto mt-3 h-3/4 w-[80%] rounded-[30px] bg-linear-to-b to-transparent opacity-40 blur-3xl" />
           {PRODUCTS_BUTTONS.map(({ icon, text }, index) => (
             <div
               key={text}
@@ -184,8 +180,8 @@ export default function Header() {
           aria-hidden={!mobileMenuIsOpen}
           className={`border-border/75 absolute right-0 z-40 mt-3 flex w-full origin-top-right flex-col gap-5 rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
             mobileMenuIsOpen
-              ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-              : "pointer-events-none -translate-y-3 scale-95 opacity-0"
+              ? "translate-y-0 scale-100 opacity-100"
+              : "-translate-y-3 scale-95 opacity-0"
           }`}
         >
           <nav className="text-foreground flex flex-col gap-3 text-lg font-medium">
@@ -217,13 +213,9 @@ export default function Header() {
           <a
             href="#footer"
             onClick={handleMobileMenuLinkClick}
-            className="inline-flex"
+            className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
           >
-            <button className="group active:translate-y-2px relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]">
-              <span className="relative z-10 transition-transform duration-300">
-                Contact Us
-              </span>
-            </button>
+            Contact Us
           </a>
         </div>
       </div>

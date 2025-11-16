@@ -56,7 +56,7 @@ const defaultItems: FocusItem[] = [
 const getRadialPositions = (count: number) => {
   const positions: { x: number; y: number }[] = [];
   const angleStep = 360 / count;
-  const radius = 40;
+  const radius = 42;
   for (let i = 0; i < count; i++) {
     const angle = (i * angleStep - 90) * (Math.PI / 180);
     const x = 50 + radius * Math.cos(angle);
@@ -136,7 +136,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
         <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/50 max-md:h-275 lg:hidden" />
         <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 rotate-90 bg-linear-to-l via-white/50 max-md:hidden max-md:h-300 lg:hidden" />
         {/* Header — везде */}
-        <div className="pointer-events-none absolute top-0 right-0 left-0 text-center">
+        <div className="pointer-events-none absolute -top-8 right-0 left-0 text-center">
           <p className="text-xs font-medium tracking-wider text-white/75 uppercase">
             Focus areas
           </p>

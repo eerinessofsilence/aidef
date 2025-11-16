@@ -50,7 +50,7 @@ export default function DroneCarouselSection() {
       id="drone-carousel-section"
       className="relative bg-[url('/site-bg.png')] bg-cover bg-center py-25 max-xl:py-12.5"
     >
-      <div className="pointer-events-none absolute -top-6 right-0 left-0 z-1 h-16 bg-linear-to-t from-[#1E282E] to-[#0B1115] backdrop-blur-sm" />
+      <div className="absolute -top-6 right-0 left-0 z-1 h-16 bg-linear-to-t from-[#1E282E] to-[#0B1115] backdrop-blur-sm" />
       <div className="relative container mx-auto">
         <div className="relative overflow-hidden">
           <div
@@ -72,10 +72,11 @@ export default function DroneCarouselSection() {
                       <p className="text-background/70 mb-10 max-w-115 text-lg leading-[31px] tracking-wide max-lg:max-w-65 max-lg:text-lg max-lg:leading-6 max-lg:text-balance">
                         {slide.description}
                       </p>
-                      <a href={slide.cta}>
-                        <button className="text-foreground bg-background h-15 w-27 rounded-[9px] text-lg font-bold uppercase transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-md:h-10 max-md:w-22 max-md:text-base">
-                          View
-                        </button>
+                      <a
+                        href={slide.cta}
+                        className="text-foreground bg-background rounded-[9px] px-[30px] py-[22.5px] text-lg font-bold uppercase transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-md:px-[25px] max-md:py-[17.5px] max-md:text-base"
+                      >
+                        View
                       </a>
                     </div>
 

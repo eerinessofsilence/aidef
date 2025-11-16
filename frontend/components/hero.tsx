@@ -2,7 +2,7 @@ import LightRays from "./ui/light-rays";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[url(/hero-bg.png),linear-gradient(rgba(50,150,255,0.05))] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-[1281px]:px-10 max-lg:pt-40 max-lg:pb-15">
+    <section className="relative overflow-hidden bg-[url(./hero-bg.png),linear-gradient(rgba(50,150,255,0.05))] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-lg:pt-40 max-lg:pb-15">
       <div className="pointer-events-none absolute inset-0">
         <LightRays
           raysOrigin="top-right"
@@ -34,12 +34,12 @@ export default function Hero() {
               </p>
               <div className="space-x-4">
                 <a href="#">
-                  <button className="text-text-alt bg-foreground rounded-lg px-6 py-4 font-bold uppercase transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] lg:text-xl">
+                  <button className="text-text-alt rounded-lg bg-white px-6 py-4 font-bold uppercase lg:text-xl">
                     Our products
                   </button>
                 </a>
                 <a href="#">
-                  <button className="text-text border-foreground :backdrop-blur-lg rounded-lg border bg-black/5 px-6 py-4 font-bold uppercase transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] lg:text-xl">
+                  <button className="text-text rounded-lg border border-white bg-black/5 px-6 py-4 font-bold uppercase lg:text-xl">
                     Contact us
                   </button>
                 </a>
