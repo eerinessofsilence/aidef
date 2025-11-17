@@ -118,9 +118,9 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
   return (
     <section
       ref={containerRef}
-      className={`overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat py-16 max-[1281px]:px-8`}
+      className={`overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat py-16 max-[1281px]:px-8 max-lg:pb-0`}
     >
-      <div className="relative container mx-auto w-full py-37.5 max-xl:py-30">
+      <div className="relative container mx-auto w-full py-37.5 max-xl:py-30 max-lg:pb-0">
         {/* радиальные линии только >= 1024px */}
         <RadialConnectors itemCount={items.length} />
 

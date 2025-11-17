@@ -26,18 +26,18 @@ export default function OurTeamSection() {
           </div>
 
           <SpotlightCard className="border-border/25 bg-background/5 flex flex-col gap-y-3 border-2 backdrop-blur-xl">
-            <div className="text-foreground flex items-center gap-3 text-6xl font-bold max-lg:justify-center max-lg:text-5xl">
-              <span className="flex gap-3">
-                <img src="./sk_flag.svg" width={48} alt="" />
+            <div className="text-foreground flex items-center gap-3 text-6xl font-bold max-lg:justify-center max-lg:text-5xl max-md:text-4xl">
+              <span className="flex gap-3 max-md:gap-2">
+                <img src="./sk_flag.svg" className="w-12 max-md:w-8" alt="" />
                 SK
               </span>
               <span className="">+</span>
-              <span className="flex gap-3">
-                <img src="./de_flag.svg" width={48} alt="" />
+              <span className="flex gap-3 max-md:gap-2">
+                <img src="./de_flag.svg" className="w-12 max-md:w-8" alt="" />
                 DE
               </span>
             </div>
-            <p className="text-text/70 tracking-[0.2rem] uppercase max-xl:tracking-wide">
+            <p className="text-text/70 tracking-[0.2rem] uppercase max-xl:tracking-wide max-md:text-xs max-md:tracking-normal">
               Slovak-German collaboration
             </p>
             <ul className="space-y-2">

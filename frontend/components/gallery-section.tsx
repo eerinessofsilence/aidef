@@ -123,7 +123,7 @@ export default function GallerySection() {
 
   return (
     <section
-      id="gallery"
+      id="gallery-section"
       className="bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat py-16 max-[1281px]:px-10 max-lg:py-8"
     >
       <div className="container mx-auto">
@@ -132,7 +132,7 @@ export default function GallerySection() {
             <p className="text-text/70 tracking-widest uppercase">
               Characteristics
             </p>
-            <h2 className="text-text text-6xl font-bold capitalize max-lg:text-5xl">
+            <h2 className="text-text text-6xl font-bold capitalize max-lg:text-5xl max-md:text-4xl">
               Aerial perspectives from recent operations
             </h2>
             <p className="text-text/70 max-w-3xl text-xl max-lg:text-lg">
@@ -142,7 +142,7 @@ export default function GallerySection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 max-lg:grid-cols-2">
+          <div className="grid grid-cols-3 gap-2 max-lg:grid-cols-2 max-md:grid-cols-1">
             {galleryImages.map((image, index) => (
               <button
                 key={image.alt}

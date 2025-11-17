@@ -2,12 +2,12 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="bg-secondary/75 border-t-4 border-cyan-600/75 pt-38.5 pb-10 max-[1281px]:px-5 max-lg:pt-20"
+      className="border-t-4 border-[#0A1A34] bg-[#16243B] pt-38.5 pb-10 max-[1281px]:px-5 max-lg:pt-20"
     >
       <div className="container-big mx-auto">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
-            <img src="./logo-ai-def.svg" className="w-42.5" alt="" />
+            <img src="./logo-ai-def.png" className="w-42.5" alt="" />
             <img src="./we-create-the-future.svg" className="w-43.5" alt="" />
           </div>
           <div className="flex flex-col space-y-3 lg:space-y-5">

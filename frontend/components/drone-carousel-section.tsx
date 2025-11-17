@@ -48,9 +48,9 @@ export default function DroneCarouselSection() {
   return (
     <section
       id="drone-carousel-section"
-      className="relative bg-[url('/site-bg.png')] bg-cover bg-center py-25 max-xl:py-12.5"
+      className="relative bg-[url('/site-bg.png')] bg-cover bg-center px-10 py-25 max-[400px]:px-0 max-xl:py-12.5"
     >
-      <div className="absolute -top-6 right-0 left-0 z-1 h-16 bg-linear-to-t from-[#1E282E] to-[#0B1115] backdrop-blur-sm" />
+      <div className="backdrop-blur-px absolute -top-6 right-0 left-0 z-1 h-16 bg-linear-to-t from-[#2F4B75]/0 via-[#314D77] to-[#2A456A]/0" />
       <div className="relative container mx-auto">
         <div className="relative overflow-hidden">
           <div
@@ -63,7 +63,7 @@ export default function DroneCarouselSection() {
                 className="flex w-full shrink-0 justify-center"
                 aria-hidden={activeIndex !== index}
               >
-                <div className="relative mx-auto aspect-1140/640 w-full bg-[url(/drone-carousel-bg.svg)] bg-cover bg-center bg-no-repeat max-lg:aspect-330/610 max-lg:w-[65%] max-lg:bg-[url(/drone-carousel-bg-mobile.png)]">
+                <div className="relative mx-auto aspect-1140/640 w-full bg-[url(/drone-carousel-bg.svg)] bg-cover bg-center bg-no-repeat max-lg:aspect-335/610 max-lg:w-auto max-lg:bg-[url(/drone-carousel-bg-mobile.svg)]">
                   <div className="flex justify-between max-lg:flex-col-reverse">
                     <div className="max-lg:mx-auto max-lg:text-center max-md:space-y-4 lg:mt-55 lg:ml-10 xl:mt-85 xl:ml-15 2xl:mt-100 2xl:ml-25">
                       <h1 className="text-background mb-3 text-6xl font-bold">
@@ -80,10 +80,10 @@ export default function DroneCarouselSection() {
                       </a>
                     </div>
 
-                    <div className="mx-auto flex w-full items-center justify-center max-lg:mt-30 max-lg:mb-15 max-md:mt-30 max-sm:mt-20">
+                    <div className="mx-auto mt-20 flex w-full items-center justify-center max-lg:mt-30 max-lg:mb-15 max-md:mt-30 max-sm:mt-20">
                       <img
                         src={slide.image}
-                        className="w-full"
+                        className="h-96 w-auto max-w-full max-lg:h-60 max-md:h-52 max-sm:h-44"
                         alt={slide.imageAlt}
                       />
                     </div>
