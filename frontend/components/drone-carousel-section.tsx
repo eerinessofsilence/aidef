@@ -63,7 +63,7 @@ export default function DroneCarouselSection() {
                 className="flex w-full shrink-0 justify-center"
                 aria-hidden={activeIndex !== index}
               >
-                <div className="relative mx-auto aspect-1140/640 w-full bg-[url(/drone-carousel-bg.svg)] bg-cover bg-center bg-no-repeat max-lg:aspect-335/610 max-lg:w-auto max-lg:bg-[url(/drone-carousel-bg-mobile.svg)]">
+                <div className="relative mx-auto aspect-1140/640 w-full bg-[url(/drone-carousel-bg.png)] bg-cover bg-center bg-no-repeat max-lg:aspect-335/610 max-lg:w-auto max-lg:bg-[url(/drone-carousel-bg-mobile.png)]">
                   <div className="flex justify-between max-lg:flex-col-reverse">
                     <div className="max-lg:mx-auto max-lg:text-center max-md:space-y-4 lg:mt-55 lg:ml-10 xl:mt-85 xl:ml-15 2xl:mt-100 2xl:ml-25">
                       <h1 className="text-background mb-3 text-6xl font-bold">
