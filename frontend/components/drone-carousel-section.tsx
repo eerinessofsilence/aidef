@@ -8,7 +8,7 @@ export default function DroneCarouselSection() {
   ));
 
   return (
-    <div className="container mx-auto h-full w-full py-20 max-[1281px]:px-5">
+    <div className="container mx-auto h-full w-full py-25 max-[1281px]:px-5">
       <h2 className="text-text max-w-7xl text-5xl font-bold max-lg:text-3xl max-sm:text-2xl">
         Unmanned Systems Portfolio
       </h2>

@@ -78,7 +78,6 @@ export default function Header() {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // used for desktop hover
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
-  // mobile expanded state: which dropdowns are opened in mobile menu
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
     {},
   );
@@ -125,7 +124,7 @@ export default function Header() {
             />
           </a>
 
-          <div className="flex items-center gap-7.5 max-lg:hidden">
+          <div className="flex items-center gap-7.5 max-xl:hidden">
             {NAV_LINKS.map((link) => (
               <div
                 key={link.text}
@@ -157,13 +156,13 @@ export default function Header() {
           <div className="flex items-center gap-5 max-lg:gap-3">
             <a
               href="#"
-              className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-lg:hidden"
+              className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-xl:hidden"
             >
               <img src="./language-icon.svg" className="h-4.5 w-4.5" alt="" />
             </a>
             <Link
               to="/portal"
-              className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:hidden"
+              className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
             >
               Client Portal
             </Link>
@@ -173,7 +172,7 @@ export default function Header() {
               onClick={handleMobileMenuToggle}
               aria-expanded={mobileMenuIsOpen}
               aria-controls={mobileMenuId}
-              className="border-border/50 active:translate-y-2px flex h-10 w-10 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] lg:hidden"
+              className="border-border/50 active:translate-y-2px flex h-10 w-10 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] xl:hidden"
             >
               {mobileMenuIsOpen ? (
                 <X className="h-5 w-5" />
@@ -204,7 +203,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all"
+                    className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
                     onClick={() => setActiveDropdown(null)}
                   >
                     <img
@@ -237,7 +236,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all"
+                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7 hover:p-3"
                     onClick={() => setActiveDropdown(null)}
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
@@ -266,7 +265,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all"
+                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7"
                     onClick={() => setActiveDropdown(null)}
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
@@ -295,7 +294,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all"
+                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7"
                     onClick={() => setActiveDropdown(null)}
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
@@ -315,7 +314,7 @@ export default function Header() {
       })}
 
       {/* Mobile menu */}
-      <div className="relative lg:hidden">
+      <div className="relative xl:hidden">
         <div
           id={mobileMenuId}
           aria-hidden={!mobileMenuIsOpen}
@@ -360,7 +359,7 @@ export default function Header() {
                           key={s.title}
                           to={s.href}
                           onClick={handleMobileMenuLinkClick}
-                          className="text-foreground/80 pl-2 text-base"
+                          className="text-foreground/80 hover:text-foreground/50 pl-2 text-base transition-all duration-300"
                         >
                           {s.title}
                         </Link>
