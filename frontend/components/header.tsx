@@ -13,6 +13,29 @@ const NAV_LINKS = [
   { text: "Contact", href: "/contact" },
 ];
 
+const LANGUAGES = [
+  {
+    id: 1,
+    title: "English",
+    img: "/en.svg",
+  },
+  {
+    id: 2,
+    title: "German",
+    img: "/de.svg",
+  },
+  {
+    id: 3,
+    title: "Slovakia",
+    img: "/sv.svg",
+  },
+  {
+    id: 4,
+    title: "French",
+    img: "/fr.svg",
+  },
+];
+
 type Item = {
   title: string;
   href: string;
@@ -27,32 +50,32 @@ type Menus = Record<
 
 const DROPDOWN_MENUS: Menus = {
   Products: [
-    { title: "AX2NG KRAKATIT", href: "#", icon: "./products-1.png" },
-    { title: "AV2 VTOL", href: "#", icon: "./products-2.png" },
-    { title: "AXQ QUADROCOPTER", href: "#", icon: "./products-3.png" },
-    { title: "Ground Control Station", href: "#", icon: "./products-4.png" },
-    { title: "UGV 150-DUP", href: "#", icon: "./products-5.png" },
+    { title: "AX2NG KRAKATIT", href: "#", icon: "/products-1.png" },
+    { title: "AV2 VTOL", href: "#", icon: "/products-2.png" },
+    { title: "AXQ QUADROCOPTER", href: "#", icon: "/products-3.png" },
+    { title: "Ground Control Station", href: "#", icon: "/products-4.png" },
+    { title: "UGV 150-DUP", href: "#", icon: "/products-5.png" },
   ],
   Solutions: [
     {
       title: "Integration into military vehicles",
       href: "#",
-      icon: "./solutions-1.svg",
+      icon: "/solutions-1.svg",
     },
     {
       title: "Aviation",
       href: "#",
-      icon: "./solutions-2.svg",
+      icon: "/solutions-2.svg",
     },
     {
       title: "Security",
       href: "#",
-      icon: "./solutions-3.svg",
+      icon: "/solutions-3.svg",
     },
     {
       title: "Defense",
       href: "#",
-      icon: "./solutions-4.svg",
+      icon: "/solutions-4.svg",
     },
   ],
   Technology: [
@@ -76,6 +99,7 @@ const DROPDOWN_MENUS: Menus = {
 
 export default function Header() {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
+  const [languageSelectorIsOpen, setLanguageSelectorOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // used for desktop hover
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
@@ -105,6 +129,8 @@ export default function Header() {
   };
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
+  const languageSelectorToggle = () =>
+    setLanguageSelectorOpen((prevState) => !prevState);
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
 
   // toggle mobile dropdown expansion (click-to-open under the link)
@@ -154,12 +180,12 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-5 max-lg:gap-3">
-            <a
-              href="#"
+            <div
+              onClick={() => languageSelectorToggle()}
               className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-xl:hidden"
             >
               <img src="./language-icon.svg" className="h-4.5 w-4.5" alt="" />
-            </a>
+            </div>
             <Link
               to="/portal"
               className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
@@ -209,7 +235,6 @@ export default function Header() {
                     <img
                       src={item.icon}
                       className="max-h-30 w-full rounded-t-xl"
-                      alt=""
                     />
                     <div className="flex h-full items-center">
                       <h3 className="text-sm font-semibold text-black">
@@ -265,7 +290,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7"
+                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7 hover:p-3"
                     onClick={() => setActiveDropdown(null)}
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
@@ -294,7 +319,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7"
+                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7 hover:p-3"
                     onClick={() => setActiveDropdown(null)}
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
@@ -313,6 +338,27 @@ export default function Header() {
         return null;
       })}
 
+      {languageSelectorIsOpen && (
+        <div className="pointer-events-auto absolute top-full left-1/2 w-full max-w-[813px] -translate-x-1/4 -translate-y-4 rounded-[20px] bg-[#f5f5f5] opacity-100 shadow-sm shadow-black/25 transition-all duration-300">
+          <div className="grid grid-cols-4 gap-12.5 p-7.5">
+            {LANGUAGES.map((item) => (
+              <a
+                key={item.id}
+                className="group flex items-center gap-5 rounded-xl text-center transition-all duration-300"
+              >
+                <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                  <img src={item.img} className="h-7 w-7" />
+                </div>
+                <div className="flex items-center">
+                  <h3 className="text-sm font-semibold text-black">
+                    {item.title}
+                  </h3>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
       {/* Mobile menu */}
       <div className="relative xl:hidden">
         <div
