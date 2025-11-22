@@ -1,19 +1,15 @@
 import Hero from "../../components/hero";
 import DroneCarouselSection from "../../components/drone-carousel-section";
 import FocusAreasSection from "../../components/focus-areas-section";
-import OurTeamSection from "../../components/our-team-section";
-import OurProductsSection from "../../components/our-products-section";
-import GallerySection from "../../components/gallery-section";
+import SystemIntegrationSection from "../../components/system-integration-section";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen bg-[#201E5F]">
       <Hero />
       <DroneCarouselSection />
-      <OurProductsSection />
       <FocusAreasSection />
-      <GallerySection />
-      <OurTeamSection />
+      <SystemIntegrationSection />
     </main>
   );
 }

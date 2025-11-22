@@ -4,177 +4,303 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
-  {
-    link: "/",
-    text: "Home",
-  },
-  {
-    link: "/products",
-    text: "Products",
-  },
-  {
-    link: "/services",
-    text: "Services",
-  },
-  {
-    link: "#footer",
-    text: "Support",
-  },
+  { text: "Home", href: "/" },
+  { text: "Products", href: "#", hasDropdown: true },
+  { text: "Solutions", href: "#", hasDropdown: true },
+  { text: "Technology", href: "#", hasDropdown: true },
+  { text: "Company", href: "#", hasDropdown: true },
+  { text: "Support", href: "/support" },
+  { text: "Contact", href: "/contact" },
 ];
 
-const NAV_BUTTONS = ["./language-icon.svg", "./search-icon.svg"];
+type Item = {
+  title: string;
+  href: string;
+  icon?: string;
+  description?: string;
+};
 
-const PRODUCTS_BUTTONS = [
-  {
-    icon: "./nav-button-1.svg",
-    text: "Autonomous unmanned aerial vehicles",
-  },
-  {
-    icon: "./nav-button-2.svg",
-    text: "Components for UAV manufacturing",
-  },
-  {
-    icon: "./nav-button-3.svg",
-    text: "Unmanned ground vehicle",
-  },
-  {
-    icon: "./nav-button-4.svg",
-    text: "Small ARMS",
-  },
-];
+type Menus = Record<
+  "Products" | "Solutions" | "Technology" | "Company",
+  Item[]
+>;
+
+const DROPDOWN_MENUS: Menus = {
+  Products: [
+    { title: "AX2NG KRAKATIT", href: "#", icon: "./products-1.png" },
+    { title: "AV2 VTOL", href: "#", icon: "./products-2.png" },
+    { title: "AXQ QUADROCOPTER", href: "#", icon: "./products-3.png" },
+    { title: "Ground Control Station", href: "#", icon: "./products-4.png" },
+    { title: "UGV 150-DUP", href: "#", icon: "./products-5.png" },
+  ],
+  Solutions: [
+    {
+      title: "Integration into military vehicles",
+      href: "#",
+      icon: "./solutions-1.svg",
+    },
+    {
+      title: "Aviation",
+      href: "#",
+      icon: "./solutions-2.svg",
+    },
+    {
+      title: "Security",
+      href: "#",
+      icon: "./solutions-3.svg",
+    },
+    {
+      title: "Defense",
+      href: "#",
+      icon: "./solutions-4.svg",
+    },
+  ],
+  Technology: [
+    {
+      title: "Propulsion (AD20PRO, jet engine systems)",
+      href: "#",
+      icon: "./technology-1.svg",
+    },
+    { title: "Electronics & Avionics", href: "#", icon: "./technology-2.svg" },
+    {
+      title: "C2, GCS & API integration",
+      href: "#",
+      icon: "./technology-3.svg",
+    },
+  ],
+  Company: [
+    { title: "About Us", href: "#", icon: "./company-1.svg" },
+    { title: "Careers", href: "#", icon: "./company-2.svg" },
+  ],
+};
+
 export default function Header() {
-  const [productsIsOpen, setProductsIsOpen] = useState(false);
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
-
-  const menuId = "products-menu";
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
   const mobileMenuId = "mobile-menu";
 
-  const handleProductsToggle = () =>
-    setProductsIsOpen((prevState) => !prevState);
+  const handleMouseEnter = (name: string) => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+    }
+    setActiveDropdown(name);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+    setDropdownTimeout(timeout);
+  };
+
+  const handleDropdownEnter = () => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+    }
+  };
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
 
   return (
-    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-[1281px]:px-10">
+    <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-[1281px]:px-5">
       <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 px-8 py-6 shadow-sm shadow-black backdrop-blur-lg max-md:px-5 max-md:py-5">
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center space-x-2">
-            <img src="./logo-ai-def.png" className="w-36 max-md:w-30" alt="" />
+            <img
+              src="./logo-ai-def.svg"
+              className="w-37.5 max-md:w-32.5"
+              alt=""
+            />
           </a>
 
           <div className="flex items-center gap-7.5 max-lg:hidden">
-            {NAV_LINKS.map(({ link, text }) => {
-              const isProducts = text === "Products";
-              if (!isProducts) {
-                return (
-                  <Link
-                    key={link}
-                    to={link}
-                    className="group text-foreground hover:text-foreground/80 relative font-medium transition-all duration-300 ease-out will-change-transform hover:opacity-90"
-                  >
-                    {text}
-                  </Link>
-                );
-              } else {
-                return (
-                  <button
-                    key={link}
-                    onClick={handleProductsToggle}
-                    aria-expanded={productsIsOpen}
-                    aria-controls={menuId}
-                    className="group text-foreground hover:text-foreground/80 relative flex cursor-pointer items-center font-medium transition-all duration-300 ease-out will-change-transform hover:opacity-90"
-                  >
-                    {text}
+            {NAV_LINKS.map((link) => (
+              <div
+                key={link.text}
+                className="relative"
+                onMouseEnter={() => handleMouseEnter(link.text)}
+                onMouseLeave={handleMouseLeave}
+              >
+                {link.hasDropdown ? (
+                  <button className="group text-foreground hover:text-foreground/70 flex cursor-pointer items-center gap-1 text-lg font-medium transition-colors">
+                    {link.text}
                     <ChevronDown
-                      className={`h-5 w-5 transition-transform duration-300 ${
-                        productsIsOpen ? "rotate-180" : ""
+                      className={`h-4 w-4 transition-transform duration-300 ${
+                        activeDropdown === link.text ? "rotate-180" : ""
                       }`}
                     />
                   </button>
-                );
-              }
-            })}
+                ) : (
+                  <Link
+                    to={link.href}
+                    className="text-foreground hover:text-foreground/70 cursor-pointer text-lg font-medium transition-colors"
+                  >
+                    {link.text}
+                  </Link>
+                )}
+              </div>
+            ))}
           </div>
 
-          <div className="flex items-center gap-6 max-lg:gap-3 max-sm:gap-2">
-            {NAV_BUTTONS.map((item) =>
-              item !== "./language-icon.svg" ? (
-                <a
-                  key={item}
-                  href="#"
-                  className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-lg:hidden"
-                >
-                  <img src={item} className="h-4.5 w-4.5" alt="" />
-                </a>
-              ) : (
-                <a
-                  key={item}
-                  href="#"
-                  className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)]"
-                >
-                  <img src={item} className="h-4.5 w-4.5" alt="" />
-                </a>
-              ),
-            )}
-
+          <div className="flex items-center gap-5 max-lg:gap-3">
             <a
-              href="#footer"
-              onClick={handleMobileMenuLinkClick}
-              className="group active:translate-y-2px relative inline-flex h-10 w-30 items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.94] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:hidden"
+              href="#"
+              className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-lg:hidden"
             >
-              Contact Us
+              <img src="./language-icon.svg" className="h-4.5 w-4.5" alt="" />
             </a>
+            <Link
+              to="/portal"
+              className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:hidden"
+            >
+              Client Portal
+            </Link>
 
             <button
               type="button"
               onClick={handleMobileMenuToggle}
               aria-expanded={mobileMenuIsOpen}
               aria-controls={mobileMenuId}
-              className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] lg:hidden"
+              className="border-border/50 active:translate-y-2px flex h-10 w-10 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] lg:hidden"
             >
               {mobileMenuIsOpen ? (
-                <X className="h-4.5 w-4.5" />
+                <X className="h-5 w-5" />
               ) : (
-                <Menu className="h-4.5 w-4.5" />
+                <Menu className="h-5 w-5" />
               )}
             </button>
           </div>
         </div>
       </header>
-      <div className="relative hidden lg:block">
-        <div
-          id={menuId}
-          aria-hidden={!productsIsOpen}
-          className={`border-border/75 absolute right-0 z-50 mt-2.5 grid w-fit origin-top-right transform grid-cols-2 gap-x-10 gap-y-5 overflow-hidden rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-7.5 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
-            productsIsOpen
-              ? "translate-y-0 scale-100 opacity-100"
-              : "-translate-y-3 scale-95 opacity-0"
-          }`}
-        >
-          <div className="from-foreground/30 via-foreground/5 absolute inset-0 -z-10 mx-auto mt-3 h-3/4 w-[80%] rounded-[30px] bg-linear-to-b to-transparent opacity-40 blur-3xl" />
-          {PRODUCTS_BUTTONS.map(({ icon, text }, index) => (
+      {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
+        if (activeDropdown === "Products") {
+          return (
             <div
-              key={text}
-              style={{
-                transitionDelay: `${productsIsOpen ? index * 90 + 80 : 0}ms`,
-              }}
-              className={`flex items-center gap-5 rounded-2xl transition-all duration-500 ease-out ${
-                productsIsOpen
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-3 opacity-0"
+              key={name}
+              onMouseEnter={handleDropdownEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 transition-all duration-300 ${
+                activeDropdown === name
+                  ? "pointer-events-auto -translate-y-4 opacity-100"
+                  : "pointer-events-none -translate-y-8 opacity-0"
               }`}
             >
-              <div className="border-border/75 h-15 w-15 rounded-2xl border bg-linear-to-br from-black/20 via-black/25 to-black/25 p-3 shadow-md shadow-black/25 backdrop-blur-2xl hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)]">
-                <img src={icon} className="h-8.5 w-8.5" alt="" />
+              <div className="grid grid-cols-3 gap-5 p-5">
+                {items.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.href}
+                    className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all"
+                  >
+                    <img
+                      src={item.icon}
+                      className="max-h-30 w-full rounded-t-xl"
+                      alt=""
+                    />
+                    <div className="flex h-full items-center">
+                      <h3 className="text-sm font-semibold text-black">
+                        {item.title}
+                      </h3>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <a href="#" className="text-lg font-semibold">
-                {text}
-              </a>
             </div>
-          ))}
-        </div>
-      </div>
+          );
+        } else if (activeDropdown === "Solutions") {
+          return (
+            <div
+              key={name}
+              onMouseEnter={handleDropdownEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`absolute top-full right-0 left-1/7 max-w-[930px] rounded-[20px] bg-white shadow-sm shadow-black transition-all duration-300 ${
+                activeDropdown === name
+                  ? "pointer-events-auto -translate-y-4 opacity-100"
+                  : "pointer-events-none -translate-y-8 opacity-0"
+              }`}
+            >
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
+                {items.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.href}
+                    className="group flex items-center gap-5 rounded-xl transition-all"
+                  >
+                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">
+                      {item.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        } else if (activeDropdown === "Technology") {
+          return (
+            <div
+              key={name}
+              onMouseEnter={handleDropdownEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`absolute top-full right-0 left-1/4 max-w-[930px] rounded-[20px] bg-white shadow-sm shadow-black transition-all duration-300 ${
+                activeDropdown === name
+                  ? "pointer-events-auto -translate-y-4 opacity-100"
+                  : "pointer-events-none -translate-y-8 opacity-0"
+              }`}
+            >
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
+                {items.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.href}
+                    className="group flex items-center gap-5 rounded-xl transition-all"
+                  >
+                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">
+                      {item.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        } else if (activeDropdown === "Company") {
+          return (
+            <div
+              key={name}
+              onMouseEnter={handleDropdownEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-white shadow-sm shadow-black transition-all duration-300 ${
+                activeDropdown === name
+                  ? "pointer-events-auto -translate-y-4 opacity-100"
+                  : "pointer-events-none -translate-y-8 opacity-0"
+              }`}
+            >
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
+                {items.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.href}
+                    className="group flex items-center gap-5 rounded-xl transition-all"
+                  >
+                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">
+                      {item.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        }
+      })}
 
       <div className="relative lg:hidden">
         <div
@@ -187,38 +313,24 @@ export default function Header() {
           }`}
         >
           <nav className="text-foreground flex flex-col gap-3 text-lg font-medium">
-            {NAV_LINKS.map(({ link, text }) => (
+            {NAV_LINKS.map(({ href, text }) => (
               <Link
-                key={link}
-                to={link}
+                key={href}
+                to={href}
                 onClick={handleMobileMenuLinkClick}
-                className="hover:text-foreground/80 transition-colors duration-200"
+                className="hover:text-foreground/70 transition-colors duration-300"
               >
                 {text}
               </Link>
             ))}
           </nav>
 
-          <div className="flex flex-wrap items-center gap-4 max-lg:hidden">
-            {NAV_BUTTONS.map((item) => (
-              <a
-                key={item}
-                href="#"
-                onClick={handleMobileMenuLinkClick}
-                className="border-border/50 flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/20 to-black/25 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)]"
-              >
-                <img src={item} className="h-4.5 w-4.5" alt="" />
-              </a>
-            ))}
-          </div>
-
-          <a
-            href="#footer"
-            onClick={handleMobileMenuLinkClick}
+          <Link
+            to="/portal"
             className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
           >
-            Contact Us
-          </a>
+            Client Portal
+          </Link>
         </div>
       </div>
     </div>

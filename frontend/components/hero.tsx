@@ -1,54 +1,73 @@
-import LightRays from "./ui/light-rays";
+"use client";
 
-export default function Hero() {
+import { useState, useEffect } from "react";
+
+const backgroundImages = [
+  "/hero-bg-1.png",
+  "/hero-bg-2.png",
+  "/hero-bg-3.png",
+  "/hero-bg-4.png",
+];
+
+export default function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % backgroundImages.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section className="relative overflow-hidden bg-[url(/hero-bg.jpg)] bg-cover bg-center bg-no-repeat pt-67 pb-30 max-lg:pt-40 max-lg:pb-15">
-      <div className="pointer-events-none absolute inset-0">
-        <LightRays
-          raysOrigin="top-right"
-          raysColor="#ffffff"
-          raysSpeed={1.3}
-          lightSpread={1}
-          rayLength={1.7}
-          followMouse={true}
-          mouseInfluence={0.3}
-          noiseAmount={0.2}
-          distortion={0.05}
-          className="custom-rays h-full w-full"
-        />
+    <section className="relative flex min-h-screen items-end pb-25 max-[1281px]:px-5 max-md:pb-5">
+      <div className="absolute inset-0 overflow-hidden">
+        {backgroundImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentSlide ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <img
+              src={image || "/placeholder.svg"}
+              alt={`Background ${index + 1}`}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
+        ))}
       </div>
 
-      {/* Контент поверх */}
-      <div className="relative z-10">
-        <section className="container m-auto max-lg:px-10">
-          <div className="lg:space-y-8">
-            <div>
-              <h1 className="text-text text-[84px] leading-26 font-bold uppercase max-lg:text-[64px] max-lg:leading-20 max-md:mb-3 max-md:text-center max-md:text-[42px] max-md:leading-12 max-md:text-balance">
-                High-speed <br /> dual-mode UAV
-              </h1>
-            </div>
-            <div className="flex w-fit flex-col space-y-10">
-              <p className="uppercase max-md:text-center lg:text-lg lg:leading-8">
-                Ground-to-ground and ground-to-air precision <br /> strikes with
-                HE and HEF warheads
-              </p>
-              <div className="space-x-4 max-md:flex max-md:flex-col max-md:space-x-0 max-md:gap-y-3 max-md:text-center">
-                <a
-                  href="#"
-                  className="text-text-alt rounded-lg bg-white px-6 py-4 font-bold uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] hover:backdrop-blur-sm active:scale-[0.94] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] lg:text-xl"
-                >
-                  Our products
-                </a>
-                <a
-                  href="#"
-                  className="text-text rounded-lg border border-white bg-black/5 px-6 py-4 font-bold uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] hover:backdrop-blur-md active:scale-[0.94] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] lg:text-xl"
-                >
-                  Contact us
-                </a>
-              </div>
-            </div>
+      <div className="relative z-10 container mx-auto">
+        <div className="max-w-7xl">
+          <div className="max-w-4xl">
+            <h1 className="mb-6 text-6xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-4xl">
+              Autonomous combat
+              <br />
+              UAV & Robotic systems
+            </h1>
+            <p className="max-w-3xl text-lg text-pretty text-white/90 lg:text-xl">
+              We are a system integrator delivering kamikaze UAV, UGV and GCS,
+              integrated into military vehicle systems via open C2 APIs and
+              third-party system integration.
+            </p>
           </div>
-        </section>
+        </div>
+
+        <div className="z-20 flex justify-center gap-2 py-5">
+          {backgroundImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

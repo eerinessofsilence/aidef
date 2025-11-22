@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container-big mx-auto">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
-            <img src="./logo-ai-def.png" className="w-42.5" alt="" />
+            <img src="./logo-ai-def.svg" className="w-42.5" alt="" />
             <img src="./we-create-the-future.svg" className="w-43.5" alt="" />
           </div>
           <div className="flex flex-col space-y-3 lg:space-y-5">
