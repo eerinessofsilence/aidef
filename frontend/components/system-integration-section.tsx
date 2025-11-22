@@ -18,7 +18,7 @@ const CARDS = [
 
 export default function SystemIntegrationSection() {
   return (
-    <section className="container mx-auto flex flex-col items-center justify-center space-y-25 pb-[90px] max-[1281px]:px-5 max-lg:space-y-15">
+    <section className="container mx-auto flex flex-col items-center justify-center space-y-25 pt-25 pb-[90px] max-[1281px]:px-5 max-lg:space-y-15 max-lg:pt-12.5">
       <div className="flex flex-col items-center gap-y-10 max-lg:gap-y-5">
         <h1 className="text-center text-5xl font-bold max-[1281px]:text-4xl max-md:text-3xl">
           System Integration for Military Vehicles

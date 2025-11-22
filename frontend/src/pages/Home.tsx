@@ -5,7 +5,7 @@ import SystemIntegrationSection from "../../components/system-integration-sectio
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-[#201E5F]">
+    <main className="bg-background relative min-h-screen">
       <Hero />
       <DroneCarouselSection />
       <FocusAreasSection />

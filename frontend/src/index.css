@@ -4,7 +4,7 @@
 
 :root {
   --font-sans: "Inter", system-ui, sans-serif;
-  --background: #314d77;
+  --background: #172b4a;
   --secondary: #3a414d;
   --foreground: #ffffff;
   --muted: #435561;
@@ -57,26 +57,4 @@
   @media (width >= 96rem /* 1536px */) {
     max-width: 102rem; /* ~1632px */
   }
-}
-
-@keyframes slow-rotate {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    transform: rotate(90deg) scale(1.1);
-  }
-  50% {
-    transform: rotate(360deg) scale(1);
-  }
-  75% {
-    transform: rotate(270deg) scale(1.1);
-  }
-  100% {
-    transform: rotate(0deg) scale(1);
-  }
-}
-
-@utility animate-slow-rotate {
-  animation: slow-rotate 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
