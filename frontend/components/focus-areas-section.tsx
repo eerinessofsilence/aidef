@@ -121,20 +121,17 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
       className={`overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat py-16 max-[1281px]:px-5 max-lg:pb-0`}
     >
       <div className="relative container mx-auto w-full py-37.5 max-xl:py-30 max-lg:pb-0">
-        {/* радиальные линии только >= 1024px */}
         <RadialConnectors itemCount={items.length} />
 
-        {/* Центр только >= 1024px */}
         <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:top-1/7 max-md:top-1/11">
           <img
             src="/focus-areas-core.svg"
-            className="w-50 max-lg:w-36"
+            className="animate-slow-rotate motion-safe:animate-slow-rotate w-50 hover:opacity-95 max-lg:w-36"
             alt=""
           />
         </div>
 
         <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/75 max-md:h-300 lg:hidden" />
-        {/* Header — везде */}
         <div className="pointer-events-none absolute -top-8 right-0 left-0 text-center">
           <p className="text-xs font-medium tracking-wider text-white/75 uppercase">
             Focus areas
@@ -144,7 +141,6 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           </h1>
         </div>
 
-        {/* Десктоп: радиальная схема (>= 1024px) */}
         <div className="relative hidden h-screen w-full lg:block">
           {items.map((item, idx) => (
             <RadialCard
@@ -155,7 +151,6 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           ))}
         </div>
 
-        {/* Мобайл/планшет: грид (<= ~1024px) */}
         <div className="relative z-10 mt-48 grid grid-cols-2 gap-6 pb-16 max-md:grid-cols-1 lg:hidden">
           {items.map((item, idx) => (
             <div

@@ -59,50 +59,24 @@
   }
 }
 
-@media (width >= 360px) {
-  .drone-carousel-characteristics {
-    @apply right-1/2 bottom-7.5 flex translate-x-3 gap-5 text-lg;
+@keyframes slow-rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(360deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
   }
 }
 
-@media (width >= 430px) {
-  .drone-carousel-characteristics {
-    @apply right-1/2 bottom-10 flex translate-x-4 gap-5 text-2xl;
-  }
-}
-
-@media (width >= 560px) {
-  .drone-carousel-characteristics {
-    @apply right-1/2 bottom-12 flex translate-x-2 gap-7 text-2xl;
-  }
-}
-
-@media (width >= 640px) {
-  .drone-carousel-characteristics {
-    @apply right-1/2 bottom-13.5 flex translate-x-4 gap-7.5 text-3xl;
-  }
-}
-
-@media (width >= 768px) {
-  .drone-carousel-characteristics {
-    @apply right-1/2 bottom-16.5 flex translate-x-4 gap-7.5 text-4xl;
-  }
-}
-
-@media (width >= 1024px) {
-  .drone-carousel-characteristics {
-    @apply right-1/5 bottom-8.5 flex translate-x-6.5 gap-7.5 text-3xl;
-  }
-}
-
-@media (width >= 1280px) {
-  .drone-carousel-characteristics {
-    @apply right-1/5 bottom-11 flex translate-x-7 gap-10 text-4xl;
-  }
-}
-
-@media (width >= 1536px) {
-  .drone-carousel-characteristics {
-    @apply right-1/5 bottom-15 flex translate-x-4 gap-15 text-4xl;
-  }
+@utility animate-slow-rotate {
+  animation: slow-rotate 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }

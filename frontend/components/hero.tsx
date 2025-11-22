@@ -21,7 +21,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <section className="relative flex min-h-screen items-end pb-25 max-[1281px]:px-5 max-md:pb-5">
+    <section className="relative flex items-end pb-25 max-[1281px]:px-5 max-md:min-h-[75vh] max-md:items-center max-md:pt-20 md:min-h-screen">
       <div className="absolute inset-0 overflow-hidden">
         {backgroundImages.map((image, index) => (
           <div
@@ -40,15 +40,15 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className="relative z-10 container mx-auto">
+      <div className="relative z-10 container mx-auto max-md:mt-20">
         <div className="max-w-7xl">
           <div className="max-w-4xl">
-            <h1 className="mb-6 text-6xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-4xl">
+            <h1 className="mb-6 text-6xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-4xl max-md:text-center">
               Autonomous combat
               <br />
               UAV & Robotic systems
             </h1>
-            <p className="max-w-3xl text-lg text-pretty text-white/90 lg:text-xl">
+            <p className="max-w-3xl text-lg text-pretty text-white/90 max-md:text-center lg:text-xl">
               We are a system integrator delivering kamikaze UAV, UGV and GCS,
               integrated into military vehicle systems via open C2 APIs and
               third-party system integration.

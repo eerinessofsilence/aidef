@@ -76,8 +76,13 @@ const DROPDOWN_MENUS: Menus = {
 
 export default function Header() {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // used for desktop hover
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
+  // mobile expanded state: which dropdowns are opened in mobile menu
+  const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
+    {},
+  );
+
   const mobileMenuId = "mobile-menu";
 
   const handleMouseEnter = (name: string) => {
@@ -88,7 +93,7 @@ export default function Header() {
   };
 
   const handleMouseLeave = () => {
-    const timeout = setTimeout(() => {
+    const timeout = window.setTimeout(() => {
       setActiveDropdown(null);
     }, 150);
     setDropdownTimeout(timeout);
@@ -102,6 +107,11 @@ export default function Header() {
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
+
+  // toggle mobile dropdown expansion (click-to-open under the link)
+  const toggleMobileDropdown = (name: string) => {
+    setMobileExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
 
   return (
     <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-[1281px]:px-5">
@@ -174,18 +184,20 @@ export default function Header() {
           </div>
         </div>
       </header>
+
+      {/* Desktop dropdowns (hover) */}
       {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
-        if (activeDropdown === "Products") {
+        // render only when activeDropdown === name
+        if (activeDropdown !== name) return null;
+
+        // choose layout per menu type (kept similar to your original layouts)
+        if (name === "Products") {
           return (
             <div
               key={name}
               onMouseEnter={handleDropdownEnter}
               onMouseLeave={handleMouseLeave}
-              className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 transition-all duration-300 ${
-                activeDropdown === name
-                  ? "pointer-events-auto -translate-y-4 opacity-100"
-                  : "pointer-events-none -translate-y-8 opacity-0"
-              }`}
+              className={`pointer-events-auto absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 -translate-y-4 rounded-[20px] bg-[#f5f5f5] opacity-100 shadow-sm shadow-black/25 transition-all duration-300`}
             >
               <div className="grid grid-cols-3 gap-5 p-5">
                 {items.map((item) => (
@@ -193,6 +205,7 @@ export default function Header() {
                     key={item.title}
                     to={item.href}
                     className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all"
+                    onClick={() => setActiveDropdown(null)}
                   >
                     <img
                       src={item.icon}
@@ -209,17 +222,15 @@ export default function Header() {
               </div>
             </div>
           );
-        } else if (activeDropdown === "Solutions") {
+        }
+
+        if (name === "Solutions") {
           return (
             <div
               key={name}
               onMouseEnter={handleDropdownEnter}
               onMouseLeave={handleMouseLeave}
-              className={`absolute top-full right-0 left-1/7 max-w-[930px] rounded-[20px] bg-white shadow-sm shadow-black transition-all duration-300 ${
-                activeDropdown === name
-                  ? "pointer-events-auto -translate-y-4 opacity-100"
-                  : "pointer-events-none -translate-y-8 opacity-0"
-              }`}
+              className={`pointer-events-auto absolute top-full right-0 left-1/7 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
             >
               <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
                 {items.map((item) => (
@@ -227,66 +238,7 @@ export default function Header() {
                     key={item.title}
                     to={item.href}
                     className="group flex items-center gap-5 rounded-xl transition-all"
-                  >
-                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-black">
-                      {item.title}
-                    </h3>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          );
-        } else if (activeDropdown === "Technology") {
-          return (
-            <div
-              key={name}
-              onMouseEnter={handleDropdownEnter}
-              onMouseLeave={handleMouseLeave}
-              className={`absolute top-full right-0 left-1/4 max-w-[930px] rounded-[20px] bg-white shadow-sm shadow-black transition-all duration-300 ${
-                activeDropdown === name
-                  ? "pointer-events-auto -translate-y-4 opacity-100"
-                  : "pointer-events-none -translate-y-8 opacity-0"
-              }`}
-            >
-              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
-                {items.map((item) => (
-                  <Link
-                    key={item.title}
-                    to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all"
-                  >
-                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-black">
-                      {item.title}
-                    </h3>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          );
-        } else if (activeDropdown === "Company") {
-          return (
-            <div
-              key={name}
-              onMouseEnter={handleDropdownEnter}
-              onMouseLeave={handleMouseLeave}
-              className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-white shadow-sm shadow-black transition-all duration-300 ${
-                activeDropdown === name
-                  ? "pointer-events-auto -translate-y-4 opacity-100"
-                  : "pointer-events-none -translate-y-8 opacity-0"
-              }`}
-            >
-              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
-                {items.map((item) => (
-                  <Link
-                    key={item.title}
-                    to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all"
+                    onClick={() => setActiveDropdown(null)}
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                       <img src={item.icon} className="h-8.5 w-8.5" alt="" />
@@ -300,8 +252,69 @@ export default function Header() {
             </div>
           );
         }
+
+        if (name === "Technology") {
+          return (
+            <div
+              key={name}
+              onMouseEnter={handleDropdownEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`pointer-events-auto absolute top-full right-0 left-1/4 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
+            >
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
+                {items.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.href}
+                    className="group flex items-center gap-5 rounded-xl transition-all"
+                    onClick={() => setActiveDropdown(null)}
+                  >
+                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">
+                      {item.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        if (name === "Company") {
+          return (
+            <div
+              key={name}
+              onMouseEnter={handleDropdownEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`pointer-events-auto absolute top-full right-0 left-1/3 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
+            >
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
+                {items.map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.href}
+                    className="group flex items-center gap-5 rounded-xl transition-all"
+                    onClick={() => setActiveDropdown(null)}
+                  >
+                    <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                      <img src={item.icon} className="h-8.5 w-8.5" alt="" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">
+                      {item.title}
+                    </h3>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        return null;
       })}
 
+      {/* Mobile menu */}
       <div className="relative lg:hidden">
         <div
           id={mobileMenuId}
@@ -313,16 +326,62 @@ export default function Header() {
           }`}
         >
           <nav className="text-foreground flex flex-col gap-3 text-lg font-medium">
-            {NAV_LINKS.map(({ href, text }) => (
-              <Link
-                key={href}
-                to={href}
-                onClick={handleMobileMenuLinkClick}
-                className="hover:text-foreground/70 transition-colors duration-300"
-              >
-                {text}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              if (link.hasDropdown) {
+                const submenu = DROPDOWN_MENUS[link.text as keyof Menus] || [];
+                const expanded = !!mobileExpanded[link.text];
+                return (
+                  <div key={link.text} className="relative">
+                    <button
+                      onClick={() => toggleMobileDropdown(link.text)}
+                      className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                      aria-expanded={expanded}
+                      aria-controls={`mobile-submenu-${link.text}`}
+                    >
+                      <span>{link.text}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform duration-200 ${
+                          expanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {/* Submenu as plain text links under the parent item */}
+                    <div
+                      id={`mobile-submenu-${link.text}`}
+                      className={`mt-2 flex flex-col gap-2 pl-4 transition-all ${
+                        expanded
+                          ? "max-h-[1000px] opacity-100"
+                          : "max-h-0 opacity-0"
+                      } overflow-hidden`}
+                    >
+                      {submenu.map((s) => (
+                        <Link
+                          key={s.title}
+                          to={s.href}
+                          onClick={handleMobileMenuLinkClick}
+                          className="text-foreground/80 pl-2 text-base"
+                        >
+                          {s.title}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div key={link.text} className="relative">
+                  <Link
+                    to={link.href}
+                    onClick={handleMobileMenuLinkClick}
+                    className="text-foreground hover:text-foreground/70 block cursor-pointer text-lg font-medium transition-colors"
+                  >
+                    {link.text}
+                  </Link>
+                </div>
+              );
+            })}
           </nav>
 
           <Link
