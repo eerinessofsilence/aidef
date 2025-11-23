@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
 
@@ -9,8 +9,8 @@ const NAV_LINKS = [
   { text: "Solutions", href: "#", hasDropdown: true },
   { text: "Technology", href: "#", hasDropdown: true },
   { text: "Company", href: "#", hasDropdown: true },
-  { text: "Support", href: "/support" },
-  { text: "Contact", href: "/contact" },
+  { text: "Support", href: "#" },
+  { text: "Contact", href: "#" },
 ];
 
 const LANGUAGES = [
@@ -108,6 +108,8 @@ export default function Header() {
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
     {},
   );
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
 
   const mobileMenuId = "mobile-menu";
 
@@ -153,6 +155,30 @@ export default function Header() {
   const toggleMobileDropdown = (name: string) => {
     setMobileExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
   };
+
+  useEffect(() => {
+    if (!mobileMenuIsOpen) return;
+
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(target) &&
+        mobileToggleRef.current &&
+        !mobileToggleRef.current.contains(target)
+      ) {
+        setMobileMenuIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [mobileMenuIsOpen]);
 
   return (
     <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-[1281px]:px-5">
@@ -204,7 +230,7 @@ export default function Header() {
               <img src="./language-icon.svg" className="h-4.5 w-4.5" alt="" />
             </div>
             <Link
-              to="/portal"
+              to="#"
               className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
             >
               Client Portal
@@ -215,6 +241,7 @@ export default function Header() {
               onClick={handleMobileMenuToggle}
               aria-expanded={mobileMenuIsOpen}
               aria-controls={mobileMenuId}
+              ref={mobileToggleRef}
               className="border-border/50 active:translate-y-2px flex h-10 w-10 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] xl:hidden"
             >
               {mobileMenuIsOpen ? (
@@ -377,6 +404,7 @@ export default function Header() {
         <div
           id={mobileMenuId}
           aria-hidden={!mobileMenuIsOpen}
+          ref={mobileMenuRef}
           className={`border-border/75 absolute right-0 z-40 mt-3 flex w-full origin-top-right flex-col gap-5 rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
             mobileMenuIsOpen
               ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
@@ -443,7 +471,8 @@ export default function Header() {
           </nav>
 
           <Link
-            to="/portal"
+            to="#"
+            onClick={handleMobileMenuLinkClick}
             className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
           >
             Client Portal

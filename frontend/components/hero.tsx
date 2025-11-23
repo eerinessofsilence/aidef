@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 const backgroundImages = [
   "/hero-bg-1.png",
@@ -20,8 +21,21 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const paragraphY = useTransform(scrollYProgress, [0, 1], [0, -48]);
+  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const indicatorY = useTransform(scrollYProgress, [0, 1], [0, -20]);
+
   return (
-    <section className="relative flex items-center pb-25 max-[1281px]:px-5 max-md:min-h-[75vh] max-md:items-center max-md:pt-20 md:min-h-screen">
+    <section
+      ref={heroRef}
+      className="relative flex items-center pb-25 max-[1281px]:px-5 max-md:min-h-[75vh] max-md:items-center max-md:pt-20 md:min-h-screen"
+    >
       <div className="absolute inset-0 overflow-hidden">
         {backgroundImages.map((image, index) => (
           <div
@@ -43,21 +57,36 @@ export default function HomePage() {
       <div className="relative z-10 container mx-auto max-md:mt-20">
         <div className="max-w-7xl">
           <div className="max-w-4xl">
-            <h1 className="mb-6 text-7xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-6xl max-md:text-center max-md:text-5xl lg:leading-22">
+            <motion.h1
+              className="mb-6 text-7xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-6xl max-md:text-center max-md:text-5xl lg:leading-22"
+              style={{ y: headingY }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+            >
               Autonomous combat
               <br />
               UAV & Robotic systems
-            </h1>
-            <p className="max-w-3xl text-lg leading-8.5 text-pretty text-white/90 max-md:text-center lg:text-xl">
+            </motion.h1>
+            <motion.p
+              className="max-w-3xl text-lg leading-8.5 text-pretty text-white/90 max-md:text-center lg:text-xl"
+              style={{ y: paragraphY }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.22 }}
+            >
               We are a system integrator delivering kamikaze UAV, UGV and GCS,
               integrated into military vehicle systems via open C2 APIs and
               third-party system integration.
-            </p>
+            </motion.p>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 max-md:bottom-6">
+      <motion.div
+        className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 max-md:bottom-6"
+        style={{ opacity: indicatorOpacity, y: indicatorY }}
+      >
         {backgroundImages.map((_, index) => (
           <button
             key={index}
@@ -68,7 +97,7 @@ export default function HomePage() {
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
