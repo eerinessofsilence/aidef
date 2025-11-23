@@ -118,9 +118,14 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
   return (
     <section
       ref={containerRef}
-      className={`overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat pt-50 pb-25 max-[1281px]:px-5 max-lg:pt-25 max-lg:pb-12.5`}
+      className={`relative overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat pt-50 pb-25 max-[1281px]:px-5 max-lg:pt-25 max-lg:pb-12.5`}
     >
-      <div className="relative container mx-auto w-full py-37.5 max-xl:py-30 max-lg:pb-0">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 bg-black/35"
+      />
+
+      <div className="relative z-10 container mx-auto w-full py-37.5 max-xl:py-30 max-lg:pb-0">
         <RadialConnectors itemCount={items.length} />
 
         <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:top-1/7 max-md:top-1/11">
@@ -133,10 +138,10 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
 
         <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/75 max-md:h-300 lg:hidden" />
         <div className="pointer-events-none absolute -top-8 right-0 left-0 text-center lg:-top-16">
-          <p className="text-xs font-medium tracking-wider text-white/75 uppercase">
+          <p className="text-foreground/70 text-sm font-medium tracking-widest uppercase">
             Focus areas
           </p>
-          <h1 className="text-5xl font-bold text-white capitalize lg:text-[50px]">
+          <h1 className="text-foreground text-5xl font-bold capitalize max-lg:text-4xl">
             Ai at the core
           </h1>
         </div>

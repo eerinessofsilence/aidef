@@ -7,13 +7,9 @@ import React, {
   useContext,
   type JSX,
 } from "react";
-import {
-  IconArrowNarrowLeft,
-  IconArrowNarrowRight,
-  IconX,
-} from "@tabler/icons-react";
+import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "../../lib/utils";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { type ImageProps } from "next/image";
 import { useOutsideClick } from "../../hooks/use-outside-click";
 
@@ -24,10 +20,8 @@ interface CarouselProps {
 
 type Card = {
   bg: any;
-  src: string;
   title: string;
   category: string;
-  content: React.ReactNode;
 };
 
 export const CarouselContext = createContext<{
@@ -93,10 +87,10 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
       value={{ onCardClose: handleCardClose, currentIndex }}
     >
       <div className="relative w-full">
-        <div className="absolute right-0 -bottom-4 left-0 flex justify-end gap-2 md:-top-10 md:right-8">
+        <div className="absolute right-0 -bottom-12 left-0 flex justify-end gap-2 md:-top-12 md:right-8">
           <a
             href="#"
-            className="absolute top-2 mr-5 text-lg underline max-md:left-0 md:right-20"
+            className="absolute top-1 mr-5 text-lg underline max-md:left-0 md:right-20"
           >
             Show All
           </a>
@@ -126,12 +120,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
             )}
           ></div>
 
-          <div
-            className={cn(
-              "flex flex-row flex-nowrap justify-start gap-6 max-lg:gap-3",
-              "max-w-7xl", // remove max-w-4xl if you want the carousel to span the full width of its container
-            )}
-          >
+          <div className="flex max-w-7xl flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
             {items.map((item, index) => (
               <motion.div
                 initial={{
@@ -148,7 +137,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                   },
                 }}
                 key={"card" + index}
-                className="h-85 w-75 rounded"
+                className="h-85 w-75"
               >
                 {item}
               </motion.div>
@@ -206,50 +195,9 @@ export const Card = ({
 
   return (
     <>
-      <AnimatePresence>
-        {open && (
-          <div className="fixed inset-0 z-50 h-screen overflow-auto">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 h-full w-full bg-black/80 backdrop-blur-lg"
-            />
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              ref={containerRef}
-              layoutId={layout ? `card-${card.title}` : undefined}
-              className="relative z-60 mx-auto my-10 h-fit max-w-5xl rounded-3xl bg-white p-4 font-sans md:p-10 dark:bg-neutral-900"
-            >
-              <button
-                className="sticky top-4 right-0 ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-black dark:bg-white"
-                onClick={handleClose}
-              >
-                <IconX className="h-6 w-6 text-neutral-100 dark:text-neutral-900" />
-              </button>
-              <motion.p
-                layoutId={layout ? `category-${card.title}` : undefined}
-                className="text-base font-medium text-black dark:text-white"
-              >
-                {card.category}
-              </motion.p>
-              <motion.p
-                layoutId={layout ? `title-${card.title}` : undefined}
-                className="mt-4 text-2xl font-semibold text-neutral-700 md:text-5xl dark:text-white"
-              >
-                {card.title}
-              </motion.p>
-              <div className="py-10">{card.content}</div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
       <motion.button
         layoutId={layout ? `card-${card.title}` : undefined}
-        onClick={handleOpen}
-        className="relative z-10 flex h-97 w-75 cursor-pointer flex-col items-start justify-start overflow-hidden rounded-3xl bg-center"
+        className="relative z-10 flex h-97 w-75 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50"
         style={{
           backgroundImage: `url(${card.bg})`,
           backgroundSize: "cover",
@@ -257,10 +205,10 @@ export const Card = ({
         }}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-linear-to-b from-black/50 via-black/25 to-transparent" />
-        <div className="relative z-40 p-8">
+        <div className="relative z-40">
           <motion.p
             layoutId={layout ? `category-${card.category}` : undefined}
-            className="text-left font-sans text-sm font-medium text-white md:text-base"
+            className="text-left font-sans text-base font-medium text-white"
           >
             {card.category}
           </motion.p>
@@ -271,7 +219,6 @@ export const Card = ({
             {card.title}
           </motion.p>
         </div>
-        <BlurImage src={card.src} alt={card.title} fill />
       </motion.button>
     </>
   );

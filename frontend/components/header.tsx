@@ -102,6 +102,9 @@ export default function Header() {
   const [languageSelectorIsOpen, setLanguageSelectorOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // used for desktop hover
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
+  const [languageDropdownTimeout, setLanguageDropdownTimeout] = useState<
+    number | null
+  >(null);
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
     {},
   );
@@ -127,10 +130,23 @@ export default function Header() {
       clearTimeout(dropdownTimeout);
     }
   };
+
+  const handleLanguageMouseEnter = () => {
+    if (languageDropdownTimeout) {
+      clearTimeout(languageDropdownTimeout);
+    }
+    setLanguageSelectorOpen(true);
+  };
+
+  const handleLanguageMouseLeave = () => {
+    const timeout = window.setTimeout(() => {
+      setLanguageSelectorOpen(false);
+    }, 150);
+    setLanguageDropdownTimeout(timeout);
+  };
+
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
-  const languageSelectorToggle = () =>
-    setLanguageSelectorOpen((prevState) => !prevState);
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
 
   // toggle mobile dropdown expansion (click-to-open under the link)
@@ -159,7 +175,7 @@ export default function Header() {
                 onMouseLeave={handleMouseLeave}
               >
                 {link.hasDropdown ? (
-                  <button className="group text-foreground hover:text-foreground/70 flex cursor-pointer items-center gap-1 text-lg font-medium transition-colors">
+                  <button className="group text-foreground hover:text-foreground/70 flex cursor-pointer items-center gap-1 text-[17px] font-medium transition-colors">
                     {link.text}
                     <ChevronDown
                       className={`h-4 w-4 transition-transform duration-300 ${
@@ -170,7 +186,7 @@ export default function Header() {
                 ) : (
                   <Link
                     to={link.href}
-                    className="text-foreground hover:text-foreground/70 cursor-pointer text-lg font-medium transition-colors"
+                    className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
                   >
                     {link.text}
                   </Link>
@@ -181,7 +197,8 @@ export default function Header() {
 
           <div className="flex items-center gap-5 max-lg:gap-3">
             <div
-              onClick={() => languageSelectorToggle()}
+              onMouseEnter={handleLanguageMouseEnter}
+              onMouseLeave={handleLanguageMouseLeave}
               className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-xl:hidden"
             >
               <img src="./language-icon.svg" className="h-4.5 w-4.5" alt="" />
@@ -209,13 +226,8 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      {/* Desktop dropdowns (hover) */}
       {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
-        // render only when activeDropdown === name
         if (activeDropdown !== name) return null;
-
-        // choose layout per menu type (kept similar to your original layouts)
         if (name === "Products") {
           return (
             <div
@@ -261,8 +273,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7 hover:p-3"
-                    onClick={() => setActiveDropdown(null)}
+                    className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/25"
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                       <img src={item.icon} className="h-8.5 w-8.5" alt="" />
@@ -290,8 +301,7 @@ export default function Header() {
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7 hover:p-3"
-                    onClick={() => setActiveDropdown(null)}
+                    className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/25"
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                       <img src={item.icon} className="h-8.5 w-8.5" alt="" />
@@ -314,13 +324,12 @@ export default function Header() {
               onMouseLeave={handleMouseLeave}
               className={`pointer-events-auto absolute top-full right-0 left-1/3 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
             >
-              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
                 {items.map((item) => (
                   <Link
                     key={item.title}
                     to={item.href}
-                    className="group flex items-center gap-5 rounded-xl transition-all duration-300 hover:bg-black/7 hover:p-3"
-                    onClick={() => setActiveDropdown(null)}
+                    className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/25"
                   >
                     <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                       <img src={item.icon} className="h-8.5 w-8.5" alt="" />
@@ -339,12 +348,16 @@ export default function Header() {
       })}
 
       {languageSelectorIsOpen && (
-        <div className="pointer-events-auto absolute top-full left-1/2 w-full max-w-[813px] -translate-x-1/4 -translate-y-4 rounded-[20px] bg-[#f5f5f5] opacity-100 shadow-sm shadow-black/25 transition-all duration-300">
-          <div className="grid grid-cols-4 gap-12.5 p-7.5">
+        <div
+          onMouseEnter={handleLanguageMouseEnter}
+          onMouseLeave={handleLanguageMouseLeave}
+          className="pointer-events-auto absolute top-full left-1/2 w-full max-w-[813px] -translate-x-1/4 -translate-y-4 rounded-[20px] bg-[#f5f5f5] opacity-100 shadow-sm shadow-black/25 transition-all duration-300"
+        >
+          <div className="grid grid-cols-4 gap-12.5 p-4.5">
             {LANGUAGES.map((item) => (
               <a
                 key={item.id}
-                className="group flex items-center gap-5 rounded-xl text-center transition-all duration-300 hover:bg-black/7 hover:p-3"
+                className="group flex items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/25"
               >
                 <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                   <img src={item.img} className="h-7 w-7" />
