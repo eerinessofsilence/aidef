@@ -23,6 +23,7 @@ interface CarouselProps {
 }
 
 type Card = {
+  bg: any;
   src: string;
   title: string;
   category: string;
@@ -147,7 +148,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                   },
                 }}
                 key={"card" + index}
-                className="rounded"
+                className="h-85 w-75 rounded"
               >
                 {item}
               </motion.div>
@@ -163,10 +164,12 @@ export const Card = ({
   card,
   index,
   layout = false,
+  bg,
 }: {
   card: Card;
   index: number;
   layout?: boolean;
+  bg?: string;
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -247,9 +250,14 @@ export const Card = ({
       <motion.button
         layoutId={layout ? `card-${card.title}` : undefined}
         onClick={handleOpen}
-        className="relative z-10 flex h-80 w-56 cursor-pointer flex-col items-start justify-start overflow-hidden rounded-3xl bg-[url(/our-products-card-bg.png)] bg-center md:h-160 md:w-96 dark:bg-neutral-900"
+        className="relative z-10 flex h-97 w-75 cursor-pointer flex-col items-start justify-start overflow-hidden rounded-3xl bg-center"
+        style={{
+          backgroundImage: `url(${card.bg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-linear-to-b from-black/50 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-linear-to-b from-black/50 via-black/25 to-transparent" />
         <div className="relative z-40 p-8">
           <motion.p
             layoutId={layout ? `category-${card.category}` : undefined}

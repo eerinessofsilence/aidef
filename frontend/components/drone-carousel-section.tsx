@@ -4,7 +4,7 @@ import { Carousel, Card } from "./ui/apple-cards-carousel";
 
 export default function DroneCarouselSection() {
   const cards = data.map((card, index) => (
-    <Card key={card.src} card={card} index={index} />
+    <Card key={card.src ?? index} card={card} index={index} bg={card.bg} />
   ));
 
   return (
@@ -55,6 +55,7 @@ const data = [
     title: "AX2NG KRAKATIT",
     description: "Jet engine KAMIKAZE drone with AI",
     src: "./unmanned-systems-portfolio-1.png",
+    bg: "/drone-carousel-bg-1.png",
     content: <DummyContent />,
   },
   {
@@ -62,6 +63,7 @@ const data = [
     title: "AV2 VTOL",
     description: "Vertical take-of and landing aircraft",
     src: "./unmanned-systems-portfolio-2.png",
+    bg: "/drone-carousel-bg-1.png",
     content: <DummyContent />,
   },
   {
@@ -69,6 +71,7 @@ const data = [
     title: "AXQ",
     description: "Lightweight 10-inch multicopter",
     src: "./unmanned-systems-portfolio-3.png",
+    bg: "/drone-carousel-bg-1.png",
     content: <DummyContent />,
   },
 
@@ -77,6 +80,7 @@ const data = [
     title: "UGV 150-DU",
     description: "Unmanned ground platform",
     src: "./unmanned-systems-portfolio-4.png",
+    bg: "/drone-carousel-bg-1.png",
     content: <DummyContent />,
   },
   {
@@ -84,6 +88,7 @@ const data = [
     title: "Ground Control Station",
     description: " Unihed control for all platforms",
     src: "./unmanned-systems-portfolio-5.jpg",
+    bg: "/drone-carousel-bg-1.png",
     content: <DummyContent />,
   },
 ];
