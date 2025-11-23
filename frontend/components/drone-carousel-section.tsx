@@ -63,7 +63,7 @@ const data = [
     title: "AV2 VTOL",
     description: "Vertical take-of and landing aircraft",
     src: "./unmanned-systems-portfolio-2.png",
-    bg: "/drone-carousel-bg-1.png",
+    bg: "/drone-carousel-bg-2.png",
     content: <DummyContent />,
   },
   {
@@ -71,7 +71,7 @@ const data = [
     title: "AXQ",
     description: "Lightweight 10-inch multicopter",
     src: "./unmanned-systems-portfolio-3.png",
-    bg: "/drone-carousel-bg-1.png",
+    bg: "/drone-carousel-bg-3.png",
     content: <DummyContent />,
   },
 
@@ -80,7 +80,7 @@ const data = [
     title: "UGV 150-DU",
     description: "Unmanned ground platform",
     src: "./unmanned-systems-portfolio-4.png",
-    bg: "/drone-carousel-bg-1.png",
+    bg: "/drone-carousel-bg-4.png",
     content: <DummyContent />,
   },
   {
@@ -88,7 +88,7 @@ const data = [
     title: "Ground Control Station",
     description: " Unihed control for all platforms",
     src: "./unmanned-systems-portfolio-5.jpg",
-    bg: "/drone-carousel-bg-1.png",
+    bg: "/drone-carousel-bg-5.png",
     content: <DummyContent />,
   },
 ];

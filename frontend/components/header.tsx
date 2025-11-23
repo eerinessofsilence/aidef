@@ -344,7 +344,7 @@ export default function Header() {
             {LANGUAGES.map((item) => (
               <a
                 key={item.id}
-                className="group flex items-center gap-5 rounded-xl text-center transition-all duration-300"
+                className="group flex items-center gap-5 rounded-xl text-center transition-all duration-300 hover:bg-black/7 hover:p-3"
               >
                 <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                   <img src={item.img} className="h-7 w-7" />
