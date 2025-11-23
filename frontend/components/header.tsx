@@ -468,6 +468,45 @@ export default function Header() {
                 </div>
               );
             })}
+
+            <div className="relative">
+              <button
+                onClick={() => toggleMobileDropdown("Languages")}
+                className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                aria-expanded={!!mobileExpanded.Languages}
+                aria-controls="mobile-submenu-languages"
+              >
+                <span>Languages</span>
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    mobileExpanded.Languages ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              <div
+                id="mobile-submenu-languages"
+                className={`mt-2 flex flex-col gap-2 pl-4 transition-all ${
+                  mobileExpanded.Languages
+                    ? "max-h-[1000px] opacity-100"
+                    : "max-h-0 opacity-0"
+                } overflow-hidden`}
+              >
+                {LANGUAGES.map((language) => (
+                  <button
+                    key={language.id}
+                    type="button"
+                    onClick={handleMobileMenuLinkClick}
+                    className="text-foreground/80 hover:text-foreground/50 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 shadow-inner shadow-black/20">
+                      <img src={language.img} className="h-6 w-6" alt="" />
+                    </div>
+                    <span className="font-medium">{language.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </nav>
 
           <Link

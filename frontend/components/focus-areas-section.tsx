@@ -172,7 +172,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           ))}
         </motion.div>
 
-        <div>
+        <div className="lg:hidden">
           <div className="flex justify-center">
             <img
               src="/focus-areas-core.svg"
@@ -180,7 +180,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
               alt=""
             />
           </div>
-          <div className="relative z-10 mt-24 grid grid-cols-2 gap-6 max-md:grid-cols-1 lg:hidden">
+          <div className="relative z-10 mt-24 grid grid-cols-2 gap-6 max-md:grid-cols-1">
             {items.map((item, idx) => (
               <div
                 key={idx}

@@ -51,12 +51,18 @@ export default function SystemIntegrationSection() {
             distance={0}
           >
             <div className="transition-all duration-300 hover:-translate-y-0.5 hover:scale-105">
-              <div className="border-border/15 h-70 w-full rounded-[20px] border-2 bg-white/5 p-10 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
-                <img src={item.icon} className="mb-5 max-w-15" alt="" />
-                <h3 className="mb-2.5 text-xl font-bold text-white">
+              <div className="border-border/15 h-70 w-full rounded-[20px] border-2 bg-white/5 p-10 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl max-md:h-60 max-md:p-7.5">
+                <img
+                  src={item.icon}
+                  className="mb-5 max-w-15 max-md:mb-2.5"
+                  alt=""
+                />
+                <h3 className="text-foreground mb-2.5 text-lg font-bold">
                   {item.title}
                 </h3>
-                <p className="text-white/75 capitalize">{item.description}</p>
+                <p className="text-foreground/75 text-sm capitalize">
+                  {item.description}
+                </p>
               </div>
             </div>
           </ScrollReveal>
