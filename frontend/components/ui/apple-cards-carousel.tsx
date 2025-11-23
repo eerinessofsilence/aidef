@@ -123,26 +123,12 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 
           <div className="flex max-w-7xl flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
             {items.map((item, index) => (
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 30,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.12 * index,
-                  ease: "easeOut",
-                }}
+              <div
                 key={"card" + index}
-                className="h-85 w-75"
+                className="h-162.5 w-125 max-md:h-97.5 max-md:w-75"
               >
                 {item}
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -218,7 +204,7 @@ export const Card = ({
     <>
       <motion.button
         layoutId={layout ? `card-${card.title}` : undefined}
-        className="relative z-10 flex h-97 w-75 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50"
+        className="relative z-10 flex h-162.5 w-125 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50 max-md:h-97.5 max-md:w-75"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

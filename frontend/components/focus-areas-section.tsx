@@ -154,11 +154,11 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
 
           <motion.div
             style={{ y: slowFloat }}
-            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:top-1/7 max-md:top-1/11"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           >
             <img
               src="/focus-areas-core.svg"
-              className="animate-slow-rotate motion-safe:animate-slow-rotate w-50 hover:opacity-95 max-lg:w-36"
+              className="w-50 max-lg:w-36"
               alt=""
             />
           </motion.div>
@@ -172,21 +172,30 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           ))}
         </motion.div>
 
-        <div className="relative z-10 mt-48 grid grid-cols-2 gap-6 max-md:grid-cols-1 lg:hidden">
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
-            >
-              <img src={item.icon} className="mb-4 h-10 w-10" alt="" />
-              <h3 className="mb-2 text-lg font-bold text-white">
-                {item.title}
-              </h3>
-              <p className="text-sm text-white/75 capitalize">
-                {item.description}
-              </p>
-            </div>
-          ))}
+        <div>
+          <div className="flex justify-center">
+            <img
+              src="/focus-areas-core.svg"
+              className="w-50 max-lg:w-36"
+              alt=""
+            />
+          </div>
+          <div className="relative z-10 mt-24 grid grid-cols-2 gap-6 max-md:grid-cols-1 lg:hidden">
+            {items.map((item, idx) => (
+              <div
+                key={idx}
+                className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
+              >
+                <img src={item.icon} className="mb-4 h-10 w-10" alt="" />
+                <h3 className="mb-2 text-lg font-bold text-white">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-white/75 capitalize">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
