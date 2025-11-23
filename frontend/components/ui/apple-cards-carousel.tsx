@@ -164,7 +164,6 @@ export const Card = ({
   card,
   index,
   layout = false,
-  bg,
 }: {
   card: Card;
   index: number;
