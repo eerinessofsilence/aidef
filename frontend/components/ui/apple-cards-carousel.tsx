@@ -19,9 +19,10 @@ interface CarouselProps {
 }
 
 type Card = {
-  bg: any;
+  bg: string;
   title: string;
   category: string;
+  video?: string;
 };
 
 export const CarouselContext = createContext<{
@@ -125,16 +126,17 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
               <motion.div
                 initial={{
                   opacity: 0,
-                  y: 20,
+                  y: 30,
                 }}
-                animate={{
+                whileInView={{
                   opacity: 1,
                   y: 0,
-                  transition: {
-                    duration: 0.5,
-                    delay: 0.2 * index,
-                    ease: "easeOut",
-                  },
+                }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.12 * index,
+                  ease: "easeOut",
                 }}
                 key={"card" + index}
                 className="h-85 w-75"
@@ -157,10 +159,11 @@ export const Card = ({
   card: Card;
   index: number;
   layout?: boolean;
-  bg?: string;
 }) => {
   const [open, setOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { onCardClose } = useContext(CarouselContext);
 
   useEffect(() => {
@@ -185,8 +188,30 @@ export const Card = ({
   );
 
   const handleClose = () => {
+    if (!open) return;
     setOpen(false);
     onCardClose(index);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+    setIsHovered(false);
   };
 
   return (
@@ -194,13 +219,31 @@ export const Card = ({
       <motion.button
         layoutId={layout ? `card-${card.title}` : undefined}
         className="relative z-10 flex h-97 w-75 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50"
-        style={{
-          backgroundImage: `url(${card.bg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-linear-to-b from-black/50 via-black/25 to-transparent" />
+        <div className="absolute inset-0">
+          <img
+            src={card.bg}
+            alt={`${card.title} preview`}
+            className="h-full w-full object-cover"
+          />
+          {card.video && (
+            <video
+              ref={videoRef}
+              src={card.video}
+              poster={card.bg}
+              muted
+              loop
+              playsInline
+              preload="none"
+              autoPlay={isHovered}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ease-in-out ${isHovered ? "opacity-100" : "opacity-0"}`}
+            />
+          )}
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 z-30 bg-linear-to-b from-black/50 via-black/25 to-transparent" />
         <div className="relative z-40">
           <motion.p
             layoutId={layout ? `category-${card.category}` : undefined}

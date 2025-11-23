@@ -5,7 +5,11 @@ import { ScrollReveal } from "./ui/scroll-reveal";
 
 export default function DroneCarouselSection() {
   const cards = data.map((card, index) => (
-    <Card key={index} card={card} index={index} bg={card.bg} />
+    <Card
+      key={index}
+      card={{ ...card, video: `/drone-carousel-video-${index + 1}.MP4` }}
+      index={index}
+    />
   ));
 
   return (
