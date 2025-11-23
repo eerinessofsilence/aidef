@@ -110,6 +110,7 @@ export default function Header() {
   );
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
+  const originalBodyOverflow = useRef<string | null>(null);
 
   const mobileMenuId = "mobile-menu";
 
@@ -177,6 +178,25 @@ export default function Header() {
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
       document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [mobileMenuIsOpen]);
+
+  useEffect(() => {
+    if (mobileMenuIsOpen) {
+      if (originalBodyOverflow.current === null) {
+        originalBodyOverflow.current = document.body.style.overflow;
+      }
+      document.body.style.overflow = "hidden";
+    } else if (originalBodyOverflow.current !== null) {
+      document.body.style.overflow = originalBodyOverflow.current;
+      originalBodyOverflow.current = null;
+    }
+
+    return () => {
+      if (originalBodyOverflow.current !== null) {
+        document.body.style.overflow = originalBodyOverflow.current;
+        originalBodyOverflow.current = null;
+      }
     };
   }, [mobileMenuIsOpen]);
 

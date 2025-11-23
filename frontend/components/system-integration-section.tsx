@@ -30,10 +30,10 @@ export default function SystemIntegrationSection() {
         duration={1.1}
         distance={0}
       >
-        <h1 className="text-center text-5xl font-bold max-[1281px]:text-4xl max-md:text-3xl">
+        <h1 className="text-center text-5xl font-bold max-lg:text-4xl">
           System Integration for Military Vehicles
         </h1>
-        <p className="text-center text-lg max-md:text-base">
+        <p className="text-center text-lg max-md:text-base max-md:text-balance">
           We integrate our UAV, UGV and GCS into armoured and soft-skin military{" "}
           <br />
           vehicles. Our systems expose open C2 APIs and are designed for
