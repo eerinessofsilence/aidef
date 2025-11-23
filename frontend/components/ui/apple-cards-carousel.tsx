@@ -184,10 +184,6 @@ export const Card = ({
     handleClose(),
   );
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
   const handleClose = () => {
     setOpen(false);
     onCardClose(index);
