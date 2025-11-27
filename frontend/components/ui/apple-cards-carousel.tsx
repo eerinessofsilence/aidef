@@ -88,12 +88,6 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
     >
       <div className="relative w-full">
         <div className="absolute right-0 -bottom-12 left-0 flex justify-end gap-2 md:-top-12 md:right-8">
-          <a
-            href="#"
-            className="absolute top-1 mr-5 text-lg underline max-md:left-0 md:right-20"
-          >
-            Show All
-          </a>
           <button
             className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
             onClick={scrollLeft}
