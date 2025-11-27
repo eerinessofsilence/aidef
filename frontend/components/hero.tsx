@@ -34,7 +34,7 @@ export default function HomePage() {
   return (
     <section
       ref={heroRef}
-      className="relative flex items-center pb-25 max-[1281px]:px-5 max-md:min-h-[75vh] max-md:items-center max-md:pt-20 md:min-h-screen"
+      className="relative flex min-h-screen items-center max-[1281px]:px-5 max-md:py-20"
     >
       <div className="absolute inset-0 overflow-hidden">
         {backgroundImages.map((image, index) => (
@@ -62,7 +62,11 @@ export default function HomePage() {
               style={{ y: headingY }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.22, 1, 0.36, 1],
+                delay: 0.1,
+              }}
             >
               Autonomous combat
               <br />
@@ -73,7 +77,11 @@ export default function HomePage() {
               style={{ y: paragraphY }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.22 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.22, 1, 0.36, 1],
+                delay: 0.22,
+              }}
             >
               We are a system integrator delivering kamikaze UAV, UGV and GCS,
               integrated into military vehicle systems via open C2 APIs and
