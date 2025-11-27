@@ -4,14 +4,12 @@ import React, {
   useRef,
   useState,
   createContext,
-  useContext,
   type JSX,
 } from "react";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "../../lib/utils";
 import { motion } from "motion/react";
 import { type ImageProps } from "next/image";
-import { useOutsideClick } from "../../hooks/use-outside-click";
 
 interface CarouselProps {
   items: JSX.Element[];
@@ -23,6 +21,7 @@ type Card = {
   title: string;
   category: string;
   video?: string;
+  href?: string;
 };
 
 export const CarouselContext = createContext<{
@@ -146,38 +145,8 @@ export const Card = ({
   index: number;
   layout?: boolean;
 }) => {
-  const [open, setOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { onCardClose } = useContext(CarouselContext);
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        handleClose();
-      }
-    }
-
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
-
-  useOutsideClick(containerRef as React.RefObject<HTMLDivElement>, () =>
-    handleClose(),
-  );
-
-  const handleClose = () => {
-    if (!open) return;
-    setOpen(false);
-    onCardClose(index);
-  };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -202,11 +171,13 @@ export const Card = ({
 
   return (
     <>
-      <motion.button
+      <motion.a
+        href={card.href ?? "#"}
         layoutId={layout ? `card-${card.title}` : undefined}
         className="relative z-10 flex h-162.5 w-125 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50 max-md:h-97.5 max-md:w-75"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        data-card-index={index}
       >
         <div className="absolute inset-0">
           <img
@@ -244,7 +215,7 @@ export const Card = ({
             {card.title}
           </motion.p>
         </div>
-      </motion.button>
+      </motion.a>
     </>
   );
 };
