@@ -83,18 +83,18 @@ const DROPDOWN_MENUS: Menus = {
     {
       title: "Propulsion (AD20PRO, jet engine systems)",
       href: "#",
-      icon: "./technology-1.svg",
+      icon: "/technology-1.svg",
     },
-    { title: "Electronics & Avionics", href: "#", icon: "./technology-2.svg" },
+    { title: "Electronics & Avionics", href: "#", icon: "/technology-2.svg" },
     {
       title: "C2, GCS & API integration",
       href: "#",
-      icon: "./technology-3.svg",
+      icon: "/technology-3.svg",
     },
   ],
   Company: [
-    { title: "About Us", href: "#", icon: "./company-1.svg" },
-    { title: "Careers", href: "#", icon: "./company-2.svg" },
+    { title: "About Us", href: "#", icon: "/company-1.svg" },
+    { title: "Careers", href: "#", icon: "/company-2.svg" },
   ],
 };
 
@@ -234,7 +234,7 @@ export default function Header() {
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center space-x-2">
               <img
-                src="./logo-ai-def.svg"
+                src="/logo-ai-def.svg"
                 className="w-37.5 max-md:w-32.5"
                 alt=""
               />
@@ -283,7 +283,7 @@ export default function Header() {
                 onMouseLeave={handleLanguageMouseLeave}
                 className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-xl:hidden"
               >
-                <img src="./language-icon.svg" className="h-4.5 w-4.5" alt="" />
+                <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
               </div>
               <Link
                 to="#"

@@ -7,8 +7,8 @@ export default function Footer() {
       <div className="container-big mx-auto">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
-            <img src="./logo-ai-def.svg" className="w-42.5" alt="" />
-            <img src="./we-create-the-future.svg" className="w-43.5" alt="" />
+            <img src="/logo-ai-def.svg" className="w-42.5" alt="" />
+            <img src="/we-create-the-future.svg" className="w-43.5" alt="" />
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="font-bold uppercase">Quick links</h1>
@@ -50,16 +50,16 @@ export default function Footer() {
               </div>
               <div className="flex max-w-90 items-center gap-4.5">
                 <a href="">
-                  <img src="./linkedin-logo.svg" alt="" />
+                  <img src="/linkedin-logo.svg" alt="" />
                 </a>
                 <a href="">
-                  <img src="./instagram-logo.svg" alt="" />
+                  <img src="/instagram-logo.svg" alt="" />
                 </a>
                 <a href="">
-                  <img src="./facebook-logo.svg" alt="" />
+                  <img src="/facebook-logo.svg" alt="" />
                 </a>
                 <a href="">
-                  <img src="./twitter-logo.svg" alt="" />
+                  <img src="/twitter-logo.svg" alt="" />
                 </a>
               </div>
             </div>
