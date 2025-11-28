@@ -18,9 +18,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'category', 'available', 'price', 'discount', 'created_at')
-    list_filter = ('available', 'category')
+    list_display = ('name', 'slug', 'category', 'available', 'price', 'discount', 'is_featured', 'created_at')
+    list_filter = ('available', 'category', 'is_featured')
     search_fields = ('name', 'slug', 'sku')
     prepopulated_fields = {'slug': ('name',)}
-    ordering = ('-created_at',)
+    ordering = ('-is_featured', '-created_at')
     inlines = [ProductImageInline]

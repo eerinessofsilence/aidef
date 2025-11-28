@@ -39,8 +39,8 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'discount': _to_float(product.discount),
         'price_after_discount': product.price_after_discount(),
         'available': product.available,
+        'is_featured': product.is_featured,
     }
-
 
 def _serialize_product_list(product: Product) -> Dict[str, Any]:
     data = _serialize_product_base(product)
@@ -79,7 +79,7 @@ def item_list_api(request):
         Product.objects.filter(available=True)
         .select_related('category')
         .prefetch_related('images')
-        .order_by('name')
+        .order_by('-is_featured', 'name')
     )
 
     payload = [_serialize_product_list(product) for product in products]

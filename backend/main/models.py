@@ -33,10 +33,15 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     specs = models.JSONField(blank=True, null=True)
 
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Show this product as the flagship / favorite item.",
+    )
+
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-        ordering = ('-created_at',)
+        ordering = ('-is_featured', '-created_at',)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -49,6 +54,9 @@ class Product(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
+        if self.is_featured:
+            Product.objects.exclude(pk=self.pk).filter(is_featured=True).update(is_featured=False)
+    
     def price_after_discount(self):
         return float(self.price * (Decimal(1) - self.discount / Decimal(100)))
 
