@@ -6,12 +6,8 @@ from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_GET
 
 from .models import (
-    Accessory,
-    FuelOption,
-    MagazineOption,
     Product,
-    ProductAccessory,
-    ProductImage,
+    ProductImage
 )
 
 
@@ -37,58 +33,18 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'id': product.id,
         'slug': product.slug,
         'name': product.name,
+        'description': product.description,
+        'category': product.category.slug if product.category else None,
         'price': _to_float(product.price),
         'discount': _to_float(product.discount),
         'price_after_discount': product.price_after_discount(),
-        'product_type': product.product_type,
         'available': product.available,
     }
 
 
 def _serialize_product_list(product: Product) -> Dict[str, Any]:
     data = _serialize_product_base(product)
-    if product.category:
-        data['category'] = {
-            'id': product.category_id,
-            'name': product.category.name,
-            'slug': product.category.slug,
-        }
-    else:
-        data['category'] = None
     return data
-
-
-def _serialize_fuel_option(option: FuelOption) -> Dict[str, Any]:
-    return {
-        'id': option.id,
-        'name': option.name,
-        'extra_price': _to_float(option.extra_price),
-        'capacity': option.capacity,
-        'notes': option.notes,
-    }
-
-
-def _serialize_magazine_option(option: MagazineOption) -> Dict[str, Any]:
-    return {
-        'id': option.id,
-        'name': option.name,
-        'capacity': option.capacity,
-        'caliber': option.caliber,
-        'extra_price': _to_float(option.extra_price),
-        'notes': option.notes,
-    }
-
-
-def _serialize_accessory(accessory: Accessory, relation: ProductAccessory) -> Dict[str, Any]:
-    return {
-        'id': accessory.id,
-        'name': accessory.name,
-        'sku': accessory.sku,
-        'price': _to_float(accessory.price),
-        'quantity': relation.quantity,
-        'extra_price': _to_float(relation.extra_price),
-    }
-
 
 def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
     data = _serialize_product_list(product)
@@ -114,22 +70,6 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         if image.image
     ]
 
-    if product.product_type == 'drone':
-        data['fuel_options'] = [_serialize_fuel_option(option) for option in product.fuel_options.all()]
-    else:
-        data['fuel_options'] = []
-
-    if product.product_type == 'weapon':
-        data['magazine_options'] = [
-            _serialize_magazine_option(option) for option in product.magazine_options.all()
-        ]
-    else:
-        data['magazine_options'] = []
-
-    data['accessories'] = [
-        _serialize_accessory(pa.accessory, pa) for pa in product.product_accessories.all()
-    ]
-
     return data
 
 
@@ -150,12 +90,10 @@ def item_list_api(request):
 def item_detail_api(request, slug: str):
     try:
         product = (
-            Product.objects.select_related('category')
+            Product.objects
+            .select_related('category')
             .prefetch_related(
-                'images',
-                'fuel_options',
-                'magazine_options',
-                'product_accessories__accessory',
+                'images'
             )
             .get(slug=slug, available=True)
         )
