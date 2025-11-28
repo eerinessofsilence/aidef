@@ -14,13 +14,8 @@ export default function DroneCarouselSection() {
 
   return (
     <div className="container mx-auto h-full w-full py-25 max-[1281px]:px-5">
-      <ScrollReveal className="max-w-7xl" amount={0.45}>
-        <h2 className="text-text text-5xl font-bold max-lg:text-4xl">
-          Unmanned Systems Portfolio
-        </h2>
-      </ScrollReveal>
       <ScrollReveal delay={0.12} amount={0.3}>
-        <Carousel items={cards} />
+        <Carousel carouselTitle="Unmanned Systems Portfolio" items={cards} />
       </ScrollReveal>
     </div>
   );

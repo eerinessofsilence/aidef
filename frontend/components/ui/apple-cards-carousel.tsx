@@ -12,7 +12,8 @@ import { motion } from "motion/react";
 import { type ImageProps } from "next/image";
 
 interface CarouselProps {
-  items: JSX.Element[];
+  carouselTitle?: string;
+  items?: JSX.Element[];
   initialScroll?: number;
 }
 
@@ -24,7 +25,7 @@ type Card = {
   href?: string;
 };
 
-export const CarouselContext = createContext<{
+const CarouselContext = createContext<{
   onCardClose: (index: number) => void;
   currentIndex: number;
 }>({
@@ -32,7 +33,11 @@ export const CarouselContext = createContext<{
   currentIndex: 0,
 });
 
-export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
+export const Carousel = ({
+  carouselTitle,
+  items = [],
+  initialScroll = 0,
+}: CarouselProps) => {
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
@@ -87,24 +92,31 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
       value={{ onCardClose: handleCardClose, currentIndex }}
     >
       <div className="relative w-full">
-        <div className="absolute right-0 -bottom-12 left-0 flex justify-end gap-2 md:-top-12 md:right-8">
-          <button
-            className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
-            onClick={scrollLeft}
-            disabled={!canScrollLeft}
-          >
-            <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
-          </button>
-          <button
-            className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
-            onClick={scrollRight}
-            disabled={!canScrollRight}
-          >
-            <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
-          </button>
+        <div className="flex items-center justify-between gap-3 max-md:flex-col max-md:items-start">
+          {carouselTitle ? (
+            <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:mx-auto max-md:text-3xl">
+              {carouselTitle}
+            </h2>
+          ) : null}
+          <div className="mx-auto flex gap-2">
+            <button
+              className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
+              onClick={scrollLeft}
+              disabled={!canScrollLeft}
+            >
+              <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+            </button>
+            <button
+              className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
+              onClick={scrollRight}
+              disabled={!canScrollRight}
+            >
+              <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+            </button>
+          </div>
         </div>
         <div
-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none] lg:py-20"
+          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]"
           ref={carouselRef}
           onScroll={checkScrollability}
         >
