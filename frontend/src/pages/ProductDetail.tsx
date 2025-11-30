@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
+import { dispatchOpenContactModal } from "../../lib/contact-modal";
 
 interface Product {
   id: number;
@@ -85,6 +85,7 @@ export default function Products() {
     "idle",
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const openContactModal = () => dispatchOpenContactModal();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -147,12 +148,13 @@ export default function Products() {
               ))}
             </div>
             <div className="max-lg:hidden">
-              <Link
-                to="#"
+              <button
+                type="button"
+                onClick={openContactModal}
                 className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
               >
                 Contact Us
-              </Link>
+              </button>
             </div>
           </ScrollReveal>
           <ScrollReveal amount={0.35} delay={0.08} className="relative">
@@ -215,12 +217,13 @@ export default function Products() {
             </div>
           </ScrollReveal>
           <div className="flex md:justify-center lg:hidden">
-            <Link
-              to="#"
+            <button
+              type="button"
+              onClick={openContactModal}
               className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
             >
               Contact Us
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -428,12 +431,13 @@ export default function Products() {
           </ScrollReveal>
           <div className="flex max-md:justify-center">
             <ScrollReveal amount={0.2} delay={0.1}>
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={openContactModal}
                 className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-36 max-md:text-base"
               >
                 Contact Us
-              </a>
+              </button>
             </ScrollReveal>
           </div>
         </div>
@@ -458,12 +462,13 @@ export default function Products() {
             delay={0.1}
             className="flex max-md:justify-center"
           >
-            <a
-              href="#"
+            <button
+              type="button"
+              onClick={openContactModal}
               className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-36 max-md:text-base"
             >
               Contact Us
-            </a>
+            </button>
           </ScrollReveal>
         </div>
       </section>

@@ -54,11 +54,11 @@ WSGI_APPLICATION = 'aidef.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': getenv('DB_HOST', 'localhost'),
-        'PORT': getenv('DB_PORT', 5432),
-        'USER': getenv('DB_USER'),
-        'PASSWORD': getenv('DB_PASS'),
-        'NAME': getenv('DB_NAME'),
+        'HOST': getenv('DB_HOST', getenv('POSTGRES_HOST', 'db')),
+        'PORT': getenv('DB_PORT', getenv('POSTGRES_PORT', '5432')),
+        'USER': getenv('DB_USER', getenv('POSTGRES_USER', 'aidef')),
+        'PASSWORD': getenv('DB_PASS', getenv('POSTGRES_PASSWORD', 'aidef_password')),
+        'NAME': getenv('DB_NAME', getenv('POSTGRES_DB', 'aidef')),
         'ATOMIC_REQUESTS': True,
     }
 }
@@ -84,9 +84,10 @@ TIME_ZONE = getenv('TIME_ZONE', 'Europe/Kyiv')
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'

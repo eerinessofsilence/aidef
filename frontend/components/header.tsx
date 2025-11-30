@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { ContactForm } from "./ui/contact-form";
+import { CONTACT_MODAL_EVENT } from "../lib/contact-modal";
 
 const NAV_LINKS = [
   { text: "Home", href: "/" },
@@ -51,7 +52,11 @@ type Menus = Record<
 
 const DROPDOWN_MENUS: Menus = {
   Products: [
-    { title: "AX2NG KRAKATIT", href: "#", icon: "/products-1.png" },
+    {
+      title: "AX2NG KRAKATIT",
+      href: "products/ax2ng-krakatit",
+      icon: "/products-1.png",
+    },
     { title: "AV2 VTOL", href: "#", icon: "/products-2.png" },
     { title: "AXQ QUADROCOPTER", href: "#", icon: "/products-3.png" },
     { title: "Ground Control Station", href: "#", icon: "/products-4.png" },
@@ -116,13 +121,16 @@ export default function Header() {
 
   const mobileMenuId = "mobile-menu";
 
-  const openContactModal = (closeMobile = false) => {
-    if (closeMobile) {
-      setMobileMenuIsOpen(false);
-    }
-    setActiveDropdown(null);
-    setContactModalOpen(true);
-  };
+  const openContactModal = useCallback(
+    (closeMobile = false) => {
+      if (closeMobile) {
+        setMobileMenuIsOpen(false);
+      }
+      setActiveDropdown(null);
+      setContactModalOpen(true);
+    },
+    [setMobileMenuIsOpen, setActiveDropdown, setContactModalOpen],
+  );
 
   const closeContactModal = () => setContactModalOpen(false);
 
@@ -192,6 +200,14 @@ export default function Header() {
       document.removeEventListener("touchstart", handleOutsideClick);
     };
   }, [mobileMenuIsOpen]);
+
+  useEffect(() => {
+    const handleOpenContact = () => openContactModal();
+    window.addEventListener(CONTACT_MODAL_EVENT, handleOpenContact);
+
+    return () =>
+      window.removeEventListener(CONTACT_MODAL_EVENT, handleOpenContact);
+  }, [openContactModal]);
 
   useEffect(() => {
     if (!contactModalOpen) return;

@@ -25,6 +25,7 @@ const data = [
   {
     category: "Drone",
     title: "AX2NG KRAKATIT",
+    href: "products/ax2ng-krakatit",
     description: "Jet engine KAMIKAZE drone with AI",
     bg: "/drone-carousel-bg-1.png",
   },
