@@ -18,8 +18,8 @@ interface Product {
   id: number;
   slug: string;
   name: string;
-  description?: string; // <- чтобы не ругался на отсутствие
-  category: string | null; // slug, а не объект
+  description?: string;
+  category: string | null;
   price: number;
   discount?: number | null;
   price_after_discount?: number | null;
@@ -115,8 +115,8 @@ export default function Products() {
   );
 
   return (
-    <div className="container mx-auto min-h-screen px-6 py-24 max-[1281px]:px-5 max-sm:px-4 max-sm:py-12">
-      <section className="relative my-16 overflow-hidden rounded-4xl border border-white/10 bg-linear-to-br from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-lg:p-8 max-sm:p-5">
+    <div className="container mx-auto min-h-screen px-6 pt-28 pb-14 max-[1281px]:px-5 max-md:pt-14 max-md:pb-7">
+      <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-[1281px]:p-5">
         <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
         <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
         <div className="relative grid gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -130,7 +130,7 @@ export default function Products() {
             <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
               {heroProduct?.description ?? "Aerial Platform"}
             </p>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div className="mt-10 grid gap-6 max-md:gap-3 sm:grid-cols-2">
               {statHighlights.map((stat) => (
                 <div
                   key={stat.label}
@@ -170,7 +170,7 @@ export default function Products() {
                   rail ready for mapping or cinematic capture.
                 </p>
               </div>
-              <div className="mt-10 grid grid-cols-2 gap-4 text-white/80 max-md:grid-cols-1">
+              <div className="mt-10 grid grid-cols-2 gap-6 text-white/70 max-md:mt-5 max-md:grid-cols-1 max-md:gap-3">
                 <FeatureBadge
                   icon={BatteryCharging}
                   title="Smart batteries"
@@ -245,7 +245,7 @@ export default function Products() {
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {techFocus.map((feature, index) => (
             <ScrollReveal key={feature.title} amount={0.2} delay={0.06 * index}>
-              <article className="bg-secondary/30 text-foreground rounded-3xl border border-white/10 p-6 shadow-inner shadow-black/30">
+              <article className="bg-secondary/30 text-foreground rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/30">
                 <feature.icon className="h-8 w-8 text-white/80" />
                 <h3 className="mt-6 text-2xl font-semibold">{feature.title}</h3>
                 <p className="text-foreground/70 mt-3 text-sm">
@@ -288,7 +288,7 @@ export default function Products() {
           </ScrollReveal>
         </div>
       </section>
-      <section className="py-16 max-[1281px]:px-5 max-sm:py-12">
+      <section className="py-16 max-sm:py-12">
         <div className="flex w-full items-start justify-end max-lg:justify-start">
           <ScrollReveal
             amount={0.25}
@@ -301,7 +301,7 @@ export default function Products() {
             </div>
 
             <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-sm:text-3xl">
-              Multipurpose Assault{" "}
+              Multipurpose Assault
             </h1>
 
             <p className="text-foreground/70 text-lg leading-relaxed max-sm:text-base">
