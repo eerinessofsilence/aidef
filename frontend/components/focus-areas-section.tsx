@@ -125,7 +125,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
   return (
     <section
       ref={containerRef}
-      className={`relative overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat pt-50 pb-25 max-[1281px]:px-5 max-lg:pt-25 max-lg:pb-12.5`}
+      className={`relative overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat px-5 pt-50 pb-25 max-lg:pt-25 max-lg:pb-12.5`}
     >
       <div aria-hidden="true" className="absolute inset-0 z-0 bg-black/35" />
 

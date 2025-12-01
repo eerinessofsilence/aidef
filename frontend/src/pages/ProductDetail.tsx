@@ -270,8 +270,8 @@ export default function Products() {
           ) : null}
         </div>
       </ScrollReveal>
-      <div className="max-[1281px]:px-5">
-        <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-[1281px]:p-5">
+      <div className="px-5">
+        <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
           <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
           <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
           <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -414,7 +414,7 @@ export default function Products() {
           </div>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
+          <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
             <ScrollReveal
               amount={0.25}
               className="space-y-5 max-md:space-y-4 max-md:text-center"
@@ -461,7 +461,7 @@ export default function Products() {
           </div>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-          <div className="container m-auto grid grid-cols-1 gap-12 px-6 py-12 max-[1281px]:px-5 max-sm:px-4 max-sm:py-10">
+          <div className="container m-auto grid grid-cols-1 gap-12 px-6 py-12 max-xl:px-5 max-sm:px-4 max-sm:py-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <ScrollReveal
                 amount={0.25}
@@ -559,7 +559,7 @@ export default function Products() {
           </div>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
+          <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
             <ScrollReveal
               amount={0.25}
               className="space-y-5 max-md:space-y-4 max-md:text-center"
@@ -587,7 +587,7 @@ export default function Products() {
           </div>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-3.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
+          <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
             <ScrollReveal
               amount={0.25}
               className="space-y-5 max-md:space-y-4 max-md:text-center"

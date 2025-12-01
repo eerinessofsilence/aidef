@@ -245,7 +245,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 py-6 max-[1281px]:px-5">
+      <div className="fixed left-1/2 z-50 container mx-auto -translate-x-1/2 p-5">
         <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 px-8 py-6 shadow-sm shadow-black backdrop-blur-lg max-md:px-5 max-md:py-5">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center space-x-2">

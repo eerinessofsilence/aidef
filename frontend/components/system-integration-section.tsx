@@ -22,7 +22,7 @@ const CARDS = [
 
 export default function SystemIntegrationSection() {
   return (
-    <section className="container mx-auto flex flex-col items-center justify-center space-y-25 py-25 max-[1281px]:px-5 max-lg:space-y-15 max-lg:py-12.5">
+    <section className="container mx-auto flex flex-col items-center justify-center space-y-25 px-5 py-25 max-lg:space-y-15 max-lg:py-12.5">
       <ScrollReveal
         className="flex flex-col items-center gap-y-10 max-lg:gap-y-5"
         amount={0.65}
@@ -40,7 +40,7 @@ export default function SystemIntegrationSection() {
           integration <br /> with third-party sensors and efectors.
         </p>
       </ScrollReveal>
-      <div className="grid grid-cols-3 gap-17.5 max-[1281px]:gap-10 max-lg:grid-cols-2 max-md:grid-cols-1 max-md:gap-5">
+      <div className="grid grid-cols-3 gap-17.5 max-xl:gap-10 max-lg:grid-cols-2 max-md:grid-cols-1 max-md:gap-5">
         {CARDS.map((item, index) => (
           <ScrollReveal
             key={item.title}

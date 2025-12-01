@@ -34,7 +34,7 @@ export default function HomePage() {
   return (
     <section
       ref={heroRef}
-      className="relative flex min-h-screen items-center max-[1281px]:px-5 max-md:py-20"
+      className="relative flex min-h-screen items-center px-5 max-md:py-20"
     >
       <div className="absolute inset-0 overflow-hidden">
         {backgroundImages.map((image, index) => (
