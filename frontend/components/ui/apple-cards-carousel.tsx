@@ -92,15 +92,15 @@ export const Carousel = ({
       value={{ onCardClose: handleCardClose, currentIndex }}
     >
       <div className="relative w-full">
-        <div className="flex items-center justify-between gap-3 max-md:flex-col">
+        <div className="flex justify-between gap-3 max-md:flex-col">
           {carouselTitle ? (
             <div>
-              <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:mx-auto max-md:text-3xl">
+              <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
                 {carouselTitle}
               </h2>
             </div>
           ) : null}
-          <div className="flex gap-2">
+          <div className="flex justify-end gap-2">
             <button
               className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
               onClick={scrollLeft}

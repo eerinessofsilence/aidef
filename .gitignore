@@ -5,3 +5,4 @@ dist/
 __pychache__/
 *.pyc
 media/
+.DS_Store

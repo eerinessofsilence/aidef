@@ -4,12 +4,15 @@ import type { LucideIcon } from "lucide-react";
 import {
   BatteryCharging,
   Camera,
+  ChevronLeft,
+  ChevronRight,
   Gauge,
   Layers,
   Radio,
   Shield,
   Wind,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
@@ -25,6 +28,21 @@ interface Product {
   price_after_discount?: number | null;
   available: boolean;
   is_featured?: boolean;
+}
+
+interface ProductImage {
+  id: number;
+  url: string | null;
+  alt?: string | null;
+  order?: number | null;
+}
+
+interface ProductDetail extends Product {
+  sku?: string | null;
+  specs?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  images?: ProductImage[];
 }
 
 const statHighlights = [
@@ -80,11 +98,20 @@ const techFocus: Array<{
 ];
 
 export default function Products() {
+  const { slug } = useParams<{ slug: string }>();
   const [items, setItems] = useState<Product[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [productDetail, setProductDetail] = useState<ProductDetail | null>(
+    null,
+  );
+  const [detailStatus, setDetailStatus] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
   const openContactModal = () => dispatchOpenContactModal();
 
   useEffect(() => {
@@ -110,327 +137,475 @@ export default function Products() {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    if (!slug) {
+      return;
+    }
+
+    const controller = new AbortController();
+    setDetailStatus("loading");
+    setDetailError(null);
+
+    axios
+      .get<ProductDetail>(`${import.meta.env.VITE_API_URL}/items/${slug}/`, {
+        signal: controller.signal,
+      })
+      .then((res) => {
+        setProductDetail(res.data);
+        setDetailStatus("ready");
+      })
+      .catch((err) => {
+        if (axios.isCancel(err)) {
+          return;
+        }
+        console.error("Unable to load product detail", err);
+        setDetailError("Не получилось загрузить изображения продукта.");
+        setDetailStatus("error");
+      });
+
+    return () => controller.abort();
+  }, [slug]);
+
   const heroProduct = useMemo(
-    () => items.find((p) => p.is_featured) ?? items[0],
-    [items],
+    () => productDetail ?? items.find((p) => p.is_featured) ?? items[0] ?? null,
+    [productDetail, items],
   );
 
+  const productImages = useMemo(() => {
+    const images = productDetail?.images ?? [];
+    return [...images]
+      .filter((img): img is ProductImage & { url: string } => Boolean(img.url))
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER),
+      );
+  }, [productDetail]);
+
+  useEffect(() => {
+    setActiveSlide(0);
+  }, [productImages.length, productDetail?.slug]);
+
+  const handlePrevSlide = () => {
+    if (productImages.length < 2) return;
+    setActiveSlide(
+      (prev) => (prev - 1 + productImages.length) % productImages.length,
+    );
+  };
+
+  const handleNextSlide = () => {
+    if (productImages.length < 2) return;
+    setActiveSlide((prev) => (prev + 1) % productImages.length);
+  };
+
   return (
-    <div className="container mx-auto min-h-screen px-6 pt-28 pb-14 max-[1281px]:px-5 max-md:pt-14 max-md:pb-7">
-      <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-[1281px]:p-5">
-        <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-        <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-        <div className="relative grid gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <ScrollReveal amount={0.35} className="h-full">
-            <p className="text-sm tracking-wide text-white/50 uppercase">
-              Characteristics
-            </p>
-            <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-              About product
-            </h1>
-            <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-              {heroProduct?.description ?? "Aerial Platform"}
-            </p>
-            <div className="mt-10 grid gap-6 max-md:gap-3 sm:grid-cols-2">
-              {statHighlights.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
-                >
-                  <p className="text-sm tracking-wide text-white/60 uppercase">
-                    {stat.label}
-                  </p>
-                  <p className="mt-2 text-3xl font-semibold max-sm:text-2xl">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-white/70">{stat.detail}</p>
-                </div>
+    <div className="min-h-screen pt-28 pb-14 max-md:pt-14 max-md:pb-7">
+      <ScrollReveal amount={0.35} className="w-full">
+        <div className="my-5">
+          <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
+            {detailStatus === "loading" ? (
+              <div className="absolute inset-0 animate-pulse bg-white/10" />
+            ) : productImages.length > 0 ? (
+              <>
+                {productImages.map((image, index) => (
+                  <img
+                    key={image.id}
+                    src={image.url ?? ""}
+                    alt={
+                      image.alt ?? heroProduct?.name ?? "Изображение продукта"
+                    }
+                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+                      activeSlide === index ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                ))}
+                {productImages.length > 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handlePrevSlide}
+                      className="absolute top-1/2 left-4 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      aria-label="Предыдущее изображение"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextSlide}
+                      className="absolute top-1/2 right-4 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      aria-label="Следующее изображение"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <img
+                src="/hero-bg-1.png"
+                className="absolute inset-0 h-full w-full rounded-3xl object-cover"
+                alt={heroProduct?.name ?? "Product hero"}
+              />
+            )}
+          </div>
+          {productImages.length > 1 ? (
+            <div className="mt-5 flex items-center justify-center gap-2">
+              {productImages.map((image, index) => (
+                <button
+                  key={image.id}
+                  type="button"
+                  onClick={() => setActiveSlide(index)}
+                  aria-label={`Перейти к изображению ${index + 1}`}
+                  className={`h-2.5 w-2.5 rounded-full border border-white/35 transition ${
+                    activeSlide === index
+                      ? "bg-white"
+                      : "bg-white/30 hover:bg-white/60"
+                  }`}
+                />
               ))}
             </div>
-            <div className="max-lg:hidden">
+          ) : null}
+          {detailStatus === "error" && detailError ? (
+            <p className="mt-3 text-sm text-red-200">{detailError}</p>
+          ) : null}
+        </div>
+      </ScrollReveal>
+      <div className="max-[1281px]:px-5">
+        <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-[1281px]:p-5">
+          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
+          <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
+          <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
+              <p className="text-sm tracking-wide text-white/50 uppercase">
+                Characteristics
+              </p>
+              <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
+                About product
+              </h1>
+              <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
+                {heroProduct?.description ?? "Aerial Platform"}
+              </p>
+              <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                {statHighlights.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
+                  >
+                    <p className="text-sm tracking-wide text-white/60 uppercase">
+                      {stat.label}
+                    </p>
+                    <p className="mt-1 text-4xl font-semibold max-sm:text-2xl">
+                      {stat.value}
+                    </p>
+                    <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="max-lg:hidden">
+                <button
+                  type="button"
+                  onClick={openContactModal}
+                  className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                >
+                  Contact Us
+                </button>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal
+              amount={0.35}
+              delay={0.08}
+              className="relative max-lg:col-span-2"
+            >
+              <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
+              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-6 backdrop-blur-2xl max-sm:p-3">
+                <div>
+                  <p className="text-sm tracking-wide text-white/50 uppercase">
+                    {heroProduct?.category ?? "Aerial System"}
+                  </p>
+                  <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
+                    {heroProduct?.name ?? "Aerial Platform"}
+                  </h2>
+                  <p className="mt-4 text-white/70 max-sm:text-sm">
+                    Hybrid carbon fuselage, omnidirectional sensors, and a
+                    payload rail ready for mapping or cinematic capture.
+                  </p>
+                </div>
+                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-3">
+                  <FeatureBadge
+                    icon={BatteryCharging}
+                    title="Smart batteries"
+                    copy="Active balancing + thermal shielding"
+                  />
+                  <FeatureBadge
+                    icon={Wind}
+                    title="Wind-sliced frame"
+                    copy="Tapered arm geometry for stable orbits"
+                  />
+                  <FeatureBadge
+                    icon={Gauge}
+                    title="Sport flight"
+                    copy="Boost to 94 km/h with horizon lock"
+                  />
+                  <FeatureBadge
+                    icon={Shield}
+                    title="Fail-safe return"
+                    copy="Triple GNSS with predictive reroute"
+                  />
+                </div>
+              </div>
+            </ScrollReveal>
+            <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
               <button
                 type="button"
                 onClick={openContactModal}
-                className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
               >
                 Contact Us
               </button>
             </div>
-          </ScrollReveal>
-          <ScrollReveal amount={0.35} delay={0.08} className="relative">
-            <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
-            <div className="relative flex h-full flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-8 backdrop-blur-2xl max-sm:p-4">
+          </div>
+        </section>
+
+        <section className="space-y-8 py-16 max-sm:py-12">
+          <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <ScrollReveal amount={0.25}>
               <div>
-                <p className="text-sm tracking-wide text-white/50 uppercase">
-                  {heroProduct?.category ?? "Aerial System"}
+                <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                  Technology Focus
                 </p>
-                <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
-                  {heroProduct?.name ?? "Aerial Platform"}
+                <h2 className="text-3xl font-semibold">
+                  DJI-level polish, tuned for rugged autonomy.
                 </h2>
-                <p className="mt-4 text-white/70 max-sm:text-sm">
-                  Hybrid carbon fuselage, omnidirectional sensors, and a payload
-                  rail ready for mapping or cinematic capture.
+                <p className="text-foreground/70 mt-2 max-w-2xl text-sm">
+                  These capability stacks mirror the Mavic series feel:
+                  responsive sticks, cinematic brakes, and intuitive fail-safes.
                 </p>
               </div>
-              <div className="mt-10 grid grid-cols-2 gap-6 text-white/70 max-md:mt-5 max-md:grid-cols-1 max-md:gap-3">
-                <FeatureBadge
-                  icon={BatteryCharging}
-                  title="Smart batteries"
-                  copy="Active balancing + thermal shielding"
-                />
-                <FeatureBadge
-                  icon={Wind}
-                  title="Wind-sliced frame"
-                  copy="Tapered arm geometry for stable orbits"
-                />
-                <FeatureBadge
-                  icon={Gauge}
-                  title="Sport flight"
-                  copy="Boost to 94 km/h with horizon lock"
-                />
-                <FeatureBadge
-                  icon={Shield}
-                  title="Fail-safe return"
-                  copy="Triple GNSS with predictive reroute"
-                />
-                <FeatureBadge
-                  icon={BatteryCharging}
-                  title="Smart batteries"
-                  copy="Active balancing + thermal shielding"
-                />
-                <FeatureBadge
-                  icon={Wind}
-                  title="Wind-sliced frame"
-                  copy="Tapered arm geometry for stable orbits"
-                />
-                <FeatureBadge
-                  icon={Gauge}
-                  title="Sport flight"
-                  copy="Boost to 94 km/h with horizon lock"
-                />
-                <FeatureBadge
-                  icon={Shield}
-                  title="Fail-safe return"
-                  copy="Triple GNSS with predictive reroute"
-                />
+            </ScrollReveal>
+          </header>
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            {techFocus.map((feature, index) => (
+              <ScrollReveal
+                key={feature.title}
+                amount={0.2}
+                delay={0.06 * index}
+              >
+                <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/30">
+                  <feature.icon className="h-8 w-8 text-white/80" />
+                  <h3 className="mt-6 text-2xl font-semibold">
+                    {feature.title}
+                  </h3>
+                  <p className="text-foreground/70 mt-3 text-sm">
+                    {feature.description}
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {feature.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              </ScrollReveal>
+            ))}
+          </div>
+        </section>
+        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+          <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
+            <ScrollReveal
+              amount={0.25}
+              className="space-y-5 max-md:space-y-4 max-md:text-center"
+            >
+              <div>
+                <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                  Charasteristics
+                </span>
               </div>
-            </div>
-          </ScrollReveal>
-          <div className="flex md:justify-center lg:hidden">
-            <button
-              type="button"
-              onClick={openContactModal}
-              className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
-            >
-              Contact Us
-            </button>
+              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
+                Jet-Powered Speed
+              </h1>
+              <p className="text-foreground/70 text-lg max-sm:text-base">
+                The jet propulsion engine provides high speed and agility,
+                enabling the AX2ng KRAKATIT to effectively respond to dynamic
+                combat situations and reach its targets rapidly.
+              </p>
+            </ScrollReveal>
           </div>
-        </div>
-      </section>
-
-      <section className="space-y-8 py-16 max-sm:py-12">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <ScrollReveal amount={0.25}>
-            <div>
-              <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                Technology Focus
-              </p>
-              <h2 className="text-3xl font-semibold">
-                DJI-level polish, tuned for rugged autonomy.
-              </h2>
-              <p className="text-foreground/70 mt-2 max-w-2xl text-sm">
-                These capability stacks mirror the Mavic series feel: responsive
-                sticks, cinematic brakes, and intuitive fail-safes.
-              </p>
-            </div>
-          </ScrollReveal>
-        </header>
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          {techFocus.map((feature, index) => (
-            <ScrollReveal key={feature.title} amount={0.2} delay={0.06 * index}>
-              <article className="bg-secondary/30 text-foreground rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/30">
-                <feature.icon className="h-8 w-8 text-white/80" />
-                <h3 className="mt-6 text-2xl font-semibold">{feature.title}</h3>
-                <p className="text-foreground/70 mt-3 text-sm">
-                  {feature.description}
+        </section>
+        <section className="py-16 max-sm:py-12">
+          <div className="flex w-full items-start justify-end max-lg:justify-start">
+            <ScrollReveal
+              amount={0.25}
+              className="space-y-5 text-right max-lg:text-left max-md:space-y-4"
+            >
+              <div className="flex justify-end max-lg:justify-start">
+                <p className="text-sm tracking-wider uppercase">
+                  Characteristics
                 </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {feature.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </article>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
-      <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-        <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
-          <ScrollReveal
-            amount={0.25}
-            className="space-y-5 max-md:space-y-4 max-md:text-center"
-          >
-            <div>
-              <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                Charasteristics
-              </span>
-            </div>
-            <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
-              Jet-Powered Speed
-            </h1>
-            <p className="text-foreground/70 text-lg max-sm:text-base">
-              The jet propulsion engine provides high speed and agility,
-              enabling the AX2ng KRAKATIT to effectively respond to dynamic
-              combat situations and reach its targets rapidly.
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
-      <section className="py-16 max-sm:py-12">
-        <div className="flex w-full items-start justify-end max-lg:justify-start">
-          <ScrollReveal
-            amount={0.25}
-            className="space-y-5 text-right max-lg:text-left max-md:space-y-4"
-          >
-            <div className="flex justify-end max-lg:justify-start">
-              <p className="text-sm tracking-wider uppercase">
-                Characteristics
+              </div>
+
+              <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-sm:text-3xl">
+                Multipurpose Assault
+              </h1>
+
+              <p className="text-foreground/70 text-lg leading-relaxed max-sm:text-base">
+                The AX2ng KRAKATIT is capable of attack high-value ground
+                targets as well as aerial targets, including UAVs flying up to
+                300 km/h and helicopters. This makes the AX2ng KRAKATIT a
+                versatile military platform.
               </p>
-            </div>
-
-            <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-sm:text-3xl">
-              Multipurpose Assault
-            </h1>
-
-            <p className="text-foreground/70 text-lg leading-relaxed max-sm:text-base">
-              The AX2ng KRAKATIT is capable of attack high-value ground targets
-              as well as aerial targets, including UAVs flying up to 300 km/h
-              and helicopters. This makes the AX2ng KRAKATIT a versatile
-              military platform.
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
-      <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-        <div className="container m-auto grid grid-cols-1 gap-12 px-6 py-12 max-[1281px]:px-5 max-sm:px-4 max-sm:py-10">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <ScrollReveal
-              amount={0.25}
-              className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
-            >
-              <h1 className="text-[28px] font-bold text-black max-sm:text-2xl">
-                Supportive firing capability to
-              </h1>
-              <ul className="mt-7.5 space-y-7.5 text-[#314D77]/65">
-                <li className="flex max-w-[420px] items-center gap-3">
-                  <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                    </span>
-                  </span>
-
-                  <span>
-                    Land force fire units (mechanized, motorized, infantry,
-                    artillery barrel, artillery mortar …)
-                  </span>
-                </li>
-                <li className="flex max-w-[420px] gap-3">
-                  <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                    </span>
-                  </span>
-
-                  <span>Special force units.</span>
-                </li>
-              </ul>
-            </ScrollReveal>
-            <ScrollReveal
-              amount={0.25}
-              delay={0.08}
-              className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
-            >
-              <img
-                src="/drone-product-detail-1.png"
-                alt=""
-                className="w-full object-contain"
-              />
             </ScrollReveal>
           </div>
-          <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <ScrollReveal
-              amount={0.25}
-              delay={0.06}
-              className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
-            >
-              <img
-                src="/drone-product-detail-2.png"
-                alt=""
-                className="w-full object-contain"
-              />
-            </ScrollReveal>
-            <ScrollReveal
-              amount={0.25}
-              delay={0.12}
-              className="flex flex-col justify-center gap-4 text-left"
-            >
-              <h1 className="max-w-111 text-[28px] font-bold text-balance text-black max-sm:text-2xl">
-                Wherever and whenever the operational use of the main weapons is
-                tactically impossible, inappropriate or disadvantageous:
-              </h1>
-              <ul className="mt-2 space-y-7.5 text-[#314D77]/65">
-                <li className="flex max-w-[420px] items-center gap-3">
-                  <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+        </section>
+        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
+          <div className="container m-auto grid grid-cols-1 gap-12 px-6 py-12 max-[1281px]:px-5 max-sm:px-4 max-sm:py-10">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+              <ScrollReveal
+                amount={0.25}
+                className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
+              >
+                <h1 className="text-[28px] font-bold text-black max-sm:text-2xl">
+                  Supportive firing capability to
+                </h1>
+                <ul className="mt-7.5 space-y-7.5 text-[#314D77]/65">
+                  <li className="flex max-w-[420px] items-center gap-3">
+                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
+                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                      </span>
                     </span>
-                  </span>
 
-                  <span>Long time preparation of firing position.</span>
-                </li>
-                <li className="flex max-w-[420px] gap-3">
-                  <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                    <span>
+                      Land force fire units (mechanized, motorized, infantry,
+                      artillery barrel, artillery mortar …)
                     </span>
-                  </span>
-                  <span>Firing preparation time</span>
-                </li>
-                <li className="flex max-w-[420px] gap-3">
-                  <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                  </li>
+                  <li className="flex max-w-[420px] gap-3">
+                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
+                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                      </span>
                     </span>
-                  </span>
-                  <span>Unmasking effects</span>
-                </li>
-              </ul>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-      <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-        <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
-          <ScrollReveal
-            amount={0.25}
-            className="space-y-5 max-md:space-y-4 max-md:text-center"
-          >
-            <div>
-              <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                Booster
-              </span>
+
+                    <span>Special force units.</span>
+                  </li>
+                </ul>
+              </ScrollReveal>
+              <ScrollReveal
+                amount={0.25}
+                delay={0.08}
+                className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
+              >
+                <img
+                  src="/drone-product-detail-1.png"
+                  alt=""
+                  className="w-full object-contain"
+                />
+              </ScrollReveal>
             </div>
-            <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
-              AX2NG KRAKATIT
-            </h1>
-          </ScrollReveal>
-          <div className="flex max-md:justify-center">
-            <ScrollReveal amount={0.2} delay={0.1}>
+            <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
+              <ScrollReveal
+                amount={0.25}
+                delay={0.06}
+                className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
+              >
+                <img
+                  src="/drone-product-detail-2.png"
+                  alt=""
+                  className="w-full object-contain"
+                />
+              </ScrollReveal>
+              <ScrollReveal
+                amount={0.25}
+                delay={0.12}
+                className="flex flex-col justify-center gap-4 text-left"
+              >
+                <h1 className="max-w-111 text-[28px] font-bold text-balance text-black max-sm:text-2xl">
+                  Wherever and whenever the operational use of the main weapons
+                  is tactically impossible, inappropriate or disadvantageous:
+                </h1>
+                <ul className="mt-2 space-y-7.5 text-[#314D77]/65">
+                  <li className="flex max-w-[420px] items-center gap-3">
+                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
+                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                      </span>
+                    </span>
+
+                    <span>Long time preparation of firing position.</span>
+                  </li>
+                  <li className="flex max-w-[420px] gap-3">
+                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
+                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                      </span>
+                    </span>
+                    <span>Firing preparation time</span>
+                  </li>
+                  <li className="flex max-w-[420px] gap-3">
+                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
+                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
+                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
+                      </span>
+                    </span>
+                    <span>Unmasking effects</span>
+                  </li>
+                </ul>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+          <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
+            <ScrollReveal
+              amount={0.25}
+              className="space-y-5 max-md:space-y-4 max-md:text-center"
+            >
+              <div>
+                <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                  Booster
+                </span>
+              </div>
+              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
+                AX2NG KRAKATIT
+              </h1>
+            </ScrollReveal>
+            <div className="flex max-md:justify-center">
+              <ScrollReveal amount={0.2} delay={0.1}>
+                <button
+                  type="button"
+                  onClick={openContactModal}
+                  className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-36 max-md:text-base"
+                >
+                  Contact Us
+                </button>
+              </ScrollReveal>
+            </div>
+          </div>
+        </section>
+        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-3.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+          <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
+            <ScrollReveal
+              amount={0.25}
+              className="space-y-5 max-md:space-y-4 max-md:text-center"
+            >
+              <div>
+                <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                  Swarm system
+                </span>
+              </div>
+              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
+                AX2NG KRAKATIT
+              </h1>
+            </ScrollReveal>
+            <ScrollReveal
+              amount={0.2}
+              delay={0.1}
+              className="flex max-md:justify-center"
+            >
               <button
                 type="button"
                 onClick={openContactModal}
@@ -440,60 +615,30 @@ export default function Products() {
               </button>
             </ScrollReveal>
           </div>
-        </div>
-      </section>
-      <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-3.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-        <div className="container mx-auto px-6 pb-12.5 max-[1281px]:px-5 max-sm:px-4 lg:pb-25">
-          <ScrollReveal
-            amount={0.25}
-            className="space-y-5 max-md:space-y-4 max-md:text-center"
-          >
-            <div>
-              <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                Swarm system
-              </span>
+        </section>
+        <section className="my-16 space-y-6 py-10 max-sm:py-8">
+          <ScrollReveal delay={0.12} amount={0.3}>
+            <Carousel
+              carouselTitle="Other Products"
+              items={DRONE_CAROUSEL_DATA.map((card, index) => (
+                <Card
+                  key={card.title}
+                  card={{
+                    ...card,
+                    video: `/drone-carousel-video-${index + 1}.MP4`,
+                  }}
+                  index={index}
+                />
+              ))}
+            />
+          </ScrollReveal>
+          {status === "error" ? (
+            <div className="rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
+              {errorMessage ?? "Catalog data load have failed."}
             </div>
-            <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
-              AX2NG KRAKATIT
-            </h1>
-          </ScrollReveal>
-          <ScrollReveal
-            amount={0.2}
-            delay={0.1}
-            className="flex max-md:justify-center"
-          >
-            <button
-              type="button"
-              onClick={openContactModal}
-              className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-36 max-md:text-base"
-            >
-              Contact Us
-            </button>
-          </ScrollReveal>
-        </div>
-      </section>
-      <section className="my-16 space-y-6 rounded-4xl border border-white/10 bg-white/5 px-4 py-10 max-sm:py-8 md:px-8">
-        <ScrollReveal delay={0.12} amount={0.3}>
-          <Carousel
-            carouselTitle="Other Products"
-            items={DRONE_CAROUSEL_DATA.map((card, index) => (
-              <Card
-                key={card.title}
-                card={{
-                  ...card,
-                  video: `/drone-carousel-video-${index + 1}.MP4`,
-                }}
-                index={index}
-              />
-            ))}
-          />
-        </ScrollReveal>
-        {status === "error" ? (
-          <div className="rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
-            {errorMessage ?? "Catalog data load have failed."}
-          </div>
-        ) : null}
-      </section>
+          ) : null}
+        </section>
+      </div>
     </div>
   );
 }
