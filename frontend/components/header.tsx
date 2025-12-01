@@ -620,7 +620,7 @@ export default function Header() {
             <button
               type="button"
               onClick={closeContactModal}
-              className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black text-white transition hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+              className="absolute top-4 right-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black text-white transition hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none dark:bg-white dark:text-black dark:hover:bg-neutral-200"
             >
               <X className="h-5 w-5" />
             </button>

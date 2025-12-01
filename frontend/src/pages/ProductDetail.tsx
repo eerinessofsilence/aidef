@@ -199,32 +199,57 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen pt-28 pb-14 max-md:pt-14 max-md:pb-7">
+    <div className="min-h-screen pt-32 pb-14 max-md:pb-7">
       <ScrollReveal amount={0.35} className="w-full">
-        <div className="my-5">
+        <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
             {detailStatus === "loading" ? (
               <div className="absolute inset-0 animate-pulse bg-white/10" />
             ) : productImages.length > 0 ? (
               <>
                 {productImages.map((image, index) => (
-                  <img
+                  <div
                     key={image.id}
-                    src={image.url ?? ""}
-                    alt={
-                      image.alt ?? heroProduct?.name ?? "Изображение продукта"
-                    }
-                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
-                      activeSlide === index ? "opacity-100" : "opacity-0"
+                    className={`pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-600 ${
+                      activeSlide === index ? "z-10 opacity-100" : "opacity-0"
                     }`}
-                  />
+                  >
+                    <img
+                      src={image.url ?? ""}
+                      alt={
+                        image.alt ?? heroProduct?.name ?? "Изображение продукта"
+                      }
+                      className={`h-full w-full object-cover ${
+                        activeSlide === index ? "animate-kenburns-slow" : ""
+                      }`}
+                    />
+                    <div
+                      className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/30 via-black/5 to-black/50 ${
+                        activeSlide === index ? "animate-slide-glow" : ""
+                      }`}
+                    />
+                    <div
+                      className={`pointer-events-none absolute inset-10 ${
+                        activeSlide === index ? "animate-slide-glow" : ""
+                      }`}
+                    />
+                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                      <div
+                        className={`absolute top-0 -left-1/3 h-full w-1/3 skew-x-12 bg-linear-to-r from-white/0 via-white/30 to-white/0 ${
+                          activeSlide === index
+                            ? "animate-sweep-shimmer opacity-70"
+                            : "opacity-0"
+                        }`}
+                      />
+                    </div>
+                  </div>
                 ))}
                 {productImages.length > 1 ? (
                   <>
                     <button
                       type="button"
                       onClick={handlePrevSlide}
-                      className="absolute top-1/2 left-4 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      className="absolute top-1/2 left-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
                       aria-label="Предыдущее изображение"
                     >
                       <ChevronLeft className="h-5 w-5" />
@@ -232,7 +257,7 @@ export default function Products() {
                     <button
                       type="button"
                       onClick={handleNextSlide}
-                      className="absolute top-1/2 right-4 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      className="absolute top-1/2 right-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
                       aria-label="Следующее изображение"
                     >
                       <ChevronRight className="h-5 w-5" />
@@ -302,13 +327,12 @@ export default function Products() {
                 ))}
               </div>
               <div className="max-lg:hidden">
-                <button
-                  type="button"
+                <a
                   onClick={openContactModal}
-                  className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
                 >
                   Contact Us
-                </button>
+                </a>
               </div>
             </ScrollReveal>
             <ScrollReveal
@@ -317,7 +341,7 @@ export default function Products() {
               className="relative max-lg:col-span-2"
             >
               <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
-              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-6 backdrop-blur-2xl max-sm:p-3">
+              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
                 <div>
                   <p className="text-sm tracking-wide text-white/50 uppercase">
                     {heroProduct?.category ?? "Aerial System"}
@@ -330,7 +354,7 @@ export default function Products() {
                     payload rail ready for mapping or cinematic capture.
                   </p>
                 </div>
-                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-3">
+                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-2">
                   <FeatureBadge
                     icon={BatteryCharging}
                     title="Smart batteries"
@@ -355,13 +379,12 @@ export default function Products() {
               </div>
             </ScrollReveal>
             <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-              <button
-                type="button"
+              <a
                 onClick={openContactModal}
                 className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
               >
                 Contact Us
-              </button>
+              </a>
             </div>
           </div>
         </section>
@@ -436,29 +459,26 @@ export default function Products() {
           </div>
         </section>
         <section className="py-16 max-sm:py-12">
-          <div className="flex w-full items-start justify-end max-lg:justify-start">
-            <ScrollReveal
-              amount={0.25}
-              className="space-y-5 text-right max-lg:text-left max-md:space-y-4"
-            >
-              <div className="flex justify-end max-lg:justify-start">
-                <p className="text-sm tracking-wider uppercase">
-                  Characteristics
-                </p>
-              </div>
-
+          <ScrollReveal
+            amount={0.25}
+            className="flex items-center justify-between max-md:flex-col max-md:space-y-10"
+          >
+            <div className="max-md:text-center">
+              <p className="tracking-wider uppercase">Characteristics</p>
               <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-sm:text-3xl">
                 Multipurpose Assault
               </h1>
-
-              <p className="text-foreground/70 text-lg leading-relaxed max-sm:text-base">
+              <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-sm:text-base">
                 The AX2ng KRAKATIT is capable of attack high-value ground
                 targets as well as aerial targets, including UAVs flying up to
                 300 km/h and helicopters. This makes the AX2ng KRAKATIT a
                 versatile military platform.
               </p>
-            </ScrollReveal>
-          </div>
+            </div>
+            <div>
+              <img src="/focus-areas-core.svg" className="mx-10" alt="" />
+            </div>
+          </ScrollReveal>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
           <div className="container m-auto grid grid-cols-1 gap-12 px-6 py-12 max-xl:px-5 max-sm:px-4 max-sm:py-10">
@@ -470,7 +490,7 @@ export default function Products() {
                 <h1 className="text-[28px] font-bold text-black max-sm:text-2xl">
                   Supportive firing capability to
                 </h1>
-                <ul className="mt-7.5 space-y-7.5 text-[#314D77]/65">
+                <ul className="space-y-7.5 text-[#314D77]/65 max-md:space-y-3">
                   <li className="flex max-w-[420px] items-center gap-3">
                     <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
                       <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
@@ -527,7 +547,7 @@ export default function Products() {
                   Wherever and whenever the operational use of the main weapons
                   is tactically impossible, inappropriate or disadvantageous:
                 </h1>
-                <ul className="mt-2 space-y-7.5 text-[#314D77]/65">
+                <ul className="space-y-7.5 text-[#314D77]/65 max-md:space-y-3">
                   <li className="flex max-w-[420px] items-center gap-3">
                     <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
                       <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
@@ -575,13 +595,12 @@ export default function Products() {
             </ScrollReveal>
             <div className="flex max-md:justify-center">
               <ScrollReveal amount={0.2} delay={0.1}>
-                <button
-                  type="button"
+                <a
                   onClick={openContactModal}
-                  className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-36 max-md:text-base"
+                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
                 >
                   Contact Us
-                </button>
+                </a>
               </ScrollReveal>
             </div>
           </div>
@@ -606,13 +625,12 @@ export default function Products() {
               delay={0.1}
               className="flex max-md:justify-center"
             >
-              <button
-                type="button"
+              <a
                 onClick={openContactModal}
-                className="group relative mt-12 inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-36 max-md:text-base"
+                className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
               >
                 Contact Us
-              </button>
+              </a>
             </ScrollReveal>
           </div>
         </section>

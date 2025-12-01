@@ -58,3 +58,67 @@
     max-width: 102rem; /* ~1632px */
   }
 }
+
+@layer utilities {
+  @keyframes kenburns-slow {
+    0% {
+      transform: scale(1.02) translate3d(0, 0, 0);
+    }
+    50% {
+      transform: scale(1.08) translate3d(2%, -1%, 0);
+    }
+    100% {
+      transform: scale(1.02) translate3d(-1%, 1%, 0);
+    }
+  }
+
+  .animate-kenburns-slow {
+    animation: kenburns-slow 18s ease-in-out infinite;
+  }
+
+  @keyframes slide-glow {
+    0% {
+      opacity: 0;
+      transform: translateY(8px) scale(1.01);
+      filter: blur(12px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  .animate-slide-glow {
+    animation: slide-glow 0.7s ease forwards;
+  }
+
+  @keyframes sweep-shimmer {
+    0% {
+      transform: translateX(-120%) skewX(12deg);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 0.75;
+    }
+    100% {
+      transform: translateX(120%) skewX(12deg);
+      opacity: 0;
+    }
+  }
+
+  .animate-sweep-shimmer {
+    animation: sweep-shimmer 1.6s ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-kenburns-slow,
+    .animate-slide-glow,
+    .animate-sweep-shimmer {
+      animation: none !important;
+    }
+  }
+}
