@@ -199,101 +199,7 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-14 max-md:pb-7">
-      <ScrollReveal amount={0.35}>
-        <section className="relative container mx-auto mt-16 overflow-hidden rounded-t-4xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_60px_180px_120px_rgba(0,0,0,0.2)]">
-          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-          <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-          <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
-              <p className="text-sm tracking-wide text-white/50 uppercase">
-                Characteristics
-              </p>
-              <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                About product
-              </h1>
-              <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                {heroProduct?.description ?? "Aerial Platform"}
-              </p>
-              <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                {statHighlights.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
-                  >
-                    <p className="text-sm tracking-wide text-white/60 uppercase">
-                      {stat.label}
-                    </p>
-                    <p className="mt-1 text-4xl font-semibold max-sm:text-2xl">
-                      {stat.value}
-                    </p>
-                    <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="max-lg:hidden">
-                <a
-                  onClick={openContactModal}
-                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-                >
-                  Contact Us
-                </a>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal
-              amount={0.35}
-              delay={0.08}
-              className="relative max-lg:col-span-2"
-            >
-              <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
-              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                <div>
-                  <p className="text-sm tracking-wide text-white/50 uppercase">
-                    {heroProduct?.category ?? "Aerial System"}
-                  </p>
-                  <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
-                    {heroProduct?.name ?? "Aerial Platform"}
-                  </h2>
-                  <p className="mt-4 text-white/70 max-sm:text-sm">
-                    Hybrid carbon fuselage, omnidirectional sensors, and a
-                    payload rail ready for mapping or cinematic capture.
-                  </p>
-                </div>
-                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-2">
-                  <FeatureBadge
-                    icon={BatteryCharging}
-                    title="Smart batteries"
-                    copy="Active balancing + thermal shielding"
-                  />
-                  <FeatureBadge
-                    icon={Wind}
-                    title="Wind-sliced frame"
-                    copy="Tapered arm geometry for stable orbits"
-                  />
-                  <FeatureBadge
-                    icon={Gauge}
-                    title="Sport flight"
-                    copy="Boost to 94 km/h with horizon lock"
-                  />
-                  <FeatureBadge
-                    icon={Shield}
-                    title="Fail-safe return"
-                    copy="Triple GNSS with predictive reroute"
-                  />
-                </div>
-              </div>
-            </ScrollReveal>
-            <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-              <a
-                onClick={openContactModal}
-                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
-              >
-                Contact Us
-              </a>
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
+    <div className="min-h-screen pb-14 max-md:pb-7">
       <ScrollReveal amount={0.35} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
@@ -390,6 +296,99 @@ export default function Products() {
         </div>
       </ScrollReveal>
       <div className="px-5">
+        <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
+          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
+          <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
+          <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
+              <p className="text-sm tracking-wide text-white/50 uppercase">
+                Characteristics
+              </p>
+              <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
+                About product
+              </h1>
+              <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
+                {heroProduct?.description ?? "Aerial Platform"}
+              </p>
+              <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                {statHighlights.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
+                  >
+                    <p className="text-sm tracking-wide text-white/60 uppercase">
+                      {stat.label}
+                    </p>
+                    <p className="mt-1 text-4xl font-semibold max-sm:text-2xl">
+                      {stat.value}
+                    </p>
+                    <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="max-lg:hidden">
+                <a
+                  onClick={openContactModal}
+                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                >
+                  Contact Us
+                </a>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal
+              amount={0.35}
+              delay={0.08}
+              className="relative max-lg:col-span-2"
+            >
+              <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
+              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
+                <div>
+                  <p className="text-sm tracking-wide text-white/50 uppercase">
+                    {heroProduct?.category ?? "Aerial System"}
+                  </p>
+                  <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
+                    {heroProduct?.name ?? "Aerial Platform"}
+                  </h2>
+                  <p className="mt-4 text-white/70 max-sm:text-sm">
+                    Hybrid carbon fuselage, omnidirectional sensors, and a
+                    payload rail ready for mapping or cinematic capture.
+                  </p>
+                </div>
+                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-2">
+                  <FeatureBadge
+                    icon={BatteryCharging}
+                    title="Smart batteries"
+                    copy="Active balancing + thermal shielding"
+                  />
+                  <FeatureBadge
+                    icon={Wind}
+                    title="Wind-sliced frame"
+                    copy="Tapered arm geometry for stable orbits"
+                  />
+                  <FeatureBadge
+                    icon={Gauge}
+                    title="Sport flight"
+                    copy="Boost to 94 km/h with horizon lock"
+                  />
+                  <FeatureBadge
+                    icon={Shield}
+                    title="Fail-safe return"
+                    copy="Triple GNSS with predictive reroute"
+                  />
+                </div>
+              </div>
+            </ScrollReveal>
+            <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
+              <a
+                onClick={openContactModal}
+                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
+              >
+                Contact Us
+              </a>
+            </div>
+          </div>
+        </section>
+
         <section className="space-y-8 py-16 max-sm:py-12">
           <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <ScrollReveal amount={0.25}>

@@ -180,7 +180,7 @@ const TERMS_SECTIONS: TermSection[] = [
 
 export default function TermAndCondition() {
   return (
-    <section className="container mx-auto px-5 pt-52.5">
+    <section className="container mx-auto px-13 pt-52.5 pb-25">
       <div className="mb-25 text-center text-5xl font-bold">
         <h1>TERMS & CONDITION</h1>
       </div>
