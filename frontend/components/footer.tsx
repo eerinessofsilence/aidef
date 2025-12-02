@@ -11,18 +11,18 @@ export default function Footer() {
             <img src="/we-create-the-future.svg" className="w-43.5" alt="" />
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
-            <h1 className="font-bold uppercase">Quick links</h1>
+            <h1 className="text-foreground font-bold uppercase">Quick links</h1>
             <a href="#">Product</a>
             <a href="#">Services</a>
             <a href="#">Support</a>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
-            <h1 className="font-bold uppercase">Contact</h1>
+            <h1 className="text-foreground font-bold uppercase">Contact</h1>
             <p>+421 906 949 592</p>
             <p>office@ai-def.com</p>
           </div>
           <div className="space-y-4">
-            <h1 className="font-bold uppercase">Adresses</h1>
+            <h1 className="text-foreground font-bold uppercase">Adresses</h1>
             <div className="grid grid-cols-2 gap-y-5">
               <div className="max-w-90">
                 <h1 className="text-foreground/50 font-bold uppercase">

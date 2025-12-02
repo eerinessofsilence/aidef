@@ -199,7 +199,101 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen pb-14 max-md:pb-7">
+    <div className="min-h-screen pt-32 pb-14 max-md:pb-7">
+      <ScrollReveal amount={0.35}>
+        <section className="relative container mx-auto mt-16 overflow-hidden rounded-t-4xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_60px_180px_120px_rgba(0,0,0,0.2)]">
+          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
+          <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
+          <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
+              <p className="text-sm tracking-wide text-white/50 uppercase">
+                Characteristics
+              </p>
+              <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
+                About product
+              </h1>
+              <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
+                {heroProduct?.description ?? "Aerial Platform"}
+              </p>
+              <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                {statHighlights.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
+                  >
+                    <p className="text-sm tracking-wide text-white/60 uppercase">
+                      {stat.label}
+                    </p>
+                    <p className="mt-1 text-4xl font-semibold max-sm:text-2xl">
+                      {stat.value}
+                    </p>
+                    <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="max-lg:hidden">
+                <a
+                  onClick={openContactModal}
+                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                >
+                  Contact Us
+                </a>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal
+              amount={0.35}
+              delay={0.08}
+              className="relative max-lg:col-span-2"
+            >
+              <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
+              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
+                <div>
+                  <p className="text-sm tracking-wide text-white/50 uppercase">
+                    {heroProduct?.category ?? "Aerial System"}
+                  </p>
+                  <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
+                    {heroProduct?.name ?? "Aerial Platform"}
+                  </h2>
+                  <p className="mt-4 text-white/70 max-sm:text-sm">
+                    Hybrid carbon fuselage, omnidirectional sensors, and a
+                    payload rail ready for mapping or cinematic capture.
+                  </p>
+                </div>
+                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-2">
+                  <FeatureBadge
+                    icon={BatteryCharging}
+                    title="Smart batteries"
+                    copy="Active balancing + thermal shielding"
+                  />
+                  <FeatureBadge
+                    icon={Wind}
+                    title="Wind-sliced frame"
+                    copy="Tapered arm geometry for stable orbits"
+                  />
+                  <FeatureBadge
+                    icon={Gauge}
+                    title="Sport flight"
+                    copy="Boost to 94 km/h with horizon lock"
+                  />
+                  <FeatureBadge
+                    icon={Shield}
+                    title="Fail-safe return"
+                    copy="Triple GNSS with predictive reroute"
+                  />
+                </div>
+              </div>
+            </ScrollReveal>
+            <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
+              <a
+                onClick={openContactModal}
+                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
+              >
+                Contact Us
+              </a>
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
       <ScrollReveal amount={0.35} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
@@ -296,99 +390,6 @@ export default function Products() {
         </div>
       </ScrollReveal>
       <div className="px-5">
-        <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
-          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-          <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-          <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
-              <p className="text-sm tracking-wide text-white/50 uppercase">
-                Characteristics
-              </p>
-              <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                About product
-              </h1>
-              <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                {heroProduct?.description ?? "Aerial Platform"}
-              </p>
-              <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                {statHighlights.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
-                  >
-                    <p className="text-sm tracking-wide text-white/60 uppercase">
-                      {stat.label}
-                    </p>
-                    <p className="mt-1 text-4xl font-semibold max-sm:text-2xl">
-                      {stat.value}
-                    </p>
-                    <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="max-lg:hidden">
-                <a
-                  onClick={openContactModal}
-                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-                >
-                  Contact Us
-                </a>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal
-              amount={0.35}
-              delay={0.08}
-              className="relative max-lg:col-span-2"
-            >
-              <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
-              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                <div>
-                  <p className="text-sm tracking-wide text-white/50 uppercase">
-                    {heroProduct?.category ?? "Aerial System"}
-                  </p>
-                  <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
-                    {heroProduct?.name ?? "Aerial Platform"}
-                  </h2>
-                  <p className="mt-4 text-white/70 max-sm:text-sm">
-                    Hybrid carbon fuselage, omnidirectional sensors, and a
-                    payload rail ready for mapping or cinematic capture.
-                  </p>
-                </div>
-                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-2">
-                  <FeatureBadge
-                    icon={BatteryCharging}
-                    title="Smart batteries"
-                    copy="Active balancing + thermal shielding"
-                  />
-                  <FeatureBadge
-                    icon={Wind}
-                    title="Wind-sliced frame"
-                    copy="Tapered arm geometry for stable orbits"
-                  />
-                  <FeatureBadge
-                    icon={Gauge}
-                    title="Sport flight"
-                    copy="Boost to 94 km/h with horizon lock"
-                  />
-                  <FeatureBadge
-                    icon={Shield}
-                    title="Fail-safe return"
-                    copy="Triple GNSS with predictive reroute"
-                  />
-                </div>
-              </div>
-            </ScrollReveal>
-            <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-              <a
-                onClick={openContactModal}
-                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
-              >
-                Contact Us
-              </a>
-            </div>
-          </div>
-        </section>
-
         <section className="space-y-8 py-16 max-sm:py-12">
           <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <ScrollReveal amount={0.25}>
@@ -436,7 +437,7 @@ export default function Products() {
             ))}
           </div>
         </section>
-        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/96 h-[70vh] w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
           <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
             <ScrollReveal
               amount={0.25}
@@ -447,10 +448,10 @@ export default function Products() {
                   Charasteristics
                 </span>
               </div>
-              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
+              <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
                 Jet-Powered Speed
               </h1>
-              <p className="text-foreground/70 text-lg max-sm:text-base">
+              <p className="text-foreground/70 text-lg max-md:text-base">
                 The jet propulsion engine provides high speed and agility,
                 enabling the AX2ng KRAKATIT to effectively respond to dynamic
                 combat situations and reach its targets rapidly.
@@ -465,10 +466,10 @@ export default function Products() {
           >
             <div className="max-md:text-center">
               <p className="tracking-wider uppercase">Characteristics</p>
-              <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-sm:text-3xl">
+              <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
                 Multipurpose Assault
               </h1>
-              <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-sm:text-base">
+              <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
                 The AX2ng KRAKATIT is capable of attack high-value ground
                 targets as well as aerial targets, including UAVs flying up to
                 300 km/h and helicopters. This makes the AX2ng KRAKATIT a
@@ -487,30 +488,20 @@ export default function Products() {
                 amount={0.25}
                 className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
               >
-                <h1 className="text-[28px] font-bold text-black max-sm:text-2xl">
+                <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
                   Supportive firing capability to
                 </h1>
-                <ul className="space-y-7.5 text-[#314D77]/65 max-md:space-y-3">
+                <ul className="space-y-3 text-black">
                   <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                      </span>
-                    </span>
-
-                    <span>
+                    <span className="text-lg max-md:text-base">
                       Land force fire units (mechanized, motorized, infantry,
                       artillery barrel, artillery mortar …)
                     </span>
                   </li>
-                  <li className="flex max-w-[420px] gap-3">
-                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                      </span>
+                  <li className="flex max-w-[420px] items-center gap-3">
+                    <span className="text-lg max-md:text-base">
+                      Special force units.
                     </span>
-
-                    <span>Special force units.</span>
                   </li>
                 </ul>
               </ScrollReveal>
@@ -543,35 +534,25 @@ export default function Products() {
                 delay={0.12}
                 className="flex flex-col justify-center gap-4 text-left"
               >
-                <h1 className="max-w-111 text-[28px] font-bold text-balance text-black max-sm:text-2xl">
+                <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
                   Wherever and whenever the operational use of the main weapons
                   is tactically impossible, inappropriate or disadvantageous:
                 </h1>
-                <ul className="space-y-7.5 text-[#314D77]/65 max-md:space-y-3">
+                <ul className="space-y-3 text-black">
                   <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                      </span>
+                    <span className="text-lg max-md:text-base">
+                      Long time preparation of firing position.
                     </span>
-
-                    <span>Long time preparation of firing position.</span>
                   </li>
-                  <li className="flex max-w-[420px] gap-3">
-                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                      </span>
+                  <li className="flex max-w-[420px] items-center gap-3">
+                    <span className="text-lg max-md:text-base">
+                      Firing preparation time
                     </span>
-                    <span>Firing preparation time</span>
                   </li>
-                  <li className="flex max-w-[420px] gap-3">
-                    <span className="mt-1 inline-flex h-4 w-4 items-center justify-center">
-                      <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#314D77]/30 bg-[#314D77]/10">
-                        <span className="h-2.5 w-2.5 rounded-full bg-[#314D77]" />
-                      </span>
+                  <li className="flex max-w-[420px] items-center gap-3">
+                    <span className="text-lg max-md:text-base">
+                      Unmasking effects
                     </span>
-                    <span>Unmasking effects</span>
                   </li>
                 </ul>
               </ScrollReveal>
