@@ -199,7 +199,7 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-14 max-md:pb-7">
+    <div className="min-h-screen pb-14 max-md:pb-7">
       <ScrollReveal amount={0.35} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">

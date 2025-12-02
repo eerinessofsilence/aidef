@@ -144,7 +144,7 @@ export default function Header() {
   const handleMouseLeave = () => {
     const timeout = window.setTimeout(() => {
       setActiveDropdown(null);
-    }, 150);
+    }, 300);
     setDropdownTimeout(timeout);
   };
 
@@ -164,7 +164,7 @@ export default function Header() {
   const handleLanguageMouseLeave = () => {
     const timeout = window.setTimeout(() => {
       setLanguageSelectorOpen(false);
-    }, 150);
+    }, 300);
     setLanguageDropdownTimeout(timeout);
   };
 
@@ -297,7 +297,7 @@ export default function Header() {
               <div
                 onMouseEnter={handleLanguageMouseEnter}
                 onMouseLeave={handleLanguageMouseLeave}
-                className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-xl:hidden"
+                className="border-border/50 active:translate-y-2px flex h-9.5 w-9.5 cursor-pointer items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/25 to-black/25 backdrop-blur-xl transition-all duration-300 will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.4),inset_0_-6px_18px_rgba(0,0,0,0.7)] max-xl:hidden"
               >
                 <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
               </div>
