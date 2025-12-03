@@ -1,3 +1,5 @@
+import { ScrollReveal } from "../../components/ui/scroll-reveal";
+
 type TermEntry = {
   label: string;
   body: string | string[];
@@ -188,23 +190,29 @@ export default function TermAndCondition() {
         {TERMS_SECTIONS.map((section) => {
           return (
             <div className="space-y-7.5">
-              <div className="text-4xl font-bold capitalize">
-                <h1>{section.title}</h1>
-              </div>
-              <div className="space-y-7.5">
-                {section.entries.map((entry) => {
-                  return (
-                    <div className="space-y-2">
-                      <div className="text-lg font-semibold uppercase">
-                        <h1>{entry.label}</h1>
-                      </div>
-                      <div className="text-foreground/70">
-                        <p>{entry.body}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <ScrollReveal amount={0.35}>
+                <ScrollReveal amount={0.35}>
+                  <div className="text-4xl font-bold capitalize">
+                    <h1>{section.title}</h1>
+                  </div>
+                </ScrollReveal>
+                <div className="space-y-7.5">
+                  {section.entries.map((entry) => {
+                    return (
+                      <ScrollReveal amount={0.35}>
+                        <div className="space-y-2">
+                          <div className="text-lg font-semibold uppercase">
+                            <h1>{entry.label}</h1>
+                          </div>
+                          <div className="text-foreground/70">
+                            <p>{entry.body}</p>
+                          </div>
+                        </div>
+                      </ScrollReveal>
+                    );
+                  })}
+                </div>
+              </ScrollReveal>
             </div>
           );
         })}
