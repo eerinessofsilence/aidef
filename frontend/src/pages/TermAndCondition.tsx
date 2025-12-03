@@ -190,7 +190,7 @@ export default function TermAndCondition() {
         {TERMS_SECTIONS.map((section) => {
           return (
             <div className="space-y-7.5">
-              <ScrollReveal amount={0.35}>
+              <ScrollReveal amount={0.35} className="space-y-7.5">
                 <ScrollReveal amount={0.35}>
                   <div className="text-4xl font-bold capitalize">
                     <h1>{section.title}</h1>

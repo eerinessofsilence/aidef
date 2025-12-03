@@ -199,7 +199,7 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen pb-14 max-md:pb-7">
+    <div className="min-h-screen max-lg:pt-32 max-md:pb-7">
       <ScrollReveal amount={0.35} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
@@ -249,7 +249,7 @@ export default function Products() {
                     <button
                       type="button"
                       onClick={handlePrevSlide}
-                      className="absolute top-1/2 left-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      className="absolute top-1/2 left-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
                       aria-label="Предыдущее изображение"
                     >
                       <ChevronLeft className="h-5 w-5" />
@@ -257,7 +257,7 @@ export default function Products() {
                     <button
                       type="button"
                       onClick={handleNextSlide}
-                      className="absolute top-1/2 right-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      className="absolute top-1/2 right-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
                       aria-label="Следующее изображение"
                     >
                       <ChevronRight className="h-5 w-5" />
@@ -329,7 +329,7 @@ export default function Products() {
               <div className="max-lg:hidden">
                 <a
                   onClick={openContactModal}
-                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                  className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
                 >
                   Contact Us
                 </a>
@@ -381,7 +381,7 @@ export default function Products() {
             <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
               <a
                 onClick={openContactModal}
-                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full"
+                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
               >
                 Contact Us
               </a>
@@ -389,7 +389,7 @@ export default function Products() {
           </div>
         </section>
 
-        <section className="space-y-8 py-16 max-sm:py-12">
+        <section className="space-y-8 px-10 py-16 max-xl:px-5 max-sm:py-12">
           <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <ScrollReveal amount={0.25}>
               <div>
@@ -436,32 +436,30 @@ export default function Products() {
             ))}
           </div>
         </section>
-        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/96 h-[70vh] w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
-            <ScrollReveal
-              amount={0.25}
-              className="space-y-5 max-md:space-y-4 max-md:text-center"
-            >
-              <div>
-                <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                  Charasteristics
-                </span>
-              </div>
-              <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                Jet-Powered Speed
-              </h1>
-              <p className="text-foreground/70 text-lg max-md:text-base">
-                The jet propulsion engine provides high speed and agility,
-                enabling the AX2ng KRAKATIT to effectively respond to dynamic
-                combat situations and reach its targets rapidly.
-              </p>
-            </ScrollReveal>
-          </div>
-        </section>
-        <section className="py-16 max-sm:py-12">
+        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/96 h-[70vh] w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center px-5 max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
           <ScrollReveal
             amount={0.25}
-            className="flex items-center justify-between max-md:flex-col max-md:space-y-10"
+            className="container mx-auto space-y-5 px-10 pb-12.5 max-xl:px-5 max-md:space-y-4 max-md:text-center lg:pb-25"
+          >
+            <div>
+              <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                Charasteristics
+              </span>
+            </div>
+            <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+              Jet-Powered Speed
+            </h1>
+            <p className="text-foreground/70 text-lg max-md:text-base">
+              The jet propulsion engine provides high speed and agility,
+              enabling the AX2ng KRAKATIT to effectively respond to dynamic
+              combat situations and reach its targets rapidly.
+            </p>
+          </ScrollReveal>
+        </section>
+        <section className="container mx-auto py-16 max-sm:py-12">
+          <ScrollReveal
+            amount={0.25}
+            className="flex items-center justify-between px-10 max-xl:px-5 max-md:flex-col max-md:space-y-10"
           >
             <div className="max-md:text-center">
               <p className="tracking-wider uppercase">Characteristics</p>
@@ -476,12 +474,16 @@ export default function Products() {
               </p>
             </div>
             <div>
-              <img src="/focus-areas-core.svg" className="mx-10" alt="" />
+              <img
+                src="/focus-areas-core.svg"
+                className="mx-10 w-full max-w-[200px] max-md:max-w-[120px]"
+                alt=""
+              />
             </div>
           </ScrollReveal>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-          <div className="container m-auto grid grid-cols-1 gap-12 px-6 py-12 max-xl:px-5 max-sm:px-4 max-sm:py-10">
+          <div className="container m-auto grid grid-cols-1 gap-12 px-15 py-12 max-xl:px-10 max-sm:py-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <ScrollReveal
                 amount={0.25}
@@ -569,20 +571,10 @@ export default function Products() {
                   Booster
                 </span>
               </div>
-              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
+              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
                 AX2NG KRAKATIT
               </h1>
             </ScrollReveal>
-            <div className="flex max-md:justify-center">
-              <ScrollReveal amount={0.2} delay={0.1}>
-                <a
-                  onClick={openContactModal}
-                  className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-                >
-                  Contact Us
-                </a>
-              </ScrollReveal>
-            </div>
           </div>
         </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-3.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
@@ -596,7 +588,7 @@ export default function Products() {
                   Swarm system
                 </span>
               </div>
-              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-3xl">
+              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
                 AX2NG KRAKATIT
               </h1>
             </ScrollReveal>
@@ -607,7 +599,7 @@ export default function Products() {
             >
               <a
                 onClick={openContactModal}
-                className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
               >
                 Contact Us
               </a>
