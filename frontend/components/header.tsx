@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { text: "Solutions", href: "#", hasDropdown: true },
   { text: "Technology", href: "#", hasDropdown: true },
   { text: "Company", href: "#", hasDropdown: true },
-  { text: "Support", href: "#" },
+  { text: "Support", href: "/support" },
   { text: "Contact", href: "#" },
 ];
 
