@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import ProductDetail from "./pages/ProductDetail";
-import TermsAndCondition from "./pages/TermAndCondition";
+import TermsOfCondition from "./pages/TermOfCondition";
 
 export default function App() {
   return (
@@ -12,7 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products/:slug" element={<ProductDetail />} />
-        <Route path="/terms-and-condition" element={<TermsAndCondition />} />
+        <Route path="/terms-of-condition" element={<TermsOfCondition />} />
       </Routes>
       <Footer />
     </>

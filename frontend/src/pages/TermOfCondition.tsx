@@ -180,11 +180,11 @@ const TERMS_SECTIONS: TermSection[] = [
   },
 ];
 
-export default function TermAndCondition() {
+export default function TermOfCondition() {
   return (
     <section className="container mx-auto px-13 pt-52.5 pb-25">
-      <div className="mb-25 text-center text-5xl font-bold">
-        <h1>TERMS & CONDITION</h1>
+      <div className="mb-25 text-center text-5xl font-bold uppercase">
+        <h1>Terms of Condition</h1>
       </div>
       <div className="space-y-25">
         {TERMS_SECTIONS.map((section) => {
