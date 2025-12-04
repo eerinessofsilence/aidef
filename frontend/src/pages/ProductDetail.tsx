@@ -244,6 +244,11 @@ export default function Products() {
                     </div>
                   </div>
                 ))}
+                <div className="absolute bottom-8 left-8 z-20 max-w-[70%] text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:bottom-4 max-md:left-4 max-md:max-w-[90%]">
+                  <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                    {productDetail?.name}
+                  </h1>
+                </div>
                 {productImages.length > 1 ? (
                   <>
                     <button
