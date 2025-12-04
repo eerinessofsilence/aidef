@@ -326,14 +326,20 @@ export default function Header() {
           </div>
         </header>
         {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
-          if (activeDropdown !== name) return null;
+          const transitionClasses =
+            "transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]";
+          const isOpen = activeDropdown === name;
+          const visibilityClasses = isOpen
+            ? "pointer-events-auto opacity-100 -translate-y-3"
+            : "pointer-events-none opacity-0 -translate-y-5";
           if (name === "Products") {
             return (
               <div
                 key={name}
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleMouseLeave}
-                className={`pointer-events-auto absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 -translate-y-4 rounded-[20px] bg-[#f5f5f5] opacity-100 shadow-sm shadow-black/25 transition-all duration-300`}
+                aria-hidden={!isOpen}
+                className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${transitionClasses} ${visibilityClasses}`}
               >
                 <div className="grid grid-cols-3 gap-5 p-5">
                   {items.map((item) => (
@@ -365,7 +371,8 @@ export default function Header() {
                 key={name}
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleMouseLeave}
-                className={`pointer-events-auto absolute top-full right-0 left-1/7 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
+                aria-hidden={!isOpen}
+                className={`absolute top-full right-0 left-1/7 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${transitionClasses} ${visibilityClasses}`}
               >
                 <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
                   {items.map((item) => (
@@ -393,7 +400,8 @@ export default function Header() {
                 key={name}
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleMouseLeave}
-                className={`pointer-events-auto absolute top-full right-0 left-1/4 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
+                aria-hidden={!isOpen}
+                className={`absolute top-full right-0 left-1/4 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${transitionClasses} ${visibilityClasses}`}
               >
                 <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
                   {items.map((item) => (
@@ -421,7 +429,8 @@ export default function Header() {
                 key={name}
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleMouseLeave}
-                className={`pointer-events-auto absolute top-full right-0 left-1/3 max-w-[930px] -translate-y-4 rounded-[20px] bg-white opacity-100 shadow-sm shadow-black transition-all duration-300`}
+                aria-hidden={!isOpen}
+                className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${transitionClasses} ${visibilityClasses}`}
               >
                 <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
                   {items.map((item) => (
@@ -446,31 +455,34 @@ export default function Header() {
           return null;
         })}
 
-        {languageSelectorIsOpen && (
-          <div
-            onMouseEnter={handleLanguageMouseEnter}
-            onMouseLeave={handleLanguageMouseLeave}
-            className="pointer-events-auto absolute top-full left-1/2 w-full max-w-[813px] -translate-x-1/4 -translate-y-4 rounded-[20px] bg-[#f5f5f5] opacity-100 shadow-sm shadow-black/25 transition-all duration-300"
-          >
-            <div className="grid grid-cols-4 gap-12.5 p-4.5">
-              {LANGUAGES.map((item) => (
-                <a
-                  key={item.id}
-                  className="group flex items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
-                >
-                  <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                    <img src={item.img} className="h-7 w-7" />
-                  </div>
-                  <div className="flex items-center">
-                    <h3 className="text-sm font-semibold text-black">
-                      {item.title}
-                    </h3>
-                  </div>
-                </a>
-              ))}
-            </div>
+        <div
+          onMouseEnter={handleLanguageMouseEnter}
+          onMouseLeave={handleLanguageMouseLeave}
+          aria-hidden={!languageSelectorIsOpen}
+          className={`absolute top-full left-1/2 w-full max-w-[813px] -translate-x-1/4 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${
+            languageSelectorIsOpen
+              ? "pointer-events-auto -translate-y-3 opacity-100"
+              : "pointer-events-none -translate-y-5 opacity-0"
+          }`}
+        >
+          <div className="grid grid-cols-4 gap-12.5 p-4.5">
+            {LANGUAGES.map((item) => (
+              <a
+                key={item.id}
+                className="group flex items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
+              >
+                <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                  <img src={item.img} className="h-7 w-7" />
+                </div>
+                <div className="flex items-center">
+                  <h3 className="text-sm font-semibold text-black">
+                    {item.title}
+                  </h3>
+                </div>
+              </a>
+            ))}
           </div>
-        )}
+        </div>
         {/* Mobile menu */}
         <div className="relative xl:hidden">
           <div
@@ -514,13 +526,18 @@ export default function Header() {
                             : "max-h-0 opacity-0"
                         } overflow-hidden`}
                       >
-                        {submenu.map((s) => (
+                        {submenu.map((s, subIdx) => (
                           <Link
                             key={s.title}
                             to={s.href}
                             onClick={handleMobileMenuLinkClick}
-                            className="text-foreground/80 hover:text-foreground/50 pl-2 text-base transition-all duration-300"
+                            className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
+                            <img
+                              src={`/${link.text.toLowerCase()}-white-${subIdx + 1}.svg`}
+                              className="h-6 w-6"
+                              alt=""
+                            />
                             {s.title}
                           </Link>
                         ))}

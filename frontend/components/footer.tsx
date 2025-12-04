@@ -15,6 +15,7 @@ export default function Footer() {
             <a href="#">Product</a>
             <a href="#">Services</a>
             <a href="#">Support</a>
+            <a href="/terms-of-condition">Terms of Condition</a>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="text-foreground font-bold uppercase">Contact</h1>
