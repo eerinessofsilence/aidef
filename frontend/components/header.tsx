@@ -57,10 +57,22 @@ const DROPDOWN_MENUS: Menus = {
       href: "products/ax2ng-krakatit",
       icon: "/products-1.png",
     },
-    { title: "AV2 VTOL", href: "#", icon: "/products-2.png" },
-    { title: "AXQ QUADROCOPTER", href: "#", icon: "/products-3.png" },
-    { title: "Ground Control Station", href: "#", icon: "/products-4.png" },
-    { title: "UGV 150-DUP", href: "#", icon: "/products-5.png" },
+    { title: "AV2 VTOL", href: "products/av2-vtol", icon: "/products-2.png" },
+    {
+      title: "AXQ QUADROCOPTER",
+      href: "products/axq-quadrocopter",
+      icon: "/products-3.png",
+    },
+    {
+      title: "Ground Control Station",
+      href: "products/ground-control-system",
+      icon: "/products-4.png",
+    },
+    {
+      title: "UGV 150-DUP",
+      href: "products/ugv-150-dup",
+      icon: "/products-5.png",
+    },
   ],
   Solutions: [
     {
