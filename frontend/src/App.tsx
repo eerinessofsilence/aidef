@@ -5,10 +5,12 @@ import Footer from "../components/footer";
 import ProductDetail from "./pages/ProductDetail";
 import TermsOfCondition from "./pages/TermOfCondition";
 import Support from "./pages/Support";
+import ScrollToTop from "../components/scroll-to-top";
 
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -199,7 +199,10 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen max-lg:pt-32 max-md:pb-7">
+    <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 lg:hidden">
+        <img src="/site-bg-top.png" className="w-full select-none" alt="" />
+      </div>
       <ScrollReveal amount={0.35} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
@@ -658,21 +661,21 @@ const data = [
   {
     category: "Drone",
     title: "AX2NG KRAKATIT",
-    href: "products/ax2ng-krakatit",
+    href: "/products/ax2ng-krakatit",
     description: "Jet engine KAMIKAZE drone with AI",
     bg: "/drone-carousel-bg-1.png",
   },
   {
     category: "Drone",
     title: "AV2 VTOL",
-    href: "products/av2-vtol",
+    href: "/products/av2-vtol",
     description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-2.png",
   },
   {
     category: "Quadrocopter",
     title: "AXQ",
-    href: "products/axq-quadrocopter",
+    href: "/products/axq-quadrocopter",
     description: "Lightweight 10-inch multicopter",
     bg: "/drone-carousel-bg-3.png",
   },
@@ -680,14 +683,14 @@ const data = [
   {
     category: "UGV",
     title: "UGV 150-DUP",
-    href: "products/ugv-150-dup",
+    href: "/products/ugv-150-dup",
     description: "Unmanned ground platform",
     bg: "/drone-carousel-bg-4.png",
   },
   {
     category: "Drone controls",
     title: "Ground Control Station",
-    href: "products/ground-control-station",
+    href: "/products/ground-control-station",
     description: " Unihed control for all platforms",
     bg: "/drone-carousel-bg-5.png",
   },

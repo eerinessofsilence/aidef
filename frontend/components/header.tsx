@@ -54,23 +54,23 @@ const DROPDOWN_MENUS: Menus = {
   Products: [
     {
       title: "AX2NG KRAKATIT",
-      href: "products/ax2ng-krakatit",
+      href: "/products/ax2ng-krakatit",
       icon: "/products-1.png",
     },
-    { title: "AV2 VTOL", href: "products/av2-vtol", icon: "/products-2.png" },
+    { title: "AV2 VTOL", href: "/products/av2-vtol", icon: "/products-2.png" },
     {
       title: "AXQ QUADROCOPTER",
-      href: "products/axq-quadrocopter",
+      href: "/products/axq-quadrocopter",
       icon: "/products-3.png",
     },
     {
       title: "Ground Control Station",
-      href: "products/ground-control-station",
+      href: "/products/ground-control-station",
       icon: "/products-4.png",
     },
     {
       title: "UGV 150-DUP",
-      href: "products/ugv-150-dup",
+      href: "/products/ugv-150-dup",
       icon: "/products-5.png",
     },
   ],
@@ -501,7 +501,7 @@ export default function Header() {
             id={mobileMenuId}
             aria-hidden={!mobileMenuIsOpen}
             ref={mobileMenuRef}
-            className={`border-border/75 absolute right-0 z-40 mt-3 flex w-full origin-top-right flex-col gap-5 rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out max-h-[calc(100vh-140px)] overflow-y-auto overscroll-contain ${
+            className={`border-border/75 absolute right-0 z-40 mt-3 flex max-h-[calc(100vh-140px)] w-full origin-top-right flex-col gap-5 overflow-y-auto overscroll-contain rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
               mobileMenuIsOpen
                 ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
                 : "pointer-events-none -translate-y-3 scale-95 opacity-0"

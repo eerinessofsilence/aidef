@@ -182,40 +182,45 @@ const TERMS_SECTIONS: TermSection[] = [
 
 export default function TermOfCondition() {
   return (
-    <section className="container mx-auto px-13 pt-52.5 pb-25">
-      <div className="mb-25 text-center text-5xl font-bold uppercase">
-        <h1>Terms of Condition</h1>
-      </div>
-      <div className="space-y-25">
-        {TERMS_SECTIONS.map((section) => {
-          return (
-            <div className="space-y-7.5">
-              <ScrollReveal amount={0.35} className="space-y-7.5">
-                <ScrollReveal amount={0.35}>
-                  <div className="text-4xl font-bold capitalize">
-                    <h1>{section.title}</h1>
+    <section className="relative overflow-hidden">
+      <div className="relative z-10 container mx-auto px-13 pt-52.5 pb-25">
+        <div className="mb-25 text-center text-5xl font-bold uppercase">
+          <h1>Terms of Condition</h1>
+        </div>
+        <div className="space-y-25">
+          {TERMS_SECTIONS.map((section) => {
+            return (
+              <div className="space-y-7.5">
+                <ScrollReveal amount={0.35} className="space-y-7.5">
+                  <ScrollReveal amount={0.35}>
+                    <div className="text-4xl font-bold capitalize">
+                      <h1>{section.title}</h1>
+                    </div>
+                  </ScrollReveal>
+                  <div className="space-y-7.5">
+                    {section.entries.map((entry) => {
+                      return (
+                        <ScrollReveal amount={0.35}>
+                          <div className="space-y-2">
+                            <div className="text-lg font-semibold uppercase">
+                              <h1>{entry.label}</h1>
+                            </div>
+                            <div className="text-foreground/70">
+                              <p>{entry.body}</p>
+                            </div>
+                          </div>
+                        </ScrollReveal>
+                      );
+                    })}
                   </div>
                 </ScrollReveal>
-                <div className="space-y-7.5">
-                  {section.entries.map((entry) => {
-                    return (
-                      <ScrollReveal amount={0.35}>
-                        <div className="space-y-2">
-                          <div className="text-lg font-semibold uppercase">
-                            <h1>{entry.label}</h1>
-                          </div>
-                          <div className="text-foreground/70">
-                            <p>{entry.body}</p>
-                          </div>
-                        </div>
-                      </ScrollReveal>
-                    );
-                  })}
-                </div>
-              </ScrollReveal>
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10">
+        <img src="/site-bg-bottom.png" className="w-full select-none" alt="" />
       </div>
     </section>
   );
