@@ -481,7 +481,7 @@ export default function Products() {
             <div>
               <img
                 src="/focus-areas-core.svg"
-                className="mx-10 w-full max-w-[200px] max-md:max-w-[120px]"
+                className="mx-10 w-60 max-md:w-50 max-sm:w-40"
                 alt=""
               />
             </div>
@@ -615,7 +615,7 @@ export default function Products() {
           <ScrollReveal delay={0.12} amount={0.3}>
             <Carousel
               carouselTitle="Other Products"
-              items={DRONE_CAROUSEL_DATA.map((card, index) => (
+              items={data.map((card, index) => (
                 <Card
                   key={card.title}
                   card={{
@@ -654,35 +654,40 @@ function FeatureBadge({ icon: Icon, title, copy }: FeatureBadgeProps) {
   );
 }
 
-const DRONE_CAROUSEL_DATA = [
+const data = [
   {
     category: "Drone",
     title: "AX2NG KRAKATIT",
+    href: "products/ax2ng-krakatit",
     description: "Jet engine KAMIKAZE drone with AI",
     bg: "/drone-carousel-bg-1.png",
   },
   {
     category: "Drone",
     title: "AV2 VTOL",
+    href: "products/av2-vtol",
     description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-2.png",
   },
   {
-    category: "Copter",
+    category: "Quadrocopter",
     title: "AXQ",
+    href: "products/axq-quadrocopter",
     description: "Lightweight 10-inch multicopter",
     bg: "/drone-carousel-bg-3.png",
   },
 
   {
     category: "UGV",
-    title: "UGV 150-DU",
+    title: "UGV 150-DUP",
+    href: "products/ugv-150-dup",
     description: "Unmanned ground platform",
     bg: "/drone-carousel-bg-4.png",
   },
   {
-    category: "GCS",
+    category: "Drone controls",
     title: "Ground Control Station",
+    href: "products/ground-control-station",
     description: " Unihed control for all platforms",
     bg: "/drone-carousel-bg-5.png",
   },

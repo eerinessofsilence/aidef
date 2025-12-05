@@ -32,25 +32,29 @@ const data = [
   {
     category: "Drone",
     title: "AV2 VTOL",
+    href: "products/av2-vtol",
     description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-2.png",
   },
   {
-    category: "Copter",
+    category: "Quadrocopter",
     title: "AXQ",
+    href: "products/axq-quadrocopter",
     description: "Lightweight 10-inch multicopter",
     bg: "/drone-carousel-bg-3.png",
   },
 
   {
     category: "UGV",
-    title: "UGV 150-DU",
+    title: "UGV 150-DUP",
+    href: "products/ugv-150-dup",
     description: "Unmanned ground platform",
     bg: "/drone-carousel-bg-4.png",
   },
   {
-    category: "GCS",
+    category: "Drone controls",
     title: "Ground Control Station",
+    href: "products/ground-control-station",
     description: " Unihed control for all platforms",
     bg: "/drone-carousel-bg-5.png",
   },

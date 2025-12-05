@@ -25,6 +25,29 @@ type Card = {
   href?: string;
 };
 
+const normalizeHref = (href: string) => {
+  if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(href)) {
+    return href;
+  }
+  return href.startsWith("/") ? href : `/${href}`;
+};
+
+const buildProductHref = (card: Card) => {
+  if (card.href && card.href !== "#") {
+    return normalizeHref(card.href);
+  }
+
+  const slug = card.title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug ? `/products/${slug}` : "#";
+};
+
 const CarouselContext = createContext<{
   onCardClose: (index: number) => void;
   currentIndex: number;
@@ -155,6 +178,7 @@ export const Card = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const productHref = buildProductHref(card);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -180,7 +204,7 @@ export const Card = ({
   return (
     <>
       <motion.a
-        href={card.href ?? "#"}
+        href={productHref}
         layoutId={layout ? `card-${card.title}` : undefined}
         className="relative z-10 flex h-162.5 w-125 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50 max-md:h-97.5 max-md:w-75"
         onMouseEnter={handleMouseEnter}

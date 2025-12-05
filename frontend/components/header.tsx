@@ -65,7 +65,7 @@ const DROPDOWN_MENUS: Menus = {
     },
     {
       title: "Ground Control Station",
-      href: "products/ground-control-system",
+      href: "products/ground-control-station",
       icon: "/products-4.png",
     },
     {
@@ -501,7 +501,7 @@ export default function Header() {
             id={mobileMenuId}
             aria-hidden={!mobileMenuIsOpen}
             ref={mobileMenuRef}
-            className={`border-border/75 absolute right-0 z-40 mt-3 flex w-full origin-top-right flex-col gap-5 rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
+            className={`border-border/75 absolute right-0 z-40 mt-3 flex w-full origin-top-right flex-col gap-5 rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out max-h-[calc(100vh-140px)] overflow-y-auto overscroll-contain ${
               mobileMenuIsOpen
                 ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
                 : "pointer-events-none -translate-y-3 scale-95 opacity-0"
