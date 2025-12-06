@@ -1,7 +1,5 @@
 from django.db import models
 from django.utils.text import slugify
-from decimal import Decimal
-
 
 class Category(models.Model):
     name = models.CharField(max_length=120, unique=True)
@@ -81,5 +79,31 @@ class ProductFeature(models.Model):
     )
     name = models.CharField(max_length=100)
     value = models.CharField(max_length=100)
-    description = models.TextField(max_length=256, default="")
+    description = models.TextField(max_length=256, blank=False)
     order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product feature"
+        verbose_name_plural = "Product features"
+        
+    def __str__(self):
+        return f"{self.product.name} — feature {self.pk}"
+    
+class ProductSubFeature(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="sub_features",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=100)
+    description = models.TextField(max_length=256, blank=False)
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product sub feature"
+        verbose_name_plural = "Product sub features"
+        
+    def __str__(self):
+        return f"{self.product.name} — sub feature {self.pk}"

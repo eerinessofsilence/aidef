@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Product, Category, ProductImage, ProductFeature
+    Product, Category, ProductImage, ProductFeature, ProductSubFeature
 )
 
 
@@ -11,6 +11,11 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductFeatureInline(admin.TabularInline):
     model = ProductFeature
+    extra = 1
+    ordering = ("order",)
+    
+class ProductSubFeatureInline(admin.TabularInline):
+    model = ProductSubFeature
     extra = 1
     ordering = ("order",)
 
@@ -28,4 +33,4 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('-is_featured', '-created_at')
-    inlines = [ProductImageInline, ProductFeatureInline]
+    inlines = [ProductImageInline, ProductFeatureInline, ProductSubFeatureInline]

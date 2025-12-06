@@ -7,7 +7,9 @@ from django.views.decorators.http import require_GET
 
 from .models import (
     Product,
-    ProductImage
+    ProductImage,
+    ProductFeature,
+    ProductSubFeature,
 )
 
 def _absolute_media_url(request, image_field) -> str | None:
@@ -56,6 +58,29 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         for image in images
         if image.image
     ]
+    
+    features: List[ProductFeature] = list(product.features.all())
+    data['features'] = [
+        {
+            'id': feature.id,
+            'name': feature.name,
+            'value': feature.value,
+            'description': feature.description,
+            'order': feature.order,
+        }
+        for feature in features
+    ]
+    
+    sub_features: List[ProductSubFeature] = list(product.sub_features.all())
+    data['sub_features'] = [
+        {
+            'id': sub_feature.id,
+            'name': sub_feature.name,
+            'description': sub_feature.description,
+            'order': sub_feature.order,
+        }
+        for sub_feature in sub_features
+    ]
 
     return data
 
@@ -65,7 +90,7 @@ def item_list_api(request):
     products = (
         Product.objects.filter(available=True)
         .select_related('category')
-        .prefetch_related('images')
+        .prefetch_related('features', 'sub_features', 'images')
         .order_by('-is_featured', 'name')
     )
 
@@ -80,6 +105,8 @@ def item_detail_api(request, slug: str):
             Product.objects
             .select_related('category')
             .prefetch_related(
+                'features',
+                'sub_features',
                 'images'
             )
             .get(slug=slug, available=True)
