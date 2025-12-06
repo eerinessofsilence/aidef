@@ -24,10 +24,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    sku = models.CharField(max_length=100, blank=True, null=True, help_text="Article")
     description = models.TextField(blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, help_text="In percent")
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,9 +53,6 @@ class Product(models.Model):
 
         if self.is_featured:
             Product.objects.exclude(pk=self.pk).filter(is_featured=True).update(is_featured=False)
-    
-    def price_after_discount(self):
-        return float(self.price * (Decimal(1) - self.discount / Decimal(100)))
 
     def __str__(self):
         return self.name
@@ -77,3 +71,15 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} — image {self.pk}"
+    
+
+class ProductFeature(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="features",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    description = models.TextField(max_length=256, default="")
+    order = models.PositiveIntegerField(default=0)

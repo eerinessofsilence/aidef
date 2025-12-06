@@ -10,17 +10,9 @@ from .models import (
     ProductImage
 )
 
-
-def _to_float(value) -> float | None:
-    if value is None:
-        return None
-    return float(value)
-
-
 def _absolute_media_url(request, image_field) -> str | None:
     if not image_field:
         return None
-    # build_absolute_uri can raise for unsaved files; swallow those gracefully
     try:
         url = image_field.url
     except (ValueError, AttributeError):
@@ -35,9 +27,6 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'name': product.name,
         'description': product.description,
         'category': product.category.slug if product.category else None,
-        'price': _to_float(product.price),
-        'discount': _to_float(product.discount),
-        'price_after_discount': product.price_after_discount(),
         'available': product.available,
         'is_featured': product.is_featured,
     }
@@ -51,8 +40,6 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
     data.update(
         {
             'description': product.description,
-            'sku': product.sku,
-            'specs': product.specs,
             'created_at': product.created_at.isoformat(),
             'updated_at': product.updated_at.isoformat(),
         }
