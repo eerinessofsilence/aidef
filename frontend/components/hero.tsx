@@ -10,7 +10,7 @@ const backgroundImages = [
   "/hero-bg-4.png",
 ];
 
-export default function HomePage() {
+export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {

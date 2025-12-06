@@ -1,17 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import type { LucideIcon } from "lucide-react";
-import {
-  BatteryCharging,
-  Camera,
-  ChevronLeft,
-  ChevronRight,
-  Gauge,
-  Layers,
-  Radio,
-  Shield,
-  Wind,
-} from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Layers, Radio } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
@@ -23,9 +13,6 @@ interface Product {
   name: string;
   description?: string;
   category: string | null;
-  price: number;
-  discount?: number | null;
-  price_after_discount?: number | null;
   available: boolean;
   is_featured?: boolean;
 }
@@ -37,36 +24,29 @@ interface ProductImage {
   order?: number | null;
 }
 
+interface ProductFeature {
+  id: number;
+  name: string;
+  value: string;
+  description: string;
+  order?: number | null;
+}
+
+interface ProductSubFeature {
+  id: number;
+  name: string;
+  description: string;
+  order?: number | null;
+}
+
 interface ProductDetail extends Product {
-  sku?: string | null;
   specs?: string | null;
   created_at?: string;
   updated_at?: string;
   images?: ProductImage[];
+  features?: ProductFeature[];
+  sub_features?: ProductSubFeature[];
 }
-
-const statHighlights = [
-  {
-    label: "Max Flight Time",
-    value: "45 min",
-    detail: "Dual hot-swappable packs",
-  },
-  {
-    label: "Transmission",
-    value: "20 km",
-    detail: "Tri-band, anti-jam uplink",
-  },
-  {
-    label: "Wind Resistance",
-    value: "43 km/h",
-    detail: "6-axis active stabilization",
-  },
-  {
-    label: "Payload Flex",
-    value: "2.3 kg",
-    detail: "Adaptive gimbal rail",
-  },
-];
 
 const techFocus: Array<{
   title: string;
@@ -97,7 +77,7 @@ const techFocus: Array<{
   },
 ];
 
-export default function Products() {
+export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [items, setItems] = useState<Product[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
@@ -145,6 +125,7 @@ export default function Products() {
     const controller = new AbortController();
     setDetailStatus("loading");
     setDetailError(null);
+    setProductDetail(null);
 
     axios
       .get<ProductDetail>(`${import.meta.env.VITE_API_URL}/items/${slug}/`, {
@@ -159,7 +140,7 @@ export default function Products() {
           return;
         }
         console.error("Unable to load product detail", err);
-        setDetailError("Не получилось загрузить изображения продукта.");
+        setDetailError("Couldn't load product data.");
         setDetailStatus("error");
       });
 
@@ -180,6 +161,24 @@ export default function Products() {
           (a.order ?? Number.MAX_SAFE_INTEGER) -
           (b.order ?? Number.MAX_SAFE_INTEGER),
       );
+  }, [productDetail]);
+
+  const productFeatures = useMemo(() => {
+    const features = productDetail?.features ?? [];
+    return [...features].sort(
+      (a, b) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+    );
+  }, [productDetail]);
+
+  const productSubFeatures = useMemo(() => {
+    const sub_features = productDetail?.sub_features ?? [];
+    return [...sub_features].sort(
+      (a, b) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+    );
   }, [productDetail]);
 
   useEffect(() => {
@@ -219,9 +218,7 @@ export default function Products() {
                   >
                     <img
                       src={image.url ?? ""}
-                      alt={
-                        image.alt ?? heroProduct?.name ?? "Изображение продукта"
-                      }
+                      alt={image.alt ?? heroProduct?.name ?? "Product image"}
                       className={`h-full w-full object-cover ${
                         activeSlide === index ? "animate-kenburns-slow" : ""
                       }`}
@@ -248,6 +245,9 @@ export default function Products() {
                   </div>
                 ))}
                 <div className="absolute bottom-8 left-8 z-20 max-w-[70%] text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:bottom-4 max-md:left-4 max-md:max-w-[90%]">
+                  <p className="text-foreground/50 tracking-wider uppercase">
+                    {productDetail?.category}
+                  </p>
                   <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
                     {productDetail?.name}
                   </h1>
@@ -258,7 +258,7 @@ export default function Products() {
                       type="button"
                       onClick={handlePrevSlide}
                       className="absolute top-1/2 left-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
-                      aria-label="Предыдущее изображение"
+                      aria-label="Previous image"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
@@ -266,7 +266,7 @@ export default function Products() {
                       type="button"
                       onClick={handleNextSlide}
                       className="absolute top-1/2 right-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
-                      aria-label="Следующее изображение"
+                      aria-label="Next image"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
@@ -319,18 +319,18 @@ export default function Products() {
                 {heroProduct?.description ?? "Aerial Platform"}
               </p>
               <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                {statHighlights.map((stat) => (
+                {productFeatures.map((feature) => (
                   <div
-                    key={stat.label}
-                    className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm max-sm:p-4"
+                    key={feature.id}
+                    className="border-border/25 bg-foreground/5 space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
                   >
-                    <p className="text-sm tracking-wide text-white/60 uppercase">
-                      {stat.label}
+                    <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                      {feature.name}
                     </p>
-                    <p className="mt-1 text-4xl font-semibold max-sm:text-2xl">
-                      {stat.value}
+                    <p className="text-3xl font-semibold max-md:text-2xl">
+                      {feature.value}
                     </p>
-                    <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
+                    <p className="text-foreground/70">{feature.description}</p>
                   </div>
                 ))}
               </div>
@@ -343,46 +343,23 @@ export default function Products() {
                 </a>
               </div>
             </ScrollReveal>
-            <ScrollReveal
-              amount={0.35}
-              delay={0.08}
-              className="relative max-lg:col-span-2"
-            >
-              <div className="absolute inset-0 rounded-4xl bg-linear-to-br from-white/30 via-white/5 to-transparent blur-3xl" />
+            <ScrollReveal amount={0.35} className="relative max-lg:col-span-2">
+              <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
               <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                <div>
-                  <p className="text-sm tracking-wide text-white/50 uppercase">
-                    {heroProduct?.category ?? "Aerial System"}
-                  </p>
-                  <h2 className="mt-2 text-4xl font-semibold max-sm:text-3xl">
-                    {heroProduct?.name ?? "Aerial Platform"}
-                  </h2>
-                  <p className="mt-4 text-white/70 max-sm:text-sm">
-                    Hybrid carbon fuselage, omnidirectional sensors, and a
-                    payload rail ready for mapping or cinematic capture.
-                  </p>
-                </div>
-                <div className="mt-5 grid grid-cols-2 gap-4 text-white/70 max-md:grid-cols-1 max-md:gap-2">
-                  <FeatureBadge
-                    icon={BatteryCharging}
-                    title="Smart batteries"
-                    copy="Active balancing + thermal shielding"
-                  />
-                  <FeatureBadge
-                    icon={Wind}
-                    title="Wind-sliced frame"
-                    copy="Tapered arm geometry for stable orbits"
-                  />
-                  <FeatureBadge
-                    icon={Gauge}
-                    title="Sport flight"
-                    copy="Boost to 94 km/h with horizon lock"
-                  />
-                  <FeatureBadge
-                    icon={Shield}
-                    title="Fail-safe return"
-                    copy="Triple GNSS with predictive reroute"
-                  />
+                <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                  {productSubFeatures.map((sub_feature) => (
+                    <div
+                      key={sub_feature.id}
+                      className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
+                    >
+                      <h3 className="text-lg font-semibold">
+                        {sub_feature.name}
+                      </h3>
+                      <p className="text-foreground/70">
+                        {sub_feature.description}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </ScrollReveal>
@@ -617,7 +594,7 @@ export default function Products() {
         <section className="my-16 space-y-6 py-10 max-sm:py-8">
           <ScrollReveal delay={0.12} amount={0.3}>
             <Carousel
-              carouselTitle="Other Products"
+              carouselTitle="All Products"
               items={data.map((card, index) => (
                 <Card
                   key={card.title}
@@ -637,22 +614,6 @@ export default function Products() {
           ) : null}
         </section>
       </div>
-    </div>
-  );
-}
-
-interface FeatureBadgeProps {
-  icon: LucideIcon;
-  title: string;
-  copy: string;
-}
-
-function FeatureBadge({ icon: Icon, title, copy }: FeatureBadgeProps) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white">
-      <Icon className="h-5 w-5 text-white/80" />
-      <p className="mt-3 text-sm font-semibold">{title}</p>
-      <p className="text-xs text-white/70">{copy}</p>
     </div>
   );
 }
