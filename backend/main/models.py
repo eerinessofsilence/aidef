@@ -175,10 +175,10 @@ class ProductInfoBlock(models.Model):
         on_delete=models.CASCADE,
     )
     title_1 = models.CharField(max_length=128)
-    description_1 = models.TextField(max_length=256, blank=False)
+    description_1 = models.JSONField(max_length=512, blank=False)
     image_1 = models.ImageField(upload_to='products/%Y/%m/', blank=True)
     title_2 = models.CharField(max_length=128)
-    description_2 = models.TextField(max_length=256, blank=False)
+    description_2 = models.JSONField(max_length=512, blank=False)
     image_2 = models.ImageField(upload_to='products/%Y/%m/', blank=True)
     order = models.PositiveIntegerField(default=0)
     

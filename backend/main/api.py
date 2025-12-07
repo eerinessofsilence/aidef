@@ -115,10 +115,10 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         {
             'id': block.id,
             'title_1': block.title_1,
-            'description_1': block.description_1,
+            'description_1': block.description_1 or [],
             'image_1': _absolute_media_url(request, block.image_1),
             'title_2': block.title_2,
-            'description_2': block.description_2,
+            'description_2': block.description_2 or [],
             'image_2': _absolute_media_url(request, block.image_2),
             'order': block.order,
         }
