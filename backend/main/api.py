@@ -10,6 +10,7 @@ from .models import (
     ProductImage,
     ProductFeature,
     ProductSubFeature,
+    ProductTech,
 )
 
 def _absolute_media_url(request, image_field) -> str | None:
@@ -82,6 +83,18 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         for sub_feature in sub_features
     ]
 
+    tech_items: List[ProductTech] = list(product.tech.all())
+    data['technologies'] = [
+        {
+            'id': item.id,
+            'name': item.name,
+            'description': item.description,
+            'tags': item.tags or [],
+            'order': item.order,
+        }
+        for item in tech_items
+    ]
+
     return data
 
 
@@ -107,7 +120,8 @@ def item_detail_api(request, slug: str):
             .prefetch_related(
                 'features',
                 'sub_features',
-                'images'
+                'images',
+                'tech',
             )
             .get(slug=slug, available=True)
         )

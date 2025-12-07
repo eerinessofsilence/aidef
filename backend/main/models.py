@@ -1,5 +1,20 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
+
+
+def validate_tags_max_three(value):
+    if value is None:
+        return
+    if not isinstance(value, (list, tuple)):
+        raise ValidationError("Tags must be a list of strings.")
+    if len(value) > 3:
+        raise ValidationError("No more than 3 tags are allowed.")
+    for tag in value:
+        if not isinstance(tag, str):
+            raise ValidationError("Each tag must be a string.")
+        if len(tag) > 40:
+            raise ValidationError("Tag length must be 40 characters or less.")
 
 class Category(models.Model):
     name = models.CharField(max_length=120, unique=True)
@@ -107,3 +122,27 @@ class ProductSubFeature(models.Model):
         
     def __str__(self):
         return f"{self.product.name} — sub feature {self.pk}"
+    
+class ProductTech(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="tech",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=100)
+    description = models.TextField(max_length=256, blank=False)
+    tags = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="List of up to 3 badges for this tech item.",
+        validators=[validate_tags_max_three],
+    )
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product technology"
+        verbose_name_plural = "Product technology"
+        
+    def __str__(self):
+        return f"{self.product.name} — technology {self.pk}"
