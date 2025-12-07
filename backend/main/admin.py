@@ -8,6 +8,7 @@ from .models import (
     ProductTechnology,
     ProductFeatureBlock,
     ProductInfoBlock,
+    ProductCTABlock
 )
 
 
@@ -44,6 +45,12 @@ class ProductInfoBlockInline(admin.TabularInline):
     ordering = ("order",)
     fields = ("title_1", "description_1", "image_1", "title_2", "description_2", "image_2", "order")
 
+class ProductCTABlockInline(admin.TabularInline):
+    model = ProductCTABlock
+    extra = 1
+    ordering = ("order",)
+    fields = ("name", "title", "background_image", "has_button", "order")
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug')
@@ -58,4 +65,4 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('-is_featured', '-created_at')
-    inlines = [ProductImageInline, ProductFeatureInline, ProductSubFeatureInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline]
+    inlines = [ProductImageInline, ProductFeatureInline, ProductSubFeatureInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline]

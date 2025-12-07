@@ -12,7 +12,8 @@ from .models import (
     ProductSubFeature,
     ProductTechnology,
     ProductFeatureBlock,
-    ProductInfoBlock
+    ProductInfoBlock,
+    ProductCTABlock
 )
 
 def _absolute_media_url(request, image_field) -> str | None:
@@ -110,6 +111,7 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         }
         for block in feature_blocks
     ]
+    
     info_blocks: List[ProductInfoBlock] = list(product.info_blocks.all())
     data['info_blocks'] = [
         {
@@ -123,6 +125,19 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
             'order': block.order,
         }
         for block in info_blocks
+    ]
+    
+    cta_blocks: List[ProductCTABlock] = list(product.cta_blocks.all())
+    data['cta_blocks'] = [
+        {
+            'id': block.id,
+            'name': block.name,
+            'title': block.title,
+            'background_image': _absolute_media_url(request, block.background_image),
+            'has_button': block.has_button,
+            'order': block.order,
+        }
+        for block in cta_blocks
     ]
 
     return data
@@ -154,6 +169,7 @@ def item_detail_api(request, slug: str):
                 'technologies',
                 'feature_blocks',
                 'info_blocks',
+                'cta_blocks',
             )
             .get(slug=slug, available=True)
         )

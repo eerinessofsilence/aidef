@@ -189,3 +189,23 @@ class ProductInfoBlock(models.Model):
         
     def __str__(self):
         return f"{self.product.name} — info block {self.pk}"
+
+class ProductCTABlock(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="cta_blocks",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=128, blank=False)
+    background_image = models.ImageField(upload_to='products/%Y/%m/', blank=True)
+    has_button = models.BooleanField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product CTA block"
+        verbose_name_plural = "Product CTA blocks"
+        
+    def __str__(self):
+        return f"{self.product.name} — CTA block {self.pk}"
