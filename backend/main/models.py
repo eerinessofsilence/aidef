@@ -147,22 +147,45 @@ class ProductTechnology(models.Model):
     def __str__(self):
         return f"{self.product.name} — technology {self.pk}"
     
-class ProductHeroFeatureBlock(models.Model):
+class ProductFeatureBlock(models.Model):
     product = models.ForeignKey(
         Product,
-        related_name="hero_feature_blocks",
+        related_name="feature_blocks",
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=256, blank=False)
     background_image = models.ImageField(upload_to='products/%Y/%m/', blank=True)
+    with_logo = models.BooleanField(blank=False)
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
         ordering = ('order',)
-        verbose_name = "Product hero feature block"
-        verbose_name_plural = "Product hero feature blocks"
+        verbose_name = "Product feature block"
+        verbose_name_plural = "Product feature blocks"
         
     def __str__(self):
-        return f"{self.product.name} — hero feature block {self.pk}"
+        return f"{self.product.name} — feature block {self.pk}"
+    
+class ProductInfoBlock(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="info_blocks",
+        on_delete=models.CASCADE,
+    )
+    title_1 = models.CharField(max_length=128)
+    description_1 = models.TextField(max_length=256, blank=False)
+    image_1 = models.ImageField(upload_to='products/%Y/%m/', blank=True)
+    title_2 = models.CharField(max_length=128)
+    description_2 = models.TextField(max_length=256, blank=False)
+    image_2 = models.ImageField(upload_to='products/%Y/%m/', blank=True)
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product info block"
+        verbose_name_plural = "Product info blocks"
+        
+    def __str__(self):
+        return f"{self.product.name} — info block {self.pk}"
