@@ -46,12 +46,24 @@ interface ProductTechnology {
   order?: number | null;
 }
 
-interface ProductHeroFeatureBlock {
+interface ProductFeatureBlock {
   id: number;
   name: string;
   title: string;
   description: string;
   background_image: string | null;
+  with_logo: boolean;
+  order?: number | null;
+}
+
+interface ProductInfoBlock {
+  id: number;
+  title_1: string;
+  description_1: Array<string>;
+  image_1: string;
+  title_2: string;
+  description_2: Array<string>;
+  image_2: string;
   order?: number | null;
 }
 
@@ -63,7 +75,8 @@ interface ProductDetail extends Product {
   features?: ProductFeature[];
   sub_features?: ProductSubFeature[];
   technologies?: ProductTechnology[];
-  hero_feature_blocks?: ProductHeroFeatureBlock[];
+  feature_blocks?: ProductFeatureBlock[];
+  info_blocks?: ProductInfoBlock[];
 }
 
 export default function ProductDetail() {
@@ -179,8 +192,17 @@ export default function ProductDetail() {
     );
   }, [productDetail]);
 
-  const productHeroFeatureBlocks = useMemo(() => {
-    const blocks = productDetail?.hero_feature_blocks ?? [];
+  const productFeatureBlocks = useMemo(() => {
+    const blocks = productDetail?.feature_blocks ?? [];
+    return [...blocks].sort(
+      (a, b) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+    );
+  }, [productDetail]);
+
+  const productInfoBlocks = useMemo(() => {
+    const blocks = productDetail?.info_blocks ?? [];
     return [...blocks].sort(
       (a, b) =>
         (a.order ?? Number.MAX_SAFE_INTEGER) -
@@ -430,144 +452,134 @@ export default function ProductDetail() {
             </div>
           </section>
         ) : null}
-        {productHeroFeatureBlocks.length > 0
-          ? productHeroFeatureBlocks.map((block) => (
-              <section
-                key={block.id}
-                className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end px-5 ${
-                  block.background_image
-                    ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
-                    : ""
-                }`}
-                style={
-                  block.background_image
-                    ? { backgroundImage: `url(${block.background_image})` }
-                    : undefined
-                }
-              >
-                <ScrollReveal
-                  amount={0.35}
-                  className="container mx-auto space-y-5 px-10 pb-12.5 max-xl:px-5 max-md:space-y-4 max-md:text-center lg:pb-25"
+        {productFeatureBlocks.length > 0
+          ? productFeatureBlocks.map((block) =>
+              !block.with_logo ? (
+                <section
+                  key={block.id}
+                  className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end px-5 ${
+                    block.background_image
+                      ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                      : ""
+                  }`}
+                  style={
+                    block.background_image
+                      ? { backgroundImage: `url(${block.background_image})` }
+                      : undefined
+                  }
                 >
-                  <div>
-                    <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                      {block.name}
-                    </span>
+                  <ScrollReveal
+                    amount={0.35}
+                    className="container mx-auto space-y-5 px-10 pb-12.5 max-xl:px-5 max-md:space-y-4 max-md:text-center lg:pb-25"
+                  >
+                    <div>
+                      <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                        {block.name}
+                      </span>
+                    </div>
+                    <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                      {block.title}
+                    </h1>
+                    <p className="text-foreground/70 text-lg max-md:text-base">
+                      {block.description}
+                    </p>
+                  </ScrollReveal>
+                </section>
+              ) : (
+                <section className="container mx-auto py-16 max-sm:py-12">
+                  <ScrollReveal
+                    amount={0.25}
+                    className="flex items-center justify-between px-10 max-xl:px-5 max-md:flex-col max-md:space-y-10"
+                  >
+                    <div className="max-md:text-center">
+                      <p className="tracking-wider uppercase">{block.name}</p>
+                      <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
+                        {block.title}
+                      </h1>
+                      <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
+                        {block.description}
+                      </p>
+                    </div>
+                    <div>
+                      <img
+                        src="/focus-areas-core.svg"
+                        className="mx-10 w-60 max-md:w-50 max-sm:w-40"
+                        alt=""
+                      />
+                    </div>
+                  </ScrollReveal>
+                </section>
+              ),
+            )
+          : null}
+        {productInfoBlocks.length > 0
+          ? productInfoBlocks.map((block) => (
+              <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
+                <div className="container m-auto grid grid-cols-1 gap-12 px-15 py-12 max-xl:px-10 max-sm:py-10">
+                  <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                    <ScrollReveal
+                      amount={0.25}
+                      className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
+                    >
+                      <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
+                        {block.title_1}
+                      </h1>
+                      <ul className="space-y-3 text-black">
+                        {block.description_1.map((tag) => (
+                          <li className="flex max-w-[420px] items-center gap-3">
+                            <span className="text-lg max-md:text-base">
+                              {tag}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </ScrollReveal>
+                    <ScrollReveal
+                      amount={0.25}
+                      className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
+                    >
+                      <img
+                        src={block.image_1}
+                        alt=""
+                        className="w-full object-contain"
+                      />
+                    </ScrollReveal>
                   </div>
-                  <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                    {block.title}
-                  </h1>
-                  <p className="text-foreground/70 text-lg max-md:text-base">
-                    {block.description}
-                  </p>
-                </ScrollReveal>
+                  <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
+                    <ScrollReveal
+                      amount={0.25}
+                      delay={0.06}
+                      className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
+                    >
+                      <img
+                        src={block.image_2}
+                        alt=""
+                        className="w-full object-contain"
+                      />
+                    </ScrollReveal>
+                    <ScrollReveal
+                      amount={0.25}
+                      delay={0.12}
+                      className="flex flex-col justify-center gap-4 text-left"
+                    >
+                      <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
+                        {block.title_2}
+                      </h1>
+                      <ul className="space-y-3 text-black">
+                        {block.description_2.map((tag) => (
+                          <li className="flex max-w-[420px] items-center gap-3">
+                            <span className="text-lg max-md:text-base">
+                              {tag}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </ScrollReveal>
+                  </div>
+                </div>
               </section>
             ))
           : null}
-        <section className="container mx-auto py-16 max-sm:py-12">
-          <ScrollReveal
-            amount={0.25}
-            className="flex items-center justify-between px-10 max-xl:px-5 max-md:flex-col max-md:space-y-10"
-          >
-            <div className="max-md:text-center">
-              <p className="tracking-wider uppercase">Characteristics</p>
-              <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
-                Multipurpose Assault
-              </h1>
-              <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
-                The AX2ng KRAKATIT is capable of attack high-value ground
-                targets as well as aerial targets, including UAVs flying up to
-                300 km/h and helicopters. This makes the AX2ng KRAKATIT a
-                versatile military platform.
-              </p>
-            </div>
-            <div>
-              <img
-                src="/focus-areas-core.svg"
-                className="mx-10 w-60 max-md:w-50 max-sm:w-40"
-                alt=""
-              />
-            </div>
-          </ScrollReveal>
-        </section>
-        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-          <div className="container m-auto grid grid-cols-1 gap-12 px-15 py-12 max-xl:px-10 max-sm:py-10">
-            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-              <ScrollReveal
-                amount={0.25}
-                className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
-              >
-                <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
-                  Supportive firing capability to
-                </h1>
-                <ul className="space-y-3 text-black">
-                  <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="text-lg max-md:text-base">
-                      Land force fire units (mechanized, motorized, infantry,
-                      artillery barrel, artillery mortar …)
-                    </span>
-                  </li>
-                  <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="text-lg max-md:text-base">
-                      Special force units.
-                    </span>
-                  </li>
-                </ul>
-              </ScrollReveal>
-              <ScrollReveal
-                amount={0.25}
-                delay={0.08}
-                className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
-              >
-                <img
-                  src="/drone-product-detail-1.png"
-                  alt=""
-                  className="w-full object-contain"
-                />
-              </ScrollReveal>
-            </div>
-            <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
-              <ScrollReveal
-                amount={0.25}
-                delay={0.06}
-                className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
-              >
-                <img
-                  src="/drone-product-detail-2.png"
-                  alt=""
-                  className="w-full object-contain"
-                />
-              </ScrollReveal>
-              <ScrollReveal
-                amount={0.25}
-                delay={0.12}
-                className="flex flex-col justify-center gap-4 text-left"
-              >
-                <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
-                  Wherever and whenever the operational use of the main weapons
-                  is tactically impossible, inappropriate or disadvantageous:
-                </h1>
-                <ul className="space-y-3 text-black">
-                  <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="text-lg max-md:text-base">
-                      Long time preparation of firing position.
-                    </span>
-                  </li>
-                  <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="text-lg max-md:text-base">
-                      Firing preparation time
-                    </span>
-                  </li>
-                  <li className="flex max-w-[420px] items-center gap-3">
-                    <span className="text-lg max-md:text-base">
-                      Unmasking effects
-                    </span>
-                  </li>
-                </ul>
-              </ScrollReveal>
-            </div>
-          </div>
-        </section>
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
           <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
             <ScrollReveal
