@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import type { LucideIcon } from "lucide-react";
-import { Camera, ChevronLeft, ChevronRight, Layers, Radio } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
@@ -39,6 +38,14 @@ interface ProductSubFeature {
   order?: number | null;
 }
 
+interface ProductTech {
+  id: number;
+  name: string;
+  description: string;
+  tags: Array<string>;
+  order?: number | null;
+}
+
 interface ProductDetail extends Product {
   specs?: string | null;
   created_at?: string;
@@ -46,36 +53,8 @@ interface ProductDetail extends Product {
   images?: ProductImage[];
   features?: ProductFeature[];
   sub_features?: ProductSubFeature[];
+  technologies?: ProductTech[];
 }
-
-const techFocus: Array<{
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  tags: string[];
-}> = [
-  {
-    title: "HorizonLock Imaging",
-    description:
-      "8K dual-native ISO capture with cinematic roll compensation keeps every frame level, even in 30° gusts.",
-    icon: Camera,
-    tags: ["Night HDR", "10-bit LOG"],
-  },
-  {
-    title: "SkyShield Link",
-    description:
-      "Encrypted multi-node transmission with spectrum agility mirrors DJI's flagship rock-solid downlink reliability.",
-    icon: Radio,
-    tags: ["AES-256", "Mesh-ready"],
-  },
-  {
-    title: "OmniSense Matrix",
-    description:
-      "Neural obstacle mapping + terrain following for confident low-altitude runs through complex industrial sites.",
-    icon: Layers,
-    tags: ["360° lidar", "Subject track"],
-  },
-];
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -175,6 +154,15 @@ export default function ProductDetail() {
   const productSubFeatures = useMemo(() => {
     const sub_features = productDetail?.sub_features ?? [];
     return [...sub_features].sort(
+      (a, b) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+    );
+  }, [productDetail]);
+
+  const productTechnologies = useMemo(() => {
+    const technologies = productDetail?.technologies ?? [];
+    return [...technologies].sort(
       (a, b) =>
         (a.order ?? Number.MAX_SAFE_INTEGER) -
           (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
@@ -374,53 +362,55 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        <section className="space-y-8 px-10 py-16 max-xl:px-5 max-sm:py-12">
-          <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <ScrollReveal amount={0.25}>
-              <div>
-                <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                  Technology Focus
-                </p>
-                <h2 className="text-3xl font-semibold">
-                  DJI-level polish, tuned for rugged autonomy.
-                </h2>
-                <p className="text-foreground/70 mt-2 max-w-2xl text-sm">
-                  These capability stacks mirror the Mavic series feel:
-                  responsive sticks, cinematic brakes, and intuitive fail-safes.
-                </p>
-              </div>
-            </ScrollReveal>
-          </header>
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {techFocus.map((feature, index) => (
-              <ScrollReveal
-                key={feature.title}
-                amount={0.2}
-                delay={0.06 * index}
-              >
-                <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/30">
-                  <feature.icon className="h-8 w-8 text-white/80" />
-                  <h3 className="mt-6 text-2xl font-semibold">
-                    {feature.title}
-                  </h3>
-                  <p className="text-foreground/70 mt-3 text-sm">
-                    {feature.description}
+        {productTechnologies.length > 0 ? (
+          <section className="space-y-8 px-10 py-16 max-xl:px-5 max-sm:py-12">
+            <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <ScrollReveal amount={0.25}>
+                <div>
+                  <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                    Technology Focus
                   </p>
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {feature.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </article>
+                  <h2 className="text-3xl font-semibold">
+                    Production-grade polish, tuned for rugged autonomy.
+                  </h2>
+                  <p className="text-foreground/70 mt-2 max-w-2xl">
+                    Across UAVs, UGVs, and GCS, the control stack delivers
+                    precise inputs, smooth dynamics, and intuitive safety layers
+                    that feel instantly familiar to operators.
+                  </p>
+                </div>
               </ScrollReveal>
-            ))}
-          </div>
-        </section>
+            </header>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+              {productTechnologies.map((technology) => (
+                <ScrollReveal
+                  key={technology.id}
+                  amount={0.2}
+                  delay={0.06 * technology.id}
+                >
+                  <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/30">
+                    <h3 className="text-2xl font-semibold">
+                      {technology.name}
+                    </h3>
+                    <p className="text-foreground/70 mt-3 text-sm">
+                      {technology.description}
+                    </p>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {technology.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                </ScrollReveal>
+              ))}
+            </div>
+          </section>
+        ) : null}
         <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/96 h-[70vh] w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center px-5 max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
           <ScrollReveal
             amount={0.25}
