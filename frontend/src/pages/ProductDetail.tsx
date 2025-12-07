@@ -67,6 +67,15 @@ interface ProductInfoBlock {
   order?: number | null;
 }
 
+interface ProductCTABlock {
+  id: number;
+  name: string;
+  title: string;
+  background_image: string;
+  has_button: boolean;
+  order?: number | null;
+}
+
 interface ProductDetail extends Product {
   specs?: string | null;
   created_at?: string;
@@ -77,6 +86,7 @@ interface ProductDetail extends Product {
   technologies?: ProductTechnology[];
   feature_blocks?: ProductFeatureBlock[];
   info_blocks?: ProductInfoBlock[];
+  cta_blocks?: ProductCTABlock[];
 }
 
 export default function ProductDetail() {
@@ -203,6 +213,15 @@ export default function ProductDetail() {
 
   const productInfoBlocks = useMemo(() => {
     const blocks = productDetail?.info_blocks ?? [];
+    return [...blocks].sort(
+      (a, b) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+    );
+  }, [productDetail]);
+
+  const productCTABlocks = useMemo(() => {
+    const blocks = productDetail?.cta_blocks ?? [];
     return [...blocks].sort(
       (a, b) =>
         (a.order ?? Number.MAX_SAFE_INTEGER) -
@@ -580,52 +599,41 @@ export default function ProductDetail() {
               </section>
             ))
           : null}
-        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
-            <ScrollReveal
-              amount={0.25}
-              className="space-y-5 max-md:space-y-4 max-md:text-center"
-            >
-              <div>
-                <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                  Booster
-                </span>
-              </div>
-              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
-                AX2NG KRAKATIT
-              </h1>
-            </ScrollReveal>
-          </div>
-        </section>
-        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-3.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
-            <ScrollReveal
-              amount={0.25}
-              className="space-y-5 max-md:space-y-4 max-md:text-center"
-            >
-              <div>
-                <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                  Swarm system
-                </span>
-              </div>
-              <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
-                AX2NG KRAKATIT
-              </h1>
-            </ScrollReveal>
-            <ScrollReveal
-              amount={0.2}
-              delay={0.1}
-              className="flex max-md:justify-center"
-            >
-              <a
-                onClick={openContactModal}
-                className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
-              >
-                Contact Us
-              </a>
-            </ScrollReveal>
-          </div>
-        </section>
+        {productCTABlocks.length > 0
+          ? productCTABlocks.map((block) => (
+              <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+                <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
+                  <ScrollReveal
+                    amount={0.25}
+                    className="space-y-5 max-md:space-y-4 max-md:text-center"
+                  >
+                    <div>
+                      <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                        {block.name}
+                      </span>
+                    </div>
+                    <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
+                      {block.title}
+                    </h1>
+                    {block.has_button ? (
+                      <ScrollReveal
+                        amount={0.2}
+                        delay={0.1}
+                        className="flex max-md:justify-center"
+                      >
+                        <a
+                          onClick={openContactModal}
+                          className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
+                        >
+                          Contact Us
+                        </a>
+                      </ScrollReveal>
+                    ) : null}
+                  </ScrollReveal>
+                </div>
+              </section>
+            ))
+          : null}
         <section className="my-16 space-y-6 py-10 max-sm:py-8">
           <ScrollReveal delay={0.12} amount={0.3}>
             <Carousel
