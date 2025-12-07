@@ -38,11 +38,20 @@ interface ProductSubFeature {
   order?: number | null;
 }
 
-interface ProductTech {
+interface ProductTechnology {
   id: number;
   name: string;
   description: string;
   tags: Array<string>;
+  order?: number | null;
+}
+
+interface ProductHeroFeatureBlock {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  background_image: string | null;
   order?: number | null;
 }
 
@@ -53,7 +62,8 @@ interface ProductDetail extends Product {
   images?: ProductImage[];
   features?: ProductFeature[];
   sub_features?: ProductSubFeature[];
-  technologies?: ProductTech[];
+  technologies?: ProductTechnology[];
+  hero_feature_blocks?: ProductHeroFeatureBlock[];
 }
 
 export default function ProductDetail() {
@@ -163,6 +173,15 @@ export default function ProductDetail() {
   const productTechnologies = useMemo(() => {
     const technologies = productDetail?.technologies ?? [];
     return [...technologies].sort(
+      (a, b) =>
+        (a.order ?? Number.MAX_SAFE_INTEGER) -
+          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+    );
+  }, [productDetail]);
+
+  const productHeroFeatureBlocks = useMemo(() => {
+    const blocks = productDetail?.hero_feature_blocks ?? [];
+    return [...blocks].sort(
       (a, b) =>
         (a.order ?? Number.MAX_SAFE_INTEGER) -
           (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
@@ -411,26 +430,40 @@ export default function ProductDetail() {
             </div>
           </section>
         ) : null}
-        <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/96 h-[70vh] w-screen items-end bg-[url(/pdetail-bg-img-1.png)] bg-cover bg-center px-5 max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
-          <ScrollReveal
-            amount={0.25}
-            className="container mx-auto space-y-5 px-10 pb-12.5 max-xl:px-5 max-md:space-y-4 max-md:text-center lg:pb-25"
-          >
-            <div>
-              <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                Charasteristics
-              </span>
-            </div>
-            <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-              Jet-Powered Speed
-            </h1>
-            <p className="text-foreground/70 text-lg max-md:text-base">
-              The jet propulsion engine provides high speed and agility,
-              enabling the AX2ng KRAKATIT to effectively respond to dynamic
-              combat situations and reach its targets rapidly.
-            </p>
-          </ScrollReveal>
-        </section>
+        {productHeroFeatureBlocks.length > 0
+          ? productHeroFeatureBlocks.map((block) => (
+              <section
+                key={block.id}
+                className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end px-5 ${
+                  block.background_image
+                    ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                    : ""
+                }`}
+                style={
+                  block.background_image
+                    ? { backgroundImage: `url(${block.background_image})` }
+                    : undefined
+                }
+              >
+                <ScrollReveal
+                  amount={0.35}
+                  className="container mx-auto space-y-5 px-10 pb-12.5 max-xl:px-5 max-md:space-y-4 max-md:text-center lg:pb-25"
+                >
+                  <div>
+                    <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                      {block.name}
+                    </span>
+                  </div>
+                  <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                    {block.title}
+                  </h1>
+                  <p className="text-foreground/70 text-lg max-md:text-base">
+                    {block.description}
+                  </p>
+                </ScrollReveal>
+              </section>
+            ))
+          : null}
         <section className="container mx-auto py-16 max-sm:py-12">
           <ScrollReveal
             amount={0.25}
