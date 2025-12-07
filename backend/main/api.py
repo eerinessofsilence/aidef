@@ -10,7 +10,8 @@ from .models import (
     ProductImage,
     ProductFeature,
     ProductSubFeature,
-    ProductTech,
+    ProductTechnology,
+    ProductHeroFeatureBlock
 )
 
 def _absolute_media_url(request, image_field) -> str | None:
@@ -83,16 +84,29 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         for sub_feature in sub_features
     ]
 
-    tech_items: List[ProductTech] = list(product.tech.all())
+    technologies: List[ProductTechnology] = list(product.technologies.all())
     data['technologies'] = [
         {
-            'id': item.id,
-            'name': item.name,
-            'description': item.description,
-            'tags': item.tags or [],
-            'order': item.order,
+            'id': technology.id,
+            'name': technology.name,
+            'description': technology.description,
+            'tags': technology.tags or [],
+            'order': technology.order,
         }
-        for item in tech_items
+        for technology in technologies
+    ]
+    
+    hero_feature_blocks: List[ProductHeroFeatureBlock] = list(product.hero_feature_blocks.all())
+    data['hero_feature_blocks'] = [
+        {
+            'id': block.id,
+            'name': block.name,
+            'title': block.title,
+            'description': block.description,
+            'background_image': _absolute_media_url(request, block.background_image),
+            'order': block.order,
+        }
+        for block in hero_feature_blocks
     ]
 
     return data
@@ -121,7 +135,8 @@ def item_detail_api(request, slug: str):
                 'features',
                 'sub_features',
                 'images',
-                'tech',
+                'technologies',
+                'hero_feature_blocks',
             )
             .get(slug=slug, available=True)
         )

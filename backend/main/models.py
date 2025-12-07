@@ -123,10 +123,10 @@ class ProductSubFeature(models.Model):
     def __str__(self):
         return f"{self.product.name} — sub feature {self.pk}"
     
-class ProductTech(models.Model):
+class ProductTechnology(models.Model):
     product = models.ForeignKey(
         Product,
-        related_name="tech",
+        related_name="technologies",
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=100)
@@ -134,7 +134,7 @@ class ProductTech(models.Model):
     tags = models.JSONField(
         default=list,
         blank=True,
-        help_text="List of up to 3 badges for this tech item.",
+        help_text="List of up to 3 badges for this technology.",
         validators=[validate_tags_max_three],
     )
     order = models.PositiveIntegerField(default=0)
@@ -146,3 +146,23 @@ class ProductTech(models.Model):
         
     def __str__(self):
         return f"{self.product.name} — technology {self.pk}"
+    
+class ProductHeroFeatureBlock(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="hero_feature_blocks",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    description = models.TextField(max_length=256, blank=False)
+    background_image = models.ImageField(upload_to='products/%Y/%m/', blank=True)
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product hero feature block"
+        verbose_name_plural = "Product hero feature blocks"
+        
+    def __str__(self):
+        return f"{self.product.name} — hero feature block {self.pk}"
