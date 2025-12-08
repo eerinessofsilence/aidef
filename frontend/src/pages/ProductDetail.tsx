@@ -324,7 +324,7 @@ export default function ProductDetail() {
             ) : (
               <img
                 src="/hero-bg-1.png"
-                className="absolute inset-0 h-full w-full rounded-3xl object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
                 alt={heroProduct?.name ?? "Product hero"}
               />
             )}
@@ -347,80 +347,89 @@ export default function ProductDetail() {
             </div>
           ) : null}
           {detailStatus === "error" && detailError ? (
-            <p className="mt-3 text-sm text-red-200">{detailError}</p>
+            <p className="mt-3 px-5 text-lg font-medium text-red-300">
+              {detailError}
+            </p>
           ) : null}
         </div>
       </ScrollReveal>
       <div className="px-5">
-        <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
-          <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-          <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-          <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
-              <p className="text-sm tracking-wide text-white/50 uppercase">
-                Characteristics
-              </p>
-              <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                About product
-              </h1>
-              <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                {heroProduct?.description ?? "Aerial Platform"}
-              </p>
-              <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                {productFeatures.map((feature) => (
-                  <div
-                    key={feature.id}
-                    className="border-border/25 bg-foreground/5 space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
-                  >
-                    <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                      {feature.name}
-                    </p>
-                    <p className="text-3xl font-semibold max-md:text-2xl">
-                      {feature.value}
-                    </p>
-                    <p className="text-foreground/70">{feature.description}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="max-lg:hidden">
-                <a
-                  onClick={openContactModal}
-                  className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-                >
-                  Contact Us
-                </a>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal amount={0.35} className="relative max-lg:col-span-2">
-              <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
-              <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                  {productSubFeatures.map((sub_feature) => (
+        {productDetail ? (
+          <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
+            <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
+            <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
+            <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+              <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
+                <p className="text-sm tracking-wide text-white/50 uppercase">
+                  Characteristics
+                </p>
+                <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
+                  About product
+                </h1>
+                <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
+                  {heroProduct?.description ?? "Aerial Platform"}
+                </p>
+                <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                  {productFeatures.map((feature) => (
                     <div
-                      key={sub_feature.id}
-                      className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
+                      key={feature.id}
+                      className="border-border/25 bg-foreground/5 space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
                     >
-                      <h3 className="text-lg font-semibold">
-                        {sub_feature.name}
-                      </h3>
+                      <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                        {feature.name}
+                      </p>
+                      <p className="text-3xl font-semibold max-md:text-2xl">
+                        {feature.value}
+                      </p>
                       <p className="text-foreground/70">
-                        {sub_feature.description}
+                        {feature.description}
                       </p>
                     </div>
                   ))}
                 </div>
-              </div>
-            </ScrollReveal>
-            <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-              <a
-                onClick={openContactModal}
-                className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
+                <div className="max-lg:hidden">
+                  <a
+                    onClick={openContactModal}
+                    className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                  >
+                    Contact Us
+                  </a>
+                </div>
+              </ScrollReveal>
+              <ScrollReveal
+                amount={0.35}
+                className="relative max-lg:col-span-2"
               >
-                Contact Us
-              </a>
+                <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
+                <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
+                  <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                    {productSubFeatures.map((sub_feature) => (
+                      <div
+                        key={sub_feature.id}
+                        className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
+                      >
+                        <h3 className="text-lg font-semibold">
+                          {sub_feature.name}
+                        </h3>
+                        <p className="text-foreground/70">
+                          {sub_feature.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </ScrollReveal>
+              <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
+                <a
+                  onClick={openContactModal}
+                  className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
+                >
+                  Contact Us
+                </a>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {productTechnologies.length > 0 ? (
           <section className="space-y-8 px-10 py-16 max-xl:px-5 max-sm:py-12">

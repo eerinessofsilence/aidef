@@ -481,7 +481,7 @@ export default function Header() {
             {LANGUAGES.map((item) => (
               <a
                 key={item.id}
-                className="group flex items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
+                className="group flex cursor-pointer items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
               >
                 <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
                   <img src={item.img} className="h-7 w-7" />
@@ -612,7 +612,7 @@ export default function Header() {
                       key={language.id}
                       type="button"
                       onClick={handleMobileMenuLinkClick}
-                      className="text-foreground/80 hover:text-foreground/50 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
+                      className="text-foreground/80 hover:text-foreground/50 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 shadow-inner shadow-black/20">
                         <img src={language.img} className="h-6 w-6" alt="" />
