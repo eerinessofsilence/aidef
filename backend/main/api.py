@@ -10,6 +10,7 @@ from .models import (
     ProductImage,
     ProductFeature,
     ProductSubFeature,
+    ProductGallery,
     ProductTechnology,
     ProductFeatureBlock,
     ProductInfoBlock,
@@ -84,6 +85,18 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
             'order': sub_feature.order,
         }
         for sub_feature in sub_features
+    ]
+    
+    gallery: List[ProductGallery] = list(product.gallery.all())
+    data['gallery'] = [
+        {
+            'id': gallery_item.id,
+            'url': _absolute_media_url(request, gallery_item.image),
+            'alt': gallery_item.alt,
+            'order': gallery_item.order,
+        }
+        for gallery_item in gallery
+        if gallery_item.image
     ]
 
     technologies: List[ProductTechnology] = list(product.technologies.all())
@@ -166,6 +179,7 @@ def item_detail_api(request, slug: str):
                 'features',
                 'sub_features',
                 'images',
+                'gallery',
                 'technologies',
                 'feature_blocks',
                 'info_blocks',

@@ -1,11 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const MODAL_TRANSITION_MS = 220;
 
-const galleryImages = [
+export type GalleryImage = {
+  src: string;
+  alt?: string | null;
+};
+
+const defaultGalleryImages = [
   {
     src: "./gallery-1.png",
     alt: "",
@@ -32,7 +37,15 @@ const galleryImages = [
   },
 ] as const;
 
-export default function GallerySection() {
+type GallerySectionProps = {
+  images?: Array<GalleryImage>;
+};
+
+export default function GallerySection({ images }: GallerySectionProps) {
+  const galleryImages = useMemo(
+    () => (images === undefined ? defaultGalleryImages : images),
+    [images],
+  );
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -119,13 +132,16 @@ export default function GallerySection() {
 
   useEffect(() => () => clearCloseTimeout(), [clearCloseTimeout]);
 
+  useEffect(() => {
+    setActiveIndex(null);
+    setIsModalVisible(false);
+    clearCloseTimeout();
+  }, [galleryImages, clearCloseTimeout]);
+
   const activeImage = activeIndex !== null ? galleryImages[activeIndex] : null;
 
   return (
-    <section
-      id="gallery-section"
-      className="bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat py-16 max-[1281px]:px-10 max-lg:py-8"
-    >
+    <section id="gallery-section" className="py-16 max-lg:py-8">
       <div className="container mx-auto">
         <div className="flex w-full flex-col gap-10 max-lg:gap-5">
           <div className="space-y-6 max-lg:space-y-3">
@@ -133,19 +149,18 @@ export default function GallerySection() {
               Characteristics
             </p>
             <h2 className="text-text text-6xl font-bold capitalize max-lg:text-5xl max-md:text-4xl">
-              Aerial perspectives from recent operations
+              Highlights from recent projects
             </h2>
             <p className="text-text/70 max-w-3xl text-xl max-lg:text-lg">
-              Browse a curated selection of sorties, showcasing the clarity,
-              stability, and coverage of our autonomous fleet across challenging
-              environments.
+              Browse a curated selection of work, showcasing clarity,
+              reliability, and performance across a range of environments.
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-2 max-lg:grid-cols-2 max-md:grid-cols-1">
             {galleryImages.map((image, index) => (
               <button
-                key={image.alt}
+                key={`${image.src}-${index}`}
                 type="button"
                 onClick={() => openModal(index)}
                 className="group flex w-full flex-col gap-3 text-left text-[#ffffff] transition-transform duration-300 hover:-translate-y-1"
@@ -153,10 +168,16 @@ export default function GallerySection() {
                 <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-[#3a414d] transition-transform duration-500 group-hover:scale-[1.02]">
                   <img
                     src={image.src}
-                    alt={image.alt}
+                    alt={image.alt ?? "Gallery image"}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="pointer-events-none absolute inset-x-4 bottom-4 text-left opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <p className="text-sm leading-tight font-medium text-white">
+                      {image.alt ?? "View image"}
+                    </p>
+                  </div>
                 </div>
               </button>
             ))}
@@ -204,11 +225,7 @@ export default function GallerySection() {
               }`}
             >
               <div className="relative w-full overflow-hidden rounded-2xl">
-                <img
-                  src={activeImage.src}
-                  alt={activeImage.alt}
-                  className="w-full object-cover"
-                />
+                <img src={activeImage.src} className="w-full object-cover" />
               </div>
             </div>
           </div>

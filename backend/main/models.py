@@ -123,6 +123,25 @@ class ProductSubFeature(models.Model):
     def __str__(self):
         return f"{self.product.name} — sub feature {self.pk}"
     
+class ProductGallery(models.Model):
+    product = models.ForeignKey(
+        Product,
+        related_name="gallery",
+        on_delete=models.CASCADE,
+    )
+    
+    image = models.ImageField(upload_to='products/%Y/%m/', blank=False)
+    alt = models.CharField(max_length=255, blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product gallery image"
+        verbose_name_plural = "Product gallery images"
+
+    def __str__(self):
+        return f"{self.product.name} — gallery {self.pk}"
+    
 class ProductTechnology(models.Model):
     product = models.ForeignKey(
         Product,

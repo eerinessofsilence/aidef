@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
+import GallerySection from "../../components/gallery-section";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
 
 interface Product {
@@ -28,6 +29,13 @@ interface ProductFeature {
   name: string;
   value: string;
   description: string;
+  order?: number | null;
+}
+
+interface ProductGallery {
+  id: number;
+  url: string | null;
+  alt?: string | null;
   order?: number | null;
 }
 
@@ -83,6 +91,7 @@ interface ProductDetail extends Product {
   images?: ProductImage[];
   features?: ProductFeature[];
   sub_features?: ProductSubFeature[];
+  gallery?: ProductGallery[];
   technologies?: ProductTechnology[];
   feature_blocks?: ProductFeatureBlock[];
   info_blocks?: ProductInfoBlock[];
@@ -191,6 +200,19 @@ export default function ProductDetail() {
         (a.order ?? Number.MAX_SAFE_INTEGER) -
           (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
     );
+  }, [productDetail]);
+
+  const productGallery = useMemo(() => {
+    const gallery = productDetail?.gallery ?? [];
+    return [...gallery]
+      .filter((item): item is ProductGallery & { url: string } =>
+        Boolean(item.url),
+      )
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
 
   const productTechnologies = useMemo(() => {
@@ -429,6 +451,15 @@ export default function ProductDetail() {
               </div>
             </div>
           </section>
+        ) : null}
+
+        {productGallery.length > 0 ? (
+          <GallerySection
+            images={productGallery.map((item) => ({
+              src: item.url,
+              alt: item.alt ?? productDetail?.name ?? heroProduct?.name,
+            }))}
+          />
         ) : null}
 
         {productTechnologies.length > 0 ? (
