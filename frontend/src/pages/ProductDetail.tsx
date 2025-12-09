@@ -28,7 +28,7 @@ interface ProductFeature {
   id: number;
   name: string;
   value: string;
-  description: string;
+  description?: string;
   order?: number | null;
 }
 
@@ -42,15 +42,15 @@ interface ProductGallery {
 interface ProductSubFeature {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   order?: number | null;
 }
 
 interface ProductTechnology {
   id: number;
   name: string;
-  description: string;
-  tags: Array<string>;
+  description?: string;
+  tags?: Array<string>;
   order?: number | null;
 }
 
@@ -58,7 +58,7 @@ interface ProductFeatureBlock {
   id: number;
   name: string;
   title: string;
-  description: string;
+  description?: string;
   background_image: string | null;
   with_logo: boolean;
   order?: number | null;
@@ -67,10 +67,10 @@ interface ProductFeatureBlock {
 interface ProductInfoBlock {
   id: number;
   title_1: string;
-  description_1: Array<string>;
+  description_1?: Array<string> | null;
   image_1: string;
   title_2: string;
-  description_2: Array<string>;
+  description_2?: Array<string> | null;
   image_2: string;
   order?: number | null;
 }
@@ -403,9 +403,11 @@ export default function ProductDetail() {
                       <p className="text-3xl font-semibold max-md:text-2xl">
                         {feature.value}
                       </p>
-                      <p className="text-foreground/70">
-                        {feature.description}
-                      </p>
+                      {feature.description ? (
+                        <p className="text-foreground/70">
+                          {feature.description}
+                        </p>
+                      ) : null}
                     </div>
                   ))}
                 </div>
@@ -433,9 +435,11 @@ export default function ProductDetail() {
                         <h3 className="text-lg font-semibold">
                           {sub_feature.name}
                         </h3>
-                        <p className="text-foreground/70">
-                          {sub_feature.description}
-                        </p>
+                        {sub_feature.description ? (
+                          <p className="text-foreground/70">
+                            {sub_feature.description}
+                          </p>
+                        ) : null}
                       </div>
                     ))}
                   </div>
@@ -482,32 +486,39 @@ export default function ProductDetail() {
               </ScrollReveal>
             </header>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {productTechnologies.map((technology) => (
-                <ScrollReveal
-                  key={technology.id}
-                  amount={0.2}
-                  delay={0.06 * technology.id}
-                >
-                  <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/30">
-                    <h3 className="text-2xl font-semibold">
-                      {technology.name}
-                    </h3>
-                    <p className="text-foreground/70 mt-3 text-sm">
-                      {technology.description}
-                    </p>
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {technology.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </article>
-                </ScrollReveal>
-              ))}
+              {productTechnologies.map((technology) => {
+                const tags = technology.tags ?? [];
+                return (
+                  <ScrollReveal
+                    key={technology.id}
+                    amount={0.2}
+                    delay={0.06 * technology.id}
+                  >
+                    <article className="bg-secondary/30 text-foreground rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
+                      <h3 className="text-2xl font-semibold">
+                        {technology.name}
+                      </h3>
+                      {technology.description ? (
+                        <p className="text-foreground/70 mt-3 text-sm">
+                          {technology.description}
+                        </p>
+                      ) : null}
+                      {tags.length > 0 ? (
+                        <div className="mt-6 flex flex-wrap gap-2">
+                          {tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </article>
+                  </ScrollReveal>
+                );
+              })}
             </div>
           </section>
         ) : null}
@@ -572,72 +583,76 @@ export default function ProductDetail() {
             )
           : null}
         {productInfoBlocks.length > 0
-          ? productInfoBlocks.map((block) => (
-              <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-                <div className="container m-auto grid grid-cols-1 gap-12 px-15 py-12 max-xl:px-10 max-sm:py-10">
-                  <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                    <ScrollReveal
-                      amount={0.25}
-                      className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
-                    >
-                      <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
-                        {block.title_1}
-                      </h1>
-                      <ul className="space-y-3 text-black">
-                        {block.description_1.map((tag) => (
-                          <li className="flex max-w-[420px] items-center gap-3">
-                            <span className="text-lg max-md:text-base">
-                              {tag}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </ScrollReveal>
-                    <ScrollReveal
-                      amount={0.25}
-                      className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
-                    >
-                      <img
-                        src={block.image_1}
-                        alt=""
-                        className="w-full object-contain"
-                      />
-                    </ScrollReveal>
+          ? productInfoBlocks.map((block) => {
+              const description1 = block.description_1 ?? [];
+              const description2 = block.description_2 ?? [];
+              return (
+                <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
+                  <div className="container m-auto grid grid-cols-1 gap-12 px-15 py-12 max-xl:px-10 max-sm:py-10">
+                    <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                      <ScrollReveal
+                        amount={0.25}
+                        className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
+                      >
+                        <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
+                          {block.title_1}
+                        </h1>
+                        <ul className="space-y-3 text-black">
+                          {description1.map((tag) => (
+                            <li className="flex max-w-[420px] items-center gap-3">
+                              <span className="text-lg max-md:text-base">
+                                {tag}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollReveal>
+                      <ScrollReveal
+                        amount={0.25}
+                        className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
+                      >
+                        <img
+                          src={block.image_1}
+                          alt=""
+                          className="w-full object-contain"
+                        />
+                      </ScrollReveal>
+                    </div>
+                    <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
+                      <ScrollReveal
+                        amount={0.25}
+                        delay={0.06}
+                        className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
+                      >
+                        <img
+                          src={block.image_2}
+                          alt=""
+                          className="w-full object-contain"
+                        />
+                      </ScrollReveal>
+                      <ScrollReveal
+                        amount={0.25}
+                        delay={0.12}
+                        className="flex flex-col justify-center gap-4 text-left"
+                      >
+                        <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
+                          {block.title_2}
+                        </h1>
+                        <ul className="space-y-3 text-black">
+                          {description2.map((tag) => (
+                            <li className="flex max-w-[420px] items-center gap-3">
+                              <span className="text-lg max-md:text-base">
+                                {tag}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollReveal>
+                    </div>
                   </div>
-                  <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
-                    <ScrollReveal
-                      amount={0.25}
-                      delay={0.06}
-                      className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
-                    >
-                      <img
-                        src={block.image_2}
-                        alt=""
-                        className="w-full object-contain"
-                      />
-                    </ScrollReveal>
-                    <ScrollReveal
-                      amount={0.25}
-                      delay={0.12}
-                      className="flex flex-col justify-center gap-4 text-left"
-                    >
-                      <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
-                        {block.title_2}
-                      </h1>
-                      <ul className="space-y-3 text-black">
-                        {block.description_2.map((tag) => (
-                          <li className="flex max-w-[420px] items-center gap-3">
-                            <span className="text-lg max-md:text-base">
-                              {tag}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </ScrollReveal>
-                  </div>
-                </div>
-              </section>
-            ))
+                </section>
+              );
+            })
           : null}
         {productCTABlocks.length > 0
           ? productCTABlocks.map((block) => (
