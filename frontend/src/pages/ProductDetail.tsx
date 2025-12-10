@@ -494,7 +494,7 @@ export default function ProductDetail() {
                     amount={0.2}
                     delay={0.06 * technology.id}
                   >
-                    <article className="bg-secondary/30 text-foreground rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
+                    <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
                       <h3 className="text-2xl font-semibold">
                         {technology.name}
                       </h3>

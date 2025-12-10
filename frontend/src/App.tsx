@@ -6,11 +6,13 @@ import ProductDetail from "./pages/ProductDetail";
 import TermsOfCondition from "./pages/TermOfCondition";
 import Support from "./pages/Support";
 import ScrollToTop from "../components/scroll-to-top";
+import { CookieConsent } from "../components/cookie-consent";
 
 export default function App() {
   return (
     <>
       <ScrollToTop />
+      <CookieConsent />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />

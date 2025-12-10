@@ -35,14 +35,6 @@ export default function Footer() {
               </div>
               <div className="max-w-90">
                 <h1 className="text-foreground/50 font-bold uppercase">
-                  Prototype laboratory
-                </h1>
-                <p className="text-foreground/50 text-[15px]">
-                  Nádražná 75/2, 907 01 Myjava, Slovakia
-                </p>
-              </div>
-              <div className="max-w-90">
-                <h1 className="text-foreground/50 font-bold uppercase">
                   Headquarters & Development centre
                 </h1>
                 <p className="text-foreground/50 text-[15px]">

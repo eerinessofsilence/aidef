@@ -7,9 +7,9 @@ import { CONTACT_MODAL_EVENT } from "../lib/contact-modal";
 
 const NAV_LINKS = [
   { text: "Home", href: "/" },
+  { text: "Solutions", href: "#" },
   { text: "Products", href: "#", hasDropdown: true },
-  { text: "Solutions", href: "#", hasDropdown: true },
-  { text: "Technology", href: "#", hasDropdown: true },
+  { text: "Technology", href: "#" },
   { text: "Company", href: "#", hasDropdown: true },
   { text: "Support", href: "/support" },
   { text: "Contact", href: "#" },
@@ -45,10 +45,7 @@ type Item = {
   description?: string;
 };
 
-type Menus = Record<
-  "Products" | "Solutions" | "Technology" | "Company",
-  Item[]
->;
+type Menus = Record<"Products" | "Company", Item[]>;
 
 const DROPDOWN_MENUS: Menus = {
   Products: [
@@ -73,40 +70,10 @@ const DROPDOWN_MENUS: Menus = {
       href: "/products/ugv-150-dup",
       icon: "/products-5.png",
     },
-  ],
-  Solutions: [
     {
-      title: "Integration into military vehicles",
-      href: "#",
-      icon: "/solutions-1.svg",
-    },
-    {
-      title: "Aviation",
-      href: "#",
-      icon: "/solutions-2.svg",
-    },
-    {
-      title: "Security",
-      href: "#",
-      icon: "/solutions-3.svg",
-    },
-    {
-      title: "Defense",
-      href: "#",
-      icon: "/solutions-4.svg",
-    },
-  ],
-  Technology: [
-    {
-      title: "Propulsion (AD20PRO, jet engine systems)",
-      href: "#",
-      icon: "/technology-1.svg",
-    },
-    { title: "Electronics & Avionics", href: "#", icon: "/technology-2.svg" },
-    {
-      title: "C2, GCS & API integration",
-      href: "#",
-      icon: "/technology-3.svg",
+      title: "Electronic",
+      href: "/products/electronic",
+      icon: "/products-6.png",
     },
   ],
   Company: [
@@ -370,64 +337,6 @@ export default function Header() {
                           {item.title}
                         </h3>
                       </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          }
-
-          if (name === "Solutions") {
-            return (
-              <div
-                key={name}
-                onMouseEnter={handleDropdownEnter}
-                onMouseLeave={handleMouseLeave}
-                aria-hidden={!isOpen}
-                className={`absolute top-full right-0 left-1/7 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${transitionClasses} ${visibilityClasses}`}
-              >
-                <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
-                  {items.map((item) => (
-                    <Link
-                      key={item.title}
-                      to={item.href}
-                      className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
-                    >
-                      <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                        <img src={item.icon} className="h-8.5 w-8.5" alt="" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-black">
-                        {item.title}
-                      </h3>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          }
-
-          if (name === "Technology") {
-            return (
-              <div
-                key={name}
-                onMouseEnter={handleDropdownEnter}
-                onMouseLeave={handleMouseLeave}
-                aria-hidden={!isOpen}
-                className={`absolute top-full right-0 left-1/4 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${transitionClasses} ${visibilityClasses}`}
-              >
-                <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-7.5">
-                  {items.map((item) => (
-                    <Link
-                      key={item.title}
-                      to={item.href}
-                      className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
-                    >
-                      <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                        <img src={item.icon} className="h-8.5 w-8.5" alt="" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-black">
-                        {item.title}
-                      </h3>
                     </Link>
                   ))}
                 </div>
