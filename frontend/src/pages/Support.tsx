@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { ContactForm } from "../../components/ui/contact-form";
 
-const backgroundImages = [
-  "/hero-bg-1.png",
-  "/hero-bg-2.png",
-  "/hero-bg-3.png",
-  "/hero-bg-4.png",
-];
+const backgroundImages = ["/support-1.png", "/support-2.png", "/support-3.png"];
 
 export default function Support() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,6 +52,9 @@ export default function Support() {
             />
           ))}
         </div>
+        <h1 className="text-foreground absolute bottom-5 left-5 z-10 text-5xl font-bold">
+          Support
+        </h1>
       </section>
 
       <section className="container mx-auto space-y-7.5 px-5 pb-24 max-lg:flex max-lg:flex-col max-lg:items-center max-md:pb-16">

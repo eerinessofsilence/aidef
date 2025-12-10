@@ -77,7 +77,7 @@ const DROPDOWN_MENUS: Menus = {
     },
   ],
   Company: [
-    { title: "About Us", href: "#", icon: "/company-1.svg" },
+    { title: "About Us", href: "/about", icon: "/company-1.svg" },
     { title: "Careers", href: "#", icon: "/company-2.svg" },
   ],
 };
