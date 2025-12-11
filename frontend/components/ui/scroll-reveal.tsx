@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, type Easing } from "motion/react";
 import { useRef, type PropsWithChildren } from "react";
 import { cn } from "../../lib/utils";
 
@@ -20,7 +20,7 @@ type ScrollRevealProps = PropsWithChildren<{
   from?: Direction;
   amount?: number;
   distance?: number;
-  ease?: number[] | string;
+  ease?: Easing | Easing[];
 }>;
 
 export function ScrollReveal({
