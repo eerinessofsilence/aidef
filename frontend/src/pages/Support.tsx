@@ -52,7 +52,7 @@ export default function Support() {
             />
           ))}
         </div>
-        <h1 className="text-foreground absolute bottom-5 left-5 z-10 text-5xl font-bold">
+        <h1 className="text-foreground absolute bottom-20 left-20 z-10 text-5xl font-bold max-xl:bottom-10 max-xl:left-10 max-md:bottom-15 max-md:left-5">
           Support
         </h1>
       </section>

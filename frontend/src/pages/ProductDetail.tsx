@@ -314,7 +314,7 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 ))}
-                <div className="absolute bottom-8 left-8 z-20 max-w-[70%] text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:bottom-4 max-md:left-4 max-md:max-w-[90%]">
+                <div className="absolute bottom-20 left-20 z-20 max-w-[70%] text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-xl:bottom-10 max-xl:left-10 max-md:bottom-5 max-md:left-5 max-md:max-w-[90%] max-sm:bottom-2.5">
                   <p className="text-foreground/50 tracking-wider uppercase">
                     {productDetail?.category}
                   </p>
@@ -327,7 +327,7 @@ export default function ProductDetail() {
                     <button
                       type="button"
                       onClick={handlePrevSlide}
-                      className="absolute top-1/2 left-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      className="absolute top-1/2 left-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:left-10 max-md:left-5"
                       aria-label="Previous image"
                     >
                       <ChevronLeft className="h-5 w-5" />
@@ -335,7 +335,7 @@ export default function ProductDetail() {
                     <button
                       type="button"
                       onClick={handleNextSlide}
-                      className="absolute top-1/2 right-4 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80"
+                      className="absolute top-1/2 right-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:right-10 max-md:right-5"
                       aria-label="Next image"
                     >
                       <ChevronRight className="h-5 w-5" />
@@ -375,9 +375,9 @@ export default function ProductDetail() {
           ) : null}
         </div>
       </ScrollReveal>
-      <div className="px-5">
+      <div className="container">
         {productDetail ? (
-          <section className="relative container mx-auto my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
+          <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
             <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
             <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
             <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -389,13 +389,13 @@ export default function ProductDetail() {
                   About product
                 </h1>
                 <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                  {heroProduct?.description ?? "Aerial Platform"}
+                  {heroProduct?.description ?? "Product description"}
                 </p>
                 <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
                   {productFeatures.map((feature) => (
                     <div
                       key={feature.id}
-                      className="border-border/25 bg-foreground/5 space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
+                      className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
                     >
                       <p className="text-foreground/50 text-sm tracking-wider uppercase">
                         {feature.name}
@@ -467,7 +467,7 @@ export default function ProductDetail() {
         ) : null}
 
         {productTechnologies.length > 0 ? (
-          <section className="space-y-8 px-10 py-16 max-xl:px-5 max-sm:py-12">
+          <section className="space-y-8 py-16 max-sm:py-12">
             <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <ScrollReveal amount={0.25}>
                 <div>
@@ -527,7 +527,7 @@ export default function ProductDetail() {
               !block.with_logo ? (
                 <section
                   key={block.id}
-                  className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end px-5 ${
+                  className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end ${
                     block.background_image
                       ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
                       : ""
@@ -540,7 +540,7 @@ export default function ProductDetail() {
                 >
                   <ScrollReveal
                     amount={0.35}
-                    className="container mx-auto space-y-5 px-10 pb-12.5 max-xl:px-5 max-md:space-y-4 max-md:text-center lg:pb-25"
+                    className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25"
                   >
                     <div>
                       <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
@@ -556,10 +556,10 @@ export default function ProductDetail() {
                   </ScrollReveal>
                 </section>
               ) : (
-                <section className="container mx-auto py-16 max-sm:py-12">
+                <section className="py-16 max-sm:py-12">
                   <ScrollReveal
                     amount={0.25}
-                    className="flex items-center justify-between px-10 max-xl:px-5 max-md:flex-col max-md:space-y-10"
+                    className="flex items-center justify-between max-md:flex-col max-md:space-y-10"
                   >
                     <div className="max-md:text-center">
                       <p className="tracking-wider uppercase">{block.name}</p>
@@ -588,7 +588,7 @@ export default function ProductDetail() {
               const description2 = block.description_2 ?? [];
               return (
                 <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-                  <div className="container m-auto grid grid-cols-1 gap-12 px-15 py-12 max-xl:px-10 max-sm:py-10">
+                  <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
                     <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                       <ScrollReveal
                         amount={0.25}
@@ -726,8 +726,8 @@ const data = [
   },
   {
     category: "Drone",
-    title: "AV2 VTOL",
-    href: "/products/av2-vtol",
+    title: "AV-1 VTOL",
+    href: "/products/av-1-vtol",
     description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-2.png",
   },

@@ -67,7 +67,7 @@ const orgUnits = [
     description:
       "Leads UAV platform development, aerodynamics, jet engines, composites, electronics, avionics, and autonomy for tactical multicopters and FPV systems.",
     bullets: [
-      "Representative platforms: AX-2 / AX-2NG \"Krakatit\", AX-6, AX-8, FPV line, and other tactical multirotors.",
+      'Representative platforms: AX-2 / AX-2NG "Krakatit", AX-6, AX-8, FPV line, and other tactical multirotors.',
       "Full-stack engineering depth to customize mission-specific platforms.",
     ],
   },
@@ -188,14 +188,14 @@ export default function AboutUs() {
 
   return (
     <div className="bg-background text-foreground">
-      <section className="relative overflow-hidden px-5 pb-20 pt-28 max-md:pt-24">
+      <section className="relative overflow-hidden pt-28 pb-20 max-md:pt-24">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(61,122,215,0.16),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(103,85,227,0.13),transparent_32%),linear-gradient(135deg,#0b172f,#0f1f3c_50%,#0a1426)]" />
-          <div className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
         </div>
 
         <div className="container mx-auto max-w-7xl space-y-10">
-          <div className="flex flex-wrap items-center gap-3 text-sm font-semibold uppercase text-white/80">
+          <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-white/80 uppercase">
             <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur">
               About AI-DEF Group
             </span>
@@ -212,14 +212,14 @@ export default function AboutUs() {
 
           <div className="grid items-start gap-10 lg:grid-cols-[1.45fr_1fr]">
             <div className="space-y-7">
-              <h1 className="text-6xl font-bold leading-tight text-white max-xl:text-5xl max-md:text-4xl">
+              <h1 className="text-6xl leading-tight font-bold text-white max-xl:text-5xl max-md:text-4xl">
                 Vertically integrated unmanned systems for contested missions.
               </h1>
               <p className="text-lg leading-8 text-white/80 max-md:text-base">
                 AI-DEF Group is a vertically integrated European developer of
                 modern unmanned systems and supporting technologies. The group
-                spans UAV/UGV platforms, radar, autonomy, software,
-                multi-sensor stacks, and industrial integration.
+                spans UAV/UGV platforms, radar, autonomy, software, multi-sensor
+                stacks, and industrial integration.
               </p>
               <p className="text-lg leading-8 text-white/80 max-md:text-base">
                 We align engineering depth with operational needs to deliver
@@ -253,7 +253,7 @@ export default function AboutUs() {
               key={item.title}
               className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
             >
-              <div className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase text-white/70">
+              <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-white/70 uppercase">
                 <span className="h-1.5 w-6 rounded-full bg-white/70" />
                 {item.title}
               </div>
@@ -267,7 +267,7 @@ export default function AboutUs() {
 
       <section className="container mx-auto max-w-7xl space-y-6 px-5 pb-16">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_12px_34px_rgba(0,0,0,0.25)]">
-          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold uppercase text-white/70">
+          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white/70 uppercase">
             <span className="rounded-full bg-white/10 px-3 py-1 backdrop-blur">
               Vertically Integrated Technology Group
             </span>
@@ -278,7 +278,7 @@ export default function AboutUs() {
             {lifecyclePhases.map((phase, index) => (
               <div
                 key={phase}
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold uppercase text-white/80"
+                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 uppercase"
               >
                 <span>{phase}</span>
                 {index !== lifecyclePhases.length - 1 && (
@@ -316,7 +316,7 @@ export default function AboutUs() {
       <section className="container mx-auto max-w-7xl space-y-8 px-5 pb-16">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase text-white/60">
+            <p className="text-sm font-semibold text-white/60 uppercase">
               Organizational Structure
             </p>
             <h2 className="text-3xl font-bold text-white max-md:text-2xl">
@@ -354,7 +354,7 @@ export default function AboutUs() {
       <section className="container mx-auto max-w-7xl space-y-8 px-5 pb-16">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase text-white/60">
+            <p className="text-sm font-semibold text-white/60 uppercase">
               Systems & Capabilities
             </p>
             <h2 className="text-3xl font-bold text-white max-md:text-2xl">
@@ -372,7 +372,7 @@ export default function AboutUs() {
               key={area.title}
               className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
             >
-              <div className="flex items-center gap-2 text-sm font-semibold uppercase text-white/60">
+              <div className="flex items-center gap-2 text-sm font-semibold text-white/60 uppercase">
                 <span className="h-1.5 w-6 rounded-full bg-white/60" />
                 {area.title}
               </div>
@@ -395,7 +395,7 @@ export default function AboutUs() {
       <section className="container mx-auto max-w-7xl space-y-8 px-5 pb-16">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase text-white/60">
+            <p className="text-sm font-semibold text-white/60 uppercase">
               People & Readiness
             </p>
             <h2 className="text-3xl font-bold text-white max-md:text-2xl">
@@ -413,7 +413,7 @@ export default function AboutUs() {
               key={item.title}
               className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.18)]"
             >
-              <div className="flex items-center gap-2 text-sm font-semibold uppercase text-white/60">
+              <div className="flex items-center gap-2 text-sm font-semibold text-white/60 uppercase">
                 <span className="h-1.5 w-6 rounded-full bg-white/60" />
                 {item.title}
               </div>
@@ -435,7 +435,7 @@ export default function AboutUs() {
 
       <section className="container mx-auto max-w-7xl space-y-8 px-5 pb-20">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_12px_34px_rgba(0,0,0,0.22)]">
-          <p className="text-sm font-semibold uppercase text-white/60">
+          <p className="text-sm font-semibold text-white/60 uppercase">
             Key Differentiators
           </p>
           <h3 className="mt-2 text-3xl font-bold text-white max-md:text-2xl">
@@ -456,7 +456,7 @@ export default function AboutUs() {
             <button
               type="button"
               onClick={handleContact}
-              className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-white px-5 py-3 text-sm font-bold uppercase text-black transition-all duration-300 ease-out hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.35)] active:scale-[0.97]"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-white px-5 py-3 text-sm font-bold text-black uppercase transition-all duration-300 ease-out hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.35)] active:scale-[0.97]"
             >
               Request technical briefing
             </button>

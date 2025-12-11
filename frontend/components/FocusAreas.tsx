@@ -57,7 +57,7 @@ const defaultItems: FocusItem[] = [
 const getRadialPositions = (count: number) => {
   const positions: { x: number; y: number }[] = [];
   const angleStep = 360 / count;
-  const radius = 42;
+  const radius = 42.75;
   for (let i = 0; i < count; i++) {
     const angle = (i * angleStep - 90) * (Math.PI / 180);
     const x = 50 + radius * Math.cos(angle);
@@ -83,9 +83,9 @@ const RadialCard = ({
         transform: "translate(-50%, -50%)",
       }}
     >
-      <div className="border-border/15 h-70 w-87.5 rounded-[20px] border-2 bg-white/5 p-10 shadow-lg backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:scale-105 hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
-        <img src={item.icon} className="mb-5 max-w-15" alt="" />
-        <h3 className="mb-2.5 text-xl font-bold text-white">{item.title}</h3>
+      <div className="border-border/15 h-57.5 w-80 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:scale-105 hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+        <img src={item.icon} className="mb-4 h-12.5 w-12.5" alt="" />
+        <h3 className="mb-2 text-xl font-bold text-white">{item.title}</h3>
         <p className="text-white/75 capitalize">{item.description}</p>
       </div>
     </div>

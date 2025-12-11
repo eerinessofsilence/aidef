@@ -31,8 +31,8 @@ const data = [
   },
   {
     category: "Drone",
-    title: "AV2 VTOL",
-    href: "products/av2-vtol",
+    title: "AV-1 VTOL",
+    href: "products/av-1-vtol",
     description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-2.png",
   },

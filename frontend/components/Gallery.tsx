@@ -141,8 +141,8 @@ export default function GallerySection({ images }: GallerySectionProps) {
   const activeImage = activeIndex !== null ? galleryImages[activeIndex] : null;
 
   return (
-    <section id="gallery-section" className="py-16 max-lg:py-8">
-      <div className="container mx-auto">
+    <section id="gallery" className="py-16 max-lg:py-8">
+      <div>
         <div className="flex w-full flex-col gap-10 max-lg:gap-5">
           <div className="space-y-6 max-lg:space-y-3">
             <p className="text-text/70 tracking-widest uppercase">

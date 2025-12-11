@@ -2,9 +2,9 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="border-t-4 border-[#0A1A34] bg-[#16243B] pt-38.5 pb-10 max-[1281px]:px-5 max-lg:pt-20"
+      className="border-t-4 border-[#0A1A34] bg-[#16243B] pt-38.5 pb-10 max-lg:pt-20"
     >
-      <div className="container-big mx-auto">
+      <div className="container-big">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
             <img src="/logo-ai-def.svg" className="w-42.5" alt="" />
@@ -24,7 +24,7 @@ export default function Footer() {
           </div>
           <div className="space-y-4">
             <h1 className="text-foreground font-bold uppercase">Adresses</h1>
-            <div className="grid grid-cols-2 gap-y-5">
+            <div className="grid grid-cols-2 gap-5">
               <div className="max-w-90">
                 <h1 className="text-foreground/50 font-bold uppercase">
                   Management and administration
