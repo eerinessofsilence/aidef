@@ -5,7 +5,7 @@ import SystemIntegration from "../../components/SystemIntegration";
 
 export default function Home() {
   return (
-    <main className="bg-background relative min-h-screen">
+    <main className="relative min-h-screen">
       <Hero />
       <DroneCarousel />
       <FocusAreas />

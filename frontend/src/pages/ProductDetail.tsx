@@ -269,9 +269,6 @@ export default function ProductDetail() {
 
   return (
     <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 lg:hidden">
-        <img src="/site-bg-top.png" className="w-full select-none" alt="" />
-      </div>
       <ScrollReveal amount={0.35} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
@@ -689,7 +686,7 @@ export default function ProductDetail() {
               </section>
             ))
           : null}
-        <section className="my-16 space-y-6 py-10 max-sm:py-8">
+        <section className="space-y-6 py-10 max-sm:py-8">
           <ScrollReveal delay={0.12} amount={0.3}>
             <Carousel
               carouselTitle="All Products"

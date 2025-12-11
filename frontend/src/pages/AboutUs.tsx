@@ -187,26 +187,16 @@ export default function AboutUs() {
   const handleContact = () => dispatchOpenContactModal();
 
   return (
-    <div className="bg-background text-foreground">
-      <section className="relative overflow-hidden pt-28 pb-20 max-md:pt-24">
-        <div className="absolute inset-0 -z-10">
+    <div className="text-foreground">
+      <section className="relative overflow-hidden pt-32 pb-20">
+        <div className="absolute inset-0 -z-10 mb-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(61,122,215,0.16),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(103,85,227,0.13),transparent_32%),linear-gradient(135deg,#0b172f,#0f1f3c_50%,#0a1426)]" />
           <div className="absolute top-1/2 left-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
         </div>
-
-        <div className="container mx-auto max-w-7xl space-y-10">
-          <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-white/80 uppercase">
+        <div className="container max-w-7xl space-y-7.5">
+          <div className="text-foreground/70 flex flex-wrap items-center gap-3 font-semibold uppercase">
             <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur">
               About AI-DEF Group
-            </span>
-            <span className="rounded-full border border-white/10 px-3 py-1 text-white/70">
-              UAV/UGV Platforms
-            </span>
-            <span className="rounded-full border border-white/10 px-3 py-1 text-white/70">
-              Radar & Autonomy
-            </span>
-            <span className="rounded-full border border-white/10 px-3 py-1 text-white/70">
-              Industrial Integration
             </span>
           </div>
 
@@ -268,21 +258,22 @@ export default function AboutUs() {
       <section className="container mx-auto max-w-7xl space-y-6 px-5 pb-16">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_12px_34px_rgba(0,0,0,0.25)]">
           <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-white/70 uppercase">
-            <span className="rounded-full bg-white/10 px-3 py-1 backdrop-blur">
-              Vertically Integrated Technology Group
+            <span className="border-border/10 rounded-full border bg-white/5 px-3 py-1 backdrop-blur">
+              Lifecycle
             </span>
-            <span className="rounded-full bg-white/5 px-3 py-1">Lifecycle</span>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
             {lifecyclePhases.map((phase, index) => (
-              <div
-                key={phase}
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 uppercase"
-              >
-                <span>{phase}</span>
+              <div className="flex items-center gap-2">
+                <div
+                  key={phase}
+                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/70 uppercase shadow-sm shadow-black/25"
+                >
+                  <span>{phase}</span>
+                </div>
                 {index !== lifecyclePhases.length - 1 && (
-                  <span className="text-white/40">-&gt;</span>
+                  <span className="text-white">-&gt;</span>
                 )}
               </div>
             ))}

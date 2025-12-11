@@ -49,7 +49,7 @@ export default function SystemIntegrationSection() {
             ease={[0.33, 1, 0.68, 1]}
             amount={0.3}
           >
-            <div className="transition-all duration-300 hover:-translate-y-0.5 hover:scale-105">
+            <div className="w-full transition-all duration-300 hover:-translate-y-0.5 hover:scale-105">
               <div className="border-border/15 h-55 w-full rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl max-md:h-60 max-md:p-7.5">
                 <img src={item.icon} className="mb-3 max-w-15" alt="" />
                 <h3 className="text-foreground mb-2.5 text-lg font-bold">
