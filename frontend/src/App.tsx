@@ -8,6 +8,7 @@ import Support from "./pages/Support";
 import AboutUs from "./pages/AboutUs";
 import ScrollToTop from "../components/ui/scroll-to-top";
 import { CookieConsent } from "../components/ui/cookie-consent";
+import Solutions from "./pages/Solutions";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         </div>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/solutions" element={<Solutions />} />
           <Route path="/products/:slug" element={<ProductDetail />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-of-condition" element={<TermsOfCondition />} />

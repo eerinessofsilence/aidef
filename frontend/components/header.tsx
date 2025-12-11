@@ -7,7 +7,7 @@ import { CONTACT_MODAL_EVENT } from "../lib/contact-modal";
 
 const NAV_LINKS = [
   { text: "Home", href: "/" },
-  { text: "Solutions", href: "#" },
+  { text: "Solutions", href: "/solutions" },
   { text: "Products", href: "#", hasDropdown: true },
   { text: "Technology", href: "#" },
   { text: "Company", href: "#", hasDropdown: true },
