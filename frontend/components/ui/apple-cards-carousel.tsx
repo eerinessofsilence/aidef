@@ -12,6 +12,7 @@ import { motion } from "motion/react";
 import { type ImageProps } from "next/image";
 
 interface CarouselProps {
+  paragraph?: string;
   carouselTitle?: string;
   items?: JSX.Element[];
   initialScroll?: number;
@@ -57,6 +58,7 @@ const CarouselContext = createContext<{
 });
 
 export const Carousel = ({
+  paragraph,
   carouselTitle,
   items = [],
   initialScroll = 0,
@@ -116,13 +118,20 @@ export const Carousel = ({
     >
       <div className="relative w-full">
         <div className="flex justify-between gap-3 max-[360px]:flex-col">
-          {carouselTitle ? (
-            <div>
-              <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                {carouselTitle}
-              </h2>
-            </div>
-          ) : null}
+          <div className="space-y-2">
+            {carouselTitle ? (
+              <div>
+                <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                  {carouselTitle}
+                </h2>
+              </div>
+            ) : null}
+            {paragraph ? (
+              <div className="text-foreground/70 max-w-lg">
+                <p>{paragraph}</p>
+              </div>
+            ) : null}
+          </div>
           <div className="flex justify-end gap-2">
             <button
               className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"

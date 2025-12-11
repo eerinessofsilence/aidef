@@ -15,7 +15,11 @@ export default function DroneCarouselSection() {
   return (
     <div className="container mx-auto h-full w-full px-5 py-25">
       <ScrollReveal delay={0.12} amount={0.3}>
-        <Carousel carouselTitle="Unmanned Systems Portfolio" items={cards} />
+        <Carousel
+          paragraph="Our systems combine high-speed kinetic effect, resilience against GNSS jamming and AI-driven autonomy. A common AI-DEF avionics core (autopilot, air-data system with Pitot tube, dual GNSS, Safe-Arm load controller, power modules and onboard AI) creates a unified technical platform across all products."
+          carouselTitle="AI-DEF Ecosystem Overview"
+          items={cards}
+        />
       </ScrollReveal>
     </div>
   );
