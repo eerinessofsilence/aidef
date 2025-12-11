@@ -25,9 +25,9 @@ export default function SystemIntegrationSection() {
     <section className="container mx-auto flex flex-col items-center justify-center space-y-25 px-5 py-25 max-lg:space-y-15 max-lg:py-12.5">
       <ScrollReveal
         className="flex flex-col items-center gap-y-10 max-lg:gap-y-5"
-        amount={0.65}
+        amount={0.35}
         from="down"
-        duration={1.1}
+        duration={0.5}
         distance={0}
       >
         <h1 className="text-center text-5xl font-bold max-lg:text-4xl">
@@ -44,11 +44,10 @@ export default function SystemIntegrationSection() {
         {CARDS.map((item, index) => (
           <ScrollReveal
             key={item.title}
-            delay={index * 0.25}
-            amount={0.2}
-            from="down"
-            duration={1.15}
-            distance={0}
+            delay={index * 0.12}
+            duration={0.45}
+            ease={[0.33, 1, 0.68, 1]}
+            amount={0.3}
           >
             <div className="transition-all duration-300 hover:-translate-y-0.5 hover:scale-105">
               <div className="border-border/15 h-70 w-full rounded-[20px] border-2 bg-white/5 p-10 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl max-md:h-60 max-md:p-7.5">
