@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProductDetail from "./pages/ProductDetail";
+import Technology from "./pages/Technology";
 import TermsOfCondition from "./pages/TermsOfCondition";
 import Support from "./pages/Support";
 import AboutUs from "./pages/AboutUs";
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/products/:slug" element={<ProductDetail />} />
+          <Route path="/technology" element={<Technology />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-of-condition" element={<TermsOfCondition />} />
           <Route path="/support" element={<Support />} />

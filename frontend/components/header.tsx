@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { text: "Home", href: "/" },
   { text: "Solutions", href: "/solutions" },
   { text: "Products", href: "#", hasDropdown: true },
-  { text: "Technology", href: "#" },
+  { text: "Technology", href: "/technology" },
   { text: "Company", href: "#", hasDropdown: true },
   { text: "Support", href: "/support" },
   { text: "Contact", href: "#" },
