@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
-import GallerySection from "../../components/gallery-section";
+import Gallery from "../../components/Gallery";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
 
 interface Product {
@@ -458,7 +458,7 @@ export default function ProductDetail() {
         ) : null}
 
         {productGallery.length > 0 ? (
-          <GallerySection
+          <Gallery
             images={productGallery.map((item) => ({
               src: item.url,
               alt: item.alt ?? productDetail?.name ?? heroProduct?.name,
