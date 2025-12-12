@@ -36,6 +36,11 @@ export default function Technology() {
             autoPlay
             loop
             muted
+            playsInline
+            controls={false}
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            disablePictureInPicture
+            onContextMenu={(e) => e.preventDefault()}
             preload="none"
             src="/technology-video.mp4"
             className="absolute inset-0 -z-1 h-screen w-full object-cover"

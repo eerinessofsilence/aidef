@@ -40,6 +40,11 @@ export default function Support() {
           ))}
         </div>
 
+        <div className="container relative z-10 flex h-screen items-center justify-center">
+          <h1 className="text-center text-6xl leading-12 font-bold text-white max-lg:text-5xl max-md:max-w-xs max-md:text-4xl lg:leading-16">
+            Technical Support, Maintenance, and Expert Guidance
+          </h1>
+        </div>
         <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 max-md:bottom-6">
           {backgroundImages.map((_, index) => (
             <button
@@ -52,9 +57,6 @@ export default function Support() {
             />
           ))}
         </div>
-        <h1 className="text-foreground absolute bottom-20 left-20 z-10 text-5xl font-bold max-xl:bottom-10 max-xl:left-10 max-md:bottom-15 max-md:left-5">
-          Support
-        </h1>
       </section>
 
       <section className="container mx-auto space-y-7.5 px-5 pb-24 max-lg:flex max-lg:flex-col max-lg:items-center max-md:pb-16">
