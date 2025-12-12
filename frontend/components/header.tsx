@@ -31,11 +31,6 @@ const LANGUAGES = [
     title: "Slovakia",
     img: "/sv.svg",
   },
-  {
-    id: 4,
-    title: "French",
-    img: "/fr.svg",
-  },
 ];
 
 type Item = {
@@ -380,13 +375,13 @@ export default function Header() {
           onMouseEnter={handleLanguageMouseEnter}
           onMouseLeave={handleLanguageMouseLeave}
           aria-hidden={!languageSelectorIsOpen}
-          className={`absolute top-full left-1/2 w-full max-w-[813px] -translate-x-1/4 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${
+          className={`absolute top-full left-1/2 w-fit -translate-x-1/17 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${
             languageSelectorIsOpen
               ? "pointer-events-auto -translate-y-3 opacity-100"
               : "pointer-events-none -translate-y-5 opacity-0"
           }`}
         >
-          <div className="grid grid-cols-4 gap-12.5 p-4.5">
+          <div className="grid grid-cols-3 gap-8 p-4.5 px-6">
             {LANGUAGES.map((item) => (
               <a
                 key={item.id}

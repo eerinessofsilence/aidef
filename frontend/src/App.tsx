@@ -7,9 +7,9 @@ import Technology from "./pages/Technology";
 import TermsOfCondition from "./pages/TermsOfCondition";
 import Support from "./pages/Support";
 import AboutUs from "./pages/AboutUs";
+import Solutions from "./pages/Solutions";
 import ScrollToTop from "../components/ui/scroll-to-top";
 import { CookieConsent } from "../components/ui/cookie-consent";
-import Solutions from "./pages/Solutions";
 
 export default function App() {
   return (

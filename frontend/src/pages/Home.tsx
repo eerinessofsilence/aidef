@@ -2,6 +2,7 @@ import Hero from "../../components/Hero";
 import DroneCarousel from "../../components/DroneCarousel";
 import FocusAreas from "../../components/FocusAreas";
 import SystemIntegration from "../../components/SystemIntegration";
+import CustomerBenefits from "../../components/CustomerBenefits";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <DroneCarousel />
       <FocusAreas />
       <SystemIntegration />
+      <CustomerBenefits />
     </main>
   );
 }
