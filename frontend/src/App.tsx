@@ -11,6 +11,7 @@ import Solutions from "./pages/Solutions";
 import ScrollToTop from "../components/ui/scroll-to-top";
 import { CookieConsent } from "../components/ui/cookie-consent";
 import Auth from "./pages/Auth";
+import ClientPortal from "./pages/ClientPortal";
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/terms-of-condition" element={<TermsOfCondition />} />
           <Route path="/support" element={<Support />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/client-portal" element={<ClientPortal />} />
         </Routes>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-1">
           <img

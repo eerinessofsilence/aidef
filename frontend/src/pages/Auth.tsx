@@ -1,11 +1,33 @@
 import { type FormEvent, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Fingerprint } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Fingerprint, Eye, EyeClosed } from "lucide-react";
 
 type AuthMode = "signin" | "signup";
+type AuthResponse = {
+  token: string;
+  user: {
+    id: number;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+  };
+};
 
 export default function Auth() {
   const [mode, setMode] = useState<AuthMode>("signin");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const API_BASE = (() => {
+    const raw =
+      import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+    const trimmed = raw.replace(/\/+$/, "");
+    if (!trimmed) return "/api";
+    return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+  })();
 
   const copy = useMemo(
     () =>
@@ -23,14 +45,93 @@ export default function Auth() {
             description:
               "Provision access for your team with role-aware permissions and rapid onboarding.",
             cta: "Create account",
-            switchLabel: "Already have access?",
+            switchLabel: "Already have an account?",
             switchCta: "Sign in",
           },
     [mode],
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const extractErrorMessage = (data: unknown) => {
+    if (!data || typeof data !== "object") return "Unexpected server response.";
+    const record = data as Record<string, unknown>;
+    if (typeof record.detail === "string") return record.detail;
+
+    const [firstKey] = Object.keys(record);
+    const value = record[firstKey];
+    if (Array.isArray(value) && value.length && typeof value[0] === "string") {
+      return value[0];
+    }
+    if (typeof value === "string") return value;
+    return "Unable to process request. Please try again.";
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email")?.toString().trim();
+    const password = formData.get("password")?.toString();
+    const remember = formData.get("remember") === "on";
+
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    const payload =
+      mode === "signin"
+        ? { email, password }
+        : {
+            email,
+            password,
+            name: formData.get("name")?.toString().trim(),
+            team: formData.get("team")?.toString().trim(),
+          };
+
+    const endpoint = mode === "signin" ? "/auth/login/" : "/auth/register/";
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      const data: unknown = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setError(extractErrorMessage(data));
+        return;
+      }
+
+      const parsed = data as Partial<AuthResponse>;
+      const storage = remember ? localStorage : sessionStorage;
+      if (typeof parsed.token === "string") {
+        storage.setItem("authToken", parsed.token);
+      }
+      if (parsed.user && typeof parsed.user === "object") {
+        storage.setItem("authUser", JSON.stringify(parsed.user));
+      }
+
+      setSuccess(
+        mode === "signin"
+          ? "Signed in successfully."
+          : "Account created and signed in.",
+      );
+      window.dispatchEvent(new Event("auth-updated"));
+      navigate("/", { replace: true });
+    } catch (err) {
+      console.error(err);
+      setError("Unable to connect to the server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -117,15 +218,22 @@ export default function Auth() {
                   />
                 </label>
 
-                <label className="flex flex-col gap-y-1 text-sm">
+                <label className="relative flex flex-col gap-y-1 text-sm">
                   <span className="text-foreground/70">Password</span>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     required
                     placeholder="********"
-                    className="text-foreground placeholder:text-foreground/50 focus:border-foreground/50 focus:ring-foreground/40 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base transition focus:ring-2 focus:outline-none"
+                    className="text-foreground placeholder:text-foreground/50 focus:border-foreground/50 focus:ring-foreground/40 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 pr-24 text-base transition focus:ring-2 focus:outline-none"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="text-foreground/50 hover:text-foreground absolute top-9.5 right-3 text-xs font-semibold tracking-wide uppercase transition duration-300"
+                  >
+                    {showPassword ? <EyeClosed /> : <Eye />}
+                  </button>
                 </label>
 
                 {mode === "signin" && (
@@ -149,11 +257,25 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                  disabled={loading}
+                  className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  <span className="relative">{copy.cta}</span>
+                  <span className="relative">
+                    {loading ? "Processing..." : copy.cta}
+                  </span>
                 </button>
               </form>
+
+              {error && (
+                <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400/70">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400/70">
+                  {success}
+                </div>
+              )}
 
               <div className="text-foreground/70 mt-5 flex items-center gap-2 text-sm">
                 <span>{copy.switchLabel}</span>

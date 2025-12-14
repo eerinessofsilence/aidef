@@ -89,11 +89,13 @@ export default function Header() {
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
     {},
   );
+  const [isAuthed, setIsAuthed] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
   const originalBodyOverflow = useRef<string | null>(null);
 
   const mobileMenuId = "mobile-menu";
+  const clientPortalHref = isAuthed ? "/client-portal" : "/auth";
 
   const openContactModal = useCallback(
     (closeMobile = false) => {
@@ -184,6 +186,24 @@ export default function Header() {
   }, [openContactModal]);
 
   useEffect(() => {
+    const computeAuth = () =>
+      Boolean(
+        typeof window !== "undefined" &&
+          (localStorage.getItem("authToken") ||
+            sessionStorage.getItem("authToken")),
+      );
+    const handleAuthChange = () => setIsAuthed(computeAuth());
+
+    handleAuthChange();
+    window.addEventListener("storage", handleAuthChange);
+    window.addEventListener("auth-updated", handleAuthChange);
+    return () => {
+      window.removeEventListener("storage", handleAuthChange);
+      window.removeEventListener("auth-updated", handleAuthChange);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!contactModalOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -272,7 +292,7 @@ export default function Header() {
                 <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
               </div>
               <Link
-                to="/auth"
+                to={clientPortalHref}
                 className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
               >
                 Client Portal
@@ -525,7 +545,7 @@ export default function Header() {
             </nav>
 
             <Link
-              to="#"
+              to={clientPortalHref}
               onClick={handleMobileMenuLinkClick}
               className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
             >
