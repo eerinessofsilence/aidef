@@ -223,14 +223,10 @@ export default function Header() {
         <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 p-6 px-4 shadow-sm shadow-black backdrop-blur-lg">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center space-x-2">
-              <img
-                src="/logo-ai-def.svg"
-                className="w-37.5 max-md:w-32.5"
-                alt=""
-              />
+              <img src="/logo-ai-def.svg" className="w-35 max-md:w-30" alt="" />
             </a>
 
-            <div className="flex items-center gap-6.5 max-xl:hidden">
+            <div className="flex items-center gap-5 max-xl:hidden">
               {NAV_LINKS.map((link) => (
                 <div
                   key={link.text}
@@ -276,7 +272,7 @@ export default function Header() {
                 <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
               </div>
               <Link
-                to="#"
+                to="/auth"
                 className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
               >
                 Client Portal
@@ -411,7 +407,7 @@ export default function Header() {
                 : "pointer-events-none -translate-y-3 scale-95 opacity-0"
             }`}
           >
-            <nav className="text-foreground flex flex-col gap-3 text-lg font-medium">
+            <nav className="text-foreground flex flex-col gap-6.5 text-lg font-medium">
               {NAV_LINKS.map((link) => {
                 if (link.hasDropdown) {
                   const submenu =
