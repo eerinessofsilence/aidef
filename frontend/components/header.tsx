@@ -49,7 +49,6 @@ const DROPDOWN_MENUS: Menus = {
       href: "/products/ax2ng-krakatit",
       icon: "/products-1.png",
     },
-    { title: "AV2 VTOL", href: "/products/av2-vtol", icon: "/products-2.png" },
     {
       title: "AXQ QUADROCOPTER",
       href: "/products/axq-quadrocopter",
@@ -65,11 +64,7 @@ const DROPDOWN_MENUS: Menus = {
       href: "/products/ugv-150-dup",
       icon: "/products-5.png",
     },
-    {
-      title: "Electronic",
-      href: "/products/electronic",
-      icon: "/products-6.png",
-    },
+    { title: "AV2 VTOL", href: "/products/av2-vtol", icon: "/products-2.png" },
   ],
   Company: [
     { title: "About Us", href: "/about-us", icon: "/company-1.svg" },

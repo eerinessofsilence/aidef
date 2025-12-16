@@ -10,7 +10,7 @@ interface Product {
   description?: string;
   category: string | null;
   available: boolean;
-  is_featured?: boolean;
+  order?: number;
   images?: ProductImage[];
 }
 
@@ -150,7 +150,7 @@ export default function Solutions() {
         </div>
         <div>
           {products
-            ?.filter((product) => product.available)
+            ?.filter((product) => product.order)
             .map((product) => {
               const image = product.images?.[0]?.url;
               return (

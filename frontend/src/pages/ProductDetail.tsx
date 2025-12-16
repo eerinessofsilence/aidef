@@ -14,7 +14,7 @@ interface Product {
   description?: string;
   category: string | null;
   available: boolean;
-  is_featured?: boolean;
+  order?: number;
 }
 
 interface ProductImage {
@@ -169,7 +169,7 @@ export default function ProductDetail() {
   }, [slug]);
 
   const heroProduct = useMemo(
-    () => productDetail ?? items.find((p) => p.is_featured) ?? items[0] ?? null,
+    () => productDetail ?? items[0] ?? null,
     [productDetail, items],
   );
 
@@ -311,11 +311,11 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 ))}
-                <div className="absolute bottom-20 left-20 z-20 max-w-[70%] text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-xl:bottom-10 max-xl:left-10 max-md:bottom-5 max-md:left-5 max-md:max-w-[90%] max-sm:bottom-2.5">
-                  <p className="text-foreground/50 tracking-wider uppercase">
+                <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col gap-y-5 text-center text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
+                  <p className="text-foreground/70 hidden text-xl tracking-widest uppercase lg:inline">
                     {productDetail?.category}
                   </p>
-                  <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                  <h1 className="text-6xl leading-18 font-bold max-lg:text-5xl max-md:text-4xl max-sm:text-xl max-sm:text-nowrap">
                     {productDetail?.name}
                   </h1>
                 </div>
@@ -324,18 +324,18 @@ export default function ProductDetail() {
                     <button
                       type="button"
                       onClick={handlePrevSlide}
-                      className="absolute top-1/2 left-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:left-10 max-md:left-5"
+                      className="absolute top-1/2 left-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:left-10 max-md:left-5 max-md:h-10 max-md:w-10"
                       aria-label="Previous image"
                     >
-                      <ChevronLeft className="h-5 w-5" />
+                      <ChevronLeft className="h-5 w-5 max-md:h-4 max-md:w-4" />
                     </button>
                     <button
                       type="button"
                       onClick={handleNextSlide}
-                      className="absolute top-1/2 right-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:right-10 max-md:right-5"
+                      className="absolute top-1/2 right-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:right-10 max-md:right-5 max-md:h-10 max-md:w-10"
                       aria-label="Next image"
                     >
-                      <ChevronRight className="h-5 w-5" />
+                      <ChevronRight className="h-5 w-5 max-md:h-4 max-md:w-4" />
                     </button>
                   </>
                 ) : null}
