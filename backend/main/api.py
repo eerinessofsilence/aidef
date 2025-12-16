@@ -35,7 +35,7 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'description': product.description,
         'category': product.category.slug if product.category else None,
         'available': product.available,
-        'is_featured': product.is_featured,
+        'order': product.order,
     }
 
 def _serialize_product_list(product: Product) -> Dict[str, Any]:
@@ -162,7 +162,7 @@ def item_list_api(request):
         Product.objects.filter(available=True)
         .select_related('category')
         .prefetch_related('features', 'sub_features', 'images')
-        .order_by('-is_featured', 'name')
+        .order_by('order', 'name')
     )
 
     payload = [_serialize_product_list(product) for product in products]

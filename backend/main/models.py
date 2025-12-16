@@ -42,16 +42,12 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     specs = models.JSONField(blank=True, null=True)
-
-    is_featured = models.BooleanField(
-        default=False,
-        help_text="Show this product as the flagship / favorite item.",
-    )
+    order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-        ordering = ('-is_featured', '-created_at',)
+        ordering = ('order', '-created_at',)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -63,9 +59,6 @@ class Product(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
-
-        if self.is_featured:
-            Product.objects.exclude(pk=self.pk).filter(is_featured=True).update(is_featured=False)
 
     def __str__(self):
         return self.name
