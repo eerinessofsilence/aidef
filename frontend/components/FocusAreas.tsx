@@ -130,13 +130,13 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
       <div aria-hidden="true" className="absolute inset-0 z-0 bg-black/35" />
 
       <div className="relative z-10 container mx-auto w-full py-37.5 max-xl:py-30 max-lg:pb-0">
-        <div className="to-background from-background pointer-events-none absolute inset-y-0 left-1/2 mt-58 h-165 w-px -translate-x-1/2 bg-linear-to-b via-white/75 max-md:h-300 lg:hidden" />
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 mt-60 h-190 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-white/75 to-transparent max-md:h-360 lg:hidden" />
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.65, ease: "easeOut" }}
-          className="pointer-events-none absolute -top-8 right-0 left-0 text-center lg:-top-16"
+          className="pointer-events-none absolute top-8 right-0 left-0 text-center lg:-top-16"
         >
           <p className="text-foreground/70 text-sm font-medium tracking-widest uppercase">
             Focus areas
@@ -158,7 +158,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           >
             <img
               src="/focus-areas-core.svg"
-              className="w-50 max-lg:w-36"
+              className="w-50 max-lg:w-32"
               alt=""
             />
           </motion.div>
@@ -174,13 +174,9 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
 
         <div className="lg:hidden">
           <div className="flex justify-center">
-            <img
-              src="/focus-areas-core.svg"
-              className="w-50 max-lg:w-36"
-              alt=""
-            />
+            <img src="/focus-areas-core.svg" className="z-10 w-50" alt="" />
           </div>
-          <div className="relative z-10 mt-24 grid grid-cols-2 gap-6 max-md:grid-cols-1">
+          <div className="relative z-10 mt-12 grid grid-cols-2 gap-6 max-md:grid-cols-1">
             {items.map((item, idx) => (
               <div
                 key={idx}

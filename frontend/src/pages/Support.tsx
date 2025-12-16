@@ -40,7 +40,7 @@ export default function Support() {
           ))}
         </div>
 
-        <div className="container relative z-10 flex h-screen items-center justify-center">
+        <div className="relative z-10 container flex h-screen items-center justify-center">
           <h1 className="text-center text-6xl leading-12 font-bold text-white max-lg:text-5xl max-md:max-w-xs max-md:text-4xl lg:leading-16">
             Technical Support, Maintenance, and Expert Guidance
           </h1>
@@ -73,12 +73,6 @@ export default function Support() {
                   <img src="/mail.svg" alt="" />
                 </div>
                 <p className="text-lg font-semibold">office@ai-def.com</p>
-              </div>
-              <div className="flex items-center gap-5">
-                <div className="border/35 flex h-15 w-15 items-center justify-center rounded-2xl border bg-white/5">
-                  <img src="/mobile-phone.svg" alt="" />
-                </div>
-                <p className="text-lg font-semibold">+421 907 949 592</p>
               </div>
             </div>
             <div className="space-y-5">

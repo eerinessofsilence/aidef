@@ -19,7 +19,6 @@ export default function Footer() {
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="text-foreground font-bold uppercase">Contact</h1>
-            <p>+421 906 949 592</p>
             <p>office@ai-def.com</p>
           </div>
           <div className="space-y-4">

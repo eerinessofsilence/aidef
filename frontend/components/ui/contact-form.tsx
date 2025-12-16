@@ -628,17 +628,6 @@ export const ContactForm = ({
             <div className="mt-4 space-y-4 text-neutral-900 dark:text-neutral-100">
               <div className="space-y-1">
                 <p className="text-[13px] font-semibold text-neutral-500 uppercase dark:text-neutral-400">
-                  Phone
-                </p>
-                <a
-                  href="tel:+421906949592"
-                  className="text-lg font-semibold transition hover:text-neutral-700 dark:hover:text-neutral-200"
-                >
-                  +421 906 949 592
-                </a>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[13px] font-semibold text-neutral-500 uppercase dark:text-neutral-400">
                   Email
                 </p>
                 <a

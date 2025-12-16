@@ -93,6 +93,12 @@ export default function Header() {
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
   const originalBodyOverflow = useRef<string | null>(null);
+  const dropdownTransitionClasses =
+    "transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]";
+  const getDropdownVisibilityClasses = (isOpen: boolean) =>
+    isOpen
+      ? "pointer-events-auto opacity-100 -translate-y-3"
+      : "pointer-events-none opacity-0 -translate-y-5";
 
   const mobileMenuId = "mobile-menu";
   const clientPortalHref = isAuthed ? "/client-portal" : "/auth";
@@ -316,12 +322,8 @@ export default function Header() {
           </div>
         </header>
         {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
-          const transitionClasses =
-            "transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]";
           const isOpen = activeDropdown === name;
-          const visibilityClasses = isOpen
-            ? "pointer-events-auto opacity-100 -translate-y-3"
-            : "pointer-events-none opacity-0 -translate-y-5";
+          const visibilityClasses = getDropdownVisibilityClasses(isOpen);
           if (name === "Products") {
             return (
               <div
@@ -329,7 +331,7 @@ export default function Header() {
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleMouseLeave}
                 aria-hidden={!isOpen}
-                className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${transitionClasses} ${visibilityClasses}`}
+                className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${visibilityClasses}`}
               >
                 <div className="grid grid-cols-3 gap-5 p-5">
                   {items.map((item) => (
@@ -362,7 +364,7 @@ export default function Header() {
                 onMouseEnter={handleDropdownEnter}
                 onMouseLeave={handleMouseLeave}
                 aria-hidden={!isOpen}
-                className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${transitionClasses} ${visibilityClasses}`}
+                className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${dropdownTransitionClasses} ${visibilityClasses}`}
               >
                 <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
                   {items.map((item) => (
@@ -391,11 +393,7 @@ export default function Header() {
           onMouseEnter={handleLanguageMouseEnter}
           onMouseLeave={handleLanguageMouseLeave}
           aria-hidden={!languageSelectorIsOpen}
-          className={`absolute top-full left-1/2 w-fit -translate-x-1/17 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${
-            languageSelectorIsOpen
-              ? "pointer-events-auto -translate-y-3 opacity-100"
-              : "pointer-events-none -translate-y-5 opacity-0"
-          }`}
+          className={`absolute top-full left-1/2 w-fit -translate-x-1/17 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(languageSelectorIsOpen)}`}
         >
           <div className="grid grid-cols-3 gap-8 p-4.5 px-6">
             {LANGUAGES.map((item) => (
