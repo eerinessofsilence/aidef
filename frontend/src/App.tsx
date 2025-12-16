@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -14,15 +14,20 @@ import Auth from "./pages/Auth";
 import ClientPortal from "./pages/ClientPortal";
 
 export default function App() {
+  const location = useLocation();
+  const hideChrome = location.pathname.startsWith("/client-portal");
+
   return (
     <>
       <ScrollToTop />
       <CookieConsent />
-      <Header />
+      {!hideChrome && <Header />}
       <div className="relative min-h-screen">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-1">
-          <img src="/site-bg-top.png" className="w-full select-none" alt="" />
-        </div>
+        {!hideChrome && (
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-1">
+            <img src="/site-bg-top.png" className="w-full select-none" alt="" />
+          </div>
+        )}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/solutions" element={<Solutions />} />
@@ -34,15 +39,17 @@ export default function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/client-portal" element={<ClientPortal />} />
         </Routes>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-1">
-          <img
-            src="/site-bg-bottom.png"
-            className="w-full select-none"
-            alt=""
-          />
-        </div>
+        {!hideChrome && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-1">
+            <img
+              src="/site-bg-bottom.png"
+              className="w-full select-none"
+              alt=""
+            />
+          </div>
+        )}
       </div>
-      <Footer />
+      {!hideChrome && <Footer />}
     </>
   );
 }

@@ -13,6 +13,16 @@ type CountryOption = {
   name: string;
 };
 
+type ProductOption = {
+  value: string;
+  label: string;
+};
+
+type RestCountry = {
+  cca2?: string;
+  name?: { common?: string };
+};
+
 const fallbackCountries: CountryOption[] = [
   { code: "US", name: "United States" },
   { code: "CA", name: "Canada" },
@@ -29,7 +39,6 @@ const fallbackCountries: CountryOption[] = [
   { code: "AU", name: "Australia" },
   { code: "NZ", name: "New Zealand" },
   { code: "JP", name: "Japan" },
-  { code: "CN", name: "China" },
   { code: "SG", name: "Singapore" },
   { code: "AE", name: "United Arab Emirates" },
   { code: "SA", name: "Saudi Arabia" },
@@ -41,346 +50,6 @@ const fallbackCountries: CountryOption[] = [
   { code: "KE", name: "Kenya" },
   { code: "NG", name: "Nigeria" },
 ];
-
-const citiesByCountry: Record<string, string[]> = {
-  AE: [
-    "Dubai",
-    "Abu Dhabi",
-    "Sharjah",
-    "Ajman",
-    "Ras Al Khaimah",
-    "Fujairah",
-    "Al Ain",
-    "Umm Al Quwain",
-    "Khor Fakkan",
-    "Other / Not listed",
-  ],
-  AR: [
-    "Buenos Aires",
-    "Cordoba",
-    "Rosario",
-    "Mendoza",
-    "La Plata",
-    "Salta",
-    "Mar del Plata",
-    "San Miguel de Tucuman",
-    "Bariloche",
-    "Other / Not listed",
-  ],
-  AU: [
-    "Sydney",
-    "Melbourne",
-    "Brisbane",
-    "Perth",
-    "Adelaide",
-    "Canberra",
-    "Hobart",
-    "Darwin",
-    "Gold Coast",
-    "Other / Not listed",
-  ],
-  BR: [
-    "Sao Paulo",
-    "Rio de Janeiro",
-    "Brasilia",
-    "Salvador",
-    "Belo Horizonte",
-    "Fortaleza",
-    "Curitiba",
-    "Recife",
-    "Porto Alegre",
-    "Other / Not listed",
-  ],
-  CA: [
-    "Toronto",
-    "Vancouver",
-    "Montreal",
-    "Calgary",
-    "Ottawa",
-    "Edmonton",
-    "Winnipeg",
-    "Quebec City",
-    "Victoria",
-    "Other / Not listed",
-  ],
-  CN: [
-    "Beijing",
-    "Shanghai",
-    "Shenzhen",
-    "Guangzhou",
-    "Chengdu",
-    "Xi'an",
-    "Wuhan",
-    "Hangzhou",
-    "Nanjing",
-    "Other / Not listed",
-  ],
-  DE: [
-    "Berlin",
-    "Munich",
-    "Hamburg",
-    "Frankfurt",
-    "Cologne",
-    "Stuttgart",
-    "Dusseldorf",
-    "Leipzig",
-    "Dresden",
-    "Other / Not listed",
-  ],
-  DK: [
-    "Copenhagen",
-    "Aarhus",
-    "Odense",
-    "Aalborg",
-    "Esbjerg",
-    "Randers",
-    "Kolding",
-    "Horsens",
-    "Vejle",
-    "Other / Not listed",
-  ],
-  EG: [
-    "Cairo",
-    "Alexandria",
-    "Giza",
-    "Sharm El Sheikh",
-    "Luxor",
-    "Aswan",
-    "Hurghada",
-    "Port Said",
-    "Suez",
-    "Other / Not listed",
-  ],
-  ES: [
-    "Madrid",
-    "Barcelona",
-    "Valencia",
-    "Seville",
-    "Bilbao",
-    "Zaragoza",
-    "Malaga",
-    "Murcia",
-    "Palma de Mallorca",
-    "Other / Not listed",
-  ],
-  FI: [
-    "Helsinki",
-    "Espoo",
-    "Tampere",
-    "Oulu",
-    "Turku",
-    "Vantaa",
-    "Jyvaskyla",
-    "Lahti",
-    "Kuopio",
-    "Other / Not listed",
-  ],
-  FR: [
-    "Paris",
-    "Lyon",
-    "Marseille",
-    "Toulouse",
-    "Nice",
-    "Bordeaux",
-    "Lille",
-    "Nantes",
-    "Strasbourg",
-    "Other / Not listed",
-  ],
-  GB: [
-    "London",
-    "Manchester",
-    "Birmingham",
-    "Edinburgh",
-    "Glasgow",
-    "Bristol",
-    "Leeds",
-    "Liverpool",
-    "Belfast",
-    "Other / Not listed",
-  ],
-  IE: [
-    "Dublin",
-    "Cork",
-    "Galway",
-    "Limerick",
-    "Waterford",
-    "Kilkenny",
-    "Sligo",
-    "Wexford",
-    "Drogheda",
-    "Other / Not listed",
-  ],
-  IN: [
-    "Mumbai",
-    "Bengaluru",
-    "Delhi",
-    "Hyderabad",
-    "Chennai",
-    "Pune",
-    "Kolkata",
-    "Ahmedabad",
-    "Jaipur",
-    "Other / Not listed",
-  ],
-  IT: [
-    "Rome",
-    "Milan",
-    "Florence",
-    "Turin",
-    "Naples",
-    "Bologna",
-    "Genoa",
-    "Verona",
-    "Venice",
-    "Other / Not listed",
-  ],
-  JP: [
-    "Tokyo",
-    "Osaka",
-    "Kyoto",
-    "Yokohama",
-    "Sapporo",
-    "Nagoya",
-    "Fukuoka",
-    "Kobe",
-    "Hiroshima",
-    "Other / Not listed",
-  ],
-  KE: [
-    "Nairobi",
-    "Mombasa",
-    "Kisumu",
-    "Nakuru",
-    "Eldoret",
-    "Thika",
-    "Malindi",
-    "Naivasha",
-    "Machakos",
-    "Other / Not listed",
-  ],
-  MX: [
-    "Mexico City",
-    "Guadalajara",
-    "Monterrey",
-    "Puebla",
-    "Tijuana",
-    "Merida",
-    "Cancun",
-    "Leon",
-    "Queretaro",
-    "Other / Not listed",
-  ],
-  NG: [
-    "Lagos",
-    "Abuja",
-    "Port Harcourt",
-    "Ibadan",
-    "Benin City",
-    "Enugu",
-    "Kano",
-    "Uyo",
-    "Aba",
-    "Other / Not listed",
-  ],
-  NL: [
-    "Amsterdam",
-    "Rotterdam",
-    "The Hague",
-    "Utrecht",
-    "Eindhoven",
-    "Groningen",
-    "Tilburg",
-    "Nijmegen",
-    "Maastricht",
-    "Other / Not listed",
-  ],
-  NO: [
-    "Oslo",
-    "Bergen",
-    "Trondheim",
-    "Stavanger",
-    "Drammen",
-    "Fredrikstad",
-    "Kristiansand",
-    "Tromso",
-    "Sandnes",
-    "Other / Not listed",
-  ],
-  NZ: [
-    "Auckland",
-    "Wellington",
-    "Christchurch",
-    "Hamilton",
-    "Dunedin",
-    "Tauranga",
-    "Napier",
-    "Queenstown",
-    "Nelson",
-    "Other / Not listed",
-  ],
-  SA: [
-    "Riyadh",
-    "Jeddah",
-    "Dammam",
-    "Medina",
-    "Mecca",
-    "Khobar",
-    "Tabuk",
-    "Abha",
-    "Yanbu",
-    "Other / Not listed",
-  ],
-  SE: [
-    "Stockholm",
-    "Gothenburg",
-    "Malmo",
-    "Uppsala",
-    "Vasteras",
-    "Orebro",
-    "Linkoping",
-    "Helsingborg",
-    "Jonkoping",
-    "Other / Not listed",
-  ],
-  SG: ["Singapore", "Other / Not listed"],
-  US: [
-    "New York",
-    "San Francisco",
-    "Los Angeles",
-    "Chicago",
-    "Seattle",
-    "Austin",
-    "Boston",
-    "Denver",
-    "Atlanta",
-    "Other / Not listed",
-  ],
-  ZA: [
-    "Johannesburg",
-    "Cape Town",
-    "Durban",
-    "Pretoria",
-    "Port Elizabeth",
-    "Bloemfontein",
-    "Polokwane",
-    "East London",
-    "Stellenbosch",
-    "Other / Not listed",
-  ],
-  default: [
-    "Doha",
-    "Zurich",
-    "Vienna",
-    "Warsaw",
-    "Prague",
-    "Krakow",
-    "Budapest",
-    "Lisbon",
-    "Athens",
-    "Other / Not listed",
-  ],
-};
 
 const buildCountryOptions = (): CountryOption[] => {
   const intl = Intl as typeof Intl & {
@@ -410,37 +79,154 @@ const buildCountryOptions = (): CountryOption[] => {
   return fallbackCountries;
 };
 
+const getCountryOptionLabel = (country: CountryOption) =>
+  `${country.name} (${country.code})`;
+
+const productOptions: ProductOption[] = [
+  { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
+  { value: "av-1-vtol", label: "AV-1 VTOL" },
+  { value: "axq-quadrocopter", label: "AXQ QUADROCOPTER" },
+  { value: "ground-control-station", label: "Ground Control Station" },
+  { value: "ugv-150-dup", label: "UGV 150-DUP" },
+];
+
 export const ContactForm = ({
   onSubmit,
   showDetails = true,
 }: ContactFormProps) => {
-  const [selectedCountry, setSelectedCountry] = React.useState("");
-  const [selectedCity, setSelectedCity] = React.useState("");
+  const countryDatalistId = React.useId();
 
-  const countryOptions = React.useMemo(() => buildCountryOptions(), []);
-  const availableCities = React.useMemo(
-    () =>
-      selectedCountry
-        ? (citiesByCountry[selectedCountry] ?? citiesByCountry.default)
-        : [],
-    [selectedCountry],
+  const [countries, setCountries] = React.useState<CountryOption[]>(() =>
+    buildCountryOptions(),
   );
+  const [countryQuery, setCountryQuery] = React.useState("");
+  const [selectedCountry, setSelectedCountry] =
+    React.useState<CountryOption | null>(null);
+  const [isLoadingCountries, setIsLoadingCountries] = React.useState(false);
+  const [countryError, setCountryError] = React.useState<string | null>(null);
+
+  const [cityQuery, setCityQuery] = React.useState("");
+  const [selectedProduct, setSelectedProduct] = React.useState("");
+
+  const filteredCountries = React.useMemo(() => {
+    if (!countryQuery) {
+      return countries;
+    }
+    const query = countryQuery.toLowerCase();
+    return countries.filter(
+      (country) =>
+        country.name.toLowerCase().includes(query) ||
+        country.code.toLowerCase().includes(query),
+    );
+  }, [countries, countryQuery]);
+
+  const findCountryFromInput = React.useCallback(
+    (value: string) => {
+      const normalized = value.trim().toLowerCase();
+      return (
+        countries.find((country) => {
+          const label = getCountryOptionLabel(country).toLowerCase();
+          return (
+            label === normalized ||
+            country.name.toLowerCase() === normalized ||
+            country.code.toLowerCase() === normalized
+          );
+        }) ?? null
+      );
+    },
+    [countries],
+  );
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+    const fetchCountries = async () => {
+      setIsLoadingCountries(true);
+      setCountryError(null);
+      try {
+        const response = await fetch(
+          "https://restcountries.com/v3.1/all?fields=name,cca2",
+          { signal: controller.signal },
+        );
+        if (!response.ok) {
+          throw new Error(`Failed with status ${response.status}`);
+        }
+        const payload = (await response.json()) as RestCountry[];
+        const dynamicCountries = Array.isArray(payload)
+          ? payload
+              .filter(
+                (
+                  item,
+                ): item is RestCountry & {
+                  cca2: string;
+                  name: { common: string };
+                } => Boolean(item?.name?.common && item?.cca2),
+              )
+              .map((item) => ({
+                code: item.cca2.toUpperCase(),
+                name: item.name.common,
+              }))
+              .sort((a, b) => a.name.localeCompare(b.name))
+          : [];
+        if (dynamicCountries.length > 0) {
+          setCountries(dynamicCountries);
+          return;
+        }
+        setCountries(buildCountryOptions());
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+        console.error("Unable to load countries", error);
+        setCountryError(
+          "Не удалось обновить список стран, используем запасной список.",
+        );
+        setCountries(buildCountryOptions());
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoadingCountries(false);
+        }
+      }
+    };
+
+    fetchCountries();
+    return () => controller.abort();
+  }, []);
 
   const inputClass =
     "w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 shadow-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-50/10";
   const selectClass = `${inputClass} appearance-none pr-12`;
 
-  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCountry(event.target.value);
-    setSelectedCity("");
+  const handleCountryInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = event.target.value;
+    setCountryQuery(value);
+    setCountryError(null);
+
+    const match = findCountryFromInput(value);
+    setSelectedCountry(match);
   };
 
-  const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCity(event.target.value);
+  const handleCountryBlur = () => {
+    const match = findCountryFromInput(countryQuery);
+    if (match) {
+      setSelectedCountry(match);
+      setCountryQuery(match.name);
+    }
+  };
+
+  const handleProductChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedProduct(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const match = selectedCountry ?? findCountryFromInput(countryQuery);
+    if (!match) {
+      setCountryError("Пожалуйста, выберите страну из подсказок.");
+      return;
+    }
+    setSelectedCountry(match);
     onSubmit?.(event);
   };
 
@@ -511,81 +297,126 @@ export const ContactForm = ({
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
+          <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
             <span className="flex items-center gap-1">
-              Country <span className="text-red-500">*</span>
+              Product <span className="text-red-500">*</span>
             </span>
             <div className="relative">
               <select
                 className={selectClass}
-                name="country"
-                value={selectedCountry}
-                onChange={handleCountryChange}
-                autoComplete="country-name"
+                name="product"
+                value={selectedProduct}
+                onChange={handleProductChange}
                 required
               >
                 <option value="" disabled>
-                  Select a country
+                  Select a product
                 </option>
-                {countryOptions.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
+                {productOptions.map((product) => (
+                  <option key={product.value} value={product.value}>
+                    {product.label}
                   </option>
                 ))}
               </select>
               <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
             </div>
           </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
+          <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
             <span className="flex items-center gap-1">
-              City <span className="text-red-500">*</span>
+              Country <span className="text-red-500">*</span>
             </span>
-            <div className="relative">
-              <select
-                className={`${selectClass} ${selectedCountry ? "" : "contrast-90"}`}
-                name="city"
-                value={selectedCity}
-                onChange={handleCityChange}
-                autoComplete="address-level2"
-                required
+            <div className="space-y-2">
+              <div className="relative">
+                <input
+                  className={inputClass}
+                  name="countryName"
+                  type="text"
+                  value={countryQuery}
+                  onChange={handleCountryInputChange}
+                  onBlur={handleCountryBlur}
+                  autoComplete="country-name"
+                  placeholder="Start typing a country"
+                  list={countryDatalistId}
+                  required
+                />
+                <datalist id={countryDatalistId}>
+                  {filteredCountries.slice(0, 50).map((country) => (
+                    <option
+                      key={country.code}
+                      value={getCountryOptionLabel(country)}
+                    />
+                  ))}
+                </datalist>
+                <input
+                  type="hidden"
+                  name="country"
+                  value={selectedCountry?.code ?? ""}
+                />
+              </div>
+              {countryError ? (
+                <p className="text-xs text-red-500">{countryError}</p>
+              ) : isLoadingCountries ? (
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  Updating countries...
+                </p>
+              ) : null}
+            </div>
+          </label>
+          <div
+            className={`col-span-2 grid gap-4 overflow-hidden transition-all duration-300 ease-out md:grid-cols-2 ${
+              selectedCountry
+                ? "max-h-[640px] translate-y-0 opacity-100"
+                : "pointer-events-none max-h-0 -translate-y-2 opacity-0"
+            }`}
+            aria-hidden={!selectedCountry}
+          >
+            <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
+              <span className="flex items-center gap-1">
+                Address line 1 <span className="text-red-500">*</span>
+              </span>
+              <div className="space-y-2">
+                <div className="relative">
+                  <input
+                    className={inputClass}
+                    name="city"
+                    type="text"
+                    value={cityQuery}
+                    onChange={(event) => setCityQuery(event.target.value)}
+                    autoComplete="address-line1"
+                    placeholder="State/province and city"
+                    required={Boolean(selectedCountry)}
+                    disabled={!selectedCountry}
+                  />
+                </div>
+              </div>
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
+              <span className="flex items-center gap-1">
+                Address line 2 <span className="text-red-500">*</span>
+              </span>
+              <input
+                className={inputClass}
+                name="addressLine1"
+                type="text"
+                autoComplete="address-line1"
+                placeholder="123 Main Street"
+                required={Boolean(selectedCountry)}
                 disabled={!selectedCountry}
-              >
-                <option value="" disabled>
-                  {selectedCountry ? "Select a city" : "Select a country first"}
-                </option>
-                {availableCities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
-            </div>
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              Address line 1 <span className="text-red-500">*</span>
-            </span>
-            <input
-              className={inputClass}
-              name="addressLine1"
-              type="text"
-              autoComplete="address-line1"
-              placeholder="123 Main Street"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
-            Address line 2 (optional)
-            <input
-              className={inputClass}
-              name="addressLine2"
-              type="text"
-              autoComplete="address-line2"
-              placeholder="Apartment, suite, etc."
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
+              Address line 3 (optional)
+              <input
+                className={inputClass}
+                name="addressLine2"
+                type="text"
+                autoComplete="address-line2"
+                placeholder="Apartment, suite, etc."
+                disabled={!selectedCountry}
+              />
+            </label>
+          </div>
+          <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
             Website
             <input
               className={inputClass}
