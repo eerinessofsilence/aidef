@@ -1,4 +1,4 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -23,7 +23,6 @@ def register(request):
     serializer.is_valid(raise_exception=True)
 
     user = serializer.save()
-    login(request, user)
 
     return Response(_build_auth_response(user), status=status.HTTP_201_CREATED)
 
@@ -35,7 +34,6 @@ def login_view(request):
     serializer.is_valid(raise_exception=True)
 
     user = serializer.validated_data['user']
-    login(request, user)
 
     return Response(_build_auth_response(user), status=status.HTTP_200_OK)
 

@@ -7,8 +7,8 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("DJANGO_SECRET")
-DEBUG = getenv("DEBUG")
-ALLOWED_HOSTS = [getenv("ALLOWED_HOST"), ]
+DEBUG = True
+ALLOWED_HOSTS = ["*", "backend", "localhost", "127.0.0.1", "173.242.51.20"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -102,11 +102,12 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:4173',
     'http://localhost:4173',
+    'http://173.242.51.20',
 ]
+CSRF_TRUSTED_ORIGINS = ['http://173.242.51.20']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
