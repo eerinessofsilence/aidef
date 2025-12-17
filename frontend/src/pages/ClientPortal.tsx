@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  BatteryCharging,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -13,10 +12,8 @@ import {
   Package2,
   Radar,
   Radio,
-  Receipt,
   Settings,
   ShieldCheck,
-  ThermometerSun,
   UserRound,
 } from "lucide-react";
 
@@ -106,11 +103,7 @@ export default function ClientPortal() {
       serial: "SN-XXXX-XXXX",
       status: "Active / Owned",
       image: "/drone-product-detail-1.png",
-      images: [
-        "/drone-product-detail-1.png",
-        "/drone-product-detail-2.png",
-        "/unmanned-systems-portfolio-3.png",
-      ],
+      images: ["/drone-product-detail-1.png", "/drone-product-detail-2.png"],
       range: "120 km+",
       summary:
         "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
@@ -125,119 +118,173 @@ export default function ClientPortal() {
 
   const specGroups = [
     {
-      title: "Core Performance",
-      icon: Gauge,
+      title: "Positioning & Role",
+      icon: ShieldCheck,
       items: [
-        { label: "Weight", value: "9.2 kg ready-to-launch" },
-        { label: "Range", value: "120 km+ encrypted LOS / BLOS relay" },
-        { label: "Payload", value: "Up to 4.5 kg swappable bay" },
-        { label: "Endurance", value: "3.4 hrs w/ EO/IR package" },
+        {
+          label: "Mission type",
+          value: "Jet-powered kamikaze UAV for ground and air targets",
+        },
+        { label: "Effect", value: "4 kg HE/HEF charge for high-value targets" },
+        {
+          label: "Tagline",
+          value: "high speed, difficult-defense breakthrough",
+        },
+        {
+          label: "Integration",
+          value: "Swarm-ready, C2 compatible, human-in-loop override",
+        },
       ],
     },
     {
-      title: "Autonomy & AI",
+      title: "Performance Envelope",
+      icon: Gauge,
+      items: [
+        {
+          label: "Autonomous range",
+          value: "150 km (operator search radius 110 km)",
+        },
+        { label: "Max speed (Vne)", value: "430 km/h jet-powered" },
+        { label: "Endurance / wait", value: "20-40 min on-station" },
+        { label: "Weight", value: "29-35 kg incl. warhead; 4 kg charge" },
+        { label: "Dimensions", value: "Length 1.96 m / span 2.16 m" },
+        { label: "Prep time", value: "5 minutes from kit to launch" },
+      ],
+    },
+    {
+      title: "Autonomy & AI Navigation",
       icon: Cpu,
       items: [
         {
-          label: "Flight modes",
-          value: "Pilot assist, waypoint, terrain-follow",
+          label: "Intelligent nav",
+          value: "Identify/classify/track, object cataloging, swarm control",
         },
-        { label: "AI features", value: "Onboard tracking & target fusion" },
-        { label: "Safety", value: "Geo-fencing, auto-RTL, lost-link logic" },
+        {
+          label: "GNSS-denied",
+          value:
+            "AI fusion of AHRS, magnetometer, differential LiDAR, optical flow",
+        },
+        {
+          label: "Synthetic vision",
+          value: "Jetson onboard AI; flight without GPS",
+        },
+        {
+          label: "Training corpus",
+          value:
+            "161,742 frames / 1,366,494 objects across civilian and military classes",
+        },
       ],
     },
     {
-      title: "Communications",
-      icon: Radio,
-      items: [
-        { label: "Primary datalink", value: "AES-256, frequency agile" },
-        { label: "Mesh", value: "Inter-vehicle relay ready" },
-        { label: "Control", value: "Secure GCS w/ STANAG video" },
-      ],
-    },
-    {
-      title: "Power & Propulsion",
-      icon: BatteryCharging,
-      items: [
-        { label: "System voltage", value: "High-density Li-ion pack" },
-        { label: "Redundancy", value: "Dual-bus power with BMS alerts" },
-        { label: "Support", value: "Hot-swap ground batteries" },
-      ],
-    },
-    {
-      title: "Environmental",
-      icon: ThermometerSun,
-      items: [
-        { label: "Operating conditions", value: "-20°C to +55°C" },
-        { label: "Ingress", value: "IP54 weatherized airframe" },
-        { label: "Wind", value: "Tested to 16 m/s steady, 22 m/s gust" },
-      ],
-    },
-    {
-      title: "Sensors & EW",
+      title: "Sensors & EW Resilience",
       icon: Radar,
       items: [
-        { label: "Standard", value: "EO/IR stabilized gimbal" },
-        { label: "EW hardening", value: "Shielded harness, GNSS resilience" },
-        { label: "Add-ons", value: "Radar cueing & low-light fusion ready" },
+        {
+          label: "Primary sensors",
+          value: "IR, RGB, LiDAR plus frequency and direction scanning",
+        },
+        {
+          label: "EW hardening",
+          value: "GNSS-independent nav, AoA sensors, Safe-Arm control block",
+        },
+        {
+          label: "Comms",
+          value:
+            "RS-422 hardened link; NLOS commands; Starlink and LTE fallback",
+        },
+        {
+          label: "Swarm ops",
+          value: "Data exchange, relay, and reconfiguration between UAVs",
+        },
+      ],
+    },
+    {
+      title: "Control & Mission Modes",
+      icon: Settings,
+      items: [
+        {
+          label: "Control methods",
+          value: "Manual, semi-autonomous, autonomous; human override",
+        },
+        {
+          label: "Modes",
+          value:
+            "Takeoff, route, circle, re-entry, hold, flight-to-point, special",
+        },
+        {
+          label: "Guidance",
+          value: "NLOS operator commands plus autonomous/autopilot",
+        },
+        {
+          label: "Operations",
+          value:
+            "Data logging, telemetry, program execution, status monitoring",
+        },
+      ],
+    },
+    {
+      title: "Ground Control Station",
+      icon: Radio,
+      items: [
+        {
+          label: "Concept",
+          value:
+            "Military-grade, fire-and-forget; 1 station controls 5+ drones",
+        },
+        {
+          label: "Software",
+          value:
+            "AI-Def Pilot (UAS) and AI-Def Targeting (dual-res RGB/thermal, map cues)",
+        },
+        {
+          label: "Hardware",
+          value: "Rugged GCS with 16-core Intel CPU and Nvidia RTX GPU",
+        },
       ],
     },
   ];
 
   const upgrades = [
     {
-      title: "EO/IR Camera",
-      description: "Multi-spectral gimbal with geo-lock and object tracking.",
-      image: "/products-2.png",
-      action: "Request Quote",
-    },
-    {
-      title: "Radar module",
-      description: "Compact SAR/MTI pod for foliage penetration and cueing.",
-      image: "/products-4.png",
-      action: "Request Quote",
-    },
-    {
-      title: "EW protection",
-      description: "Hardened comms stack with spectrum monitoring overlays.",
-      image: "/products-5.png",
-      action: "Purchase",
-    },
-    {
-      title: "Extra batteries",
-      description: "Field-swappable packs with smart charge telemetry.",
-      image: "/support-2.png",
-      action: "Purchase",
-    },
-    {
-      title: "Ground control accessories",
-      description: "Secured handheld controllers and ruggedized cases.",
-      image: "/support-3.png",
-      action: "Request Quote",
-    },
-  ];
-
-  const futureSections = [
-    {
-      title: "Invoices",
+      title: "ENGINE AD20PRO",
       description:
-        "Billing statements and payment confirmations will live here.",
-      icon: Receipt,
+        "Dedicated to professional applications (UAVs, etc.) and modelers who prefer reliability and a long operational life.",
+      image: "/add-on-modules-1.png",
+      action: "Request",
     },
     {
-      title: "Payment history",
-      description: "Track settlements, renewals, and authorized methods.",
-      icon: FileText,
+      title: "AUTOMATIC FLIGHT CONTROLER",
+      description:
+        "Control the flight of UAV in automatic and semiautomatic regime",
+      image: "/add-on-modules-2.png",
+      action: "Request",
     },
     {
-      title: "Warranty & sustainment",
-      description: "Coverage windows, RMA tickets, and service cadence.",
-      icon: ShieldCheck,
+      title: "BOOSTER",
+      description:
+        "Greater range, stronger takeoff performance and lower detectability ensure fast, reliable mission readiness in only three minutes.",
+      image: "/add-on-modules-3.png",
+      action: "Request",
     },
     {
-      title: "Documents",
-      description: "Technical orders, release notes, and field checklists.",
-      icon: Lock,
+      title: "Dual Satellite Navigation System",
+      description:
+        "Position calculation of a vehicle with the ability of spoofing detection",
+      image: "/add-on-modules-4.png",
+      action: "Request",
+    },
+    {
+      title: "PAYLOAD ACTIVATION BOARD",
+      description:
+        "The board is designed to electrically activate different types of payloads",
+      image: "/add-on-modules-5.png",
+      action: "Request",
+    },
+    {
+      title: "Pitot tube",
+      description: "Integrated angle of attack and sliding angle sensor",
+      image: "/add-on-modules-6.png",
+      action: "Request",
     },
   ];
 
@@ -277,13 +324,6 @@ export default function ClientPortal() {
     navigate("/", { replace: true });
   };
 
-  const scrollToSpecs = () => {
-    const target = document.getElementById("tech-specs");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
   const showPreviousImage = () => {
     setActiveMediaIndex((current) => {
       if (!productImages.length) return current;
@@ -306,11 +346,11 @@ export default function ClientPortal() {
       </div>
 
       <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
-        <div className="container flex justify-between gap-3 px-4 py-4 max-[480px]:flex-col max-[480px]:justify-center">
+        <div className="container flex justify-between gap-3 px-4 py-4">
           <div className="flex items-center justify-center gap-3">
             <div className="flex max-w-40 items-center justify-center">
               <a href="/">
-                <img src="/client-portal-logo.svg" alt="" />
+                <img src="/logo-ai-def.svg" alt="" />
               </a>
             </div>
           </div>
@@ -321,7 +361,7 @@ export default function ClientPortal() {
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((prev) => !prev)}
-                className="flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-left shadow-lg shadow-black/30 transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none sm:w-auto"
+                className="flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-left shadow-lg shadow-black/30 transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none sm:w-auto"
               >
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
                   <UserRound className="h-4 w-4" aria-hidden="true" />
@@ -371,18 +411,324 @@ export default function ClientPortal() {
         </div>
       </header>
 
-      <div className="relative z-10 container px-4 pt-12 pb-16 lg:pt-16">
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
+      <div className="relative z-10 pt-12 pb-16 lg:pt-16">
+        <section className="space-y-5">
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="container space-y-3">
+                <div>
+                  <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                    Your product
+                  </p>
+                  <h2 className="text-2xl font-semibold text-white">
+                    {selectedProduct.name}
+                  </h2>
+                </div>
+                <div className="flex w-fit items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                  {selectedProduct.status}
+                </div>
+              </div>
+            </div>
+            <div className="relative hidden min-h-80 max-md:block">
+              <div className="relative h-full">
+                {productImages.map((imageSrc, index) => (
+                  <img
+                    key={`${selectedProduct.id}-${index}`}
+                    src={imageSrc}
+                    alt={`${selectedProduct.name} view ${index + 1}`}
+                    className={`absolute inset-0 transition duration-300 ease-out ${
+                      index === activeMediaIndex ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {hasMultipleImages ? (
+                <>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 left-0 container flex items-center justify-between px-3 sm:px-4">
+                    <button
+                      type="button"
+                      onClick={showPreviousImage}
+                      aria-label="Show previous image"
+                      className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    >
+                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={showNextImage}
+                      aria-label="Show next image"
+                      className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    >
+                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                    {productImages.map((_, index) => (
+                      <button
+                        key={`${selectedProduct.id}-dot-${index}`}
+                        type="button"
+                        aria-label={`Show image ${index + 1} of ${productImages.length}`}
+                        onClick={() => setActiveMediaIndex(index)}
+                        className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
+                          index === activeMediaIndex
+                            ? "border-white/70 bg-white"
+                            : "border-white/30 bg-white/20 hover:border-white/60"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                    {activeMediaIndex + 1} / {productImages.length}
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </div>
+          <div className="container grid gap-6">
+            <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+              <div className="grid lg:grid-cols-2">
+                <div className="relative min-h-80 overflow-hidden max-md:hidden">
+                  <div className="relative h-full">
+                    {productImages.map((imageSrc, index) => (
+                      <img
+                        key={`${selectedProduct.id}-${index}`}
+                        src={imageSrc}
+                        alt={`${selectedProduct.name} view ${index + 1}`}
+                        className={`absolute inset-0 h-full w-full object-cover transition duration-700 ease-out ${
+                          index === activeMediaIndex
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {hasMultipleImages ? (
+                    <>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center justify-between px-3 sm:px-4">
+                        <button
+                          type="button"
+                          onClick={showPreviousImage}
+                          aria-label="Show previous image"
+                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        >
+                          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={showNextImage}
+                          aria-label="Show next image"
+                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        >
+                          <ChevronRight
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      </div>
+
+                      <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                        {productImages.map((_, index) => (
+                          <button
+                            key={`${selectedProduct.id}-dot-${index}`}
+                            type="button"
+                            aria-label={`Show image ${index + 1} of ${productImages.length}`}
+                            onClick={() => setActiveMediaIndex(index)}
+                            className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
+                              index === activeMediaIndex
+                                ? "border-white/70 bg-white"
+                                : "border-white/30 bg-white/20 hover:border-white/60"
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                        {activeMediaIndex + 1} / {productImages.length}
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+                <div className="flex flex-col justify-between gap-6 p-6 md:p-8">
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold tracking-[0.18em] text-white/60 uppercase">
+                      Serial {selectedProduct.serial}
+                    </p>
+                    <h3 className="text-2xl font-semibold text-white">
+                      {selectedProduct.name}
+                    </h3>
+                    <p className="text-sm text-white/65">
+                      {selectedProduct.summary}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
+                        Mission-ready
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
+                        Airworthiness verified
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
+                        Range {selectedProduct.range}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
+                      <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
+                        Ownership
+                      </p>
+                      <p className="mt-1 text-lg font-semibold text-white">
+                        Active / Owned
+                      </p>
+                      <p className="text-xs text-white/60">
+                        Cleared for operational deployment under your program.
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
+                      <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
+                        Documentation
+                      </p>
+                      <p className="mt-1 text-lg font-semibold text-white">
+                        Confidential bundle
+                      </p>
+                      <p className="text-xs text-white/60">
+                        Technical orders, wiring, and maintenance notes secured
+                        to this session.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <div
+              id="tech-specs"
+              className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                    Specifications & Technical Details
+                  </p>
+                  <h3 className="text-xl font-semibold text-white">
+                    Engineering sheet
+                  </h3>
+                </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
+                  <FileText className="h-5 w-5" aria-hidden="true" />
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-3">
+                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
+                  <span className="text-white/70">Serial number</span>
+                  <span className="font-semibold text-white">
+                    {selectedProduct.serial}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
+                  <span className="text-white/70">Status</span>
+                  <span className="font-semibold text-emerald-200">
+                    {selectedProduct.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4">
+                {specGroups.map((group) => (
+                  <div
+                    key={group.title}
+                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
+                        <group.icon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                      <p className="text-sm font-semibold text-white">
+                        {group.title}
+                      </p>
+                    </div>
+                    <ul className="mt-3 space-y-2 text-sm text-white/70">
+                      {group.items.map((item) => (
+                        <li
+                          key={item.label}
+                          className="flex items-start justify-between gap-3 rounded-lg bg-slate-900/60 px-3 py-2 max-md:text-sm"
+                        >
+                          <span>{item.label}</span>
+                          <span className="text-right font-semibold text-white max-md:text-sm">
+                            {item.value}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="container mt-12 space-y-5">
+          <div className="flex items-center gap-3">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                Available upgrades
+              </p>
+              <h2 className="text-2xl font-semibold text-white">
+                Modules built for contested environments
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {upgrades.map((upgrade) => (
+              <article
+                key={upgrade.title}
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.32)] transition"
+              >
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={upgrade.image}
+                    alt={upgrade.title}
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-3 p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-lg font-semibold text-white">
+                      {upgrade.title}
+                    </h3>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
+                      Add-on
+                    </span>
+                  </div>
+                  <p className="text-sm text-white/65">{upgrade.description}</p>
+                  <button
+                    type="button"
+                    className="mt-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-sky-400/15 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                  >
+                    {upgrade.action}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section className="container mt-12 grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-8">
             <p className="text-xs font-semibold tracking-[0.28em] text-white/50 uppercase">
-              Welcome back, {displayName}
+              Overview
             </p>
             <h1 className="mt-3 text-3xl leading-tight font-semibold text-white md:text-4xl">
-              Your products and technical documentation are available below.
+              Centralized product overview & documentation hub.
             </h1>
             <p className="mt-3 text-base text-white/65">
-              Monitor fleet readiness, download specs, and request mission-fit
-              upgrades from a hardened portal built for defense programs.
+              Browse your full lineup, compare key specs, and access manuals,
+              service notes, and integration materials in one place.
             </p>
 
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -501,312 +847,7 @@ export default function ClientPortal() {
             </div>
           </div>
         </section>
-
-        <section className="mt-10 space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
-                <Package2 className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <div>
-                <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                  Your product
-                </p>
-                <h2 className="text-2xl font-semibold text-white">
-                  {selectedProduct.name}
-                </h2>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={scrollToSpecs}
-              className="inline-flex items-center gap-2 rounded-2xl border border-sky-400/40 bg-sky-400/10 px-4 py-2 text-sm font-semibold text-sky-50 transition hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-sky-400/20 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-            >
-              View full specifications
-            </button>
-          </div>
-
-          <div className="grid gap-6">
-            <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-              <div className="grid lg:grid-cols-2">
-                <div className="relative min-h-80 overflow-hidden">
-                  <div className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
-                    <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                    {selectedProduct.status}
-                  </div>
-
-                  <div className="relative h-full">
-                    {productImages.map((imageSrc, index) => (
-                      <img
-                        key={`${selectedProduct.id}-${index}`}
-                        src={imageSrc}
-                        alt={`${selectedProduct.name} view ${index + 1}`}
-                        className={`absolute inset-0 h-full w-full object-cover transition duration-700 ease-out ${
-                          index === activeMediaIndex
-                            ? "opacity-100"
-                            : "opacity-0"
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  {hasMultipleImages ? (
-                    <>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center justify-between px-3 sm:px-4">
-                        <button
-                          type="button"
-                          onClick={showPreviousImage}
-                          aria-label="Show previous image"
-                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                        >
-                          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={showNextImage}
-                          aria-label="Show next image"
-                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                        >
-                          <ChevronRight
-                            className="h-5 w-5"
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </div>
-
-                      <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-                        {productImages.map((_, index) => (
-                          <button
-                            key={`${selectedProduct.id}-dot-${index}`}
-                            type="button"
-                            aria-label={`Show image ${index + 1} of ${productImages.length}`}
-                            onClick={() => setActiveMediaIndex(index)}
-                            className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
-                              index === activeMediaIndex
-                                ? "border-white/70 bg-white"
-                                : "border-white/30 bg-white/20 hover:border-white/60"
-                            }`}
-                          />
-                        ))}
-                      </div>
-
-                      <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
-                        {activeMediaIndex + 1} / {productImages.length}
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-                <div className="flex flex-col justify-between gap-6 p-6 md:p-8">
-                  <div className="space-y-3">
-                    <p className="text-sm font-semibold tracking-[0.18em] text-white/60 uppercase">
-                      Serial {selectedProduct.serial}
-                    </p>
-                    <h3 className="text-2xl font-semibold text-white">
-                      {selectedProduct.name}
-                    </h3>
-                    <p className="text-sm text-white/65">
-                      {selectedProduct.summary}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-                        Mission-ready
-                      </span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-                        Airworthiness verified
-                      </span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-                        Range {selectedProduct.range}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
-                      <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                        Ownership
-                      </p>
-                      <p className="mt-1 text-lg font-semibold text-white">
-                        Active / Owned
-                      </p>
-                      <p className="text-xs text-white/60">
-                        Cleared for operational deployment under your program.
-                      </p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
-                      <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                        Documentation
-                      </p>
-                      <p className="mt-1 text-lg font-semibold text-white">
-                        Confidential bundle
-                      </p>
-                      <p className="text-xs text-white/60">
-                        Technical orders, wiring, and maintenance notes secured
-                        to this session.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <div
-              id="tech-specs"
-              className="rounded-3xl border border-white/10 bg-slate-900/70 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                    Specifications & Technical Details
-                  </p>
-                  <h3 className="text-xl font-semibold text-white">
-                    Engineering sheet
-                  </h3>
-                </div>
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
-                  <FileText className="h-5 w-5" aria-hidden="true" />
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-3">
-                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
-                  <span className="text-white/70">Serial number</span>
-                  <span className="font-semibold text-white">
-                    {selectedProduct.serial}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
-                  <span className="text-white/70">Status</span>
-                  <span className="font-semibold text-emerald-200">
-                    {selectedProduct.status}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-5 grid grid-cols-2 gap-4 max-lg:grid-cols-1">
-                {specGroups.map((group) => (
-                  <div
-                    key={group.title}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
-                        <group.icon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                      <p className="text-sm font-semibold text-white">
-                        {group.title}
-                      </p>
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm text-white/70">
-                      {group.items.map((item) => (
-                        <li
-                          key={item.label}
-                          className="flex items-start justify-between gap-3 rounded-lg bg-slate-900/60 px-3 py-2"
-                        >
-                          <span>{item.label}</span>
-                          <span className="text-right font-semibold text-white">
-                            {item.value}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-12 space-y-5">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
-              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                Available upgrades
-              </p>
-              <h2 className="text-2xl font-semibold text-white">
-                Modules built for contested environments
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {upgrades.map((upgrade) => (
-              <article
-                key={upgrade.title}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.32)] transition"
-              >
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={upgrade.image}
-                    alt={upgrade.title}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col gap-3 p-5">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-lg font-semibold text-white">
-                      {upgrade.title}
-                    </h3>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
-                      Add-on
-                    </span>
-                  </div>
-                  <p className="text-sm text-white/65">{upgrade.description}</p>
-                  <button
-                    type="button"
-                    className="mt-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-sky-400/15 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                  >
-                    {upgrade.action}
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-12 space-y-5">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
-              <FileText className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                Future-ready structure
-              </p>
-              <h2 className="text-2xl font-semibold text-white">
-                Additional controls coming online
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {futureSections.map((section) => (
-              <div
-                key={section.title}
-                className="rounded-3xl border border-dashed border-white/15 bg-white/5 p-5 shadow-[0_15px_40px_rgba(0,0,0,0.28)]"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
-                    <section.icon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-white/60 uppercase">
-                    Coming soon
-                  </span>
-                </div>
-                <h3 className="mt-3 text-lg font-semibold text-white">
-                  {section.title}
-                </h3>
-                <p className="mt-2 text-sm text-white/65">
-                  {section.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-12">
+        <section className="container mt-12">
           <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-slate-900/80 p-5 text-sm text-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.35)] md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-3">
               <span className="flex items-center justify-center rounded-xl bg-white/10 p-2 text-sky-100">
