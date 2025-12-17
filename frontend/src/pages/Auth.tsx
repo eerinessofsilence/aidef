@@ -95,7 +95,7 @@ export default function Auth() {
 
       setSuccess("Signed in successfully.");
       window.dispatchEvent(new Event("auth-updated"));
-      navigate("/", { replace: true });
+      navigate("/client-portal", { replace: true });
     } catch (err) {
       console.error(err);
       setError("Unable to connect to the server. Please try again.");

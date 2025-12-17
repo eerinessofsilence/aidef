@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
   BatteryCharging,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Cpu,
   FileText,
   Gauge,
@@ -104,6 +106,11 @@ export default function ClientPortal() {
       serial: "SN-XXXX-XXXX",
       status: "Active / Owned",
       image: "/drone-product-detail-1.png",
+      images: [
+        "/drone-product-detail-1.png",
+        "/drone-product-detail-2.png",
+        "/unmanned-systems-portfolio-3.png",
+      ],
       range: "120 km+",
       summary:
         "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
@@ -114,6 +121,7 @@ export default function ClientPortal() {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     () => products[0]?.id ?? null,
   );
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
   const specGroups = [
     {
@@ -236,6 +244,18 @@ export default function ClientPortal() {
   const selectedProduct =
     products.find((product) => product.id === selectedProductId) || products[0];
 
+  const productImages =
+    selectedProduct?.images?.length && selectedProduct.images.length > 0
+      ? selectedProduct.images
+      : selectedProduct?.image
+        ? [selectedProduct.image]
+        : [];
+  const hasMultipleImages = productImages.length > 1;
+
+  useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [selectedProductId]);
+
   const handleSignOut = async () => {
     const token =
       localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
@@ -264,6 +284,20 @@ export default function ClientPortal() {
     }
   };
 
+  const showPreviousImage = () => {
+    setActiveMediaIndex((current) => {
+      if (!productImages.length) return current;
+      return (current - 1 + productImages.length) % productImages.length;
+    });
+  };
+
+  const showNextImage = () => {
+    setActiveMediaIndex((current) => {
+      if (!productImages.length) return current;
+      return (current + 1) % productImages.length;
+    });
+  };
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-50">
       <div className="pointer-events-none absolute inset-0">
@@ -272,23 +306,22 @@ export default function ClientPortal() {
       </div>
 
       <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
-        <div className="container flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container flex justify-between gap-3 px-4 py-4 max-[480px]:flex-col max-[480px]:justify-center">
+          <div className="flex items-center justify-center gap-3">
             <div className="flex max-w-40 items-center justify-center">
               <a href="/">
                 <img src="/client-portal-logo.svg" alt="" />
               </a>
             </div>
           </div>
-
-          <div className="flex w-full items-center justify-end gap-3 sm:w-auto">
-            <div ref={menuRef} className="relative w-full sm:w-auto">
+          <div className="flex items-center justify-center gap-3">
+            <div ref={menuRef} className="relative">
               <button
                 type="button"
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((prev) => !prev)}
-                className="flex w-full min-w-0 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left shadow-lg shadow-black/30 transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none sm:w-auto"
+                className="flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-left shadow-lg shadow-black/30 transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none sm:w-auto"
               >
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
                   <UserRound className="h-4 w-4" aria-hidden="true" />
@@ -305,20 +338,20 @@ export default function ClientPortal() {
               </button>
 
               {menuOpen ? (
-                <div className="absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full max-w-[18rem] rounded-2xl border border-white/10 bg-slate-900/90 p-2 shadow-2xl backdrop-blur-lg sm:w-72">
+                <div className="absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full max-w-[18rem] rounded-2xl border border-white/10 bg-slate-900/90 p-2 shadow-2xl backdrop-blur-lg">
                   <div className="px-3 py-2 text-[11px] font-semibold tracking-[0.14em] text-white/50 uppercase">
                     Account
                   </div>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                   >
                     <UserRound className="h-4 w-4 text-white/70" />
                     Profile
                   </button>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                   >
                     <Settings className="h-4 w-4 text-white/70" />
                     Settings
@@ -326,7 +359,7 @@ export default function ClientPortal() {
                   <button
                     type="button"
                     onClick={handleSignOut}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
                   >
                     <LogOut className="h-4 w-4" />
                     Sign out
@@ -496,16 +529,72 @@ export default function ClientPortal() {
           <div className="grid gap-6">
             <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="grid lg:grid-cols-2">
-                <div className="relative">
-                  <div className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
+                <div className="relative min-h-80 overflow-hidden">
+                  <div className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
                     <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                     {selectedProduct.status}
                   </div>
-                  <img
-                    src={selectedProduct.image}
-                    alt={`${selectedProduct.name} product render`}
-                    className="h-full w-full object-cover"
-                  />
+
+                  <div className="relative h-full">
+                    {productImages.map((imageSrc, index) => (
+                      <img
+                        key={`${selectedProduct.id}-${index}`}
+                        src={imageSrc}
+                        alt={`${selectedProduct.name} view ${index + 1}`}
+                        className={`absolute inset-0 h-full w-full object-cover transition duration-700 ease-out ${
+                          index === activeMediaIndex
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  {hasMultipleImages ? (
+                    <>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center justify-between px-3 sm:px-4">
+                        <button
+                          type="button"
+                          onClick={showPreviousImage}
+                          aria-label="Show previous image"
+                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        >
+                          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={showNextImage}
+                          aria-label="Show next image"
+                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        >
+                          <ChevronRight
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      </div>
+
+                      <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                        {productImages.map((_, index) => (
+                          <button
+                            key={`${selectedProduct.id}-dot-${index}`}
+                            type="button"
+                            aria-label={`Show image ${index + 1} of ${productImages.length}`}
+                            onClick={() => setActiveMediaIndex(index)}
+                            className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
+                              index === activeMediaIndex
+                                ? "border-white/70 bg-white"
+                                : "border-white/30 bg-white/20 hover:border-white/60"
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                        {activeMediaIndex + 1} / {productImages.length}
+                      </div>
+                    </>
+                  ) : null}
                 </div>
                 <div className="flex flex-col justify-between gap-6 p-6 md:p-8">
                   <div className="space-y-3">
