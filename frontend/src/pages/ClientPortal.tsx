@@ -378,30 +378,30 @@ export default function ClientPortal() {
               </button>
 
               {menuOpen ? (
-                <div className="absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full max-w-[18rem] rounded-2xl border border-white/10 bg-slate-900/90 p-2 shadow-2xl backdrop-blur-lg">
+                <div className="absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full max-w-[18rem] rounded-2xl border border-white/10 bg-slate-900/90 p-1 shadow-2xl backdrop-blur-lg">
                   <div className="px-3 py-2 text-[11px] font-semibold tracking-[0.14em] text-white/50 uppercase">
                     Account
                   </div>
                   <button
                     type="button"
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                   >
-                    <UserRound className="h-4 w-4 text-white/70" />
+                    <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
                     Profile
                   </button>
                   <button
                     type="button"
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                   >
-                    <Settings className="h-4 w-4 text-white/70" />
+                    <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
                     Settings
                   </button>
                   <button
                     type="button"
                     onClick={handleSignOut}
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-3.5 w-3.5 shrink-0" />
                     Sign out
                   </button>
                 </div>
@@ -430,7 +430,7 @@ export default function ClientPortal() {
                 </div>
               </div>
             </div>
-            <div className="relative hidden min-h-80 max-md:block">
+            <div className="relative hidden min-h-65 max-md:block">
               <div className="relative h-full">
                 {productImages.map((imageSrc, index) => (
                   <img
@@ -465,7 +465,7 @@ export default function ClientPortal() {
                     </button>
                   </div>
 
-                  <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                  <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
                     {productImages.map((_, index) => (
                       <button
                         key={`${selectedProduct.id}-dot-${index}`}
@@ -481,14 +481,14 @@ export default function ClientPortal() {
                     ))}
                   </div>
 
-                  <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                  <div className="absolute right-4 bottom-9 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
                     {activeMediaIndex + 1} / {productImages.length}
                   </div>
                 </>
               ) : null}
             </div>
           </div>
-          <div className="container grid gap-6">
+          <div className="container grid grid-cols-1 gap-6">
             <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="grid lg:grid-cols-2">
                 <div className="relative min-h-80 overflow-hidden max-md:hidden">
@@ -498,7 +498,7 @@ export default function ClientPortal() {
                         key={`${selectedProduct.id}-${index}`}
                         src={imageSrc}
                         alt={`${selectedProduct.name} view ${index + 1}`}
-                        className={`absolute inset-0 h-full w-full object-cover transition duration-700 ease-out ${
+                        className={`absolute inset-0 transition duration-700 ease-out ${
                           index === activeMediaIndex
                             ? "opacity-100"
                             : "opacity-0"
@@ -553,7 +553,7 @@ export default function ClientPortal() {
                     </>
                   ) : null}
                 </div>
-                <div className="flex flex-col justify-between gap-6 p-6 md:p-8">
+                <div className="flex flex-col justify-between gap-6 p-5">
                   <div className="space-y-3">
                     <p className="text-sm font-semibold tracking-[0.18em] text-white/60 uppercase">
                       Serial {selectedProduct.serial}
@@ -570,9 +570,6 @@ export default function ClientPortal() {
                       </span>
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
                         Airworthiness verified
-                      </span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-                        Range {selectedProduct.range}
                       </span>
                     </div>
                   </div>
@@ -605,7 +602,6 @@ export default function ClientPortal() {
                 </div>
               </div>
             </article>
-
             <div
               id="tech-specs"
               className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7"
@@ -619,19 +615,19 @@ export default function ClientPortal() {
                     Engineering sheet
                   </h3>
                 </div>
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
                   <FileText className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
 
               <div className="mt-5 grid gap-3">
-                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
+                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
                   <span className="text-white/70">Serial number</span>
                   <span className="font-semibold text-white">
                     {selectedProduct.serial}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
+                <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
                   <span className="text-white/70">Status</span>
                   <span className="font-semibold text-emerald-200">
                     {selectedProduct.status}
@@ -639,28 +635,26 @@ export default function ClientPortal() {
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-4">
+              <div className="mt-5 grid grid-cols-1 gap-4">
                 {specGroups.map((group) => (
                   <div
                     key={group.title}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                    className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm max-md:text-xs"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 text-sm">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
                         <group.icon className="h-5 w-5" aria-hidden="true" />
                       </span>
-                      <p className="text-sm font-semibold text-white">
-                        {group.title}
-                      </p>
+                      <p className="font-semibold text-white">{group.title}</p>
                     </div>
-                    <ul className="mt-3 space-y-2 text-sm text-white/70">
+                    <ul className="mt-3 space-y-2 text-white/70">
                       {group.items.map((item) => (
                         <li
                           key={item.label}
-                          className="flex items-start justify-between gap-3 rounded-lg bg-slate-900/60 px-3 py-2 max-md:text-sm"
+                          className="flex items-start justify-between gap-3 rounded-lg bg-slate-900/60 px-3 py-2"
                         >
                           <span>{item.label}</span>
-                          <span className="text-right font-semibold text-white max-md:text-sm">
+                          <span className="text-right font-semibold wrap-break-word text-white max-md:max-w-25">
                             {item.value}
                           </span>
                         </li>
@@ -773,7 +767,7 @@ export default function ClientPortal() {
           </div>
 
           <div className="grid gap-4">
-            <div className="rounded-3xl border border-white/10 bg-linear-to-br from-white/10 via-white/5 to-slate-900/60 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            <div className="rounded-3xl border border-white/10 bg-linear-to-br from-white/10 via-white/5 to-slate-900/60 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
@@ -803,26 +797,25 @@ export default function ClientPortal() {
               </ul>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-              <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+              <p className="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase">
                 Product lineup
               </p>
               <div className="mt-3 grid grid-cols-1 gap-3">
                 {products.map((product) => (
-                  // Future purchases can be selected as they are added.
                   <button
                     key={product.id}
                     type="button"
                     onClick={() => setSelectedProductId(product.id)}
                     aria-pressed={selectedProduct?.id === product.id}
-                    className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none ${
+                    className={`flex flex-col justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none md:flex-row md:items-center ${
                       selectedProduct?.id === product.id
                         ? "border-sky-400/60 bg-sky-400/15"
                         : "border-white/10 bg-white/5"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
                         <Package2 className="h-5 w-5" aria-hidden="true" />
                       </span>
                       <div className="leading-tight">
@@ -849,8 +842,8 @@ export default function ClientPortal() {
         </section>
         <section className="container mt-12">
           <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-slate-900/80 p-5 text-sm text-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.35)] md:flex-row md:items-center md:justify-between">
-            <div className="flex items-start gap-3">
-              <span className="flex items-center justify-center rounded-xl bg-white/10 p-2 text-sky-100">
+            <div className="flex flex-col items-start gap-3 md:flex-row">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
                 <Lock className="h-5 w-5" aria-hidden="true" />
               </span>
               <div className="space-y-1">
