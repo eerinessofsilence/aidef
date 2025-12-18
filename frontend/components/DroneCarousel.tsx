@@ -38,14 +38,14 @@ const data = [
     title: "AXQ",
     href: "products/axq-quadrocopter",
     description: "Lightweight 10-inch multicopter",
-    bg: "/drone-carousel-bg-3.png",
+    bg: "/drone-carousel-bg-2.png",
   },
   {
     category: "Drone controls",
     title: "Ground Control Station",
     href: "products/ground-control-station",
     description: " Unihed control for all platforms",
-    bg: "/drone-carousel-bg-5.png",
+    bg: "/drone-carousel-bg-3.png",
   },
   {
     category: "UGV",
@@ -59,6 +59,6 @@ const data = [
     title: "AV-1 VTOL",
     href: "products/av-1-vtol",
     description: "Vertical take-of and landing aircraft",
-    bg: "/drone-carousel-bg-2.png",
+    bg: "/drone-carousel-bg-5.png",
   },
 ];

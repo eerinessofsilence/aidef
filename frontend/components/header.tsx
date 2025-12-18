@@ -1,7 +1,15 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  ChevronDown,
+  LogOut,
+  Menu,
+  Settings,
+  UserRound,
+  X,
+  LayoutDashboard,
+} from "lucide-react";
 import { ContactForm } from "./ui/contact-form";
 import { CONTACT_MODAL_EVENT } from "../lib/contact-modal";
 
@@ -85,9 +93,18 @@ export default function Header() {
     {},
   );
   const [isAuthed, setIsAuthed] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [mobileAccountMenuOpen, setMobileAccountMenuOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<{
+    email: string | null;
+    name: string | null;
+  }>({ email: null, name: null });
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileAccountMenuRef = useRef<HTMLDivElement | null>(null);
   const originalBodyOverflow = useRef<string | null>(null);
+  const navigate = useNavigate();
   const dropdownTransitionClasses =
     "transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]";
   const getDropdownVisibilityClasses = (isOpen: boolean) =>
@@ -97,6 +114,14 @@ export default function Header() {
 
   const mobileMenuId = "mobile-menu";
   const clientPortalHref = isAuthed ? "/client-portal" : "/auth";
+  const displayName = userProfile.name || userProfile.email || "Operator";
+  const API_BASE = useMemo(() => {
+    const raw =
+      import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+    const trimmed = raw.replace(/\/+$/, "");
+    if (!trimmed) return "/api";
+    return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+  }, []);
 
   const openContactModal = useCallback(
     (closeMobile = false) => {
@@ -154,6 +179,63 @@ export default function Header() {
     setMobileExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
+  const syncUserProfile = useCallback(() => {
+    if (typeof window === "undefined") return;
+
+    const rawUser =
+      localStorage.getItem("authUser") || sessionStorage.getItem("authUser");
+    if (!rawUser) {
+      setUserProfile({ email: null, name: null });
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(rawUser) as {
+        email?: string;
+        first_name?: string;
+        last_name?: string;
+      };
+      const email =
+        typeof parsed.email === "string" ? parsed.email.trim() : null;
+      const first =
+        typeof parsed.first_name === "string" ? parsed.first_name.trim() : "";
+      const last =
+        typeof parsed.last_name === "string" ? parsed.last_name.trim() : "";
+      const name =
+        [first, last].filter(Boolean).join(" ").trim() ||
+        (email ? email.split("@")[0] : null);
+
+      setUserProfile({ email, name });
+    } catch (error) {
+      console.error("Unable to parse stored user", error);
+      setUserProfile({ email: null, name: null });
+    }
+  }, []);
+
+  const handleSignOut = useCallback(async () => {
+    const token =
+      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+    try {
+      await fetch(`${API_BASE}/auth/logout/`, {
+        method: "POST",
+        headers: token ? { Authorization: `Token ${token}` } : undefined,
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("authUser");
+    sessionStorage.removeItem("authUser");
+    window.dispatchEvent(new Event("auth-updated"));
+    setAccountMenuOpen(false);
+    setMobileAccountMenuOpen(false);
+    setIsAuthed(false);
+    navigate("/", { replace: true });
+  }, [API_BASE, navigate]);
+
   useEffect(() => {
     if (!mobileMenuIsOpen) return;
 
@@ -179,6 +261,38 @@ export default function Header() {
   }, [mobileMenuIsOpen]);
 
   useEffect(() => {
+    if (!accountMenuOpen) return;
+
+    const handleClickAway = (event: MouseEvent) => {
+      if (!accountMenuRef.current?.contains(event.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickAway);
+    return () => document.removeEventListener("mousedown", handleClickAway);
+  }, [accountMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileAccountMenuOpen) return;
+
+    const handleClickAway = (event: MouseEvent) => {
+      if (!mobileAccountMenuRef.current?.contains(event.target as Node)) {
+        setMobileAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickAway);
+    return () => document.removeEventListener("mousedown", handleClickAway);
+  }, [mobileAccountMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuIsOpen) {
+      setMobileAccountMenuOpen(false);
+    }
+  }, [mobileMenuIsOpen]);
+
+  useEffect(() => {
     const handleOpenContact = () => openContactModal();
     window.addEventListener(CONTACT_MODAL_EVENT, handleOpenContact);
 
@@ -193,7 +307,12 @@ export default function Header() {
           (localStorage.getItem("authToken") ||
             sessionStorage.getItem("authToken")),
       );
-    const handleAuthChange = () => setIsAuthed(computeAuth());
+    const handleAuthChange = () => {
+      setIsAuthed(computeAuth());
+      syncUserProfile();
+      setAccountMenuOpen(false);
+      setMobileAccountMenuOpen(false);
+    };
 
     handleAuthChange();
     window.addEventListener("storage", handleAuthChange);
@@ -202,7 +321,7 @@ export default function Header() {
       window.removeEventListener("storage", handleAuthChange);
       window.removeEventListener("auth-updated", handleAuthChange);
     };
-  }, []);
+  }, [syncUserProfile]);
 
   useEffect(() => {
     if (!contactModalOpen) return;
@@ -241,10 +360,10 @@ export default function Header() {
   return (
     <>
       <div className="fixed left-1/2 z-50 container -translate-x-1/2 py-5">
-        <header className="border-border/75 rounded-[20px] border bg-linear-to-b from-black/25 via-black/25 to-black/25 p-6 px-4 shadow-sm shadow-black backdrop-blur-lg">
+        <header className="border-border/25 rounded-[20px] border bg-linear-to-b from-black/30 via-black/20 to-black/10 p-6 px-4 shadow-[inset_0_2px_12px_rgba(255,255,255,0.35)] backdrop-blur-lg">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center space-x-2">
-              <img src="/logo-ai-def.svg" className="w-35 max-md:w-30" alt="" />
+              <img src="/logo-ai-def.svg" className="w-40 max-md:w-35" alt="" />
             </a>
 
             <div className="flex items-center gap-5 max-xl:hidden">
@@ -292,12 +411,78 @@ export default function Header() {
               >
                 <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
               </div>
-              <Link
-                to={clientPortalHref}
-                className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
-              >
-                Client Portal
-              </Link>
+              {isAuthed ? (
+                <div ref={accountMenuRef} className="relative max-xl:hidden">
+                  <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={accountMenuOpen}
+                    onClick={() => setAccountMenuOpen((prev) => !prev)}
+                    className="border-border/10 flex w-38 items-center justify-between gap-2 rounded-xl border bg-black/10 px-4 py-2 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] transition-all duration-300 hover:contrast-150"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
+                        <UserRound className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                      <p className="max-w-40 min-w-0 truncate text-sm font-semibold tracking-tight sm:max-w-48">
+                        {displayName}
+                      </p>
+                    </div>
+                    <ChevronDown
+                      className={`h-4 w-4 transition duration-300 ${
+                        accountMenuOpen
+                          ? "rotate-180 text-white"
+                          : "text-white/60"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+
+                  {accountMenuOpen ? (
+                    <div className="border-border/10 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-38 rounded-2xl border bg-black/30 p-2.5 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-lg">
+                      <div className="px-3 py-2 text-xs font-semibold tracking-widest text-white/70 uppercase">
+                        Account
+                      </div>
+                      <a
+                        href="/client-portal"
+                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                      >
+                        <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                        Client portal
+                      </a>
+                      <button
+                        type="button"
+                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                      >
+                        <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                        Profile
+                      </button>
+                      <button
+                        type="button"
+                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                      >
+                        <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                        Settings
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSignOut}
+                        className="text-foreground flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition duration-300 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
+                      >
+                        <LogOut className="h-3.5 w-3.5 shrink-0" />
+                        Sign out
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <Link
+                  to={clientPortalHref}
+                  className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
+                >
+                  Client Portal
+                </Link>
+              )}
 
               <button
                 type="button"
@@ -414,10 +599,10 @@ export default function Header() {
             id={mobileMenuId}
             aria-hidden={!mobileMenuIsOpen}
             ref={mobileMenuRef}
-            className={`border-border/75 absolute right-0 z-40 mt-3 flex max-h-[calc(100vh-140px)] w-full origin-top-right flex-col gap-5 overflow-y-auto overscroll-contain rounded-[20px] border bg-linear-to-b from-black/20 via-black/20 to-black/20 p-6 shadow-lg shadow-black/25 backdrop-blur-md transition-all duration-500 ease-out ${
+            className={`border-border/25 absolute right-0 z-40 mt-3 flex max-h-[calc(100vh-140px)] w-full origin-top-right flex-col gap-5 overflow-y-auto overscroll-contain rounded-[20px] bg-linear-to-b from-black/30 via-black/20 to-black/10 p-6 shadow-[inset_0_2px_12px_rgba(255,255,255,0.35)] backdrop-blur-lg transition-all duration-500 ease-out ${
               mobileMenuIsOpen
-                ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-                : "pointer-events-none -translate-y-3 scale-95 opacity-0"
+                ? "pointer-events-auto translate-y-0 scale-100 border-r border-b border-l opacity-100"
+                : "pointer-events-none -translate-y-3 scale-95 border opacity-0"
             }`}
           >
             <nav className="text-foreground flex flex-col gap-6.5 text-lg font-medium">
@@ -537,13 +722,79 @@ export default function Header() {
               </div>
             </nav>
 
-            <Link
-              to={clientPortalHref}
-              onClick={handleMobileMenuLinkClick}
-              className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-            >
-              Client Portal
-            </Link>
+            {isAuthed ? (
+              <div ref={mobileAccountMenuRef} className="relative">
+                <button
+                  type="button"
+                  aria-haspopup="menu"
+                  aria-expanded={mobileAccountMenuOpen}
+                  onClick={() =>
+                    setMobileAccountMenuOpen((prevState) => !prevState)
+                  }
+                  className="border-border/10 flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xl border bg-black/10 px-4 py-2 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] transition-all duration-300 hover:contrast-150"
+                >
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
+                    <UserRound className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <p className="max-w-40 min-w-0 truncate text-sm tracking-tight sm:max-w-48">
+                    {displayName}
+                  </p>
+                  <ChevronDown
+                    className={`h-4 w-4 transition duration-300 ${
+                      mobileAccountMenuOpen
+                        ? "rotate-180 text-white"
+                        : "text-white/60"
+                    }`}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                {mobileAccountMenuOpen ? (
+                  <div className="border-border/10 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full rounded-2xl border bg-black/5 p-1 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-lg">
+                    <div className="px-3 py-2 text-xs font-semibold tracking-widest text-white/70 uppercase">
+                      Account
+                    </div>
+                    <a
+                      href="/client-portal"
+                      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    >
+                      <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                      Client portal
+                    </a>
+                    <button
+                      type="button"
+                      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    >
+                      <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                      Profile
+                    </button>
+                    <button
+                      type="button"
+                      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    >
+                      <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                      Settings
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="text-foreground flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition duration-300 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
+                    >
+                      <LogOut className="h-3.5 w-3.5 shrink-0" />
+                      Sign out
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <Link
+                to={clientPortalHref}
+                onClick={handleMobileMenuLinkClick}
+                className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+              >
+                Client Portal
+              </Link>
+            )}
           </div>
         </div>
       </div>

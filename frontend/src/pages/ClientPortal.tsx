@@ -1,20 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Cpu,
   FileText,
   Gauge,
   Lock,
-  LogOut,
   Package2,
   Radar,
   Radio,
   Settings,
   ShieldCheck,
-  UserRound,
 } from "lucide-react";
 
 type StoredUser = {
@@ -25,19 +22,12 @@ type StoredUser = {
 
 export default function ClientPortal() {
   const navigate = useNavigate();
-  const [userProfile, setUserProfile] = useState<{
+  const [, setUserProfile] = useState<{
     email: string | null;
     name: string | null;
   }>({ email: null, name: null });
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const API_BASE = useMemo(() => {
-    const raw =
-      import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
-    const trimmed = raw.replace(/\/+$/, "");
-    if (!trimmed) return "/api";
-    return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -94,27 +84,93 @@ export default function ClientPortal() {
     return () => document.removeEventListener("mousedown", handleClickAway);
   }, [menuOpen]);
 
-  const displayName = userProfile.name || userProfile.email || "Operator";
+  interface Product {
+    name: string;
+    category: string;
+    serial: string;
+    status: string;
+    preview_image: string;
+    images: Array<string>;
+    summary: string;
+    highlight: string;
+  }
 
-  const products = [
-    {
-      id: "ax2ng-krakatit",
-      name: "AX2NG KRAKATIT",
-      serial: "SN-XXXX-XXXX",
-      status: "Active / Owned",
-      image: "/drone-product-detail-1.png",
-      images: ["/drone-product-detail-1.png", "/drone-product-detail-2.png"],
-      range: "120 km+",
-      summary:
-        "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
-      highlight: "mission-ready",
-    },
-  ];
+  const products = useMemo<Array<Product>>(
+    () => [
+      {
+        name: "AX2NG KRAKATIT",
+        category: "UAV",
+        serial: "SN-4235-6787",
+        status: "Active / Owned",
+        preview_image: "/drone-product-detail-1.png",
+        images: ["/drone-product-detail-1.png", "/drone-product-detail-2.png"],
+        summary:
+          "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
+        highlight: "mission-ready",
+      },
+      {
+        name: "AX2NG KRAKATIT",
+        category: "UAV",
+        serial: "SN-4235-6787",
+        status: "Active / Owned",
+        preview_image: "/drone-product-detail-1.png",
+        images: ["/drone-product-detail-1.png", "/drone-product-detail-2.png"],
+        summary:
+          "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
+        highlight: "mission-ready",
+      },
+    ],
+    [],
+  );
 
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    () => products[0]?.id ?? null,
+  const productTypes = useMemo(
+    () => Array.from(new Set(products.map((product) => product.name))),
+    [products],
+  );
+
+  const defaultProductType = products[0]?.name ?? "";
+  const defaultProductName =
+    products.find((product) => product.name === defaultProductType)?.name ??
+    products[0]?.name ??
+    null;
+
+  const [selectedProductType, setSelectedProductType] =
+    useState<string>(defaultProductType);
+  const [selectedProductName, setSelectedProductName] = useState<string | null>(
+    defaultProductName,
   );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+
+  const resolvedProductType = useMemo(() => {
+    if (selectedProductType && productTypes.includes(selectedProductType)) {
+      return selectedProductType;
+    }
+    return productTypes[0] ?? "";
+  }, [productTypes, selectedProductType]);
+
+  useEffect(() => {
+    if (resolvedProductType && resolvedProductType !== selectedProductType) {
+      setSelectedProductType(resolvedProductType);
+    }
+  }, [resolvedProductType, selectedProductType]);
+
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((product) =>
+        resolvedProductType ? product.name === resolvedProductType : true,
+      ),
+    [products, resolvedProductType],
+  );
+
+  useEffect(() => {
+    const matchingProduct =
+      filteredProducts.find(
+        (product) => product.name === selectedProductName,
+      ) ?? filteredProducts[0];
+    if (matchingProduct?.name !== selectedProductName) {
+      setSelectedProductName(matchingProduct?.name ?? null);
+    }
+  }, [filteredProducts, selectedProductName]);
 
   const specGroups = [
     {
@@ -289,40 +345,22 @@ export default function ClientPortal() {
   ];
 
   const selectedProduct =
-    products.find((product) => product.id === selectedProductId) || products[0];
+    filteredProducts.find((product) => product.name === selectedProductName) ||
+    products.find((product) => product.name === selectedProductName) ||
+    filteredProducts[0] ||
+    products[0];
 
   const productImages =
     selectedProduct?.images?.length && selectedProduct.images.length > 0
       ? selectedProduct.images
-      : selectedProduct?.image
-        ? [selectedProduct.image]
+      : selectedProduct?.preview_image
+        ? [selectedProduct.preview_image]
         : [];
   const hasMultipleImages = productImages.length > 1;
 
   useEffect(() => {
     setActiveMediaIndex(0);
-  }, [selectedProductId]);
-
-  const handleSignOut = async () => {
-    const token =
-      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-    try {
-      await fetch(`${API_BASE}/auth/logout/`, {
-        method: "POST",
-        headers: token ? { Authorization: `Token ${token}` } : undefined,
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error(err);
-    }
-
-    localStorage.removeItem("authToken");
-    sessionStorage.removeItem("authToken");
-    localStorage.removeItem("authUser");
-    sessionStorage.removeItem("authUser");
-    window.dispatchEvent(new Event("auth-updated"));
-    navigate("/", { replace: true });
-  };
+  }, [selectedProductName, selectedProductType]);
 
   const showPreviousImage = () => {
     setActiveMediaIndex((current) => {
@@ -339,94 +377,48 @@ export default function ClientPortal() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-50">
+    <main className="relative min-h-screen overflow-hidden bg-black/25 pt-32">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(46,126,255,0.12),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(91,194,255,0.16),transparent_25%),radial-gradient(circle_at_50%_80%,rgba(34,197,94,0.1),transparent_30%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.02)_40%,transparent_65%)]" />
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
-        <div className="container flex justify-between gap-3 px-4 py-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="flex max-w-40 items-center justify-center">
-              <a href="/">
-                <img src="/logo-ai-def.svg" alt="" />
-              </a>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-3">
-            <div ref={menuRef} className="relative">
-              <button
-                type="button"
-                aria-haspopup="menu"
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen((prev) => !prev)}
-                className="flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-2 py-2 text-left shadow-lg shadow-black/30 transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none sm:w-auto"
-              >
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
-                  <UserRound className="h-4 w-4" aria-hidden="true" />
-                </span>
-                <p className="max-w-40 min-w-0 truncate text-sm tracking-tight sm:max-w-48">
-                  {displayName}
-                </p>
-                <ChevronDown
-                  className={`h-4 w-4 transition duration-300 ${
-                    menuOpen ? "rotate-180 text-white" : "text-white/60"
-                  }`}
-                  aria-hidden="true"
-                />
-              </button>
-
-              {menuOpen ? (
-                <div className="absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full max-w-[18rem] rounded-2xl border border-white/10 bg-slate-900/90 p-1 shadow-2xl backdrop-blur-lg">
-                  <div className="px-3 py-2 text-[11px] font-semibold tracking-[0.14em] text-white/50 uppercase">
-                    Account
-                  </div>
-                  <button
-                    type="button"
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                  >
-                    <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                    Profile
-                  </button>
-                  <button
-                    type="button"
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                  >
-                    <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                    Settings
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
-                  >
-                    <LogOut className="h-3.5 w-3.5 shrink-0" />
-                    Sign out
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="relative z-10 pt-12 pb-16 lg:pt-16">
         <section className="space-y-5">
           <div>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="container space-y-3">
-                <div>
-                  <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                    Your product
-                  </p>
-                  <h2 className="text-2xl font-semibold text-white">
+              <div className="container">
+                <p className="text-foreground/70 font-semibold tracking-widest uppercase">
+                  Your product
+                </p>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h1 className="text-foreground text-4xl font-semibold">
                     {selectedProduct.name}
-                  </h2>
-                </div>
-                <div className="flex w-fit items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-200">
-                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                  {selectedProduct.status}
+                  </h1>
+                  <label className="flex flex-col gap-1 text-sm text-white/70">
+                    <span className="text-right font-semibold tracking-widest text-white/70 uppercase">
+                      All products ({products.length})
+                    </span>
+                    <select
+                      className="shadow-foreground/25 cursor-pointer rounded-xl bg-black/5 px-3 py-2 font-semibold text-white shadow-inner transition disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-50 sm:text-base"
+                      name="product"
+                      value={selectedProductName ?? ""}
+                      onChange={(event) =>
+                        setSelectedProductName(event.target.value)
+                      }
+                      disabled={!filteredProducts.length}
+                      required
+                    >
+                      {!filteredProducts.length ? (
+                        <option value="">No products available</option>
+                      ) : null}
+                      {filteredProducts.map((product) => (
+                        <option key={product.name} value={product.name}>
+                          {product.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </div>
               </div>
             </div>
@@ -434,7 +426,7 @@ export default function ClientPortal() {
               <div className="relative h-full">
                 {productImages.map((imageSrc, index) => (
                   <img
-                    key={`${selectedProduct.id}-${index}`}
+                    key={`${selectedProduct.name}-${index}`}
                     src={imageSrc}
                     alt={`${selectedProduct.name} view ${index + 1}`}
                     className={`absolute inset-0 transition duration-300 ease-out ${
@@ -451,7 +443,7 @@ export default function ClientPortal() {
                       type="button"
                       onClick={showPreviousImage}
                       aria-label="Show previous image"
-                      className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                      className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                     >
                       <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </button>
@@ -459,7 +451,7 @@ export default function ClientPortal() {
                       type="button"
                       onClick={showNextImage}
                       aria-label="Show next image"
-                      className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                      className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                     >
                       <ChevronRight className="h-5 w-5" aria-hidden="true" />
                     </button>
@@ -468,7 +460,7 @@ export default function ClientPortal() {
                   <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
                     {productImages.map((_, index) => (
                       <button
-                        key={`${selectedProduct.id}-dot-${index}`}
+                        key={`${selectedProduct.name}-dot-${index}`}
                         type="button"
                         aria-label={`Show image ${index + 1} of ${productImages.length}`}
                         onClick={() => setActiveMediaIndex(index)}
@@ -489,13 +481,13 @@ export default function ClientPortal() {
             </div>
           </div>
           <div className="container grid grid-cols-1 gap-6">
-            <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            <article className="border-border/10 overflow-hidden rounded-3xl border bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="grid lg:grid-cols-2">
                 <div className="relative min-h-80 overflow-hidden max-md:hidden">
                   <div className="relative h-full">
                     {productImages.map((imageSrc, index) => (
                       <img
-                        key={`${selectedProduct.id}-${index}`}
+                        key={`${selectedProduct.name}-${index}`}
                         src={imageSrc}
                         alt={`${selectedProduct.name} view ${index + 1}`}
                         className={`absolute inset-0 transition duration-700 ease-out ${
@@ -514,7 +506,7 @@ export default function ClientPortal() {
                           type="button"
                           onClick={showPreviousImage}
                           aria-label="Show previous image"
-                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                          className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                         >
                           <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                         </button>
@@ -522,7 +514,7 @@ export default function ClientPortal() {
                           type="button"
                           onClick={showNextImage}
                           aria-label="Show next image"
-                          className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                          className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                         >
                           <ChevronRight
                             className="h-5 w-5"
@@ -534,7 +526,7 @@ export default function ClientPortal() {
                       <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
                         {productImages.map((_, index) => (
                           <button
-                            key={`${selectedProduct.id}-dot-${index}`}
+                            key={`${selectedProduct.name}-dot-${index}`}
                             type="button"
                             aria-label={`Show image ${index + 1} of ${productImages.length}`}
                             onClick={() => setActiveMediaIndex(index)}
@@ -559,7 +551,7 @@ export default function ClientPortal() {
                       Serial {selectedProduct.serial}
                     </p>
                     <h3 className="text-2xl font-semibold text-white">
-                      {selectedProduct.name}
+                      Overview
                     </h3>
                     <p className="text-sm text-white/65">
                       {selectedProduct.summary}
@@ -703,7 +695,7 @@ export default function ClientPortal() {
                   <p className="text-sm text-white/65">{upgrade.description}</p>
                   <button
                     type="button"
-                    className="mt-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-sky-400/15 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                    className="mt-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-sky-400/15 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                   >
                     {upgrade.action}
                   </button>
@@ -797,19 +789,22 @@ export default function ClientPortal() {
               </ul>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <p className="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase">
                 Product lineup
               </p>
-              <div className="mt-3 grid grid-cols-1 gap-3">
+              <div className="grid max-h-20 grid-cols-1 gap-3 overflow-scroll">
                 {products.map((product) => (
                   <button
-                    key={product.id}
+                    key={product.name}
                     type="button"
-                    onClick={() => setSelectedProductId(product.id)}
-                    aria-pressed={selectedProduct?.id === product.id}
+                    onClick={() => {
+                      setSelectedProductType(product.name);
+                      setSelectedProductName(product.name);
+                    }}
+                    aria-pressed={selectedProduct?.name === product.name}
                     className={`flex flex-col justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none md:flex-row md:items-center ${
-                      selectedProduct?.id === product.id
+                      selectedProduct?.name === product.name
                         ? "border-sky-400/60 bg-sky-400/15"
                         : "border-white/10 bg-white/5"
                     }`}
@@ -832,11 +827,11 @@ export default function ClientPortal() {
                     </span>
                   </button>
                 ))}
-                <p className="text-xs text-white/50">
-                  Future purchases will appear here automatically—select a unit
-                  to view specs and documentation.
-                </p>
               </div>
+              <p className="text-xs text-white/50">
+                Future purchases will appear here automatically — select a unit
+                to view specs and documentation.
+              </p>
             </div>
           </div>
         </section>
