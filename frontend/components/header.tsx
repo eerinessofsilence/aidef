@@ -418,21 +418,21 @@ export default function Header() {
                     aria-haspopup="menu"
                     aria-expanded={accountMenuOpen}
                     onClick={() => setAccountMenuOpen((prev) => !prev)}
-                    className="border-border/10 flex w-38 items-center justify-between gap-2 rounded-xl border bg-black/10 px-4 py-2 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] transition-all duration-300 hover:contrast-150"
+                    className="border-border/10 flex w-38 items-center justify-between gap-1 rounded-xl border bg-black/10 p-2 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] transition-all duration-300 hover:contrast-150"
                   >
                     <div className="flex items-center gap-2">
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
                         <UserRound className="h-4 w-4" aria-hidden="true" />
                       </span>
-                      <p className="max-w-40 min-w-0 truncate text-sm font-semibold tracking-tight sm:max-w-48">
-                        {displayName}
+                      <p className="max-w-16.5 min-w-0 truncate text-sm font-semibold tracking-tight">
+                        {displayName}testesd
                       </p>
                     </div>
                     <ChevronDown
-                      className={`h-4 w-4 transition duration-300 ${
+                      className={`h-5 w-5 transition duration-300 ${
                         accountMenuOpen
                           ? "rotate-180 text-white"
-                          : "text-white/60"
+                          : "text-white/70"
                       }`}
                       aria-hidden="true"
                     />
