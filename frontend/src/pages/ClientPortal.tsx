@@ -37,6 +37,98 @@ type ProductDropdownProps = {
   onChange: (value: string) => void;
 };
 
+type Product = {
+  slug?: string;
+  name: string;
+  category: string;
+  serial: string;
+  status: string;
+  preview_image: string;
+  images: Array<string>;
+  summary: string;
+  highlight: string;
+};
+
+type PortalProductApi = {
+  id: number;
+  slug: string;
+  name: string;
+  category: string | null;
+  category_slug?: string | null;
+  serial: string | null;
+  status: string | null;
+  preview_image: string | null;
+  images: Array<string> | null;
+  summary: string | null;
+  highlight?: string | null;
+};
+
+type PortalCharacteristicItemApi = {
+  id: number;
+  name?: string | null;
+  label?: string | null;
+  description?: string | null;
+  value?: string | null;
+  order?: number | null;
+  block_id?: number | null;
+};
+
+type PortalCharacteristicsBlockApi = {
+  id: number;
+  subtitle?: string | null;
+  title?: string | null;
+  items?: Array<PortalCharacteristicItemApi>;
+};
+
+type PortalCharacteristicsApi = {
+  blocks?: Array<PortalCharacteristicsBlockApi>;
+  items?: Array<PortalCharacteristicItemApi>;
+};
+
+type PortalModuleImageApi = {
+  id: number;
+  url: string;
+  alt?: string | null;
+};
+
+type PortalModuleApi = {
+  id: number;
+  name?: string | null;
+  title?: string | null;
+  tag?: string | null;
+  description?: string | null;
+  action?: string | null;
+  button_text?: string | null;
+  order?: number | null;
+  block_id?: number | null;
+  image?: string | null;
+  images?: Array<string> | null;
+  module_images?: Array<PortalModuleImageApi>;
+};
+
+type PortalModulesBlockApi = {
+  id: number;
+  subtitle?: string | null;
+  title?: string | null;
+  items?: Array<PortalModuleApi>;
+};
+
+type PortalModulesApi = {
+  blocks?: Array<PortalModulesBlockApi>;
+  items?: Array<PortalModuleApi>;
+};
+
+type PortalProductDetailApi = PortalProductApi & {
+  description?: string | null;
+  tags?: Array<string> | null;
+  created_at?: string;
+  updated_at?: string;
+  characteristics?: PortalCharacteristicsApi;
+  modules?: PortalModulesApi;
+};
+
+const SPEC_ICON_POOL = [ShieldCheck, Gauge, Cpu, Radar, Settings, Radio];
+
 function ProductDropdown({
   id,
   label,
@@ -165,6 +257,13 @@ export default function ClientPortal() {
   }>({ email: null, name: null });
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const apiBase = useMemo(() => {
+    const raw =
+      import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+    const trimmed = raw.replace(/\/+$/, "");
+    if (!trimmed) return "/api";
+    return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -221,60 +320,68 @@ export default function ClientPortal() {
     return () => document.removeEventListener("mousedown", handleClickAway);
   }, [menuOpen]);
 
-  interface Product {
-    name: string;
-    category: string;
-    serial: string;
-    status: string;
-    preview_image: string;
-    images: Array<string>;
-    summary: string;
-    highlight: string;
-  }
+  const [products, setProducts] = useState<Array<Product>>([]);
+  const [selectedProductDetail, setSelectedProductDetail] =
+    useState<PortalProductDetailApi | null>(null);
 
-  const products = useMemo<Array<Product>>(
-    () => [
-      {
-        name: "AX2NG KRAKATIT",
-        category: "UAV",
-        serial: "SN-4235-6787",
-        status: "Active / Owned",
-        preview_image: "/drone-product-detail-1.png",
-        images: ["/drone-product-detail-1.png", "/drone-product-detail-2.png"],
-        summary:
-          "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
-        highlight: "mission-ready",
-      },
-      {
-        name: "AX2NG KRAKATIT",
-        category: "UAV",
-        serial: "SN-4235-6787",
-        status: "Active / Owned",
-        preview_image: "/drone-product-detail-1.png",
-        images: ["/drone-product-detail-1.png", "/drone-product-detail-2.png"],
-        summary:
-          "Long-range, multi-role tactical UAV designed for ISR, denied-area recon, and rapid deployment.",
-        highlight: "mission-ready",
-      },
-    ],
-    [],
-  );
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadProducts = async () => {
+      try {
+        const response = await fetch(`${apiBase}/portal/products/`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`Unexpected response: ${response.status}`);
+        }
+        const payload = (await response.json()) as PortalProductApi[];
+        const normalized = Array.isArray(payload)
+          ? payload.map((item) => {
+              const images = Array.isArray(item.images)
+                ? item.images.filter((image): image is string => Boolean(image))
+                : [];
+              const previewImage = item.preview_image || images[0] || "";
+              return {
+                slug: item.slug,
+                name: item.name || "Untitled product",
+                category: item.category || "",
+                serial: item.serial || "",
+                status: item.status || "",
+                preview_image: previewImage,
+                images,
+                summary: item.summary || "",
+                highlight: item.highlight || "",
+              };
+            })
+          : [];
+        setProducts(normalized);
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "name" in error &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+        console.error("Unable to load portal products", error);
+        setProducts([]);
+      }
+    };
+
+    loadProducts();
+    return () => controller.abort();
+  }, [apiBase]);
 
   const productTypes = useMemo(
     () => Array.from(new Set(products.map((product) => product.name))),
     [products],
   );
 
-  const defaultProductType = products[0]?.name ?? "";
-  const defaultProductName =
-    products.find((product) => product.name === defaultProductType)?.name ??
-    products[0]?.name ??
-    null;
-
-  const [selectedProductType, setSelectedProductType] =
-    useState<string>(defaultProductType);
+  const [selectedProductType, setSelectedProductType] = useState<string>("");
   const [selectedProductName, setSelectedProductName] = useState<string | null>(
-    defaultProductName,
+    null,
   );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
@@ -318,183 +425,140 @@ export default function ClientPortal() {
     }
   }, [filteredProducts, selectedProductName]);
 
-  const specGroups = [
-    {
-      title: "Positioning & Role",
-      icon: ShieldCheck,
-      items: [
-        {
-          label: "Mission type",
-          value: "Jet-powered kamikaze UAV for ground and air targets",
-        },
-        { label: "Effect", value: "4 kg HE/HEF charge for high-value targets" },
-        {
-          label: "Tagline",
-          value: "high speed, difficult-defense breakthrough",
-        },
-        {
-          label: "Integration",
-          value: "Swarm-ready, C2 compatible, human-in-loop override",
-        },
-      ],
-    },
-    {
-      title: "Performance Envelope",
-      icon: Gauge,
-      items: [
-        {
-          label: "Autonomous range",
-          value: "150 km (operator search radius 110 km)",
-        },
-        { label: "Max speed (Vne)", value: "430 km/h jet-powered" },
-        { label: "Endurance / wait", value: "20-40 min on-station" },
-        { label: "Weight", value: "29-35 kg incl. warhead; 4 kg charge" },
-        { label: "Dimensions", value: "Length 1.96 m / span 2.16 m" },
-        { label: "Prep time", value: "5 minutes from kit to launch" },
-      ],
-    },
-    {
-      title: "Autonomy & AI Navigation",
-      icon: Cpu,
-      items: [
-        {
-          label: "Intelligent nav",
-          value: "Identify/classify/track, object cataloging, swarm control",
-        },
-        {
-          label: "GNSS-denied",
-          value:
-            "AI fusion of AHRS, magnetometer, differential LiDAR, optical flow",
-        },
-        {
-          label: "Synthetic vision",
-          value: "Jetson onboard AI; flight without GPS",
-        },
-        {
-          label: "Training corpus",
-          value:
-            "161,742 frames / 1,366,494 objects across civilian and military classes",
-        },
-      ],
-    },
-    {
-      title: "Sensors & EW Resilience",
-      icon: Radar,
-      items: [
-        {
-          label: "Primary sensors",
-          value: "IR, RGB, LiDAR plus frequency and direction scanning",
-        },
-        {
-          label: "EW hardening",
-          value: "GNSS-independent nav, AoA sensors, Safe-Arm control block",
-        },
-        {
-          label: "Comms",
-          value:
-            "RS-422 hardened link; NLOS commands; Starlink and LTE fallback",
-        },
-        {
-          label: "Swarm ops",
-          value: "Data exchange, relay, and reconfiguration between UAVs",
-        },
-      ],
-    },
-    {
-      title: "Control & Mission Modes",
-      icon: Settings,
-      items: [
-        {
-          label: "Control methods",
-          value: "Manual, semi-autonomous, autonomous; human override",
-        },
-        {
-          label: "Modes",
-          value:
-            "Takeoff, route, circle, re-entry, hold, flight-to-point, special",
-        },
-        {
-          label: "Guidance",
-          value: "NLOS operator commands plus autonomous/autopilot",
-        },
-        {
-          label: "Operations",
-          value:
-            "Data logging, telemetry, program execution, status monitoring",
-        },
-      ],
-    },
-    {
-      title: "Ground Control Station",
-      icon: Radio,
-      items: [
-        {
-          label: "Concept",
-          value:
-            "Military-grade, fire-and-forget; 1 station controls 5+ drones",
-        },
-        {
-          label: "Software",
-          value:
-            "AI-Def Pilot (UAS) and AI-Def Targeting (dual-res RGB/thermal, map cues)",
-        },
-        {
-          label: "Hardware",
-          value: "Rugged GCS with 16-core Intel CPU and Nvidia RTX GPU",
-        },
-      ],
-    },
-  ];
-
-  const upgrades = [
-    {
-      title: "ENGINE AD20PRO",
-      description:
-        "Dedicated to professional applications (UAVs, etc.) and modelers who prefer reliability and a long operational life.",
-      image: "/add-on-modules-1.png",
-      action: "Request",
-    },
-    {
-      title: "AUTOMATIC FLIGHT CONTROLER",
-      description:
-        "Control the flight of UAV in automatic and semiautomatic regime",
-      image: "/add-on-modules-2.png",
-      action: "Request",
-    },
-    {
-      title: "BOOSTER",
-      description:
-        "Greater range, stronger takeoff performance and lower detectability ensure fast, reliable mission readiness in only three minutes.",
-      image: "/add-on-modules-3.png",
-      action: "Request",
-    },
-    {
-      title: "Dual Satellite Navigation System",
-      description:
-        "Position calculation of a vehicle with the ability of spoofing detection",
-      image: "/add-on-modules-4.png",
-      action: "Request",
-    },
-    {
-      title: "PAYLOAD ACTIVATION BOARD",
-      description:
-        "The board is designed to electrically activate different types of payloads",
-      image: "/add-on-modules-5.png",
-      action: "Request",
-    },
-    {
-      title: "Pitot tube",
-      description: "Integrated angle of attack and sliding angle sensor",
-      image: "/add-on-modules-6.png",
-      action: "Request",
-    },
-  ];
-
-  const selectedProduct =
-    filteredProducts.find((product) => product.name === selectedProductName) ||
+  const selectedProduct = filteredProducts.find(
+    (product) => product.name === selectedProductName,
+  ) ||
     products.find((product) => product.name === selectedProductName) ||
     filteredProducts[0] ||
-    products[0];
+    products[0] || {
+      name: "No products available",
+      category: "",
+      serial: "",
+      status: "",
+      preview_image: "",
+      images: [],
+      summary: "Products will appear here after they are assigned.",
+      highlight: "",
+    };
+  const selectedProductSlug = selectedProduct?.slug ?? null;
+
+  useEffect(() => {
+    if (!selectedProductSlug) {
+      setSelectedProductDetail(null);
+      return;
+    }
+    const controller = new AbortController();
+    setSelectedProductDetail(null);
+
+    const loadProductDetail = async () => {
+      try {
+        const response = await fetch(
+          `${apiBase}/portal/products/${selectedProductSlug}/`,
+          { signal: controller.signal },
+        );
+        if (!response.ok) {
+          throw new Error(`Unexpected response: ${response.status}`);
+        }
+        const payload = (await response.json()) as PortalProductDetailApi;
+        setSelectedProductDetail(payload);
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "name" in error &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+        console.error("Unable to load portal product detail", error);
+        setSelectedProductDetail(null);
+      }
+    };
+
+    loadProductDetail();
+    return () => controller.abort();
+  }, [apiBase, selectedProductSlug]);
+
+  const specGroups = useMemo(() => {
+    const characteristics = selectedProductDetail?.characteristics;
+    const blocks = Array.isArray(characteristics?.blocks)
+      ? characteristics.blocks
+      : [];
+    const looseItems = Array.isArray(characteristics?.items)
+      ? characteristics.items
+      : [];
+
+    const groups = blocks.map((block, index) => {
+      const items = Array.isArray(block.items) ? block.items : [];
+      const normalizedItems = items
+        .map((item) => {
+          const label = (item.label || item.name || "").trim();
+          const value = (item.value || item.description || "").trim();
+          if (!label && !value) return null;
+          return {
+            label: label || "Detail",
+            value: value || "N/A",
+          };
+        })
+        .filter((item): item is { label: string; value: string } =>
+          Boolean(item),
+        );
+      return {
+        title: (block.title || block.subtitle || "Specifications").trim(),
+        icon: SPEC_ICON_POOL[index % SPEC_ICON_POOL.length],
+        items: normalizedItems,
+      };
+    });
+
+    if (looseItems.length) {
+      const normalizedLoose = looseItems
+        .map((item) => {
+          const label = (item.label || item.name || "").trim();
+          const value = (item.value || item.description || "").trim();
+          if (!label && !value) return null;
+          return {
+            label: label || "Detail",
+            value: value || "N/A",
+          };
+        })
+        .filter((item): item is { label: string; value: string } =>
+          Boolean(item),
+        );
+      if (normalizedLoose.length) {
+        groups.push({
+          title: "Additional",
+          icon: SPEC_ICON_POOL[groups.length % SPEC_ICON_POOL.length],
+          items: normalizedLoose,
+        });
+      }
+    }
+
+    return groups.filter((group) => group.items.length > 0);
+  }, [selectedProductDetail]);
+
+  const upgrades = useMemo(() => {
+    const modules = selectedProductDetail?.modules;
+    const blocks = Array.isArray(modules?.blocks) ? modules.blocks : [];
+    const looseItems = Array.isArray(modules?.items) ? modules.items : [];
+    const blockItems = blocks.flatMap((block) =>
+      Array.isArray(block.items) ? block.items : [],
+    );
+    const allModules = [...blockItems, ...looseItems];
+
+    return allModules
+      .map((module) => {
+        const imageFromList = Array.isArray(module.images)
+          ? module.images[0]
+          : "";
+        return {
+          title: module.title || module.name || "Module",
+          description: module.description || "",
+          image: module.image || imageFromList || "",
+          action: module.action || module.button_text || "Request",
+        };
+      })
+      .filter((module) => module.title);
+  }, [selectedProductDetail]);
 
   const productImages =
     selectedProduct?.images?.length && selectedProduct.images.length > 0
@@ -770,7 +834,7 @@ export default function ClientPortal() {
                 <ScrollReveal amount={0.35}>
                   <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
                     <span className="text-white/70">Status</span>
-                    <span className="font-semibold text-emerald-200">
+                    <span className="font-semibold text-emerald-200 capitalize">
                       {selectedProduct.status}
                     </span>
                   </div>
@@ -987,7 +1051,7 @@ export default function ClientPortal() {
                           </p>
                         </div>
                       </div>
-                      <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-nowrap text-emerald-200">
+                      <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-nowrap text-emerald-200 capitalize">
                         {product.status}
                       </span>
                     </button>

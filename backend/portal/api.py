@@ -124,7 +124,7 @@ def _serialize_characteristics_blocks(product: "PortalProduct") -> Dict[str, Any
     )
 
     characteristics: List["ProductCharacteristic"] = list(
-        product.characteristics.all().order_by("order", "id")
+        product.characteristic.all().order_by("order", "id")
     )
 
     grouped: Dict[int, List[Dict[str, Any]]] = {block.id: [] for block in blocks}
