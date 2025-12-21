@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'main',
+    'portal',
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
