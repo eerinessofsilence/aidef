@@ -129,6 +129,7 @@ type PortalProductDetailApi = PortalProductApi & {
 };
 
 const SPEC_ICON_POOL = [ShieldCheck, Gauge, Cpu, Radar, Settings, Radio];
+const getProductKey = (product: Product) => product.slug || product.name;
 
 function ProductDropdown({
   id,
@@ -375,73 +376,66 @@ export default function ClientPortal() {
     return () => controller.abort();
   }, [apiBase]);
 
-  const productTypes = useMemo(
-    () => Array.from(new Set(products.map((product) => product.name))),
-    [products],
-  );
-
-  const [selectedProductType, setSelectedProductType] = useState<string>("");
-  const [selectedProductName, setSelectedProductName] = useState<string | null>(
+  const [selectedProductKey, setSelectedProductKey] = useState<string | null>(
     null,
   );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const openContactModal = () => dispatchOpenContactModal();
 
-  const resolvedProductType = useMemo(() => {
-    if (selectedProductType && productTypes.includes(selectedProductType)) {
-      return selectedProductType;
-    }
-    return productTypes[0] ?? "";
-  }, [productTypes, selectedProductType]);
-
-  useEffect(() => {
-    if (resolvedProductType && resolvedProductType !== selectedProductType) {
-      setSelectedProductType(resolvedProductType);
-    }
-  }, [resolvedProductType, selectedProductType]);
-
-  const filteredProducts = useMemo(
-    () =>
-      products.filter((product) =>
-        resolvedProductType ? product.name === resolvedProductType : true,
-      ),
-    [products, resolvedProductType],
-  );
-
   const productOptions = useMemo(
     () =>
-      filteredProducts.map((product) => ({
-        value: product.name,
-        label: product.name,
+      products.map((product) => ({
+        value: getProductKey(product),
+        label: product.serial
+          ? `${product.name} - ${product.serial}`
+          : product.name,
       })),
-    [filteredProducts],
+    [products],
   );
 
   useEffect(() => {
-    const matchingProduct =
-      filteredProducts.find(
-        (product) => product.name === selectedProductName,
-      ) ?? filteredProducts[0];
-    if (matchingProduct?.name !== selectedProductName) {
-      setSelectedProductName(matchingProduct?.name ?? null);
+    if (!products.length) {
+      if (selectedProductKey !== null) {
+        setSelectedProductKey(null);
+      }
+      return;
     }
-  }, [filteredProducts, selectedProductName]);
+    const defaultKey = getProductKey(products[0]);
+    if (!selectedProductKey) {
+      setSelectedProductKey(defaultKey);
+      return;
+    }
+    const hasSelected = products.some(
+      (product) => getProductKey(product) === selectedProductKey,
+    );
+    if (!hasSelected) {
+      setSelectedProductKey(defaultKey);
+    }
+  }, [products, selectedProductKey]);
 
-  const selectedProduct = filteredProducts.find(
-    (product) => product.name === selectedProductName,
-  ) ||
-    products.find((product) => product.name === selectedProductName) ||
-    filteredProducts[0] ||
-    products[0] || {
-      name: "No products available",
-      category: "",
-      serial: "",
-      status: "",
-      preview_image: "",
-      images: [],
-      summary: "Products will appear here after they are assigned.",
-      highlight: "",
-    };
+  const selectedProduct = useMemo(() => {
+    if (!products.length) {
+      return {
+        name: "No products available",
+        category: "",
+        serial: "",
+        status: "",
+        preview_image: "",
+        images: [],
+        summary: "Products will appear here after they are assigned.",
+        highlight: "",
+      };
+    }
+    if (selectedProductKey) {
+      const match = products.find(
+        (product) => getProductKey(product) === selectedProductKey,
+      );
+      if (match) {
+        return match;
+      }
+    }
+    return products[0];
+  }, [products, selectedProductKey]);
   const selectedProductSlug = selectedProduct?.slug ?? null;
 
   useEffect(() => {
@@ -538,6 +532,17 @@ export default function ClientPortal() {
     return groups.filter((group) => group.items.length > 0);
   }, [selectedProductDetail]);
 
+  const tagBadges = useMemo(() => {
+    const tags = selectedProductDetail?.tags;
+    if (!Array.isArray(tags)) {
+      return [];
+    }
+    return tags
+      .filter((tag): tag is string => typeof tag === "string")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }, [selectedProductDetail]);
+
   const upgrades = useMemo(() => {
     const modules = selectedProductDetail?.modules;
     const blocks = Array.isArray(modules?.blocks) ? modules.blocks : [];
@@ -572,7 +577,7 @@ export default function ClientPortal() {
 
   useEffect(() => {
     setActiveMediaIndex(0);
-  }, [selectedProductName, selectedProductType]);
+  }, [selectedProductKey]);
 
   const showPreviousImage = () => {
     setActiveMediaIndex((current) => {
@@ -611,13 +616,11 @@ export default function ClientPortal() {
                     <ProductDropdown
                       id="product-select-desktop"
                       label={`All products (${products.length})`}
-                      value={selectedProductName}
+                      value={selectedProductKey}
                       options={productOptions}
                       disabled={!productOptions.length}
                       variant="desktop"
-                      onChange={(nextValue) =>
-                        setSelectedProductName(nextValue)
-                      }
+                      onChange={(nextValue) => setSelectedProductKey(nextValue)}
                     />
                   </div>
                 </div>
@@ -680,12 +683,12 @@ export default function ClientPortal() {
                       <ProductDropdown
                         id="product-select-mobile"
                         label={`All products (${products.length})`}
-                        value={selectedProductName}
+                        value={selectedProductKey}
                         options={productOptions}
                         disabled={!productOptions.length}
                         variant="mobile"
                         onChange={(nextValue) =>
-                          setSelectedProductName(nextValue)
+                          setSelectedProductKey(nextValue)
                         }
                       />
                     </div>
@@ -772,14 +775,18 @@ export default function ClientPortal() {
                       <p className="text-sm text-white/65">
                         {selectedProduct.summary}
                       </p>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-                          Mission-ready
-                        </span>
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-                          Airworthiness verified
-                        </span>
-                      </div>
+                      {tagBadges.length ? (
+                        <div className="flex flex-wrap gap-2">
+                          {tagBadges.map((tag, index) => (
+                            <span
+                              key={`${tag}-${index}`}
+                              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -1054,21 +1061,21 @@ export default function ClientPortal() {
                     Product lineup
                   </p>
                   <div className="grid max-h-20 grid-cols-1 gap-3 overflow-scroll">
-                    {products.map((product) => (
-                      <button
-                        key={product.name}
-                        type="button"
-                        onClick={() => {
-                          setSelectedProductType(product.name);
-                          setSelectedProductName(product.name);
-                        }}
-                        aria-pressed={selectedProduct?.name === product.name}
-                        className={`flex flex-col justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none md:flex-row md:items-center ${
-                          selectedProduct?.name === product.name
-                            ? "border-sky-400/60 bg-sky-400/15"
-                            : "border-white/10 bg-white/5"
-                        }`}
-                      >
+                    {products.map((product) => {
+                      const productKey = getProductKey(product);
+                      const isSelected = selectedProductKey === productKey;
+                      return (
+                        <button
+                          key={productKey}
+                          type="button"
+                          onClick={() => setSelectedProductKey(productKey)}
+                          aria-pressed={isSelected}
+                          className={`flex flex-col justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none md:flex-row md:items-center ${
+                            isSelected
+                              ? "border-sky-400/60 bg-sky-400/15"
+                              : "border-white/10 bg-white/5"
+                          }`}
+                        >
                         <div className="flex flex-col gap-3 md:flex-row md:items-center">
                           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
                             <Package2 className="h-5 w-5" aria-hidden="true" />
@@ -1086,7 +1093,8 @@ export default function ClientPortal() {
                           {product.status}
                         </span>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                   <p className="text-xs text-white/50">
                     Future purchases will appear here automatically — select a
