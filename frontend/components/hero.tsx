@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 
 const backgroundImages = [
-  "/hero-bg-1.png",
-  "/hero-bg-2.png",
-  "/hero-bg-3.png",
-  "/hero-bg-4.png",
+  "/hero-bg-1.jpg",
+  "/hero-bg-2.jpg",
+  "/hero-bg-3.jpg",
+  "/hero-bg-4.jpg",
+  "/hero-bg-5.jpg",
 ];
 
 export default function Hero() {
