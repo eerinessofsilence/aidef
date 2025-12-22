@@ -241,15 +241,15 @@ function ProductDropdown({
       ? "text-center font-semibold tracking-widest text-white/70 uppercase"
       : "text-right font-semibold tracking-widest text-white/70 uppercase";
   const containerClassName =
-    variant === "mobile" ? "relative w-full" : "relative inline-flex w-fit";
+    variant === "mobile" ? "relative w-full" : "relative inline-flex w-full";
   const buttonClassName =
     variant === "mobile"
       ? "flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-left font-semibold text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md transition hover:border-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-75 sm:text-base"
-      : "flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-left font-semibold text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md transition hover:border-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-75 sm:text-base";
+      : "cursor-pointer w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-left font-semibold text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md transition hover:border-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-75 sm:text-base";
   const listClassName =
     "absolute left-0 right-0 top-full z-30 mt-2 space-y-2 max-h-64 overflow-y-auto rounded-2xl border border-white/10 bg-white/10 p-2 text-sm text-white/80 shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl";
   const optionBaseClass =
-    "flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-white/10 focus-visible:bg-white/15 focus-visible:outline-none";
+    "cursor-pointer flex w-full items-center justify-between rounded-xl px-3 py-2 text-left transition hover:bg-white/10 focus-visible:bg-white/15 focus-visible:outline-none";
 
   return (
     <div className={wrapperClassName} ref={dropdownRef}>
@@ -453,9 +453,7 @@ export default function ClientPortal() {
     () =>
       products.map((product) => ({
         value: getProductKey(product),
-        label: product.serial
-          ? `${product.name} - ${product.serial}`
-          : product.name,
+        label: product.name,
       })),
     [products],
   );
@@ -686,13 +684,15 @@ export default function ClientPortal() {
             <div>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="container">
-                  <p className="text-foreground/70 font-semibold tracking-widest uppercase max-md:text-center">
-                    Your product
-                  </p>
-                  <div className="flex flex-wrap items-center justify-between gap-2 max-md:justify-center">
-                    <h1 className="text-foreground text-4xl font-semibold max-md:text-3xl">
-                      {selectedProduct.name}
-                    </h1>
+                  <div className="flex items-center justify-between max-md:justify-center">
+                    <div>
+                      <p className="text-foreground/70 font-semibold tracking-widest uppercase max-md:text-center">
+                        Your product
+                      </p>
+                      <h1 className="text-foreground text-4xl font-semibold max-md:text-3xl">
+                        {selectedProduct.name}
+                      </h1>
+                    </div>
                     <ProductDropdown
                       id="product-select-desktop"
                       label={`All products (${products.length})`}
@@ -1056,12 +1056,12 @@ export default function ClientPortal() {
         {products.length > 0 ? (
           <section className="container mt-12 grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
             <ScrollReveal amount={0.35}>
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-8">
-                <p className="text-xs font-semibold tracking-[0.28em] text-white/50 uppercase">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+                <p className="text-sm font-semibold tracking-widest text-white/50 uppercase">
                   Overview
                 </p>
                 <h1 className="mt-3 text-3xl leading-tight font-semibold text-white md:text-4xl">
-                  Centralized product overview & documentation hub.
+                  Centralized products overview
                 </h1>
                 <p className="mt-3 text-base text-white/65">
                   Browse your full lineup, compare key specs, and access
@@ -1112,89 +1112,55 @@ export default function ClientPortal() {
               </div>
             </ScrollReveal>
 
-            <div className="grid gap-4">
-              <ScrollReveal amount={0.35}>
-                <div className="rounded-3xl border border-white/10 bg-linear-to-br from-white/10 via-white/5 to-slate-900/60 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                        Access Summary
-                      </p>
-                      <h3 className="mt-1 text-lg font-semibold text-white">
-                        Secure session ready
-                      </h3>
-                    </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-200">
-                      <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-                    </div>
-                  </div>
-                  <ul className="mt-4 space-y-2 text-sm text-white/70">
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
-                      Authenticated access enabled after sign-in.
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
-                      All activity is logged; distribution is prohibited.
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
-                      Contact support for mission approvals or export controls.
-                    </li>
-                  </ul>
-                </div>
-              </ScrollReveal>
-              <ScrollReveal amount={0.35}>
-                <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-                  <p className="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase">
-                    Product lineup
-                  </p>
-                  <div className="grid max-h-20 grid-cols-1 gap-3 overflow-scroll">
-                    {products.map((product) => {
-                      const productKey = getProductKey(product);
-                      const isSelected = selectedProductKey === productKey;
-                      return (
-                        <button
-                          key={productKey}
-                          type="button"
-                          onClick={() => setSelectedProductKey(productKey)}
-                          aria-pressed={isSelected}
-                          className={`flex flex-col justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none md:flex-row md:items-center ${
-                            isSelected
-                              ? "border-sky-400/60 bg-sky-400/15"
-                              : "border-white/10 bg-white/5"
-                          }`}
-                        >
-                          <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
-                              <Package2
-                                className="h-5 w-5"
-                                aria-hidden="true"
-                              />
-                            </span>
-                            <div className="leading-tight">
-                              <p className="text-sm font-semibold text-white">
-                                {product.name}
-                              </p>
-                              <p className="text-xs text-white/60">
-                                {product.serial}
-                              </p>
-                            </div>
+            <ScrollReveal className="flex items-center" amount={0.35}>
+              <div className="h-fit space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+                <p className="text-sm font-semibold tracking-widest text-white/50 uppercase">
+                  Product lineup
+                </p>
+                <div className="grid max-h-48.75 grid-cols-1 gap-3 overflow-scroll">
+                  {products.map((product) => {
+                    const productKey = getProductKey(product);
+                    const isSelected = selectedProductKey === productKey;
+                    return (
+                      <button
+                        key={productKey}
+                        type="button"
+                        onClick={() => setSelectedProductKey(productKey)}
+                        aria-pressed={isSelected}
+                        className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none ${
+                          isSelected
+                            ? "border-sky-400/60 bg-sky-400/15"
+                            : "border-white/10 bg-white/5"
+                        }`}
+                      >
+                        <div className="flex gap-3">
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
+                            <Package2 className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                          <div className="leading-tight">
+                            <p className="text-sm font-semibold text-white">
+                              {product.name}
+                            </p>
+                            <p className="text-xs text-white/60">
+                              {product.serial}
+                            </p>
                           </div>
+                        </div>
+                        <div className="flex items-center">
                           <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-nowrap text-emerald-200 capitalize">
                             {product.status}
                           </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="text-xs text-white/50">
-                    Future purchases will appear here automatically — select a
-                    unit to view specs and documentation.
-                  </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              </ScrollReveal>
-            </div>
+                <p className="text-foreground/70 tracking-wider">
+                  Future purchases will appear here automatically — select a
+                  unit to view specs and documentation.
+                </p>
+              </div>
+            </ScrollReveal>
           </section>
         ) : null}
         <ScrollReveal amount={0.35}>
