@@ -28,14 +28,14 @@ class PortalProduct(models.Model):
                             )
     serial_number = models.CharField(max_length=12, default="SN-XXXX-XXXX")
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     
     class Meta:
+        ordering = ('order', '-created_at')
         verbose_name = "Product"
         verbose_name_plural = "Products"
-        ordering = ('-created_at',)
 
     def save(self, *args, **kwargs):
         if not self.slug:

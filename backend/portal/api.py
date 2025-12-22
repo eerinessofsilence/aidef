@@ -112,6 +112,7 @@ def _serialize_product_base(
         "category_slug": product.category_slug,
         "serial": product.serial_number,
         "status": product.status,
+        "order": product.order,
         "summary": product.description,
         "highlight": highlight,
         "preview_image": _absolute_media_url(request, preview_image),
@@ -209,7 +210,7 @@ def portal_product_list_api(request):
     products = (
         PortalProduct.objects.select_related("category")
         .prefetch_related("images")
-        .order_by("-created_at", "name")
+        .order_by("order", "-created_at", "name")
     )
     payload = [
         _serialize_product_base(request, product) for product in products
