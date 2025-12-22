@@ -235,11 +235,11 @@ function ProductDropdown({
   const wrapperClassName =
     variant === "mobile"
       ? "flex w-full flex-col gap-1 text-sm text-white/70"
-      : "flex flex-col gap-1 text-sm text-white/70 max-md:hidden";
+      : "flex flex-col w-70 gap-1 text-sm text-white/70";
   const labelClassName =
     variant === "mobile"
       ? "text-center font-semibold tracking-widest text-white/70 uppercase"
-      : "text-right font-semibold tracking-widest text-white/70 uppercase";
+      : "max-md:text-center text-right font-semibold tracking-widest text-white/70 uppercase";
   const containerClassName =
     variant === "mobile" ? "relative w-full" : "relative inline-flex w-full";
   const buttonClassName =
@@ -270,7 +270,9 @@ function ProductDropdown({
           aria-controls={id}
           disabled={isDisabled}
         >
-          <span className="flex-1 truncate">{selectedLabel}</span>
+          <span className="flex-1 truncate tracking-widest">
+            {selectedLabel}
+          </span>
           <ChevronDown
             className={`h-4 w-4 shrink-0 text-white/70 transition-transform duration-200 ${
               open ? "rotate-180" : ""
@@ -684,8 +686,10 @@ export default function ClientPortal() {
             <div>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="container">
-                  <div className="flex items-center justify-between max-md:justify-center">
-                    <div>
+                  <div
+                    className={`flex items-center justify-between max-md:justify-center ${!productImages.length ? "max-md:flex-col" : ""}`}
+                  >
+                    <div className="max-md:text-center">
                       <p className="text-foreground/70 font-semibold tracking-widest uppercase max-md:text-center">
                         Your product
                       </p>
@@ -693,88 +697,115 @@ export default function ClientPortal() {
                         {selectedProduct.name}
                       </h1>
                     </div>
-                    <ProductDropdown
-                      id="product-select-desktop"
-                      label={`All products (${products.length})`}
-                      value={selectedProductKey}
-                      options={productOptions}
-                      disabled={!productOptions.length}
-                      variant="desktop"
-                      onChange={(nextValue) => setSelectedProductKey(nextValue)}
-                    />
+                    {!productImages.length ? (
+                      <div>
+                        <ProductDropdown
+                          id="product-select-desktop"
+                          label={`All products (${products.length})`}
+                          value={selectedProductKey}
+                          options={productOptions}
+                          disabled={!productOptions.length}
+                          variant="desktop"
+                          onChange={(nextValue) =>
+                            setSelectedProductKey(nextValue)
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <div className="hidden md:block">
+                        <ProductDropdown
+                          id="product-select-desktop"
+                          label={`All products (${products.length})`}
+                          value={selectedProductKey}
+                          options={productOptions}
+                          disabled={!productOptions.length}
+                          variant="desktop"
+                          onChange={(nextValue) =>
+                            setSelectedProductKey(nextValue)
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="relative hidden min-h-65 max-md:mb-16 max-md:block">
-                <div className="relative h-full">
-                  {productImages.map((imageSrc, index) => (
-                    <img
-                      key={`${selectedProduct.name}-${index}`}
-                      src={imageSrc}
-                      alt={`${selectedProduct.name} view ${index + 1}`}
-                      className={`absolute inset-0 transition duration-300 ease-out ${
-                        index === activeMediaIndex ? "opacity-100" : "opacity-0"
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {hasMultipleImages ? (
-                  <>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 left-0 container flex items-center justify-between px-3 sm:px-4">
-                      <button
-                        type="button"
-                        onClick={showPreviousImage}
-                        aria-label="Show previous image"
-                        className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                      >
-                        <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={showNextImage}
-                        aria-label="Show next image"
-                        className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                      >
-                        <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                      </button>
-                    </div>
-
-                    <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
-                      {productImages.map((_, index) => (
-                        <button
-                          key={`${selectedProduct.name}-dot-${index}`}
-                          type="button"
-                          aria-label={`Show image ${index + 1} of ${productImages.length}`}
-                          onClick={() => setActiveMediaIndex(index)}
-                          className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
-                            index === activeMediaIndex
-                              ? "border-white/70 bg-white"
-                              : "border-white/30 bg-white/20 hover:border-white/60"
-                          }`}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="absolute right-4 bottom-9 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
-                      {activeMediaIndex + 1} / {productImages.length}
-                    </div>
-                    <div className="absolute inset-x-0 -bottom-14 container py-3">
-                      <ProductDropdown
-                        id="product-select-mobile"
-                        label={`All products (${products.length})`}
-                        value={selectedProductKey}
-                        options={productOptions}
-                        disabled={!productOptions.length}
-                        variant="mobile"
-                        onChange={(nextValue) =>
-                          setSelectedProductKey(nextValue)
-                        }
+              {productImages.length ? (
+                <div className="relative hidden min-h-75 max-md:mb-16 max-md:block">
+                  <div className="relative h-full">
+                    {productImages.map((imageSrc, index) => (
+                      <img
+                        key={`${selectedProduct.name}-${index}`}
+                        src={imageSrc}
+                        alt={`${selectedProduct.name} view ${index + 1}`}
+                        className={`absolute inset-0 transition duration-300 ease-out ${
+                          index === activeMediaIndex
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
                       />
-                    </div>
-                  </>
-                ) : null}
-              </div>
+                    ))}
+                  </div>
+
+                  {hasMultipleImages ? (
+                    <>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 left-0 container flex items-center justify-between px-3 sm:px-4">
+                        <button
+                          type="button"
+                          onClick={showPreviousImage}
+                          aria-label="Show previous image"
+                          className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        >
+                          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={showNextImage}
+                          aria-label="Show next image"
+                          className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        >
+                          <ChevronRight
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      </div>
+
+                      <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
+                        {productImages.map((_, index) => (
+                          <button
+                            key={`${selectedProduct.name}-dot-${index}`}
+                            type="button"
+                            aria-label={`Show image ${index + 1} of ${productImages.length}`}
+                            onClick={() => setActiveMediaIndex(index)}
+                            className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
+                              index === activeMediaIndex
+                                ? "border-white/70 bg-white"
+                                : "border-white/30 bg-white/20 hover:border-white/60"
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="absolute right-4 bottom-8 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                        {activeMediaIndex + 1} / {productImages.length}
+                      </div>
+                      <div className="absolute inset-x-0 -bottom-12 container py-3">
+                        <ProductDropdown
+                          id="product-select-mobile"
+                          label={`All products (${products.length})`}
+                          value={selectedProductKey}
+                          options={productOptions}
+                          disabled={!productOptions.length}
+                          variant="mobile"
+                          onChange={(nextValue) =>
+                            setSelectedProductKey(nextValue)
+                          }
+                        />
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
             <div className="container grid grid-cols-1 gap-6">
               <article className="border-border/10 overflow-hidden rounded-3xl border bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
