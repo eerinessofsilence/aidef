@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import * as LucideIcons from "lucide-react";
 import {
   ChevronDown,
   ChevronLeft,
@@ -13,6 +14,7 @@ import {
   Radio,
   Settings,
   ShieldCheck,
+  type LucideIcon,
 } from "lucide-react";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
@@ -74,10 +76,22 @@ type PortalCharacteristicItemApi = {
   block_id?: number | null;
 };
 
+type PortalIconApi =
+  | {
+      type: "lucide";
+      name?: string | null;
+    }
+  | {
+      type: "upload";
+      url?: string | null;
+    }
+  | null;
+
 type PortalCharacteristicsBlockApi = {
   id: number;
   subtitle?: string | null;
   title?: string | null;
+  icon?: PortalIconApi;
   items?: Array<PortalCharacteristicItemApi>;
 };
 
@@ -129,6 +143,59 @@ type PortalProductDetailApi = PortalProductApi & {
 };
 
 const SPEC_ICON_POOL = [ShieldCheck, Gauge, Cpu, Radar, Settings, Radio];
+const isLucideComponent = (value: unknown): value is LucideIcon =>
+  typeof value === "object" &&
+  value !== null &&
+  "$$typeof" in (value as Record<string, unknown>);
+const LUCIDE_ICON_MAP: Record<string, LucideIcon> = Object.keys(
+  LucideIcons,
+).reduce(
+  (acc, key) => {
+    if (key === "icons" || key === "createLucideIcon") {
+      return acc;
+    }
+    const candidate = (LucideIcons as Record<string, unknown>)[key];
+    if (isLucideComponent(candidate)) {
+      acc[key] = candidate;
+    }
+    return acc;
+  },
+  {} as Record<string, LucideIcon>,
+);
+const normalizeLucideName = (raw: string) => {
+  const cleaned = raw.trim().replace(/^lucide[:\s_-]+/i, "");
+  if (!cleaned) return "";
+  const spaced = cleaned
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[^a-zA-Z0-9]+/g, " ");
+  return spaced
+    .split(" ")
+    .filter(Boolean)
+    .map((chunk) => chunk[0].toUpperCase() + chunk.slice(1))
+    .join("");
+};
+const resolveLucideIcon = (raw?: string | null) => {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const normalized = normalizeLucideName(trimmed);
+  const candidates = new Set<string>();
+  candidates.add(trimmed);
+  if (normalized) {
+    candidates.add(normalized);
+  }
+  if (!trimmed.endsWith("Icon")) {
+    candidates.add(`${trimmed}Icon`);
+  }
+  if (normalized && !normalized.endsWith("Icon")) {
+    candidates.add(`${normalized}Icon`);
+  }
+  for (const candidate of candidates) {
+    const icon = LUCIDE_ICON_MAP[candidate];
+    if (icon) return icon;
+  }
+  return null;
+};
 const getProductKey = (product: Product) => product.slug || product.name;
 
 function ProductDropdown({
@@ -499,9 +566,21 @@ export default function ClientPortal() {
         .filter((item): item is { label: string; value: string } =>
           Boolean(item),
         );
+      const fallbackIcon = SPEC_ICON_POOL[index % SPEC_ICON_POOL.length];
+      const iconPayload = block.icon;
+      const iconUrl =
+        iconPayload?.type === "upload" && typeof iconPayload.url === "string"
+          ? iconPayload.url.trim()
+          : "";
+      const lucideName =
+        iconPayload?.type === "lucide" && typeof iconPayload.name === "string"
+          ? iconPayload.name
+          : null;
+      const resolvedIcon = lucideName ? resolveLucideIcon(lucideName) : null;
       return {
         title: (block.title || block.subtitle || "Specifications").trim(),
-        icon: SPEC_ICON_POOL[index % SPEC_ICON_POOL.length],
+        icon: resolvedIcon ?? fallbackIcon,
+        iconUrl,
         items: normalizedItems,
       };
     });
@@ -524,6 +603,7 @@ export default function ClientPortal() {
         groups.push({
           title: "Additional",
           icon: SPEC_ICON_POOL[groups.length % SPEC_ICON_POOL.length],
+          iconUrl: "",
           items: normalizedLoose,
         });
       }
@@ -866,10 +946,19 @@ export default function ClientPortal() {
                         >
                           <div className="flex items-center gap-3 text-sm">
                             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
-                              <group.icon
-                                className="h-5 w-5"
-                                aria-hidden="true"
-                              />
+                              {group.iconUrl ? (
+                                <img
+                                  src={group.iconUrl}
+                                  alt=""
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <group.icon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              )}
                             </span>
                             <p className="font-semibold text-white">
                               {group.title}
@@ -1076,23 +1165,26 @@ export default function ClientPortal() {
                               : "border-white/10 bg-white/5"
                           }`}
                         >
-                        <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
-                            <Package2 className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                          <div className="leading-tight">
-                            <p className="text-sm font-semibold text-white">
-                              {product.name}
-                            </p>
-                            <p className="text-xs text-white/60">
-                              {product.serial}
-                            </p>
+                          <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/15 text-sky-100">
+                              <Package2
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                              />
+                            </span>
+                            <div className="leading-tight">
+                              <p className="text-sm font-semibold text-white">
+                                {product.name}
+                              </p>
+                              <p className="text-xs text-white/60">
+                                {product.serial}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-nowrap text-emerald-200 capitalize">
-                          {product.status}
-                        </span>
-                      </button>
+                          <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-nowrap text-emerald-200 capitalize">
+                            {product.status}
+                          </span>
+                        </button>
                       );
                     })}
                   </div>
