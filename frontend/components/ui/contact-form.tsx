@@ -83,11 +83,13 @@ const getCountryOptionLabel = (country: CountryOption) =>
   `${country.name} (${country.code})`;
 
 const productOptions: ProductOption[] = [
+  { value: "all-products", label: "All products" },
   { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
   { value: "av-1-vtol", label: "AV-1 VTOL" },
   { value: "axq-quadrocopter", label: "AXQ QUADROCOPTER" },
   { value: "ground-control-station", label: "Ground Control Station" },
   { value: "ugv-150-dup", label: "UGV 150-DUP" },
+  { value: "strategic-partnership", label: "Strategic partnership" },
 ];
 
 export const ContactForm = ({
@@ -299,7 +301,8 @@ export const ContactForm = ({
           </label>
           <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
             <span className="flex items-center gap-1">
-              Product <span className="text-red-500">*</span>
+              Product / Strategic partnership
+              <span className="text-red-500">*</span>
             </span>
             <div className="relative">
               <select
