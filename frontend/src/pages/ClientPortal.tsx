@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as LucideIcons from "lucide-react";
 import {
@@ -14,6 +14,7 @@ import {
   Radio,
   Settings,
   ShieldCheck,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
@@ -45,7 +46,6 @@ type Product = {
   name: string;
   category: string;
   serial: string;
-  status: string;
   preview_image: string;
   images: Array<string>;
   summary: string;
@@ -59,7 +59,6 @@ type PortalProductApi = {
   category: string | null;
   category_slug?: string | null;
   serial: string | null;
-  status: string | null;
   preview_image: string | null;
   images: Array<string> | null;
   summary: string | null;
@@ -140,6 +139,19 @@ type PortalProductDetailApi = PortalProductApi & {
   updated_at?: string;
   characteristics?: PortalCharacteristicsApi;
   modules?: PortalModulesApi;
+};
+
+type UpgradeModule = {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  action: string;
+  tag?: string;
+  images: Array<string>;
+  moduleImages: Array<PortalModuleImageApi>;
+  blockTitle?: string;
+  blockSubtitle?: string;
 };
 
 const SPEC_ICON_POOL = [ShieldCheck, Gauge, Cpu, Radar, Settings, Radio];
@@ -418,7 +430,6 @@ export default function ClientPortal() {
                 name: item.name || "Untitled product",
                 category: item.category || "",
                 serial: item.serial || "",
-                status: item.status || "",
                 preview_image: previewImage,
                 images,
                 summary: item.summary || "",
@@ -449,7 +460,10 @@ export default function ClientPortal() {
     null,
   );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [activeModule, setActiveModule] = useState<UpgradeModule | null>(null);
   const openContactModal = () => dispatchOpenContactModal();
+  const openModuleModal = (module: UpgradeModule) => setActiveModule(module);
+  const closeModuleModal = useCallback(() => setActiveModule(null), []);
 
   const productOptions = useMemo(
     () =>
@@ -486,7 +500,6 @@ export default function ClientPortal() {
         name: "No products available",
         category: "",
         serial: "",
-        status: "",
         preview_image: "",
         images: [],
         summary: "Products will appear here after they are assigned.",
@@ -623,7 +636,7 @@ export default function ClientPortal() {
       .filter(Boolean);
   }, [selectedProductDetail]);
 
-  const upgrades = useMemo(() => {
+  const upgrades = useMemo<UpgradeModule[]>(() => {
     const modules = selectedProductDetail?.modules;
     const blocks = Array.isArray(modules?.blocks) ? modules.blocks : [];
     const looseItems = Array.isArray(modules?.items) ? modules.items : [];
@@ -631,21 +644,91 @@ export default function ClientPortal() {
       Array.isArray(block.items) ? block.items : [],
     );
     const allModules = [...blockItems, ...looseItems];
+    const blockMetaById = new Map(
+      blocks.map((block) => [
+        block.id,
+        {
+          title: block.title ?? "",
+          subtitle: block.subtitle ?? "",
+        },
+      ]),
+    );
 
     return allModules
       .map((module) => {
-        const imageFromList = Array.isArray(module.images)
-          ? module.images[0]
-          : "";
+        const imageList = Array.isArray(module.images) ? module.images : [];
+        const moduleImages = Array.isArray(module.module_images)
+          ? module.module_images
+          : [];
+        const imageFromList = imageList[0] || moduleImages[0]?.url || "";
+        const blockMeta = module.block_id
+          ? blockMetaById.get(module.block_id)
+          : undefined;
         return {
+          id: module.id,
           title: module.title || module.name || "Module",
           description: module.description || "",
           image: module.image || imageFromList || "",
           action: module.action || module.button_text || "Request",
+          tag: module.tag || "",
+          images: imageList,
+          moduleImages,
+          blockTitle: blockMeta?.title || "",
+          blockSubtitle: blockMeta?.subtitle || "",
         };
       })
       .filter((module) => module.title);
   }, [selectedProductDetail]);
+
+  const activeModuleImages = useMemo(() => {
+    if (!activeModule) return [];
+    if (activeModule.moduleImages.length > 0) {
+      return activeModule.moduleImages;
+    }
+    if (activeModule.images.length > 0) {
+      return activeModule.images.map((url, index) => ({
+        id: index,
+        url,
+        alt: "",
+      }));
+    }
+    if (activeModule.image) {
+      return [
+        {
+          id: 0,
+          url: activeModule.image,
+          alt: "",
+        },
+      ];
+    }
+    return [];
+  }, [activeModule]);
+
+  const moduleSummaryItems = useMemo(() => {
+    if (!activeModule) return [];
+    const items: Array<{ label: string; value: string }> = [];
+
+    const addItem = (label: string, value?: string | null) => {
+      const trimmed = value?.trim();
+      if (trimmed) {
+        items.push({ label, value: trimmed });
+      }
+    };
+
+    addItem("Category", activeModule.blockTitle);
+    addItem("Program", activeModule.blockSubtitle);
+    addItem("Status", activeModule.tag || "Available on request");
+    items.push({
+      label: "Visual assets",
+      value: activeModuleImages.length
+        ? `${activeModuleImages.length} image${
+            activeModuleImages.length === 1 ? "" : "s"
+          }`
+        : "Not available yet",
+    });
+
+    return items;
+  }, [activeModule, activeModuleImages]);
 
   const productImages =
     selectedProduct?.images?.length && selectedProduct.images.length > 0
@@ -658,6 +741,27 @@ export default function ClientPortal() {
   useEffect(() => {
     setActiveMediaIndex(0);
   }, [selectedProductKey]);
+
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", Boolean(activeModule));
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [activeModule]);
+
+  useEffect(() => {
+    if (!activeModule) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeModuleModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeModule, closeModuleModal]);
 
   const showPreviousImage = () => {
     setActiveMediaIndex((current) => {
@@ -958,14 +1062,6 @@ export default function ClientPortal() {
                         </span>
                       </div>
                     </ScrollReveal>
-                    <ScrollReveal amount={0.35}>
-                      <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
-                        <span className="text-white/70">Status</span>
-                        <span className="font-semibold text-emerald-200 capitalize">
-                          {selectedProduct.status}
-                        </span>
-                      </div>
-                    </ScrollReveal>
                   </div>
 
                   <div className="mt-5 grid grid-cols-1 gap-4">
@@ -1030,7 +1126,7 @@ export default function ClientPortal() {
             </a>
           </div>
         )}
-        {upgrades.length > 0 ? (
+        {upgrades.length ? (
           <section className="container mt-12 space-y-5">
             <ScrollReveal amount={0.35}>
               <div className="flex items-center gap-3">
@@ -1056,7 +1152,7 @@ export default function ClientPortal() {
                       <img
                         src={upgrade.image}
                         alt={upgrade.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        className="flex h-full w-full items-center justify-center object-cover text-center text-lg font-medium transition duration-500 group-hover:scale-105"
                       />
                     </div>
                     <div className="flex flex-1 flex-col gap-3 p-5">
@@ -1073,6 +1169,7 @@ export default function ClientPortal() {
                       </p>
                       <button
                         type="button"
+                        onClick={() => openModuleModal(upgrade)}
                         className="mt-auto inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-sky-300/60 hover:bg-sky-400/15 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                       >
                         {upgrade.action}
@@ -1177,11 +1274,6 @@ export default function ClientPortal() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center">
-                          <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-nowrap text-emerald-200 capitalize">
-                            {product.status}
-                          </span>
-                        </div>
                       </button>
                     );
                   })}
@@ -1218,6 +1310,93 @@ export default function ClientPortal() {
             </div>
           </section>
         </ScrollReveal>
+        {activeModule ? (
+          <div className="fixed inset-0 z-999 container flex items-start justify-center px-4 pt-36 pb-10">
+            <div
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={closeModuleModal}
+            />
+            <div
+              className="relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/10 bg-slate-950/95 p-5 text-white shadow-xl md:p-6 lg:p-8"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Module details"
+            >
+              <button
+                type="button"
+                onClick={closeModuleModal}
+                className="absolute top-2 right-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                <div className="space-y-6">
+                  <div className="overflow-x-auto pb-2">
+                    {activeModuleImages.length ? (
+                      <div className="flex max-w-64 gap-3">
+                        {activeModuleImages.map((image) => (
+                          <div
+                            key={image.id}
+                            className="relative aspect-4/3 w-64 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:w-72 lg:w-80"
+                          >
+                            <img
+                              src={image.url}
+                              alt={image.alt || activeModule.title}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
+                        Images are not available for this module yet.
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-4xl font-semibold text-white">
+                      {activeModule.title}
+                    </h3>
+                    <div>
+                      {activeModule.description ? (
+                        <p className="text-base text-white/70">
+                          {activeModule.description}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-white/50">
+                          Detailed description is not available yet.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                      Module details
+                    </p>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
+                      {activeModule.tag || "Add-on"}
+                    </span>
+                  </div>
+                  <div className="mt-4 flex max-h-68 flex-col gap-2 overflow-scroll">
+                    {moduleSummaryItems.map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2.5 text-sm"
+                      >
+                        <span className="text-white/60">{item.label}</span>
+                        <span className="text-right font-semibold text-white">
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );

@@ -360,7 +360,7 @@ export default function Header() {
   return (
     <>
       <div className="fixed left-1/2 z-50 container -translate-x-1/2 py-5">
-        <header className="border-border/25 rounded-[20px] border bg-linear-to-b from-black/30 via-black/20 to-black/10 p-6 px-4 shadow-[inset_0_2px_12px_rgba(255,255,255,0.35)] backdrop-blur-lg">
+        <header className="border-border/50 rounded-[20px] border bg-linear-to-b from-black/50 via-black/40 to-black/30 p-6 px-4 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center space-x-2">
               <img src="/logo-ai-def.svg" className="w-40 max-md:w-35" alt="" />
@@ -418,14 +418,14 @@ export default function Header() {
                     aria-haspopup="menu"
                     aria-expanded={accountMenuOpen}
                     onClick={() => setAccountMenuOpen((prev) => !prev)}
-                    className="border-border/10 flex w-38 items-center justify-between gap-1 rounded-xl border bg-black/10 p-2 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] transition-all duration-300 hover:contrast-150"
+                    className="border-border/25 flex w-38 items-center justify-between gap-1 rounded-xl border bg-black/2 p-2 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.35)]"
                   >
                     <div className="flex items-center gap-2">
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
                         <UserRound className="h-4 w-4" aria-hidden="true" />
                       </span>
                       <p className="max-w-16.5 min-w-0 truncate text-sm font-semibold tracking-tight">
-                        {displayName}testesd
+                        {displayName}
                       </p>
                     </div>
                     <ChevronDown
@@ -439,27 +439,27 @@ export default function Header() {
                   </button>
 
                   {accountMenuOpen ? (
-                    <div className="border-border/10 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-38 rounded-2xl border bg-black/30 p-2.5 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-lg">
-                      <div className="px-3 py-2 text-xs font-semibold tracking-widest text-white/70 uppercase">
+                    <div className="border-border/25 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-38 space-y-1 rounded-2xl border bg-black p-2.5 backdrop-blur-xl">
+                      <div className="pt-2.5 text-xs font-semibold tracking-widest text-white/70 uppercase">
                         Account
                       </div>
                       <a
                         href="/client-portal"
-                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         Client portal
                       </a>
                       <button
                         type="button"
-                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         Profile
                       </button>
                       <button
                         type="button"
-                        className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         Settings
@@ -467,9 +467,9 @@ export default function Header() {
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="text-foreground flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition duration-300 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
+                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
-                        <LogOut className="h-3.5 w-3.5 shrink-0" />
+                        <LogOut className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         Sign out
                       </button>
                     </div>
