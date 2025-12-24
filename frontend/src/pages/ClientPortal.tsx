@@ -75,6 +75,22 @@ type PortalCharacteristicItemApi = {
   block_id?: number | null;
 };
 
+type PortalModuleCharacteristicApi = {
+  id: number;
+  name?: string | null;
+  label?: string | null;
+  description?: string | null;
+  value?: string | null;
+  order?: number | null;
+};
+
+type PortalTextBlockApi = {
+  id: number;
+  title?: string | null;
+  text?: string | null;
+  order?: number | null;
+};
+
 type PortalIconApi =
   | {
       type: "lucide";
@@ -118,6 +134,7 @@ type PortalModuleApi = {
   image?: string | null;
   images?: Array<string> | null;
   module_images?: Array<PortalModuleImageApi>;
+  module_characteristics?: Array<PortalModuleCharacteristicApi>;
 };
 
 type PortalModulesBlockApi = {
@@ -139,6 +156,7 @@ type PortalProductDetailApi = PortalProductApi & {
   updated_at?: string;
   characteristics?: PortalCharacteristicsApi;
   modules?: PortalModulesApi;
+  text_blocks?: Array<PortalTextBlockApi>;
 };
 
 type UpgradeModule = {
@@ -150,6 +168,7 @@ type UpgradeModule = {
   tag?: string;
   images: Array<string>;
   moduleImages: Array<PortalModuleImageApi>;
+  moduleCharacteristics: Array<{ id: number; label: string; value: string }>;
   blockTitle?: string;
   blockSubtitle?: string;
 };
@@ -625,6 +644,37 @@ export default function ClientPortal() {
     return groups.filter((group) => group.items.length > 0);
   }, [selectedProductDetail]);
 
+  const textBlocks = useMemo(() => {
+    const blocks = selectedProductDetail?.text_blocks;
+    if (!Array.isArray(blocks)) {
+      return [];
+    }
+    return blocks
+      .map((block, index) => {
+        const title = (block.title || "").trim();
+        const text = (block.text || "").trim();
+        if (!title && !text) return null;
+        return {
+          id: block.id ?? index,
+          title: title || "Notes",
+          text: text || "Details will be added soon.",
+          order: typeof block.order === "number" ? block.order : index,
+        };
+      })
+      .filter(
+        (
+          item,
+        ): item is {
+          id: number;
+          title: string;
+          text: string;
+          order: number;
+        } => Boolean(item),
+      )
+      .sort((a, b) => a.order - b.order)
+      .map(({ order, ...rest }) => rest);
+  }, [selectedProductDetail]);
+
   const tagBadges = useMemo(() => {
     const tags = selectedProductDetail?.tags;
     if (!Array.isArray(tags)) {
@@ -660,6 +710,35 @@ export default function ClientPortal() {
         const moduleImages = Array.isArray(module.module_images)
           ? module.module_images
           : [];
+        const moduleCharacteristics = Array.isArray(
+          module.module_characteristics,
+        )
+          ? module.module_characteristics
+          : [];
+        const normalizedModuleCharacteristics = moduleCharacteristics
+          .map((item, index) => {
+            const label = (item.label || item.name || "").trim();
+            const value = (item.value || item.description || "").trim();
+            if (!label && !value) return null;
+            return {
+              id: item.id ?? index,
+              label: label || "Detail",
+              value: value || "N/A",
+              order: typeof item.order === "number" ? item.order : index,
+            };
+          })
+          .filter(
+            (
+              item,
+            ): item is {
+              id: number;
+              label: string;
+              value: string;
+              order: number;
+            } => Boolean(item),
+          )
+          .sort((a, b) => a.order - b.order)
+          .map(({ order, ...rest }) => rest);
         const imageFromList = imageList[0] || moduleImages[0]?.url || "";
         const blockMeta = module.block_id
           ? blockMetaById.get(module.block_id)
@@ -673,6 +752,7 @@ export default function ClientPortal() {
           tag: module.tag || "",
           images: imageList,
           moduleImages,
+          moduleCharacteristics: normalizedModuleCharacteristics,
           blockTitle: blockMeta?.title || "",
           blockSubtitle: blockMeta?.subtitle || "",
         };
@@ -715,17 +795,11 @@ export default function ClientPortal() {
       }
     };
 
-    addItem("Category", activeModule.blockTitle);
-    addItem("Program", activeModule.blockSubtitle);
-    addItem("Status", activeModule.tag || "Available on request");
-    items.push({
-      label: "Visual assets",
-      value: activeModuleImages.length
-        ? `${activeModuleImages.length} image${
-            activeModuleImages.length === 1 ? "" : "s"
-          }`
-        : "Not available yet",
-    });
+    if (activeModule.moduleCharacteristics.length) {
+      activeModule.moduleCharacteristics.forEach((item) =>
+        addItem(item.label, item.value),
+      );
+    }
 
     return items;
   }, [activeModule, activeModuleImages]);
@@ -1105,6 +1179,44 @@ export default function ClientPortal() {
                             ))}
                           </ul>
                         </div>
+                      </ScrollReveal>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {textBlocks.length ? (
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7">
+                  <ScrollReveal amount={0.35}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                          Operational notes
+                        </p>
+                        <h3 className="text-xl font-semibold text-white">
+                          Briefing cards
+                        </h3>
+                      </div>
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
+                        <FileText className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                    </div>
+                  </ScrollReveal>
+
+                  <div className="mt-5 columns-1 gap-x-4 md:columns-2">
+                    {textBlocks.map((block) => (
+                      <ScrollReveal
+                        amount={0.35}
+                        key={block.id}
+                        className="mb-4 break-inside-avoid"
+                      >
+                        <article className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm">
+                          <h4 className="text-base font-semibold text-white">
+                            {block.title}
+                          </h4>
+                          <p className="mt-2 leading-relaxed whitespace-pre-line text-white/70">
+                            {block.text}
+                          </p>
+                        </article>
                       </ScrollReveal>
                     ))}
                   </div>

@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react";
 type ContactFormProps = {
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   showDetails?: boolean;
+  variant?: "default" | "support";
 };
 
 type CountryOption = {
@@ -95,7 +96,9 @@ const productOptions: ProductOption[] = [
 export const ContactForm = ({
   onSubmit,
   showDetails = true,
+  variant = "default",
 }: ContactFormProps) => {
+  const isSupportForm = variant === "support";
   const countryDatalistId = React.useId();
 
   const [countries, setCountries] = React.useState<CountryOption[]>(() =>
@@ -140,6 +143,9 @@ export const ContactForm = ({
   );
 
   React.useEffect(() => {
+    if (isSupportForm) {
+      return;
+    }
     const controller = new AbortController();
     const fetchCountries = async () => {
       setIsLoadingCountries(true);
@@ -192,11 +198,42 @@ export const ContactForm = ({
 
     fetchCountries();
     return () => controller.abort();
-  }, []);
+  }, [isSupportForm]);
 
-  const inputClass =
-    "w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 shadow-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-50/10";
+  const inputClass = isSupportForm
+    ? "text-foreground placeholder:text-foreground/50 focus:border-foreground/50 focus:ring-foreground/40 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base transition focus:ring-2 focus:outline-none"
+    : "w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 shadow-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-50/10";
   const selectClass = `${inputClass} appearance-none pr-12`;
+  const formKicker = isSupportForm ? "Support" : "Contact";
+  const formTitle = isSupportForm
+    ? "Tell us about the issue"
+    : "Tell us about your project";
+  const messageLabel = isSupportForm ? "Problem description" : "Message";
+  const messagePlaceholder = isSupportForm
+    ? "Describe the issue you're facing..."
+    : "Share a bit about what you need...";
+  const formClass = isSupportForm ? "flex flex-col gap-y-5" : "space-y-5";
+  const labelClass = isSupportForm
+    ? "flex flex-col gap-y-1 text-sm"
+    : "flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100";
+  const labelSpanClass = isSupportForm
+    ? "text-foreground/70 flex items-center gap-1"
+    : "flex items-center gap-1";
+  const kickerClass = isSupportForm
+    ? "text-foreground/60 text-xs font-semibold tracking-wide uppercase"
+    : "text-sm font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400";
+  const titleClass = isSupportForm
+    ? "mt-1 text-3xl font-bold max-md:text-2xl"
+    : "mt-1 text-2xl font-semibold text-neutral-900 md:text-3xl dark:text-white";
+  const descriptionClass = isSupportForm
+    ? "mt-2 text-foreground/70 leading-relaxed"
+    : "mt-2 text-sm text-neutral-600 dark:text-neutral-400";
+  const submitButtonClass = isSupportForm
+    ? "group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+    : "cursor-pointer rounded-2xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none max-md:w-full dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus-visible:ring-neutral-50/30";
+  const submitNoteClass = isSupportForm
+    ? "text-foreground/60 text-xs"
+    : "text-xs text-neutral-500 dark:text-neutral-400";
 
   const handleCountryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -223,232 +260,293 @@ export const ContactForm = ({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const match = selectedCountry ?? findCountryFromInput(countryQuery);
-    if (!match) {
-      setCountryError("Пожалуйста, выберите страну из подсказок.");
-      return;
+    if (!isSupportForm) {
+      const match = selectedCountry ?? findCountryFromInput(countryQuery);
+      if (!match) {
+        setCountryError("Пожалуйста, выберите страну из подсказок.");
+        return;
+      }
+      setSelectedCountry(match);
     }
-    setSelectedCountry(match);
     onSubmit?.(event);
   };
 
   return (
     <div className="w-full space-y-6">
       <div>
-        <p className="text-sm font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-          Contact
+        <p className={kickerClass}>
+          {formKicker}
         </p>
-        <h3 className="mt-1 text-2xl font-semibold text-neutral-900 md:text-3xl dark:text-white">
-          Tell us about your project
+        <h3 className={titleClass}>
+          {formTitle}
         </h3>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className={descriptionClass}>
           We will get back to you within one business day.
         </p>
       </div>
-      <form className="space-y-5" onSubmit={handleSubmit}>
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              First name <span className="text-red-500">*</span>
-            </span>
-            <input
-              className={inputClass}
-              name="firstName"
-              type="text"
-              autoComplete="given-name"
-              placeholder="John"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              Last name <span className="text-red-500">*</span>
-            </span>
-            <input
-              className={inputClass}
-              name="lastName"
-              type="text"
-              autoComplete="family-name"
-              placeholder="Doe"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              Email <span className="text-red-500">*</span>
-            </span>
-            <input
-              className={inputClass}
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              Phone number <span className="text-red-500">*</span>
-            </span>
-            <input
-              className={inputClass}
-              name="phone"
-              type="tel"
-              autoComplete="tel"
-              placeholder="+1 555 123 4567"
-              required
-            />
-          </label>
-          <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              Product / Strategic partnership
-              <span className="text-red-500">*</span>
-            </span>
-            <div className="relative">
-              <select
-                className={selectClass}
-                name="product"
-                value={selectedProduct}
-                onChange={handleProductChange}
-                required
-              >
-                <option value="" disabled>
-                  Select a product
-                </option>
-                {productOptions.map((product) => (
-                  <option key={product.value} value={product.value}>
-                    {product.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
-            </div>
-          </label>
-          <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            <span className="flex items-center gap-1">
-              Country <span className="text-red-500">*</span>
-            </span>
-            <div className="space-y-2">
-              <div className="relative">
+      <form className={formClass} onSubmit={handleSubmit}>
+        {isSupportForm ? (
+          <>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className={labelClass}>
+                <span className={labelSpanClass}>
+                  First name <span className="text-red-500">*</span>
+                </span>
                 <input
                   className={inputClass}
-                  name="countryName"
+                  name="firstName"
                   type="text"
-                  value={countryQuery}
-                  onChange={handleCountryInputChange}
-                  onBlur={handleCountryBlur}
-                  autoComplete="country-name"
-                  placeholder="Start typing a country"
-                  list={countryDatalistId}
+                  autoComplete="given-name"
+                  placeholder="John"
                   required
                 />
-                <datalist id={countryDatalistId}>
-                  {filteredCountries.slice(0, 50).map((country) => (
-                    <option
-                      key={country.code}
-                      value={getCountryOptionLabel(country)}
-                    />
-                  ))}
-                </datalist>
+              </label>
+              <label className={labelClass}>
+                <span className={labelSpanClass}>
+                  Last name <span className="text-red-500">*</span>
+                </span>
                 <input
-                  type="hidden"
-                  name="country"
-                  value={selectedCountry?.code ?? ""}
+                  className={inputClass}
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Doe"
+                  required
                 />
-              </div>
-              {countryError ? (
-                <p className="text-xs text-red-500">{countryError}</p>
-              ) : isLoadingCountries ? (
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                  Updating countries...
-                </p>
-              ) : null}
+              </label>
+              <label className={`md:col-span-2 ${labelClass}`}>
+                <span className={labelSpanClass}>
+                  Email <span className="text-red-500">*</span>
+                </span>
+                <input
+                  className={inputClass}
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  required
+                />
+              </label>
             </div>
-          </label>
-          <div
-            className={`col-span-2 grid gap-4 overflow-hidden transition-all duration-300 ease-out md:grid-cols-2 ${
-              selectedCountry
-                ? "max-h-[640px] translate-y-0 opacity-100"
-                : "pointer-events-none max-h-0 -translate-y-2 opacity-0"
-            }`}
-            aria-hidden={!selectedCountry}
-          >
-            <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-              <span className="flex items-center gap-1">
-                Address line 1 <span className="text-red-500">*</span>
+            <label className={labelClass}>
+              <span className={labelSpanClass}>
+                {messageLabel} <span className="text-red-500">*</span>
               </span>
-              <div className="space-y-2">
+              <textarea
+                className={`${inputClass} min-h-[140px] resize-none`}
+                name="message"
+                placeholder={messagePlaceholder}
+                required
+              />
+            </label>
+          </>
+        ) : (
+          <>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className={labelClass}>
+                <span className={labelSpanClass}>
+                  First name <span className="text-red-500">*</span>
+                </span>
+                <input
+                  className={inputClass}
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="John"
+                  required
+                />
+              </label>
+              <label className={labelClass}>
+                <span className={labelSpanClass}>
+                  Last name <span className="text-red-500">*</span>
+                </span>
+                <input
+                  className={inputClass}
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Doe"
+                  required
+                />
+              </label>
+              <label className={labelClass}>
+                <span className={labelSpanClass}>
+                  Email <span className="text-red-500">*</span>
+                </span>
+                <input
+                  className={inputClass}
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  required
+                />
+              </label>
+              <label className={labelClass}>
+                <span className={labelSpanClass}>
+                  Phone number <span className="text-red-500">*</span>
+                </span>
+                <input
+                  className={inputClass}
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+1 555 123 4567"
+                  required
+                />
+              </label>
+              <label className={`col-span-2 ${labelClass}`}>
+                <span className={labelSpanClass}>
+                  Product / Strategic partnership
+                  <span className="text-red-500">*</span>
+                </span>
                 <div className="relative">
+                  <select
+                    className={selectClass}
+                    name="product"
+                    value={selectedProduct}
+                    onChange={handleProductChange}
+                    required
+                  >
+                    <option value="" disabled>
+                      Select a product
+                    </option>
+                    {productOptions.map((product) => (
+                      <option key={product.value} value={product.value}>
+                        {product.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
+                </div>
+              </label>
+              <label className={`col-span-2 ${labelClass}`}>
+                <span className={labelSpanClass}>
+                  Country <span className="text-red-500">*</span>
+                </span>
+                <div className="space-y-2">
+                  <div className="relative">
+                    <input
+                      className={inputClass}
+                      name="countryName"
+                      type="text"
+                      value={countryQuery}
+                      onChange={handleCountryInputChange}
+                      onBlur={handleCountryBlur}
+                      autoComplete="country-name"
+                      placeholder="Start typing a country"
+                      list={countryDatalistId}
+                      required
+                    />
+                    <datalist id={countryDatalistId}>
+                      {filteredCountries.slice(0, 50).map((country) => (
+                        <option
+                          key={country.code}
+                          value={getCountryOptionLabel(country)}
+                        />
+                      ))}
+                    </datalist>
+                    <input
+                      type="hidden"
+                      name="country"
+                      value={selectedCountry?.code ?? ""}
+                    />
+                  </div>
+                  {countryError ? (
+                    <p className="text-xs text-red-500">{countryError}</p>
+                  ) : isLoadingCountries ? (
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Updating countries...
+                    </p>
+                  ) : null}
+                </div>
+              </label>
+              <div
+                className={`col-span-2 grid gap-4 overflow-hidden transition-all duration-300 ease-out md:grid-cols-2 ${
+                  selectedCountry
+                    ? "max-h-[640px] translate-y-0 opacity-100"
+                    : "pointer-events-none max-h-0 -translate-y-2 opacity-0"
+                }`}
+                aria-hidden={!selectedCountry}
+              >
+                <label className={`col-span-2 ${labelClass}`}>
+                  <span className={labelSpanClass}>
+                    Address line 1 <span className="text-red-500">*</span>
+                  </span>
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <input
+                        className={inputClass}
+                        name="city"
+                        type="text"
+                        value={cityQuery}
+                        onChange={(event) => setCityQuery(event.target.value)}
+                        autoComplete="address-line1"
+                        placeholder="State/province and city"
+                        required={Boolean(selectedCountry)}
+                        disabled={!selectedCountry}
+                      />
+                    </div>
+                  </div>
+                </label>
+                <label className={`md:col-span-2 ${labelClass}`}>
+                  <span className={labelSpanClass}>
+                    Address line 2 <span className="text-red-500">*</span>
+                  </span>
                   <input
                     className={inputClass}
-                    name="city"
+                    name="addressLine1"
                     type="text"
-                    value={cityQuery}
-                    onChange={(event) => setCityQuery(event.target.value)}
                     autoComplete="address-line1"
-                    placeholder="State/province and city"
+                    placeholder="123 Main Street"
                     required={Boolean(selectedCountry)}
                     disabled={!selectedCountry}
                   />
-                </div>
+                </label>
+                <label className={`md:col-span-2 ${labelClass}`}>
+                  Address line 3 (optional)
+                  <input
+                    className={inputClass}
+                    name="addressLine2"
+                    type="text"
+                    autoComplete="address-line2"
+                    placeholder="Apartment, suite, etc."
+                    disabled={!selectedCountry}
+                  />
+                </label>
               </div>
-            </label>
-            <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
-              <span className="flex items-center gap-1">
-                Address line 2 <span className="text-red-500">*</span>
+              <label className={`col-span-2 ${labelClass}`}>
+                Website
+                <input
+                  className={inputClass}
+                  name="website"
+                  type="text"
+                  autoComplete="website"
+                  placeholder="Add your website URL"
+                />
+              </label>
+            </div>
+            <label className={labelClass}>
+              <span className={labelSpanClass}>
+                {messageLabel} <span className="text-red-500">*</span>
               </span>
-              <input
-                className={inputClass}
-                name="addressLine1"
-                type="text"
-                autoComplete="address-line1"
-                placeholder="123 Main Street"
-                required={Boolean(selectedCountry)}
-                disabled={!selectedCountry}
+              <textarea
+                className={`${inputClass} min-h-[140px] resize-none`}
+                name="message"
+                placeholder={messagePlaceholder}
+                required
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 md:col-span-2 dark:text-neutral-100">
-              Address line 3 (optional)
-              <input
-                className={inputClass}
-                name="addressLine2"
-                type="text"
-                autoComplete="address-line2"
-                placeholder="Apartment, suite, etc."
-                disabled={!selectedCountry}
-              />
-            </label>
-          </div>
-          <label className="col-span-2 flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            Website
-            <input
-              className={inputClass}
-              name="website"
-              type="text"
-              autoComplete="website"
-              placeholder="Add your website URL"
-            />
-          </label>
-        </div>
-        <label className="flex flex-col gap-2 text-sm font-medium text-neutral-800 dark:text-neutral-100">
-          <span className="flex items-center gap-1">
-            Message <span className="text-red-500">*</span>
-          </span>
-          <textarea
-            className={`${inputClass} min-h-[140px] resize-none`}
-            name="message"
-            placeholder="Share a bit about what you need..."
-            required
-          />
-        </label>
+          </>
+        )}
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
-            className="cursor-pointer rounded-2xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none max-md:w-full dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus-visible:ring-neutral-50/30"
+            className={submitButtonClass}
           >
             Send message
           </button>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <p className={submitNoteClass}>
             By submitting, you agree to be contacted about your request.
           </p>
         </div>

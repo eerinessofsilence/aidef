@@ -98,13 +98,20 @@ export default function Support() {
             </div>
           </div>
           <div className="flex items-start justify-end">
-            <div className="w-full max-w-4xl rounded-3xl border border-neutral-200 bg-white p-8 shadow-[0_15px_30px_rgba(0,0,0,0.12)] max-md:p-5 dark:border-neutral-700 dark:bg-neutral-900">
-              <ContactForm showDetails={false} onSubmit={handleSubmit} />
-              {submitted && (
-                <p className="mt-4 text-sm font-semibold text-neutral-800 dark:text-neutral-100">
-                  Thanks! We&apos;ll respond within one business day.
-                </p>
-              )}
+            <div className="relative w-full max-w-4xl">
+              <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-white/8 via-white/4 to-white/2 blur-3xl" />
+              <div className="relative rounded-3xl border border-white/10 bg-white/10 p-2.5 shadow-2xl backdrop-blur-xl lg:p-5">
+                <ContactForm
+                  showDetails={false}
+                  onSubmit={handleSubmit}
+                  variant="support"
+                />
+                {submitted && (
+                  <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400/70">
+                    Thanks! We&apos;ll respond within one business day.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
