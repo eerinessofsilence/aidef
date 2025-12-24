@@ -11,8 +11,10 @@ from .models import (
     ProductCharacteristicsBlock,
     ProductImage,
     ProductModule,
+    ProductModuleCharacteristic,
     ProductModuleImage,
     ProductModulesBlock,
+    ProductTextBlock,
 )
 
 
@@ -54,6 +56,49 @@ def _serialize_module_images(
     return payload
 
 
+def _serialize_text_blocks(
+    blocks: Iterable[ProductTextBlock],
+) -> List[Dict[str, Any]]:
+    payload: List[Dict[str, Any]] = []
+    for block in sorted(
+        blocks,
+        key=lambda item: (item.order, item.id or 0),
+    ):
+        payload.append(
+            {
+                "id": block.id,
+                "title": block.title,
+                "text": block.text,
+                "order": block.order,
+            }
+        )
+    return payload
+
+
+def _serialize_module_characteristics(
+    characteristics: Iterable[ProductModuleCharacteristic],
+) -> List[Dict[str, Any]]:
+    payload: List[Dict[str, Any]] = []
+    for item in sorted(
+        characteristics,
+        key=lambda characteristic: (
+            characteristic.order,
+            characteristic.id or 0,
+        ),
+    ):
+        payload.append(
+            {
+                "id": item.id,
+                "name": item.name,
+                "label": item.name,
+                "description": item.description,
+                "value": item.description,
+                "order": item.order,
+            }
+        )
+    return payload
+
+
 def _serialize_characteristic(
     characteristic: ProductCharacteristic,
 ) -> Dict[str, Any]:
@@ -74,6 +119,9 @@ def _serialize_module(
     module_images = _serialize_module_images(
         request, module.module_images.all()
     )
+    module_characteristics = _serialize_module_characteristics(
+        module.module_characteristics.all()
+    )
     image_url = module_images[0]["url"] if module_images else None
     return {
         "id": module.id,
@@ -88,6 +136,7 @@ def _serialize_module(
         "image": image_url,
         "images": [item["url"] for item in module_images],
         "module_images": module_images,
+        "module_characteristics": module_characteristics,
     }
 
 
@@ -199,6 +248,7 @@ def _serialize_product_detail(
             "updated_at": product.updated_at.isoformat(),
             "characteristics": _serialize_characteristics_blocks(product),
             "modules": _serialize_modules_blocks(request, product),
+            "text_blocks": _serialize_text_blocks(product.text_blocks.all()),
         }
     )
     return data
@@ -229,6 +279,8 @@ def portal_product_detail_api(request, slug: str):
                 "modules_blocks",
                 "module",
                 "module__module_images",
+                "module__module_characteristics",
+                "text_blocks",
             )
             .get(slug=slug)
         )

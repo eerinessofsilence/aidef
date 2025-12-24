@@ -187,6 +187,24 @@ class ProductModule(models.Model):
     def __str__(self):
         return f"{self.product.name} — module {self.pk}" 
     
+class ProductModuleCharacteristic(models.Model):
+    module = models.ForeignKey(
+        ProductModule,
+        related_name="module_characteristics",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length=128)
+    description = models.TextField(max_length=255)
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product module characteristic"
+        verbose_name_plural = "Product module characteristics"
+        
+    def __str__(self):
+        return f"{self.module.name} — module characteristic {self.pk}" 
+    
 class ProductModuleImage(models.Model):
     module = models.ForeignKey(ProductModule, on_delete=models.CASCADE, related_name='module_images')
     image = models.ImageField(upload_to='products/%Y/%m/')
@@ -213,4 +231,22 @@ class ProductModulesBlock(models.Model):
         
     def __str__(self):
         return f"{self.product.name} — modules block {self.pk}"
+
+class ProductTextBlock(models.Model):
+    product = models.ForeignKey(
+        PortalProduct,
+        related_name="text_blocks",
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=128)
+    text = models.TextField(max_length=2048)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order",)
+        verbose_name = "Product text block"
+        verbose_name_plural = "Product text blocks"
+
+    def __str__(self):
+        return f"{self.product.name} — text block {self.pk}"
     

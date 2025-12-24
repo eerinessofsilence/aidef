@@ -6,8 +6,10 @@ from .models import (
     ProductCharacteristic,
     ProductCharacteristicsBlock,
     ProductModule,
+    ProductModuleCharacteristic,
     ProductModuleImage,
     ProductModulesBlock,
+    ProductTextBlock,
     IconType
 )
 
@@ -37,12 +39,23 @@ class ProductModuleInline(admin.TabularInline):
     extra = 0
     fields = ("name", "tag", "description", "button_text", "block", "order")
     ordering = ("order",)
+class ProductModuleCharacteristicInline(admin.TabularInline):
+    model = ProductModuleCharacteristic
+    extra = 0
+    fields = ("name", "description", "order")
+    ordering = ("order",)
 
 
 class ProductModulesBlockInline(admin.StackedInline):
     model = ProductModulesBlock
     extra = 0
     fields = ("subtitle", "title")
+
+class ProductTextBlockInline(admin.TabularInline):
+    model = ProductTextBlock
+    extra = 0
+    fields = ("title", "text", "order")
+    ordering = ("order",)
 
 
 @admin.register(PortalProduct)
@@ -59,6 +72,7 @@ class PortalProductAdmin(admin.ModelAdmin):
         ProductCharacteristicInline,
         ProductModulesBlockInline,
         ProductModuleInline,
+        ProductTextBlockInline,
     ]
 
 
@@ -104,7 +118,7 @@ class ProductModuleAdmin(admin.ModelAdmin):
     list_filter = ("block",)
     search_fields = ("product__name", "name", "tag", "description")
     ordering = ("product", "order")
-    inlines = [ProductModuleImageInline]
+    inlines = [ProductModuleImageInline, ProductModuleCharacteristicInline]
 
 
 @admin.register(ProductModuleImage)
@@ -117,3 +131,10 @@ class ProductModuleImageAdmin(admin.ModelAdmin):
 class ProductModulesBlockAdmin(admin.ModelAdmin):
     list_display = ("product", "subtitle", "title")
     search_fields = ("product__name", "subtitle", "title")
+
+
+@admin.register(ProductTextBlock)
+class ProductTextBlockAdmin(admin.ModelAdmin):
+    list_display = ("product", "title", "order")
+    search_fields = ("product__name", "title", "text")
+    ordering = ("product", "order")
