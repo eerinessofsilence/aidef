@@ -47,8 +47,8 @@ class ProductModulesBlockInline(admin.StackedInline):
 
 @admin.register(PortalProduct)
 class PortalProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "category", "status", "serial_number", "order", "created_at")
-    list_filter = ("order", "status", "category")
+    list_display = ("name", "category", "serial_number", "order", "created_at")
+    list_filter = ("order", "category")
     search_fields = ("name", "slug", "serial_number", "category__name")
     prepopulated_fields = {"slug": ("name",)}
     list_select_related = ("category",)

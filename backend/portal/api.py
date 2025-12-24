@@ -111,7 +111,6 @@ def _serialize_product_base(
         "category": product.category_label,
         "category_slug": product.category_slug,
         "serial": product.serial_number,
-        "status": product.status,
         "order": product.order,
         "summary": product.description,
         "highlight": highlight,

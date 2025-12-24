@@ -10,13 +10,7 @@ class IconType(models.TextChoices):
 def default_tags():
     return [""]
 
-class PortalProduct(models.Model):
-    class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        PAID    = "paid",    "Paid"
-        CANCELED= "canceled","Canceled"
-        OWNED   = "owned",   "Owned"
-        
+class PortalProduct(models.Model):       
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
@@ -27,7 +21,6 @@ class PortalProduct(models.Model):
                             help_text="List of tags (strings). Example: ['uav', 'vtol']"
                             )
     serial_number = models.CharField(max_length=12, default="SN-XXXX-XXXX")
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
