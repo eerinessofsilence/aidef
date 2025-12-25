@@ -91,6 +91,20 @@ type PortalTextBlockApi = {
   order?: number | null;
 };
 
+type PortalProductGalleryApi = {
+  id: number;
+  url?: string | null;
+  alt?: string | null;
+  order?: number | null;
+};
+
+type PortalPresentationInfoApi = {
+  id: number;
+  title?: string | null;
+  description?: string | null;
+  order?: number | null;
+};
+
 type PortalIconApi =
   | {
       type: "lucide";
@@ -154,6 +168,8 @@ type PortalProductDetailApi = PortalProductApi & {
   tags?: Array<string> | null;
   created_at?: string;
   updated_at?: string;
+  gallery?: Array<PortalProductGalleryApi>;
+  presentation_info?: Array<PortalPresentationInfoApi>;
   characteristics?: PortalCharacteristicsApi;
   modules?: PortalModulesApi;
   text_blocks?: Array<PortalTextBlockApi>;
@@ -275,7 +291,7 @@ function ProductDropdown({
     variant === "mobile" ? "relative w-full" : "relative inline-flex w-full";
   const buttonClassName =
     variant === "mobile"
-      ? "flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-left font-semibold text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md transition hover:border-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-75 sm:text-base"
+      ? "flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-left font-semibold text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md transition hover:border-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-75 sm:text-base"
       : "cursor-pointer w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-left font-semibold text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md transition hover:border-white/25 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 disabled:cursor-not-allowed disabled:opacity-50 disabled:brightness-75 sm:text-base";
   const listClassName =
     "absolute left-0 right-0 top-full z-30 mt-2 space-y-2 max-h-64 overflow-y-auto rounded-2xl border border-white/10 bg-white/10 p-2 text-sm text-white/80 shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl";
@@ -479,10 +495,17 @@ export default function ClientPortal() {
     null,
   );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [activeModule, setActiveModule] = useState<UpgradeModule | null>(null);
   const openContactModal = () => dispatchOpenContactModal();
   const openModuleModal = (module: UpgradeModule) => setActiveModule(module);
   const closeModuleModal = useCallback(() => setActiveModule(null), []);
+  const closeGallery = useCallback(() => setIsGalleryOpen(false), []);
+  const openGallery = useCallback((index: number) => {
+    setActiveGalleryIndex(index);
+    setIsGalleryOpen(true);
+  }, []);
 
   const productOptions = useMemo(
     () =>
@@ -675,6 +698,53 @@ export default function ClientPortal() {
       .map(({ order, ...rest }) => rest);
   }, [selectedProductDetail]);
 
+  const productGallery = useMemo(() => {
+    const gallery = selectedProductDetail?.gallery;
+    if (!Array.isArray(gallery)) {
+      return [];
+    }
+    return [...gallery]
+      .filter((item): item is PortalProductGalleryApi & { url: string } =>
+        Boolean(item.url),
+      )
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
+  }, [selectedProductDetail]);
+
+  const presentationInfo = useMemo(() => {
+    const items = selectedProductDetail?.presentation_info;
+    if (!Array.isArray(items)) {
+      return [];
+    }
+    return items
+      .map((item, index) => {
+        const title = (item.title || "").trim();
+        const description = (item.description || "").trim();
+        if (!title || !description) return null;
+        return {
+          id: item.id ?? index,
+          title,
+          description,
+          order: typeof item.order === "number" ? item.order : index,
+        };
+      })
+      .filter(
+        (
+          item,
+        ): item is {
+          id: number;
+          title: string;
+          description: string;
+          order: number;
+        } => Boolean(item),
+      )
+      .sort((a, b) => a.order - b.order || a.id - b.id)
+      .map(({ order, ...rest }) => rest);
+  }, [selectedProductDetail]);
+
   const tagBadges = useMemo(() => {
     const tags = selectedProductDetail?.tags;
     if (!Array.isArray(tags)) {
@@ -811,17 +881,42 @@ export default function ClientPortal() {
         ? [selectedProduct.preview_image]
         : [];
   const hasMultipleImages = productImages.length > 1;
+  const hasMultipleGalleryImages = productGallery.length > 1;
+  const clampedGalleryIndex =
+    productGallery.length > 0
+      ? Math.min(activeGalleryIndex, productGallery.length - 1)
+      : 0;
+  const activeGalleryItem =
+    productGallery.length > 0 ? productGallery[clampedGalleryIndex] : null;
+  const isOverlayOpen = Boolean(activeModule) || isGalleryOpen;
 
   useEffect(() => {
     setActiveMediaIndex(0);
+    setActiveGalleryIndex(0);
+    setIsGalleryOpen(false);
   }, [selectedProductKey]);
 
   useEffect(() => {
-    document.body.classList.toggle("overflow-hidden", Boolean(activeModule));
+    if (!productGallery.length) {
+      if (isGalleryOpen) {
+        setIsGalleryOpen(false);
+      }
+      if (activeGalleryIndex !== 0) {
+        setActiveGalleryIndex(0);
+      }
+      return;
+    }
+    if (activeGalleryIndex > productGallery.length - 1) {
+      setActiveGalleryIndex(productGallery.length - 1);
+    }
+  }, [activeGalleryIndex, isGalleryOpen, productGallery.length]);
+
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", isOverlayOpen);
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
-  }, [activeModule]);
+  }, [isOverlayOpen]);
 
   useEffect(() => {
     if (!activeModule) return;
@@ -837,19 +932,62 @@ export default function ClientPortal() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeModule, closeModuleModal]);
 
-  const showPreviousImage = () => {
+  const showPreviousImage = useCallback(() => {
     setActiveMediaIndex((current) => {
       if (!productImages.length) return current;
       return (current - 1 + productImages.length) % productImages.length;
     });
-  };
+  }, [productImages.length]);
 
-  const showNextImage = () => {
+  const showNextImage = useCallback(() => {
     setActiveMediaIndex((current) => {
       if (!productImages.length) return current;
       return (current + 1) % productImages.length;
     });
-  };
+  }, [productImages.length]);
+
+  const showPreviousGalleryImage = useCallback(() => {
+    setActiveGalleryIndex((current) => {
+      if (!productGallery.length) return current;
+      return (current - 1 + productGallery.length) % productGallery.length;
+    });
+  }, [productGallery.length]);
+
+  const showNextGalleryImage = useCallback(() => {
+    setActiveGalleryIndex((current) => {
+      if (!productGallery.length) return current;
+      return (current + 1) % productGallery.length;
+    });
+  }, [productGallery.length]);
+
+  useEffect(() => {
+    if (!isGalleryOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeGallery();
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        showNextGalleryImage();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        showPreviousGalleryImage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    closeGallery,
+    isGalleryOpen,
+    showNextGalleryImage,
+    showPreviousGalleryImage,
+  ]);
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black/25 pt-32">
@@ -860,142 +998,63 @@ export default function ClientPortal() {
 
       <div className="relative z-10 pt-12 pb-16 lg:pt-16">
         {products.length > 0 ? (
-          <section className="space-y-5">
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="container">
-                  <div
-                    className={`flex items-center justify-between max-md:justify-center ${!productImages.length ? "max-md:flex-col" : ""}`}
-                  >
-                    <div className="max-md:text-center">
-                      <p className="text-foreground/70 font-semibold tracking-widest uppercase max-md:text-center">
-                        Your product
-                      </p>
-                      <h1 className="text-foreground text-4xl font-semibold max-md:text-3xl">
-                        {selectedProduct.name}
-                      </h1>
+          <>
+            <section className="space-y-5">
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="container">
+                    <div
+                      className={`flex items-center justify-between max-md:justify-center ${!productImages.length ? "max-md:flex-col" : ""}`}
+                    >
+                      <div className="max-md:text-center">
+                        <p className="text-foreground/70 font-semibold tracking-widest uppercase max-md:text-center">
+                          Your product
+                        </p>
+                        <h1 className="text-foreground text-4xl font-semibold max-md:text-3xl">
+                          {selectedProduct.name}
+                        </h1>
+                      </div>
+                      {!productImages.length ? (
+                        <div>
+                          <ProductDropdown
+                            id="product-select-desktop"
+                            label={`All products (${products.length})`}
+                            value={selectedProductKey}
+                            options={productOptions}
+                            disabled={!productOptions.length}
+                            variant="desktop"
+                            onChange={(nextValue) =>
+                              setSelectedProductKey(nextValue)
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <div className="hidden md:block">
+                          <ProductDropdown
+                            id="product-select-desktop"
+                            label={`All products (${products.length})`}
+                            value={selectedProductKey}
+                            options={productOptions}
+                            disabled={!productOptions.length}
+                            variant="desktop"
+                            onChange={(nextValue) =>
+                              setSelectedProductKey(nextValue)
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
-                    {!productImages.length ? (
-                      <div>
-                        <ProductDropdown
-                          id="product-select-desktop"
-                          label={`All products (${products.length})`}
-                          value={selectedProductKey}
-                          options={productOptions}
-                          disabled={!productOptions.length}
-                          variant="desktop"
-                          onChange={(nextValue) =>
-                            setSelectedProductKey(nextValue)
-                          }
-                        />
-                      </div>
-                    ) : (
-                      <div className="hidden md:block">
-                        <ProductDropdown
-                          id="product-select-desktop"
-                          label={`All products (${products.length})`}
-                          value={selectedProductKey}
-                          options={productOptions}
-                          disabled={!productOptions.length}
-                          variant="desktop"
-                          onChange={(nextValue) =>
-                            setSelectedProductKey(nextValue)
-                          }
-                        />
-                      </div>
-                    )}
                   </div>
                 </div>
-              </div>
-              {productImages.length ? (
-                <div className="relative hidden min-h-75 max-md:mb-16 max-md:block">
-                  <div className="relative h-full">
-                    {productImages.map((imageSrc, index) => (
-                      <img
-                        key={`${selectedProduct.name}-${index}`}
-                        src={imageSrc}
-                        alt={`${selectedProduct.name} view ${index + 1}`}
-                        className={`absolute inset-0 transition duration-300 ease-out ${
-                          index === activeMediaIndex
-                            ? "opacity-100"
-                            : "opacity-0"
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  {hasMultipleImages ? (
-                    <>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 left-0 container flex items-center justify-between px-3 sm:px-4">
-                        <button
-                          type="button"
-                          onClick={showPreviousImage}
-                          aria-label="Show previous image"
-                          className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                        >
-                          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={showNextImage}
-                          aria-label="Show next image"
-                          className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                        >
-                          <ChevronRight
-                            className="h-5 w-5"
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </div>
-
-                      <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
-                        {productImages.map((_, index) => (
-                          <button
-                            key={`${selectedProduct.name}-dot-${index}`}
-                            type="button"
-                            aria-label={`Show image ${index + 1} of ${productImages.length}`}
-                            onClick={() => setActiveMediaIndex(index)}
-                            className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
-                              index === activeMediaIndex
-                                ? "border-white/70 bg-white"
-                                : "border-white/30 bg-white/20 hover:border-white/60"
-                            }`}
-                          />
-                        ))}
-                      </div>
-
-                      <div className="absolute right-4 bottom-8 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
-                        {activeMediaIndex + 1} / {productImages.length}
-                      </div>
-                      <div className="absolute inset-x-0 -bottom-12 container py-3">
-                        <ProductDropdown
-                          id="product-select-mobile"
-                          label={`All products (${products.length})`}
-                          value={selectedProductKey}
-                          options={productOptions}
-                          disabled={!productOptions.length}
-                          variant="mobile"
-                          onChange={(nextValue) =>
-                            setSelectedProductKey(nextValue)
-                          }
-                        />
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-            <div className="container grid grid-cols-1 gap-6">
-              <article className="border-border/10 overflow-hidden rounded-3xl border bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-                <div className="grid lg:grid-cols-2">
-                  <div className="relative min-h-80 overflow-hidden max-md:hidden">
+                {productImages.length ? (
+                  <div className="relative hidden min-h-75 max-md:mb-16 max-md:block">
                     <div className="relative h-full">
                       {productImages.map((imageSrc, index) => (
                         <img
                           key={`${selectedProduct.name}-${index}`}
                           src={imageSrc}
                           alt={`${selectedProduct.name} view ${index + 1}`}
-                          className={`absolute inset-0 transition duration-700 ease-out ${
+                          className={`absolute inset-0 transition duration-300 ease-out ${
                             index === activeMediaIndex
                               ? "opacity-100"
                               : "opacity-0"
@@ -1006,7 +1065,7 @@ export default function ClientPortal() {
 
                     {hasMultipleImages ? (
                       <>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center justify-between px-3 sm:px-4">
+                        <div className="pointer-events-none absolute inset-y-0 right-0 left-0 container flex items-center justify-between px-3 sm:px-4">
                           <button
                             type="button"
                             onClick={showPreviousImage}
@@ -1031,14 +1090,14 @@ export default function ClientPortal() {
                           </button>
                         </div>
 
-                        <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                        <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
                           {productImages.map((_, index) => (
                             <button
                               key={`${selectedProduct.name}-dot-${index}`}
                               type="button"
                               aria-label={`Show image ${index + 1} of ${productImages.length}`}
                               onClick={() => setActiveMediaIndex(index)}
-                              className={`pointer-events-auto h-2.5 w-2.5 rounded-full border transition ${
+                              className={`pointer-events-auto h-2.5 w-2.5 cursor-pointer rounded-full border transition ${
                                 index === activeMediaIndex
                                   ? "border-white/70 bg-white"
                                   : "border-white/30 bg-white/20 hover:border-white/60"
@@ -1047,144 +1106,307 @@ export default function ClientPortal() {
                           ))}
                         </div>
 
-                        <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                        <div className="absolute right-4 bottom-8 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
                           {activeMediaIndex + 1} / {productImages.length}
+                        </div>
+                        <div className="absolute inset-x-0 -bottom-12 container py-3">
+                          <ProductDropdown
+                            id="product-select-mobile"
+                            label={`All products (${products.length})`}
+                            value={selectedProductKey}
+                            options={productOptions}
+                            disabled={!productOptions.length}
+                            variant="mobile"
+                            onChange={(nextValue) =>
+                              setSelectedProductKey(nextValue)
+                            }
+                          />
                         </div>
                       </>
                     ) : null}
                   </div>
-                  <div className="flex flex-col justify-between gap-6 p-5">
-                    <div className="space-y-3">
-                      <p className="text-sm font-semibold tracking-[0.18em] text-white/60 uppercase">
-                        Serial {selectedProduct.serial}
-                      </p>
-                      <h3 className="text-2xl font-semibold text-white">
-                        Overview
-                      </h3>
-                      <p className="text-sm text-white/65">
-                        {selectedProduct.summary}
-                      </p>
-                      {tagBadges.length ? (
-                        <div className="flex flex-wrap gap-2">
-                          {tagBadges.map((tag, index) => (
-                            <span
-                              key={`${tag}-${index}`}
-                              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70"
+                ) : null}
+              </div>
+              <div className="container grid grid-cols-1 gap-6">
+                <article className="border-border/10 overflow-hidden rounded-3xl border bg-white/5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+                  <div className="grid lg:grid-cols-2">
+                    <div className="relative min-h-80 overflow-hidden max-md:hidden">
+                      <div className="relative h-full">
+                        {productImages.map((imageSrc, index) => (
+                          <img
+                            key={`${selectedProduct.name}-${index}`}
+                            src={imageSrc}
+                            alt={`${selectedProduct.name} view ${index + 1}`}
+                            className={`absolute inset-0 transition duration-700 ease-out ${
+                              index === activeMediaIndex
+                                ? "opacity-100"
+                                : "opacity-0"
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      {hasMultipleImages ? (
+                        <>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 left-0 flex items-center justify-between px-3 sm:px-4">
+                            <button
+                              type="button"
+                              onClick={showPreviousImage}
+                              aria-label="Show previous image"
+                              className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                             >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                              <ChevronLeft
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={showNextImage}
+                              aria-label="Show next image"
+                              className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                            >
+                              <ChevronRight
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                              />
+                            </button>
+                          </div>
+
+                          <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+                            {productImages.map((_, index) => (
+                              <button
+                                key={`${selectedProduct.name}-dot-${index}`}
+                                type="button"
+                                aria-label={`Show image ${index + 1} of ${productImages.length}`}
+                                onClick={() => setActiveMediaIndex(index)}
+                                className={`pointer-events-auto h-2.5 w-2.5 cursor-pointer rounded-full border transition ${
+                                  index === activeMediaIndex
+                                    ? "border-white/70 bg-white"
+                                    : "border-white/30 bg-white/20 hover:border-white/60"
+                                }`}
+                              />
+                            ))}
+                          </div>
+
+                          <div className="absolute right-4 bottom-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur">
+                            {activeMediaIndex + 1} / {productImages.length}
+                          </div>
+                        </>
                       ) : null}
                     </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
-                        <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                          Ownership
+                    <div className="flex flex-col justify-between gap-6 p-5">
+                      <div className="space-y-3">
+                        <p className="text-sm font-semibold tracking-[0.18em] text-white/60 uppercase">
+                          Serial {selectedProduct.serial}
                         </p>
-                        <p className="mt-1 text-lg font-semibold text-white">
-                          Active / Owned
+                        <h3 className="text-2xl font-semibold text-white">
+                          Overview
+                        </h3>
+                        <p className="text-sm text-white/65">
+                          {selectedProduct.summary}
                         </p>
-                        <p className="text-xs text-white/60">
-                          Cleared for operational deployment under your program.
-                        </p>
+                        {tagBadges.length ? (
+                          <div className="flex flex-wrap gap-2">
+                            {tagBadges.map((tag, index) => (
+                              <span
+                                key={`${tag}-${index}`}
+                                className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
-                      <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
-                        <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                          Documentation
-                        </p>
-                        <p className="mt-1 text-lg font-semibold text-white">
-                          Confidential bundle
-                        </p>
-                        <p className="text-xs text-white/60">
-                          Technical orders, wiring, and maintenance notes
-                          secured to this session.
-                        </p>
+
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
+                          <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
+                            Ownership
+                          </p>
+                          <p className="mt-1 text-lg font-semibold text-white">
+                            Active / Owned
+                          </p>
+                          <p className="text-xs text-white/60">
+                            Cleared for operational deployment under your
+                            program.
+                          </p>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
+                          <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
+                            Documentation
+                          </p>
+                          <p className="mt-1 text-lg font-semibold text-white">
+                            Confidential bundle
+                          </p>
+                          <p className="text-xs text-white/60">
+                            Technical orders, wiring, and maintenance notes
+                            secured to this session.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </article>
-              {specGroups.length > 0 ? (
-                <div
-                  id="tech-specs"
-                  className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7"
-                >
-                  <ScrollReveal amount={0.35}>
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                          Specifications & Technical Details
-                        </p>
-                        <h3 className="text-xl font-semibold text-white">
-                          Engineering sheet
-                        </h3>
-                      </div>
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
-                        <FileText className="h-5 w-5" aria-hidden="true" />
-                      </div>
-                    </div>
-                  </ScrollReveal>
-
-                  <div className="mt-5 grid gap-3">
+                </article>
+                {specGroups.length > 0 ? (
+                  <div
+                    id="tech-specs"
+                    className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7"
+                  >
                     <ScrollReveal amount={0.35}>
-                      <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
-                        <span className="text-white/70">Serial number</span>
-                        <span className="font-semibold text-white">
-                          {selectedProduct.serial}
-                        </span>
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                            Specifications & Technical Details
+                          </p>
+                          <h3 className="text-xl font-semibold text-white">
+                            Engineering sheet
+                          </h3>
+                        </div>
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
+                          <FileText className="h-5 w-5" aria-hidden="true" />
+                        </div>
                       </div>
                     </ScrollReveal>
-                  </div>
 
-                  <div className="mt-5 grid grid-cols-1 gap-4">
-                    {specGroups.map((group) => (
+                    <div className="mt-5 grid gap-3">
                       <ScrollReveal amount={0.35}>
-                        <div
-                          key={group.title}
-                          className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm max-md:text-xs"
-                        >
-                          <div className="flex items-center gap-3 text-sm">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
-                              {group.iconUrl ? (
-                                <img
-                                  src={group.iconUrl}
-                                  alt=""
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                <group.icon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              )}
-                            </span>
-                            <p className="font-semibold text-white">
-                              {group.title}
-                            </p>
-                          </div>
-                          <ul className="mt-3 space-y-2 text-white/70">
-                            {group.items.map((item) => (
-                              <li
-                                key={item.label}
-                                className="flex items-start justify-between gap-3 rounded-lg bg-slate-900/60 px-3 py-2"
-                              >
-                                <span>{item.label}</span>
-                                <span className="text-right font-semibold wrap-break-word text-white max-md:max-w-25">
-                                  {item.value}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
+                        <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
+                          <span className="text-white/70">Serial number</span>
+                          <span className="font-semibold text-white">
+                            {selectedProduct.serial}
+                          </span>
                         </div>
                       </ScrollReveal>
-                    ))}
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-1 gap-4">
+                      {specGroups.map((group) => (
+                        <ScrollReveal amount={0.35}>
+                          <div
+                            key={group.title}
+                            className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm max-md:text-xs"
+                          >
+                            <div className="flex items-center gap-3 text-sm">
+                              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-sky-100">
+                                {group.iconUrl ? (
+                                  <img
+                                    src={group.iconUrl}
+                                    alt=""
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                ) : (
+                                  <group.icon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                )}
+                              </span>
+                              <p className="font-semibold text-white">
+                                {group.title}
+                              </p>
+                            </div>
+                            <ul className="mt-3 space-y-2 text-white/70">
+                              {group.items.map((item) => (
+                                <li
+                                  key={item.label}
+                                  className="flex items-start justify-between gap-3 rounded-lg bg-slate-900/60 px-3 py-2"
+                                >
+                                  <span>{item.label}</span>
+                                  <span className="text-right font-semibold wrap-break-word text-white max-md:max-w-25">
+                                    {item.value}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </ScrollReveal>
+                      ))}
+                    </div>
                   </div>
+                ) : null}
+              </div>
+            </section>
+            {productGallery.length ? (
+              <section className="container mt-12 space-y-5">
+                <ScrollReveal amount={0.35}>
+                  <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                        Product gallery
+                      </p>
+                      <h2 className="text-2xl font-semibold text-white">
+                        Visual dossier
+                      </h2>
+                      <p className="text-sm text-white/65">
+                        Imagery pulled directly from your synced fleet records.
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                      {productGallery.length} assets
+                    </span>
+                  </div>
+                </ScrollReveal>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {productGallery.map((image, index) => {
+                    const isActive =
+                      isGalleryOpen && index === clampedGalleryIndex;
+                    return (
+                      <ScrollReveal
+                        amount={0.35}
+                        key={image.id ?? `${image.url}-${index}`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => openGallery(index)}
+                          aria-label={`Open gallery image ${index + 1} of ${productGallery.length}`}
+                          className={`group relative cursor-pointer overflow-hidden rounded-3xl border bg-white/5 shadow-[0_25px_70px_rgba(0,0,0,0.35)] transition hover:-translate-y-1 ${
+                            isActive ? "border-sky-400/60" : "border-white/10"
+                          }`}
+                        >
+                          <div className="relative aspect-4/3 w-full overflow-hidden">
+                            <img
+                              src={image.url}
+                              alt={
+                                image.alt ||
+                                `${selectedProduct.name} gallery ${index + 1}`
+                              }
+                              loading="lazy"
+                              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                            />
+                            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                            <div className="pointer-events-none absolute bottom-3 left-3 text-xs font-semibold tracking-[0.2em] text-white/80 uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                              View image
+                            </div>
+                          </div>
+                        </button>
+                      </ScrollReveal>
+                    );
+                  })}
                 </div>
-              ) : null}
-              {textBlocks.length ? (
+              </section>
+            ) : null}
+            {presentationInfo.length ? (
+              <section className="container mt-12 space-y-6">
+                {presentationInfo.map((item) => (
+                  <ScrollReveal amount={0.35} key={item.id}>
+                    <div className="space-y-3">
+                      <h3 className="text-2xl font-semibold text-white">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm leading-relaxed whitespace-pre-line text-white/70">
+                        {item.description}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </section>
+            ) : null}
+            {textBlocks.length ? (
+              <section className="container mt-12">
                 <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7">
                   <ScrollReveal amount={0.35}>
                     <div className="flex items-center justify-between gap-3">
@@ -1221,9 +1443,9 @@ export default function ClientPortal() {
                     ))}
                   </div>
                 </div>
-              ) : null}
-            </div>
-          </section>
+              </section>
+            ) : null}
+          </>
         ) : (
           <div className="container flex flex-col items-center justify-center">
             <h1 className="text-foreground text-center text-3xl leading-15 font-bold max-lg:leading-10 md:text-4xl xl:text-5xl">
@@ -1367,7 +1589,7 @@ export default function ClientPortal() {
                         type="button"
                         onClick={() => setSelectedProductKey(productKey)}
                         aria-pressed={isSelected}
-                        className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none ${
+                        className={`flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none ${
                           isSelected
                             ? "border-sky-400/60 bg-sky-400/15"
                             : "border-white/10 bg-white/5"
@@ -1422,6 +1644,67 @@ export default function ClientPortal() {
             </div>
           </section>
         </ScrollReveal>
+        {isGalleryOpen && productGallery.length ? (
+          <div className="fixed inset-0 z-999 flex items-start justify-center overflow-y-auto pt-12">
+            <div
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={closeGallery}
+            />
+            <div
+              className="relative z-10 container w-full pt-24 pb-8"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Product gallery"
+            >
+              <div className="relative max-h-[calc(100vh-8rem)] overflow-hidden rounded-3xl border border-white/10 bg-slate-950/95 shadow-2xl">
+                <button
+                  type="button"
+                  onClick={closeGallery}
+                  aria-label="Close gallery"
+                  className="absolute top-4 right-4 z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                {hasMultipleGalleryImages ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={showPreviousGalleryImage}
+                      aria-label="Show previous image"
+                      className="absolute top-1/2 left-4 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                    >
+                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={showNextGalleryImage}
+                      aria-label="Show next image"
+                      className="absolute top-1/2 right-4 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                    >
+                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                  </>
+                ) : null}
+                <div className="relative w-full bg-black/40">
+                  <img
+                    src={activeGalleryItem?.url ?? ""}
+                    alt={
+                      activeGalleryItem?.alt ||
+                      `${selectedProduct.name} gallery ${clampedGalleryIndex + 1}`
+                    }
+                    className="max-h-[calc(100vh-16rem)] w-full object-contain"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-xs text-white/60">
+                  <span className="font-semibold text-white/80">
+                    {clampedGalleryIndex + 1} / {productGallery.length}
+                  </span>
+                  <span className="truncate">{selectedProduct.name}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
         {activeModule ? (
           <div className="fixed inset-0 z-999 container flex items-start justify-center px-4 pt-36 pb-10">
             <div
