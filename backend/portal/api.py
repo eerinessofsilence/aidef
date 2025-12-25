@@ -9,11 +9,13 @@ from .models import (
     PortalProduct,
     ProductCharacteristic,
     ProductCharacteristicsBlock,
+    ProductGallery,
     ProductImage,
     ProductModule,
     ProductModuleCharacteristic,
     ProductModuleImage,
     ProductModulesBlock,
+    ProductPresentationInfo,
     ProductTextBlock,
 )
 
@@ -240,6 +242,29 @@ def _serialize_product_detail(
     request, product: PortalProduct
 ) -> Dict[str, Any]:
     data = _serialize_product_base(request, product)
+    gallery: List[ProductGallery] = list(product.gallery.all())
+    data["gallery"] = [
+        {
+            "id": item.id,
+            "url": _absolute_media_url(request, item.image),
+            "alt": item.alt,
+            "order": item.order,
+        }
+        for item in gallery
+        if item.image
+    ]
+    presentation_info: List[ProductPresentationInfo] = list(
+        product.presentation_info.all().order_by("order", "id")
+    )
+    data["presentation_info"] = [
+        {
+            "id": item.id,
+            "title": item.title,
+            "description": item.description,
+            "order": item.order,
+        }
+        for item in presentation_info
+    ]
     data.update(
         {
             "description": product.description,
@@ -274,6 +299,8 @@ def portal_product_detail_api(request, slug: str):
             PortalProduct.objects.select_related("category")
             .prefetch_related(
                 "images",
+                "gallery",
+                "presentation_info",
                 "characteristics_blocks",
                 "characteristic",
                 "modules_blocks",

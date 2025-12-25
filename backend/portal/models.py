@@ -96,7 +96,43 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"{self.product.name} — image {self.pk}"
-    
+
+class ProductGallery(models.Model):
+    product = models.ForeignKey(
+        PortalProduct,
+        related_name='gallery',
+        on_delete=models.CASCADE,
+    )
+    image = models.ImageField(upload_to='products/%Y/%m/')
+    alt = models.CharField(max_length=255, blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ('order',)
+        verbose_name = "Product gallery image"
+        verbose_name_plural = "Product gallery images"
+
+    def __str__(self):
+        return f"{self.product.name} — gallery {self.pk}"
+
+class ProductPresentationInfo(models.Model):
+    product = models.ForeignKey(
+        PortalProduct,
+        related_name='presentation_info',
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=128)
+    description = models.TextField(max_length=1024)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ('order', 'id')
+        verbose_name = "Product presentation info"
+        verbose_name_plural = "Product presentation info"
+
+    def __str__(self):
+        return f"{self.product.name} — presentation {self.pk}"
+
 class ProductCharacteristic(models.Model):
     product = models.ForeignKey(
         PortalProduct,

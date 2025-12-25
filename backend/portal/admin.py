@@ -3,6 +3,8 @@ from django.contrib import admin
 from .models import (
     PortalProduct,
     ProductImage,
+    ProductGallery,
+    ProductPresentationInfo,
     ProductCharacteristic,
     ProductCharacteristicsBlock,
     ProductModule,
@@ -18,6 +20,20 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 0
     fields = ("image", "alt", "is_preview", "order")
+    ordering = ("order",)
+
+
+class ProductGalleryInline(admin.TabularInline):
+    model = ProductGallery
+    extra = 0
+    fields = ("image", "alt", "order")
+    ordering = ("order",)
+
+
+class ProductPresentationInfoInline(admin.TabularInline):
+    model = ProductPresentationInfo
+    extra = 0
+    fields = ("title", "description", "order")
     ordering = ("order",)
 
 
@@ -68,6 +84,8 @@ class PortalProductAdmin(admin.ModelAdmin):
     ordering = ("order", "-created_at")
     inlines = [
         ProductImageInline,
+        ProductGalleryInline,
+        ProductPresentationInfoInline,
         ProductCharacteristicsBlockInline,
         ProductCharacteristicInline,
         ProductModulesBlockInline,
@@ -82,6 +100,20 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_filter = ("is_preview",)
     search_fields = ("product__name", "alt")
     ordering = ("product", "order")
+
+
+@admin.register(ProductGallery)
+class ProductGalleryAdmin(admin.ModelAdmin):
+    list_display = ("product", "alt", "order")
+    search_fields = ("product__name", "alt")
+    ordering = ("product", "order")
+
+
+@admin.register(ProductPresentationInfo)
+class ProductPresentationInfoAdmin(admin.ModelAdmin):
+    list_display = ("product", "title", "order")
+    search_fields = ("product__name", "title", "description")
+    ordering = ("product", "order", "id")
 
 
 @admin.register(ProductCharacteristicsBlock)
