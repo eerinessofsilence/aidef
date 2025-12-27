@@ -10,6 +10,7 @@ from .models import (
     ProductModule,
     ProductModuleCharacteristic,
     ProductModuleImage,
+    ProductModulePlacement,
     ProductModulesBlock,
     ProductTextBlock,
     IconType
@@ -50,11 +51,20 @@ class ProductCharacteristicsBlockInline(admin.StackedInline):
     fields = ("title", "icon_type", "icon_lucide", "icon_file")
 
 
-class ProductModuleInline(admin.TabularInline):
-    model = ProductModule
+class ProductModulePlacementInline(admin.TabularInline):
+    model = ProductModulePlacement
     extra = 0
-    fields = ("name", "tag", "description", "button_text", "block", "order")
+    fields = ("module", "block", "order")
     ordering = ("order",)
+
+
+class ProductModulePlacementForModuleInline(admin.TabularInline):
+    model = ProductModulePlacement
+    extra = 0
+    fields = ("product", "block", "order")
+    ordering = ("order",)
+
+
 class ProductModuleCharacteristicInline(admin.TabularInline):
     model = ProductModuleCharacteristic
     extra = 0
@@ -89,7 +99,7 @@ class PortalProductAdmin(admin.ModelAdmin):
         ProductCharacteristicsBlockInline,
         ProductCharacteristicInline,
         ProductModulesBlockInline,
-        ProductModuleInline,
+        ProductModulePlacementInline,
         ProductTextBlockInline,
     ]
 
@@ -146,11 +156,14 @@ class ProductModuleImageInline(admin.TabularInline):
 
 @admin.register(ProductModule)
 class ProductModuleAdmin(admin.ModelAdmin):
-    list_display = ("product", "name", "tag", "block", "order")
-    list_filter = ("block",)
-    search_fields = ("product__name", "name", "tag", "description")
-    ordering = ("product", "order")
-    inlines = [ProductModuleImageInline, ProductModuleCharacteristicInline]
+    list_display = ("name", "tag", "button_text")
+    search_fields = ("name", "tag", "description")
+    ordering = ("name", "id")
+    inlines = [
+        ProductModuleImageInline,
+        ProductModuleCharacteristicInline,
+        ProductModulePlacementForModuleInline,
+    ]
 
 
 @admin.register(ProductModuleImage)
@@ -163,6 +176,14 @@ class ProductModuleImageAdmin(admin.ModelAdmin):
 class ProductModulesBlockAdmin(admin.ModelAdmin):
     list_display = ("product", "subtitle", "title")
     search_fields = ("product__name", "subtitle", "title")
+
+
+@admin.register(ProductModulePlacement)
+class ProductModulePlacementAdmin(admin.ModelAdmin):
+    list_display = ("product", "module", "block", "order")
+    list_filter = ("product", "block")
+    search_fields = ("product__name", "module__name", "module__tag")
+    ordering = ("product", "order", "id")
 
 
 @admin.register(ProductTextBlock)

@@ -196,32 +196,53 @@ class ProductCharacteristicsBlock(models.Model):
             return {"type": "upload", "url": self.icon_file.url}
         return None
 
+
 class ProductModule(models.Model):
-    product = models.ForeignKey(
+    products = models.ManyToManyField(
         PortalProduct,
-        related_name="module",
-        on_delete=models.CASCADE,
-    )
-    block = models.ForeignKey(
-        "ProductModulesBlock",
+        through="ProductModulePlacement",
         related_name="modules",
-        on_delete=models.SET_NULL,
-        null=True,
         blank=True,
     )
     name = models.CharField(max_length=128)
     tag = models.CharField(max_length=16)
     description = models.TextField(max_length=255, blank=True)
     button_text = models.CharField(max_length=32, blank=False, null=False, default="Request")
-    order = models.PositiveIntegerField(default=0)
-    
+
     class Meta:
-        ordering = ('order',)
         verbose_name = "Product module"
         verbose_name_plural = "Product modules"
         
     def __str__(self):
-        return f"{self.product.name} — module {self.pk}" 
+        return self.name
+
+class ProductModulePlacement(models.Model):
+    product = models.ForeignKey(
+        PortalProduct,
+        related_name="module_placements",
+        on_delete=models.CASCADE,
+    )
+    module = models.ForeignKey(
+        ProductModule,
+        related_name="placements",
+        on_delete=models.CASCADE,
+    )
+    block = models.ForeignKey(
+        "ProductModulesBlock",
+        related_name="module_placements",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "id")
+        verbose_name = "Product module placement"
+        verbose_name_plural = "Product module placements"
+
+    def __str__(self):
+        return f"{self.product.name} — {self.module.name}"
     
 class ProductModuleCharacteristic(models.Model):
     module = models.ForeignKey(

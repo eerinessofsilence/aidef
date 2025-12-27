@@ -14,6 +14,7 @@ from .models import (
     ProductModule,
     ProductModuleCharacteristic,
     ProductModuleImage,
+    ProductModulePlacement,
     ProductModulesBlock,
     ProductPresentationInfo,
     ProductTextBlock,
@@ -116,7 +117,11 @@ def _serialize_characteristic(
 
 
 def _serialize_module(
-    request, module: ProductModule
+    request,
+    module: ProductModule,
+    *,
+    order: int,
+    block_id: int | None,
 ) -> Dict[str, Any]:
     module_images = _serialize_module_images(
         request, module.module_images.all()
@@ -133,8 +138,8 @@ def _serialize_module(
         "description": module.description,
         "action": module.button_text,
         "button_text": module.button_text,
-        "order": module.order,
-        "block_id": module.block_id,
+        "order": order,
+        "block_id": block_id,
         "image": image_url,
         "images": [item["url"] for item in module_images],
         "module_images": module_images,
@@ -209,18 +214,22 @@ def _serialize_modules_blocks(
         product.modules_blocks.all(),
         key=lambda item: item.id,
     )
-    modules = sorted(
-        product.module.all(),
-        key=lambda item: (item.order, item.id),
+    placements: List[ProductModulePlacement] = list(
+        product.module_placements.all().order_by("order", "id")
     )
     grouped: Dict[int, List[Dict[str, Any]]] = {
         block.id: [] for block in blocks
     }
     unassigned: List[Dict[str, Any]] = []
-    for module in modules:
-        payload = _serialize_module(request, module)
-        if module.block_id and module.block_id in grouped:
-            grouped[module.block_id].append(payload)
+    for placement in placements:
+        payload = _serialize_module(
+            request,
+            placement.module,
+            order=placement.order,
+            block_id=placement.block_id,
+        )
+        if placement.block_id and placement.block_id in grouped:
+            grouped[placement.block_id].append(payload)
         else:
             unassigned.append(payload)
 
@@ -304,9 +313,10 @@ def portal_product_detail_api(request, slug: str):
                 "characteristics_blocks",
                 "characteristic",
                 "modules_blocks",
-                "module",
-                "module__module_images",
-                "module__module_characteristics",
+                "module_placements",
+                "module_placements__module",
+                "module_placements__module__module_images",
+                "module_placements__module__module_characteristics",
                 "text_blocks",
             )
             .get(slug=slug)
