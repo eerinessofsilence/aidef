@@ -64,7 +64,7 @@ export default function Technology() {
             </Link>
           </div>
         </div>
-        <div className="flex h-screen w-full items-end justify-end bg-[url(/technology-bg-1.png)] bg-cover bg-center bg-no-repeat">
+        <div className="flex h-screen w-full items-end justify-end bg-[url(/technology-bg-1.jpg)] bg-cover bg-center bg-no-repeat">
           <div className="container">
             <div className="mb-15 space-y-5">
               <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-center max-md:text-3xl">
@@ -102,7 +102,7 @@ export default function Technology() {
             </div>
           </div>
         </div>
-        <div className="flex h-screen w-full items-end justify-end bg-[url(/technology-bg-3.png)] bg-cover bg-center bg-no-repeat">
+        <div className="flex h-screen w-full items-end justify-end bg-[url(/technology-bg-3.jpg)] bg-cover bg-center bg-no-repeat">
           <div className="container">
             <div className="mb-15 space-y-5">
               <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-center max-md:text-3xl">
