@@ -122,7 +122,7 @@ class ProductPresentationInfo(models.Model):
         on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=128)
-    description = models.TextField(max_length=1024)
+    description = models.TextField(max_length=4096)
     order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
