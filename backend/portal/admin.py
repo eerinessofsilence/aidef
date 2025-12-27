@@ -57,6 +57,23 @@ class ProductModulePlacementInline(admin.TabularInline):
     fields = ("module", "block", "order")
     ordering = ("order",)
 
+    def get_formset(self, request, obj=None, **kwargs):
+        self._parent_product = obj
+        return super().get_formset(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "block":
+            parent = getattr(self, "_parent_product", None)
+            if parent is not None:
+                kwargs["queryset"] = ProductModulesBlock.objects.filter(
+                    product=parent
+                )
+            else:
+                kwargs["queryset"] = ProductModulesBlock.objects.none()
+        return super().formfield_for_foreignkey(
+            db_field, request, **kwargs
+        )
+
 
 class ProductModulePlacementForModuleInline(admin.TabularInline):
     model = ProductModulePlacement

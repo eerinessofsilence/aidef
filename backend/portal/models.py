@@ -241,6 +241,20 @@ class ProductModulePlacement(models.Model):
         verbose_name = "Product module placement"
         verbose_name_plural = "Product module placements"
 
+    def clean(self):
+        super().clean()
+        if self.block_id and self.product_id:
+            if self.block.product_id != self.product_id:
+                raise ValidationError(
+                    {
+                        "block": "Выбранный блок принадлежит другому продукту."
+                    }
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.product.name} — {self.module.name}"
     
