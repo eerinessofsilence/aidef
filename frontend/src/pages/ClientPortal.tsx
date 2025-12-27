@@ -1397,7 +1397,7 @@ export default function ClientPortal() {
                       <h3 className="text-2xl font-semibold text-white">
                         {item.title}
                       </h3>
-                      <p className="text-sm leading-relaxed whitespace-pre-line text-white/70">
+                      <p className="leading-7 whitespace-pre-line text-white/70">
                         {item.description}
                       </p>
                     </div>
@@ -1407,7 +1407,7 @@ export default function ClientPortal() {
             ) : null}
             {textBlocks.length ? (
               <section className="container mt-12">
-                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7">
+                <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
                   <ScrollReveal amount={0.35}>
                     <div className="flex items-center justify-between gap-3">
                       <div>

@@ -1,132 +1,7 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-
-interface Product {
-  id: number;
-  slug: string;
-  name: string;
-  description?: string;
-  category: string | null;
-  available: boolean;
-  order?: number;
-  images?: ProductImage[];
-}
-
-interface ProductImage {
-  id: number;
-  url: string | null;
-  alt?: string | null;
-  order?: number | null;
-}
-
-interface ProductDetail extends Product {
-  specs?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  images?: ProductImage[];
-}
-
 export default function Solutions() {
-  const { slug } = useParams<{ slug: string }>();
-  const [products, setItems] = useState<ProductDetail[]>([]);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    "idle",
-  );
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [, setProductDetail] = useState<ProductDetail | null>(null);
-  const [detailStatus, setDetailStatus] = useState<
-    "idle" | "loading" | "ready" | "error"
-  >("idle");
-  const [detailError, setDetailError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    setStatus("loading");
-    axios
-      .get<Product[]>(`${import.meta.env.VITE_API_URL}/items/`, {
-        signal: controller.signal,
-      })
-      .then(async (res) => {
-        try {
-          const productsWithImages = await Promise.all(
-            res.data.map(async (product) => {
-              try {
-                const detail = await axios.get<ProductDetail>(
-                  `${import.meta.env.VITE_API_URL}/items/${product.slug}/`,
-                  { signal: controller.signal },
-                );
-                return { ...product, images: detail.data.images };
-              } catch (error) {
-                if (axios.isCancel(error)) {
-                  throw error;
-                }
-                console.error(
-                  `Unable to load images for product ${product.slug}`,
-                  error,
-                );
-                return product;
-              }
-            }),
-          );
-
-          setItems(productsWithImages);
-          setStatus("ready");
-        } catch (error) {
-          if (axios.isCancel(error)) {
-            return;
-          }
-          console.error("Unable to load product images", error);
-          setItems(res.data);
-          setStatus("ready");
-        }
-      })
-      .catch((err) => {
-        if (axios.isCancel(err)) {
-          return;
-        }
-        console.error("Unable to load products", err);
-        setErrorMessage("We couldn’t sync the fleet catalog. Try again soon.");
-        setStatus("error");
-      });
-
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    if (!slug) {
-      return;
-    }
-
-    const controller = new AbortController();
-    setDetailStatus("loading");
-    setDetailError(null);
-    setProductDetail(null);
-
-    axios
-      .get<ProductDetail>(`${import.meta.env.VITE_API_URL}/items/${slug}/`, {
-        signal: controller.signal,
-      })
-      .then((res) => {
-        setProductDetail(res.data);
-        setDetailStatus("ready");
-      })
-      .catch((err) => {
-        if (axios.isCancel(err)) {
-          return;
-        }
-        console.error("Unable to load product detail", err);
-        setDetailError("Couldn't load product data.");
-        setDetailStatus("error");
-      });
-
-    return () => controller.abort();
-  }, [slug]);
-
   return (
-    <main className="">
-      <section className="">
+    <main>
+      <section>
         <div className="relative">
           <video
             autoPlay
@@ -148,60 +23,238 @@ export default function Solutions() {
             </h1>
           </div>
         </div>
-        <div>
-          {products
-            ?.filter((product) => product.order)
-            .map((product) => {
-              const image = product.images?.[0]?.url;
-              return (
-                <div key={product.id ?? product.slug}>
-                  <div className="h-px w-full bg-gray-200"></div>
-                  <div
-                    className={`relative space-y-6 ${
-                      image ? "bg-cover bg-center py-64 max-lg:py-32" : ""
-                    }`}
-                    style={
-                      image ? { backgroundImage: `url(${image})` } : undefined
-                    }
-                  >
-                    {image && (
-                      <div className="pointer-events-none absolute inset-0 h-full bg-black/60" />
-                    )}
-
-                    <div className="relative z-10 container space-y-6">
-                      <div className="space-y-1">
-                        <h1 className="text-4xl font-bold text-white max-md:text-3xl">
-                          {product.name}
-                        </h1>
-
-                        <p className="text-4xl tracking-widest text-white/90 uppercase max-md:text-3xl">
-                          {product.category}
-                        </p>
-                      </div>
-
-                      <Link
-                        to={`/products/${product.slug}`}
-                        className="group relative inline-flex h-12 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold tracking-wide text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
-                      >
-                        Learn more
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        <div></div>
+      </section>
+      <section className="bg-white py-25">
+        <div className="container space-y-25">
+          <div className="flex justify-center">
+            <h1 className="max-w-3xl text-center text-5xl font-bold text-black uppercase">
+              GLOBAL COMMAND COMMUNICATION & ANTIDRONE SYSTEM
+            </h1>
+          </div>
+          <div className="flex flex-col items-center md:flex-row md:justify-between">
+            <div className="max-w-125 space-y-7.5">
+              <div className="space-y-5">
+                <h1 className="text-3xl font-bold text-black">
+                  Multifunctional indicator with push-button framing and
+                  touchscreen.
+                </h1>
+                <ul className="space-y-2.5 text-[#314D77]/65">
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Resolution 1024×768 Brightness `{">"}` 1000 cd
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Aspect ratio 3 to 4
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-5">
+                <h1 className="text-lg font-semibold text-black">
+                  Diagonal indicators:
+                </h1>
+                <ul className="space-y-2.5 text-[#314D77]/65">
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    15 inches
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    10,4 inches
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Under the special order other sizes of the indicator can be
+                    made.
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Interfaces: ARINC-429, CAN, RS-485, RS-232, Ethernet, USB.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="max-w-125">
+              <img src="/solutions-page-1.png" className="w-full" alt="" />
+            </div>
+          </div>
+          <div className="flex flex-col items-center md:flex-row md:justify-between">
+            <div className="order-1 max-w-125 space-y-7.5">
+              <div className="space-y-5">
+                <h1 className="text-3xl font-bold text-black">
+                  Multifunctional indicator with push-button framing and
+                  touchscreen.
+                </h1>
+                <ul className="space-y-2.5 text-[#314D77]/65">
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Resolution 1024×768 Brightness `{">"}` 1000 cd
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Aspect ratio 3 to 4
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-5">
+                <h1 className="text-lg font-semibold text-black">
+                  Diagonal indicators:
+                </h1>
+                <ul className="space-y-2.5 text-[#314D77]/65">
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    15 inches
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    10,4 inches
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Under the special order other sizes of the indicator can be
+                    made.
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Interfaces: ARINC-429, CAN, RS-485, RS-232, Ethernet, USB.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="order-0 max-w-125">
+              <img src="/solutions-page-2.png" className="w-full" alt="" />
+            </div>
+          </div>
+          <div className="flex flex-col items-center md:flex-row md:justify-between">
+            <div className="max-w-125 space-y-7.5">
+              <div className="space-y-5">
+                <h1 className="text-3xl font-bold text-black">
+                  Multifunctional indicator with push-button framing and
+                  touchscreen.
+                </h1>
+                <ul className="space-y-2.5 text-[#314D77]/65">
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Resolution 1024×768 Brightness `{">"}` 1000 cd
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Aspect ratio 3 to 4
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-5">
+                <h1 className="text-lg font-semibold text-black">
+                  Diagonal indicators:
+                </h1>
+                <ul className="space-y-2.5 text-[#314D77]/65">
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    15 inches
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    10,4 inches
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Under the special order other sizes of the indicator can be
+                    made.
+                  </li>
+                  <li className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#314D77]/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-[#314D77]"></span>
+                    </span>
+                    Interfaces: ARINC-429, CAN, RS-485, RS-232, Ethernet, USB.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="max-w-125">
+              <img src="/solutions-page-3.png" className="w-full" alt="" />
+            </div>
+          </div>
         </div>
-        {status === "error" ? (
-          <div className="mx-auto max-w-3xl rounded-3xl border border-red-500/50 bg-red-500/10 p-5 text-center text-sm text-red-200">
-            {errorMessage ??
-              "We couldn’t sync the fleet catalog. Try again soon."}
+      </section>
+      <section className="bg-[url(/solutions-block-bg.png)] py-25">
+        <div className="container">
+          <div className="space-y-5">
+            <div>
+              <span className="text-semibold border-border/25 rounded-[30px] bg-white/25 px-[15px] py-2.5 text-center text-white uppercase backdrop-blur-xs">
+                Characteristics
+              </span>
+            </div>
+            <h1 className="text-5xl font-bold">Main features:</h1>
+            <ul className="space-y-2.5">
+              <li className="flex items-center gap-5 text-lg">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
+                  <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
+                </span>
+                GPS/GALILEO/GLONASS (PPS & SPS)
+              </li>
+              <li className="flex items-center gap-5 text-lg">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
+                  <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
+                </span>
+                MIL STD complying
+              </li>
+              <li className="flex items-center gap-5 text-lg">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
+                  <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
+                </span>
+                3 GNSS antennas = accuracy up to 0,5m
+              </li>
+              <li className="flex items-center gap-5 text-lg">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
+                  <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
+                </span>
+                Bluit-in C2 allows to integrate any analog or IP based subsytems
+                (engine, alarms etc.)
+              </li>
+              <li className="flex items-center gap-5 text-lg">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
+                  <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
+                </span>
+                Customizable graphic and SW functionalities
+              </li>
+            </ul>
           </div>
-        ) : null}
-        {detailStatus === "error" && detailError ? (
-          <div className="mx-auto max-w-3xl rounded-3xl border border-amber-400/60 bg-amber-500/10 p-5 text-center text-sm text-amber-100">
-            {detailError}
-          </div>
-        ) : null}
+        </div>
       </section>
     </main>
   );
