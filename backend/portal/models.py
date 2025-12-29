@@ -206,7 +206,7 @@ class ProductModule(models.Model):
     )
     name = models.CharField(max_length=128)
     tag = models.CharField(max_length=16)
-    description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(max_length=1024, blank=True)
     button_text = models.CharField(max_length=32, blank=False, null=False, default="Request")
 
     class Meta:
@@ -264,8 +264,8 @@ class ProductModuleCharacteristic(models.Model):
         related_name="module_characteristics",
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length=128)
-    description = models.TextField(max_length=255)
+    name = models.CharField(max_length=256)
+    description = models.TextField(max_length=512, blank=True)
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
