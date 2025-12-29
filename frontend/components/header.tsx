@@ -599,13 +599,13 @@ export default function Header() {
             id={mobileMenuId}
             aria-hidden={!mobileMenuIsOpen}
             ref={mobileMenuRef}
-            className={`border-border/25 absolute right-0 z-40 mt-3 flex max-h-[calc(100vh-140px)] w-full origin-top-right flex-col gap-5 overflow-y-auto overscroll-contain rounded-[20px] bg-linear-to-b from-black/30 via-black/20 to-black/10 p-6 shadow-[inset_0_2px_12px_rgba(255,255,255,0.35)] backdrop-blur-lg transition-all duration-500 ease-out ${
+            className={`border-border/25 absolute right-0 z-40 mt-3 flex max-h-[calc(100vh-140px)] min-h-0 w-full origin-top-right flex-col gap-5 rounded-[20px] bg-linear-to-b from-black/30 via-black/20 to-black/10 p-5 shadow-[inset_0_2px_12px_rgba(255,255,255,0.35)] backdrop-blur-lg transition-all duration-500 ease-out ${
               mobileMenuIsOpen
                 ? "pointer-events-auto translate-y-0 scale-100 border-r border-b border-l opacity-100"
                 : "pointer-events-none -translate-y-3 scale-95 border opacity-0"
             }`}
           >
-            <nav className="text-foreground flex flex-col gap-6.5 text-lg font-medium">
+            <nav className="text-foreground flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain text-lg font-medium">
               {NAV_LINKS.map((link) => {
                 if (link.hasDropdown) {
                   const submenu =
@@ -630,9 +630,9 @@ export default function Header() {
                       {/* Submenu as plain text links under the parent item */}
                       <div
                         id={`mobile-submenu-${link.text}`}
-                        className={`mt-2 flex flex-col gap-2 pl-4 transition-all ${
+                        className={`flex flex-col gap-2 pl-4 transition-all ${
                           expanded
-                            ? "max-h-[1000px] opacity-100"
+                            ? "mt-2 max-h-[1000px] opacity-100"
                             : "max-h-0 opacity-0"
                         } overflow-hidden`}
                       >
@@ -790,7 +790,7 @@ export default function Header() {
               <Link
                 to={clientPortalHref}
                 onClick={handleMobileMenuLinkClick}
-                className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                className="group relative inline-flex h-11 w-full items-center justify-center rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
               >
                 Client Portal
               </Link>
