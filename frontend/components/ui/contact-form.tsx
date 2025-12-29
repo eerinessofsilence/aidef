@@ -229,7 +229,7 @@ export const ContactForm = ({
     ? "mt-2 text-foreground/70 leading-relaxed"
     : "mt-2 text-sm text-neutral-600 dark:text-neutral-400";
   const submitButtonClass = isSupportForm
-    ? "group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+    ? "cursor-pointer group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
     : "cursor-pointer rounded-2xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none max-md:w-full dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus-visible:ring-neutral-50/30";
   const submitNoteClass = isSupportForm
     ? "text-foreground/60 text-xs"
@@ -274,12 +274,8 @@ export const ContactForm = ({
   return (
     <div className="w-full space-y-6">
       <div>
-        <p className={kickerClass}>
-          {formKicker}
-        </p>
-        <h3 className={titleClass}>
-          {formTitle}
-        </h3>
+        <p className={kickerClass}>{formKicker}</p>
+        <h3 className={titleClass}>{formTitle}</h3>
         <p className={descriptionClass}>
           We will get back to you within one business day.
         </p>
@@ -540,10 +536,7 @@ export const ContactForm = ({
           </>
         )}
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="submit"
-            className={submitButtonClass}
-          >
+          <button type="submit" className={submitButtonClass}>
             Send message
           </button>
           <p className={submitNoteClass}>

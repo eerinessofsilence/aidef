@@ -407,7 +407,7 @@ export default function Header() {
               <div
                 onMouseEnter={handleLanguageMouseEnter}
                 onMouseLeave={handleLanguageMouseLeave}
-                className="border-border/25 active:translate-y-2px flex h-10 w-10 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/10 to-black/0 backdrop-blur-lg transition-all duration-300 will-change-transform hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.25)] active:scale-[0.93] max-xl:hidden"
+                className="border-border/25 active:translate-y-2px flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/10 to-black/0 backdrop-blur-lg transition-all duration-300 will-change-transform hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.25)] active:scale-[0.93] max-xl:hidden"
               >
                 <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
               </div>
@@ -418,7 +418,7 @@ export default function Header() {
                     aria-haspopup="menu"
                     aria-expanded={accountMenuOpen}
                     onClick={() => setAccountMenuOpen((prev) => !prev)}
-                    className="border-border/25 flex w-38 items-center justify-between gap-1 rounded-xl border bg-black/2 p-2 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.35)]"
+                    className="border-border/25 flex w-38 cursor-pointer items-center justify-between gap-1 rounded-xl border bg-black/2 p-2 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.35)]"
                   >
                     <div className="flex items-center gap-2">
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">

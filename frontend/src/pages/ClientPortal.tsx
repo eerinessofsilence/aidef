@@ -1480,6 +1480,7 @@ export default function ClientPortal() {
                 <ScrollReveal amount={0.35}>
                   <article
                     key={upgrade.title}
+                    onClick={() => openModuleModal(upgrade)}
                     className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.32)] transition"
                   >
                     <div className="relative h-40 overflow-hidden">
@@ -1706,86 +1707,90 @@ export default function ClientPortal() {
           </div>
         ) : null}
         {activeModule ? (
-          <div className="fixed inset-0 z-999 container flex items-start justify-center px-4 pt-36 pb-10">
+          <div className="fixed inset-0 z-999 flex items-start justify-center pt-36 pb-10">
             <div
               className="absolute inset-0 bg-black/70 backdrop-blur-sm"
               onClick={closeModuleModal}
             />
-            <div
-              className="relative z-10 max-h-[calc(100vh-9rem)] w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/10 bg-slate-950/95 p-5 text-white shadow-xl md:p-6 lg:p-8"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Module details"
-            >
-              <button
-                type="button"
-                onClick={closeModuleModal}
-                className="absolute top-2 right-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-                <div className="space-y-6">
-                  <div className="overflow-x-auto pb-2">
-                    {activeModuleImages.length ? (
-                      <div className="flex max-w-64 gap-3">
-                        {activeModuleImages.map((image) => (
+            <div className="relative z-10 w-full">
+              <div className="container">
+                <div
+                  className="relative max-h-[calc(100vh-9rem)] overflow-x-hidden overflow-y-scroll rounded-3xl border border-white/10 bg-slate-950/95 p-5 text-white shadow-xl"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Module details"
+                >
+                  <button
+                    type="button"
+                    onClick={closeModuleModal}
+                    className="absolute top-2 right-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                    <div className="space-y-6">
+                      <div className="overflow-x-auto pb-2">
+                        {activeModuleImages.length ? (
+                          <div className="flex max-w-64 gap-3">
+                            {activeModuleImages.map((image) => (
+                              <div
+                                key={image.id}
+                                className="relative aspect-4/3 w-64 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:w-72 lg:w-80"
+                              >
+                                <img
+                                  src={image.url}
+                                  alt={image.alt || activeModule.title}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
+                            Images are not available for this module yet.
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-4xl font-semibold text-white">
+                          {activeModule.title}
+                        </h3>
+                        <div>
+                          {activeModule.description ? (
+                            <p className="text-base text-white/70">
+                              {activeModule.description}
+                            </p>
+                          ) : (
+                            <p className="text-sm text-white/50">
+                              Detailed description is not available yet.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-5">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                          Module details
+                        </p>
+                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
+                          {activeModule.tag || "Add-on"}
+                        </span>
+                      </div>
+                      <div className="mt-4 flex max-h-68 flex-col gap-2 overflow-scroll">
+                        {moduleSummaryItems.map((item) => (
                           <div
-                            key={image.id}
-                            className="relative aspect-4/3 w-64 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:w-72 lg:w-80"
+                            key={item.label}
+                            className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2.5 text-sm"
                           >
-                            <img
-                              src={image.url}
-                              alt={image.alt || activeModule.title}
-                              className="h-full w-full object-cover"
-                            />
+                            <span className="text-white/60">{item.label}</span>
+                            <span className="text-right font-semibold text-white">
+                              {item.value}
+                            </span>
                           </div>
                         ))}
                       </div>
-                    ) : (
-                      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
-                        Images are not available for this module yet.
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-4xl font-semibold text-white">
-                      {activeModule.title}
-                    </h3>
-                    <div>
-                      {activeModule.description ? (
-                        <p className="text-base text-white/70">
-                          {activeModule.description}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-white/50">
-                          Detailed description is not available yet.
-                        </p>
-                      )}
                     </div>
-                  </div>
-                </div>
-                <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-5">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                      Module details
-                    </p>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
-                      {activeModule.tag || "Add-on"}
-                    </span>
-                  </div>
-                  <div className="mt-4 flex max-h-68 flex-col gap-2 overflow-scroll">
-                    {moduleSummaryItems.map((item) => (
-                      <div
-                        key={item.label}
-                        className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2.5 text-sm"
-                      >
-                        <span className="text-white/60">{item.label}</span>
-                        <span className="text-right font-semibold text-white">
-                          {item.value}
-                        </span>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </div>

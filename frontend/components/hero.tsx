@@ -42,14 +42,14 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 container mx-auto max-md:mt-20">
-        <div className="max-w-7xl">
+        <div className="flex justify-center">
           <div className="max-w-4xl">
-            <h1 className="mb-6 text-7xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-6xl max-md:text-center max-md:text-5xl max-sm:text-4xl lg:leading-22">
+            <h1 className="mb-6 text-center text-7xl font-bold text-balance text-white max-lg:mb-3 max-lg:text-6xl max-md:text-5xl max-sm:text-4xl lg:leading-22">
               Autonomous combat
               <br />
               UAV & Robotic systems
             </h1>
-            <p className="max-w-3xl text-lg leading-8.5 text-pretty text-white/90 max-md:text-center max-sm:text-base max-sm:leading-5 lg:text-xl">
+            <p className="max-w-3xl text-center text-lg leading-8.5 text-pretty text-white/90 max-sm:text-base max-sm:leading-5 lg:text-xl">
               We are a system integrator delivering kamikaze UAV, UGV and GCS,
               integrated into military vehicle systems via open C2 APIs and
               third-party system integration.
