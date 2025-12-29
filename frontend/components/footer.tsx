@@ -1,4 +1,7 @@
+import { dispatchOpenContactModal } from "../lib/contact-modal";
+
 export default function Footer() {
+  const openContactModal = () => dispatchOpenContactModal();
   return (
     <footer
       id="footer"
@@ -7,19 +10,30 @@ export default function Footer() {
       <div className="container-big">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
-            <img src="/logo-ai-def.svg" className="w-42.5" alt="" />
-            <img src="/we-create-the-future.svg" className="w-43.5" alt="" />
+            <div>
+              <a href="/">
+                <img src="/logo-ai-def.svg" className="w-42.5" alt="" />
+              </a>
+            </div>
+            <div>
+              <img src="/we-create-the-future.svg" className="w-43.5" alt="" />
+            </div>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="text-foreground font-bold uppercase">Quick links</h1>
-            <a href="#">Product</a>
-            <a href="#">Services</a>
-            <a href="#">Support</a>
-            <a href="/terms-of-condition">Terms of Condition</a>
+            <a href="/solutions">Solutions</a>
+            <a href="/technology">Technology</a>
+            <a href="/support">Support</a>
+            <a className="cursor-pointer" onClick={openContactModal}>
+              Contact
+            </a>
+            <a href="/terms-of-condition" className="text-nowrap">
+              Terms of Condition
+            </a>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="text-foreground font-bold uppercase">Contact</h1>
-            <p>office@ai-def.com</p>
+            <p className="text-nowrap">office@ai-def.com</p>
           </div>
           <div className="space-y-4">
             <h1 className="text-foreground font-bold uppercase">Adresses</h1>
@@ -41,7 +55,7 @@ export default function Footer() {
                 </p>
               </div>
               <div className="flex max-w-90 items-center gap-4.5">
-                <a href="">
+                <a href="https://www.linkedin.com/company/aidef/">
                   <img src="/linkedin-logo.svg" alt="" />
                 </a>
                 <a href="">
@@ -59,7 +73,7 @@ export default function Footer() {
         </div>
         <div>
           <p className="text-foreground/50 text-center uppercase">
-            © AI DEF A.S. 2025. All rights reserved.
+            © AI DEF A.S. 2026. All rights reserved.
           </p>
         </div>
       </div>

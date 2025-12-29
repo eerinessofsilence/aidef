@@ -382,7 +382,7 @@ export default function Auth() {
                   role="tab"
                   aria-selected={isSignUp}
                   onClick={() => handleModeChange("signup")}
-                  className={`flex-1 rounded-2xl px-4 py-2 transition ${
+                  className={`flex-1 cursor-pointer rounded-2xl px-4 py-2 transition ${
                     isSignUp
                       ? "bg-white text-black shadow"
                       : "text-foreground/60 hover:text-foreground/80"
@@ -395,7 +395,7 @@ export default function Auth() {
                   role="tab"
                   aria-selected={!isSignUp}
                   onClick={() => handleModeChange("signin")}
-                  className={`flex-1 rounded-2xl px-4 py-2 transition ${
+                  className={`flex-1 cursor-pointer rounded-2xl px-4 py-2 transition ${
                     isSignUp
                       ? "text-foreground/60 hover:text-foreground/80"
                       : "bg-white text-black shadow"
@@ -627,7 +627,7 @@ export default function Auth() {
                     <div className="flex flex-wrap items-center gap-3">
                       <button
                         type="submit"
-                        className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                        className="group relative inline-flex h-11 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
                       >
                         <span className="relative">{activeCopy.cta}</span>
                       </button>

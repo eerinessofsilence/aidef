@@ -127,12 +127,12 @@ export const Carousel = ({
               </div>
             ) : null}
             {paragraph ? (
-              <div className="text-foreground/70 max-w-lg">
+              <div className="text-foreground/70">
                 <p>{paragraph}</p>
               </div>
             ) : null}
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="hidden justify-end gap-2 lg:flex">
             <button
               className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
               onClick={scrollLeft}
@@ -170,6 +170,22 @@ export const Carousel = ({
               </div>
             ))}
           </div>
+        </div>
+        <div className="flex justify-center gap-2 lg:hidden">
+          <button
+            className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
+            onClick={scrollLeft}
+            disabled={!canScrollLeft}
+          >
+            <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+          </button>
+          <button
+            className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
+            onClick={scrollRight}
+            disabled={!canScrollRight}
+          >
+            <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+          </button>
         </div>
       </div>
     </CarouselContext.Provider>
