@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ChevronDown,
   LogOut,
@@ -12,6 +12,12 @@ import {
 } from "lucide-react";
 import { ContactForm } from "./ui/contact-form";
 import { CONTACT_MODAL_EVENT } from "../lib/contact-modal";
+import {
+  buildLocalizedPath,
+  replaceLanguageInPath,
+  resolveLanguage,
+  type SupportedLanguage,
+} from "../src/i18n";
 
 const NAV_LINKS = [
   { text: "Home", href: "/" },
@@ -23,19 +29,27 @@ const NAV_LINKS = [
   { text: "Contact", href: "#" },
 ];
 
-const LANGUAGES = [
+const LANGUAGES: Array<{
+  id: number;
+  code: SupportedLanguage;
+  title: string;
+  img: string;
+}> = [
   {
     id: 1,
+    code: "en",
     title: "English",
     img: "/en.svg",
   },
   {
     id: 2,
+    code: "de",
     title: "German",
     img: "/de.svg",
   },
   {
     id: 3,
+    code: "sk",
     title: "Slovakia",
     img: "/sv.svg",
   },
@@ -105,6 +119,11 @@ export default function Header() {
   const mobileAccountMenuRef = useRef<HTMLDivElement | null>(null);
   const originalBodyOverflow = useRef<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
+  const withLanguage = (path: string) =>
+    buildLocalizedPath(currentLanguage, path);
   const dropdownTransitionClasses =
     "transition-all duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]";
   const getDropdownVisibilityClasses = (isOpen: boolean) =>
@@ -113,7 +132,7 @@ export default function Header() {
       : "pointer-events-none opacity-0 -translate-y-5";
 
   const mobileMenuId = "mobile-menu";
-  const clientPortalHref = isAuthed ? "/client-portal" : "/auth";
+  const clientPortalHref = withLanguage(isAuthed ? "/client-portal" : "/auth");
   const displayName = userProfile.name || userProfile.email || "Operator";
   const API_BASE = useMemo(() => {
     const raw =
@@ -173,6 +192,36 @@ export default function Header() {
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
   const handleMobileMenuLinkClick = () => setMobileMenuIsOpen(false);
+  const handleLanguageChange = (
+    nextLanguage: SupportedLanguage,
+    options?: { closeDropdown?: boolean; closeMobile?: boolean },
+  ) => {
+    if (nextLanguage === currentLanguage) {
+      if (options?.closeDropdown) {
+        setLanguageSelectorOpen(false);
+      }
+      if (options?.closeMobile) {
+        handleMobileMenuLinkClick();
+      }
+      return;
+    }
+
+    const targetPath = replaceLanguageInPath(
+      location.pathname,
+      nextLanguage,
+    );
+    navigate({
+      pathname: targetPath,
+      search: location.search,
+      hash: location.hash,
+    });
+    if (options?.closeDropdown) {
+      setLanguageSelectorOpen(false);
+    }
+    if (options?.closeMobile) {
+      handleMobileMenuLinkClick();
+    }
+  };
 
   // toggle mobile dropdown expansion (click-to-open under the link)
   const toggleMobileDropdown = (name: string) => {
@@ -233,8 +282,8 @@ export default function Header() {
     setAccountMenuOpen(false);
     setMobileAccountMenuOpen(false);
     setIsAuthed(false);
-    navigate("/", { replace: true });
-  }, [API_BASE, navigate]);
+    navigate(buildLocalizedPath(currentLanguage, "/"), { replace: true });
+  }, [API_BASE, currentLanguage, navigate]);
 
   useEffect(() => {
     if (!mobileMenuIsOpen) return;
@@ -362,9 +411,12 @@ export default function Header() {
       <div className="fixed left-1/2 z-50 container -translate-x-1/2 py-5">
         <header className="border-border/50 rounded-[20px] border bg-linear-to-b from-black/50 via-black/40 to-black/30 p-6 px-4 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-xl">
           <div className="flex items-center justify-between">
-            <a href="/" className="flex items-center space-x-2">
+            <Link
+              to={withLanguage("/")}
+              className="flex items-center space-x-2"
+            >
               <img src="/logo-ai-def.svg" className="w-40 max-md:w-35" alt="" />
-            </a>
+            </Link>
 
             <div className="flex items-center gap-5 max-xl:hidden">
               {NAV_LINKS.map((link) => (
@@ -393,7 +445,7 @@ export default function Header() {
                     </button>
                   ) : (
                     <Link
-                      to={link.href}
+                      to={withLanguage(link.href)}
                       className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
                     >
                       {link.text}
@@ -443,13 +495,13 @@ export default function Header() {
                       <div className="pt-2.5 text-xs font-semibold tracking-widest text-white/70 uppercase">
                         Account
                       </div>
-                      <a
-                        href="/client-portal"
+                      <Link
+                        to={withLanguage("/client-portal")}
                         className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         Client portal
-                      </a>
+                      </Link>
                       <button
                         type="button"
                         className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
@@ -517,7 +569,7 @@ export default function Header() {
                   {items.map((item) => (
                     <Link
                       key={item.title}
-                      to={item.href}
+                      to={withLanguage(item.href)}
                       className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
                       onClick={() => setActiveDropdown(null)}
                     >
@@ -550,7 +602,7 @@ export default function Header() {
                   {items.map((item) => (
                     <Link
                       key={item.title}
-                      to={item.href}
+                      to={withLanguage(item.href)}
                       className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
                     >
                       <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
@@ -577,19 +629,23 @@ export default function Header() {
         >
           <div className="grid grid-cols-3 gap-8 p-4.5 px-6">
             {LANGUAGES.map((item) => (
-              <a
+              <button
                 key={item.id}
+                type="button"
+                onClick={() =>
+                  handleLanguageChange(item.code, { closeDropdown: true })
+                }
                 className="group flex cursor-pointer items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
               >
                 <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                  <img src={item.img} className="h-7 w-7" />
+                  <img src={item.img} className="h-7 w-7" alt="" />
                 </div>
                 <div className="flex items-center">
                   <h3 className="text-sm font-semibold text-black">
                     {item.title}
                   </h3>
                 </div>
-              </a>
+              </button>
             ))}
           </div>
         </div>
@@ -639,7 +695,7 @@ export default function Header() {
                         {submenu.map((s, subIdx) => (
                           <Link
                             key={s.title}
-                            to={s.href}
+                            to={withLanguage(s.href)}
                             onClick={handleMobileMenuLinkClick}
                             className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
@@ -671,7 +727,7 @@ export default function Header() {
                       </button>
                     ) : (
                       <Link
-                        to={link.href}
+                        to={withLanguage(link.href)}
                         onClick={handleMobileMenuLinkClick}
                         className="text-foreground hover:text-foreground/70 block cursor-pointer text-lg font-medium transition-colors"
                       >
@@ -709,7 +765,11 @@ export default function Header() {
                     <button
                       key={language.id}
                       type="button"
-                      onClick={handleMobileMenuLinkClick}
+                      onClick={() =>
+                        handleLanguageChange(language.code, {
+                          closeMobile: true,
+                        })
+                      }
                       className="text-foreground/80 hover:text-foreground/50 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 shadow-inner shadow-black/20">
@@ -754,13 +814,13 @@ export default function Header() {
                     <div className="px-3 py-2 text-xs font-semibold tracking-widest text-white/70 uppercase">
                       Account
                     </div>
-                    <a
-                      href="/client-portal"
+                    <Link
+                      to={withLanguage("/client-portal")}
                       className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                     >
                       <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
                       Client portal
-                    </a>
+                    </Link>
                     <button
                       type="button"
                       className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"

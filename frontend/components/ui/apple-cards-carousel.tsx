@@ -6,10 +6,12 @@ import React, {
   createContext,
   type JSX,
 } from "react";
+import { useParams } from "react-router-dom";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "../../lib/utils";
 import { motion } from "motion/react";
 import { type ImageProps } from "next/image";
+import { buildLocalizedPath, resolveLanguage } from "../../src/i18n";
 
 interface CarouselProps {
   paragraph?: string;
@@ -22,6 +24,7 @@ type Card = {
   bg: string;
   title: string;
   category: string;
+  description?: string;
   video?: string;
   href?: string;
 };
@@ -203,7 +206,10 @@ export const Card = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
   const productHref = buildProductHref(card);
+  const localizedHref = buildLocalizedPath(currentLanguage, productHref);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -229,7 +235,7 @@ export const Card = ({
   return (
     <>
       <motion.a
-        href={productHref}
+        href={localizedHref}
         layoutId={layout ? `card-${card.title}` : undefined}
         className="relative z-10 flex h-162.5 w-125 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50 max-md:h-97.5 max-md:w-75"
         onMouseEnter={handleMouseEnter}

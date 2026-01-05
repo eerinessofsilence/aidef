@@ -1,13 +1,22 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Carousel, Card } from "./ui/apple-cards-carousel";
 import { ScrollReveal } from "./ui/scroll-reveal";
 
 export default function DroneCarouselSection() {
+  const { t } = useTranslation();
   const cards = data.map((card, index) => (
     <Card
-      key={index}
-      card={{ ...card, video: `/drone-carousel-video-${index + 1}.MP4` }}
+      key={card.key}
+      card={{
+        category: t(card.categoryKey),
+        title: t(card.titleKey),
+        description: t(card.descriptionKey),
+        href: card.href,
+        bg: card.bg,
+        video: `/drone-carousel-video-${index + 1}.MP4`,
+      }}
       index={index}
     />
   ));
@@ -16,8 +25,8 @@ export default function DroneCarouselSection() {
     <div className="container mx-auto h-full w-full px-5 py-25">
       <ScrollReveal delay={0.12} amount={0.3}>
         <Carousel
-          paragraph="Our systems combine high-speed kinetic effect, resilience against GNSS jamming and AI-driven autonomy. A common AI-DEF avionics core (autopilot, air-data system with Pitot tube, dual GNSS, Safe-Arm load controller, power modules and onboard AI) creates a unified technical platform across all products."
-          carouselTitle="AI-DEF Ecosystem Overview"
+          paragraph={t("main.droneCarousel.description")}
+          carouselTitle={t("main.droneCarousel.title")}
           items={cards}
         />
       </ScrollReveal>
@@ -25,40 +34,54 @@ export default function DroneCarouselSection() {
   );
 }
 
-const data = [
+type CarouselItem = {
+  key: string;
+  categoryKey: string;
+  titleKey: string;
+  descriptionKey: string;
+  href: string;
+  bg: string;
+};
+
+const data: CarouselItem[] = [
   {
-    category: "Drone",
-    title: "AX2NG KRAKATIT",
+    key: "ax2ng",
+    categoryKey: "main.droneCarousel.items.ax2ng.category",
+    titleKey: "main.droneCarousel.items.ax2ng.title",
+    descriptionKey: "main.droneCarousel.items.ax2ng.description",
     href: "products/ax2ng-krakatit",
-    description: "Jet engine KAMIKAZE drone with AI",
     bg: "/drone-carousel-bg-1.png",
   },
   {
-    category: "Quadrocopter",
-    title: "AXQ",
+    key: "axq",
+    categoryKey: "main.droneCarousel.items.axq.category",
+    titleKey: "main.droneCarousel.items.axq.title",
+    descriptionKey: "main.droneCarousel.items.axq.description",
     href: "products/axq-quadrocopter",
-    description: "Lightweight 10-inch multicopter",
     bg: "/drone-carousel-bg-2.png",
   },
   {
-    category: "Drone controls",
-    title: "Ground Control Station",
+    key: "gcs",
+    categoryKey: "main.droneCarousel.items.gcs.category",
+    titleKey: "main.droneCarousel.items.gcs.title",
+    descriptionKey: "main.droneCarousel.items.gcs.description",
     href: "products/ground-control-station",
-    description: " Unihed control for all platforms",
     bg: "/drone-carousel-bg-3.png",
   },
   {
-    category: "UGV",
-    title: "UGV 150-DUP",
+    key: "ugv",
+    categoryKey: "main.droneCarousel.items.ugv.category",
+    titleKey: "main.droneCarousel.items.ugv.title",
+    descriptionKey: "main.droneCarousel.items.ugv.description",
     href: "products/ugv-150-dup",
-    description: "Unmanned ground platform",
     bg: "/drone-carousel-bg-4.png",
   },
   {
-    category: "Drone",
-    title: "AV-1 VTOL",
+    key: "av1",
+    categoryKey: "main.droneCarousel.items.av1.category",
+    titleKey: "main.droneCarousel.items.av1.title",
+    descriptionKey: "main.droneCarousel.items.av1.description",
     href: "products/av-1-vtol",
-    description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-5.png",
   },
 ];

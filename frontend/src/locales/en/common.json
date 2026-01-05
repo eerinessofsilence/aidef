@@ -1,0 +1,100 @@
+{
+  "main": {
+    "hero": {
+      "title": "Autonomous combat UAV & Robotic systems",
+      "description": "We are a system integrator delivering kamikaze UAV, UGV and GCS, integrated into military vehicle systems via open C2 APIs and third-party system integration.",
+      "slideAlt": "Background {{index}}",
+      "slideAria": "Go to slide {{index}}"
+    },
+    "droneCarousel": {
+      "title": "AI-DEF Ecosystem Overview",
+      "description": "Our systems combine high-speed kinetic effect, resilience against GNSS jamming and AI-driven autonomy. A common AI-DEF avionics core (autopilot, air-data system with Pitot tube, dual GNSS, Safe-Arm load controller, power modules and onboard AI) creates a unified technical platform across all products.",
+      "items": {
+        "ax2ng": {
+          "category": "Drone",
+          "title": "AX2NG KRAKATIT",
+          "description": "Jet engine KAMIKAZE drone with AI"
+        },
+        "axq": {
+          "category": "Quadrocopter",
+          "title": "AXQ",
+          "description": "Lightweight 10-inch multicopter"
+        },
+        "gcs": {
+          "category": "Drone controls",
+          "title": "Ground Control Station",
+          "description": "Unihed control for all platforms"
+        },
+        "ugv": {
+          "category": "UGV",
+          "title": "UGV 150-DUP",
+          "description": "Unmanned ground platform"
+        },
+        "av1": {
+          "category": "Drone",
+          "title": "AV-1 VTOL",
+          "description": "Vertical take-of and landing aircraft"
+        }
+      }
+    },
+    "focusAreas": {
+      "kicker": "Focus areas",
+      "title": "Ai at the core",
+      "items": {
+        "security": {
+          "title": "Security",
+          "description": "AI-powered security solutions for threat detection and response systems."
+        },
+        "drones": {
+          "title": "Drones",
+          "description": "Intelligent drone systems with autonomous navigation and mission planning."
+        },
+        "automation": {
+          "title": "Automation",
+          "description": "Industrial automation systems leveraging machine learning and robotics."
+        },
+        "ugv": {
+          "title": "UGV",
+          "description": "Unmanned ground vehicles with advanced perception and decision- making capabilities."
+        },
+        "defense": {
+          "title": "Defense",
+          "description": "Cutting-edge defense technologies combining AI with tactical operations."
+        },
+        "automationAdvanced": {
+          "title": "Automation",
+          "description": "Advanced AI systems for next-generation aircraft and autonomous light control."
+        }
+      }
+    },
+    "systemIntegration": {
+      "title": "System Integration for Military Vehicles",
+      "description": "We integrate our UAV, UGV and GCS into armoured and soft-skin military vehicles. Our systems expose open C2 APIs and are designed for integration with third-party sensors and efectors.",
+      "cards": {
+        "c2": {
+          "title": "Integration via C2 API",
+          "description": "User BMS/C2 connection"
+        },
+        "terminals": {
+          "title": "Vehicle-mounted control terminals",
+          "description": "GCS inside the combat vehicle interior"
+        },
+        "thirdParty": {
+          "title": "Third-party system integration",
+          "description": "Integration of sensors, weapon stations, and ISR modules"
+        }
+      }
+    },
+    "customerBenefits": {
+      "title": "Customer Benefits",
+      "description": "We control the full chain - design, software, avionics, airframes and integration. This allows us to guarantee availability, fast adaptations to customer requirements, technology transfer and licensed local production in partner countries.",
+      "cta": "Contact Us"
+    }
+  },
+  "auth": {},
+  "clientPortal": {},
+  "productDetail": {},
+  "solutions": {},
+  "technology": {},
+  "support": {}
+}

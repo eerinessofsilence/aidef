@@ -1,0 +1,100 @@
+{
+  "main": {
+    "hero": {
+      "title": "Autonómne bojové bezpilotné lietadlá a robotické systémy",
+      "description": "Sme systémový integrátor dodávajúci kamikadze UAV, UGV a GCS, integrované do systémov vojenských vozidiel prostredníctvom otvorených C2 API a integrácie systémov tretích strán.",
+      "slideAlt": "Pozadie {{index}}",
+      "slideAria": "Prejsť na snímku {{index}}"
+    },
+    "droneCarousel": {
+      "title": "Prehľad ekosystému AI-DEF",
+      "description": "Naše systémy kombinujú vysokorýchlostný kinetický efekt, odolnosť proti rušeniu GNSS a autonómnosť riadenú umelou inteligenciou. Spoločný jadro avioniky AI-DEF (autopilot, systém leteckých údajov s Pitotovou trubicou, duálny GNSS, regulátor zaťaženia Safe-Arm, napájacie moduly a palubná umelá inteligencia) vytvára jednotnú technickú platformu pre všetky produkty.",
+      "items": {
+        "ax2ng": {
+          "category": "Dron",
+          "title": "AX2NG KRAKATIT",
+          "description": "Kamikadze dron s prúdovým motorom a AI"
+        },
+        "axq": {
+          "category": "Kvadrikoptéra",
+          "title": "AXQ",
+          "description": "Ľahká 10-palcová multikoptéra"
+        },
+        "gcs": {
+          "category": "Riadenie dronov",
+          "title": "Ground Control Station",
+          "description": "Jednotné ovládanie pre všetky platformy"
+        },
+        "ugv": {
+          "category": "UGV",
+          "title": "UGV 150-DUP",
+          "description": "Bezpilotná pozemná platforma"
+        },
+        "av1": {
+          "category": "Dron",
+          "title": "AV-1 VTOL",
+          "description": "Lietadlo VTOL so zvislým štartom a pristátím"
+        }
+      }
+    },
+    "focusAreas": {
+      "kicker": "Oblasti zamerania",
+      "title": "AI v jadre",
+      "items": {
+        "security": {
+          "title": "Bezpečnosť",
+          "description": "AI bezpečnostné riešenia na detekciu hrozieb a reakčné systémy."
+        },
+        "drones": {
+          "title": "Drony",
+          "description": "Inteligentné dronové systémy s autonómnou navigáciou a plánovaním misií."
+        },
+        "automation": {
+          "title": "Automatizácia",
+          "description": "Priemyselné automatizačné systémy využívajúce strojové učenie a robotiku."
+        },
+        "ugv": {
+          "title": "UGV",
+          "description": "Bezpilotné pozemné vozidlá s pokročilým vnímaním a schopnosťou rozhodovania."
+        },
+        "defense": {
+          "title": "Obrana",
+          "description": "Špičkové obranné technológie kombinujúce AI s taktickými operáciami."
+        },
+        "automationAdvanced": {
+          "title": "Automatizácia",
+          "description": "Pokročilé AI systémy pre lietadlá novej generácie a autonómne svetelné riadenie."
+        }
+      }
+    },
+    "systemIntegration": {
+      "title": "Systémová integrácia pre vojenské vozidlá",
+      "description": "Integrujeme naše UAV, UGV a GCS do obrnených aj neobrnených vojenských vozidiel. Naše systémy ponúkajú otvorené C2 API a sú navrhnuté na integráciu so senzormi a efektormi tretích strán.",
+      "cards": {
+        "c2": {
+          "title": "Integrácia cez C2 API",
+          "description": "Prepojenie BMS/C2 používateľa"
+        },
+        "terminals": {
+          "title": "Vozidlom montované ovládacie terminály",
+          "description": "GCS v interiéri bojového vozidla"
+        },
+        "thirdParty": {
+          "title": "Integrácia systémov tretích strán",
+          "description": "Integrácia senzorov, zbraňových staníc a ISR modulov"
+        }
+      }
+    },
+    "customerBenefits": {
+      "title": "Zákaznícke výhody",
+      "description": "Kontrolujeme celý reťazec - dizajn, softvér, avioniku, draky a integráciu. To nám umožňuje garantovať dostupnosť, rýchle prispôsobenie požiadavkám zákazníkov, transfer technológií a licencovanú lokálnu výrobu v partnerských krajinách.",
+      "cta": "Kontaktujte nás"
+    }
+  },
+  "auth": {},
+  "clientPortal": {},
+  "productDetail": {},
+  "solutions": {},
+  "technology": {},
+  "support": {}
+}

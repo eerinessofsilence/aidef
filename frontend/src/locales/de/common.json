@@ -1,0 +1,100 @@
+{
+  "main": {
+    "hero": {
+      "title": "Autonome Kampf-UAVs und Robotersysteme",
+      "description": "Wir sind ein Systemintegrator, der Kamikaze-UAVs, UGVs und GCS liefert, die über offene C2-APIs und die Integration von Drittanbietersystemen in militärische Fahrzeugsysteme integriert werden.",
+      "slideAlt": "Hintergrund {{index}}",
+      "slideAria": "Zu Folie {{index}} wechseln"
+    },
+    "droneCarousel": {
+      "title": "AI-DEF-Ökosystem im Überblick",
+      "description": "Unsere Systeme kombinieren hohe kinetische Geschwindigkeit, Widerstandsfähigkeit gegen GNSS-Störsignale und KI-gesteuerte Autonomie. Ein gemeinsamer KI-DEF-Avionik-Kern (Autopilot, Luftdatensystem mit Pitotrohr, duales GNSS, Safe-Arm-Laststeuerung, Leistungsmodule und integrierte KI) schafft eine einheitliche technische Plattform für alle Produkte.",
+      "items": {
+        "ax2ng": {
+          "category": "Drohne",
+          "title": "AX2NG KRAKATIT",
+          "description": "Jettriebwerk KAMIKAZE Drohne mit KI"
+        },
+        "axq": {
+          "category": "Quadrocopter",
+          "title": "AXQ",
+          "description": "Leichter 10-Zoll Multicopter"
+        },
+        "gcs": {
+          "category": "Drohnensteuerung",
+          "title": "Ground Control Station",
+          "description": "Einheitliche Steuerung für alle Plattformen"
+        },
+        "ugv": {
+          "category": "UGV",
+          "title": "UGV 150-DUP",
+          "description": "Unbemanntes Bodenfahrzeug"
+        },
+        "av1": {
+          "category": "Drohne",
+          "title": "AV-1 VTOL",
+          "description": "VTOL-Flugzeug mit senkrechtem Start und Landung"
+        }
+      }
+    },
+    "focusAreas": {
+      "kicker": "Fokusbereiche",
+      "title": "KI im Kern",
+      "items": {
+        "security": {
+          "title": "Sicherheit",
+          "description": "KI-gestützte Sicherheitslösungen für Bedrohungserkennung und Reaktionssysteme."
+        },
+        "drones": {
+          "title": "Drohnen",
+          "description": "Intelligente Drohnensysteme mit autonomer Navigation und Missionsplanung."
+        },
+        "automation": {
+          "title": "Automatisierung",
+          "description": "Industrielle Automatisierungssysteme mit maschinellem Lernen und Robotik."
+        },
+        "ugv": {
+          "title": "UGV",
+          "description": "Unbemannte Bodenfahrzeuge mit fortschrittlicher Wahrnehmung und Entscheidungsfähigkeit."
+        },
+        "defense": {
+          "title": "Verteidigung",
+          "description": "Modernste Verteidigungstechnologien, die KI mit taktischen Operationen kombinieren."
+        },
+        "automationAdvanced": {
+          "title": "Automatisierung",
+          "description": "Fortschrittliche KI-Systeme für Flugzeuge der nächsten Generation und autonome Lichtsteuerung."
+        }
+      }
+    },
+    "systemIntegration": {
+      "title": "Systemintegration für Militärfahrzeuge",
+      "description": "Wir integrieren unsere UAV, UGV und GCS in gepanzerte und weich geschützte Militärfahrzeuge. Unsere Systeme bieten offene C2-APIs und sind für die Integration mit Sensoren und Effektoren von Drittanbietern ausgelegt.",
+      "cards": {
+        "c2": {
+          "title": "Integration über C2 API",
+          "description": "BMS/C2-Verbindung des Nutzers"
+        },
+        "terminals": {
+          "title": "Fahrzeugmontierte Steuerterminals",
+          "description": "GCS im Innenraum des Gefechtsfahrzeugs"
+        },
+        "thirdParty": {
+          "title": "Integration von Drittsystemen",
+          "description": "Integration von Sensoren, Waffenstationen und ISR-Modulen"
+        }
+      }
+    },
+    "customerBenefits": {
+      "title": "Kundenvorteile",
+      "description": "Wir kontrollieren die gesamte Kette - Design, Software, Avionik, Zellen und Integration. Das ermöglicht Verfügbarkeit, schnelle Anpassungen an Kundenanforderungen, Technologietransfer und lizenzierte lokale Produktion in Partnerländern.",
+      "cta": "Kontakt"
+    }
+  },
+  "auth": {},
+  "clientPortal": {},
+  "productDetail": {},
+  "solutions": {},
+  "technology": {},
+  "support": {}
+}

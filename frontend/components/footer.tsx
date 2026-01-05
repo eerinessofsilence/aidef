@@ -1,6 +1,12 @@
+import { Link, useParams } from "react-router-dom";
 import { dispatchOpenContactModal } from "../lib/contact-modal";
+import { buildLocalizedPath, resolveLanguage } from "../src/i18n";
 
 export default function Footer() {
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
+  const withLanguage = (path: string) =>
+    buildLocalizedPath(currentLanguage, path);
   const openContactModal = () => dispatchOpenContactModal();
   return (
     <footer
@@ -11,9 +17,9 @@ export default function Footer() {
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
           <div className="space-y-6.5">
             <div>
-              <a href="/">
-                <img src="/logo-ai-def.svg" className="w-42.5" alt="" />
-              </a>
+              <Link to={withLanguage("/")}>
+                <img src="/logo-for-footer.svg" className="w-42.5" alt="" />
+              </Link>
             </div>
             <div>
               <img src="/we-create-the-future.svg" className="w-43.5" alt="" />
@@ -21,15 +27,15 @@ export default function Footer() {
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="text-foreground font-bold uppercase">Quick links</h1>
-            <a href="/solutions">Solutions</a>
-            <a href="/technology">Technology</a>
-            <a href="/support">Support</a>
+            <Link to={withLanguage("/solutions")}>Solutions</Link>
+            <Link to={withLanguage("/technology")}>Technology</Link>
+            <Link to={withLanguage("/support")}>Support</Link>
             <a className="cursor-pointer" onClick={openContactModal}>
               Contact
             </a>
-            <a href="/terms-of-condition" className="text-nowrap">
+            <Link to={withLanguage("/terms-of-condition")} className="text-nowrap">
               Terms of Condition
-            </a>
+            </Link>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
             <h1 className="text-foreground font-bold uppercase">Contact</h1>

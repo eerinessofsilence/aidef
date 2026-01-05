@@ -7,7 +7,8 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { buildLocalizedPath, resolveLanguage } from "../i18n";
 import { Fingerprint, Eye, EyeClosed, ChevronDown } from "lucide-react";
 
 type AuthResponse = {
@@ -131,6 +132,10 @@ export default function Auth() {
   const [cityQuery, setCityQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const navigate = useNavigate();
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
+  const withLanguage = (path: string) =>
+    buildLocalizedPath(currentLanguage, path);
   const isSignUp = mode === "signup";
 
   const API_BASE = (() => {
@@ -351,7 +356,7 @@ export default function Auth() {
 
       setSignInSuccess("Signed in successfully.");
       window.dispatchEvent(new Event("auth-updated"));
-      navigate("/client-portal", { replace: true });
+      navigate(withLanguage("/client-portal"), { replace: true });
     } catch (err) {
       console.error(err);
       setSignInError("Unable to connect to the server. Please try again.");
@@ -728,7 +733,7 @@ export default function Auth() {
                 <p>
                   By continuing you agree to the operational access policy and{" "}
                   <Link
-                    to="/terms-of-condition"
+                    to={withLanguage("/terms-of-condition")}
                     className="hover:text-foreground/70 font-medium text-white transition duration-300"
                   >
                     Terms of Condition

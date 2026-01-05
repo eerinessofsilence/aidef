@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as LucideIcons from "lucide-react";
 import {
   ChevronDown,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
+import { buildLocalizedPath, resolveLanguage } from "../i18n";
 
 type StoredUser = {
   email?: string;
@@ -369,6 +370,9 @@ function ProductDropdown({
 
 export default function ClientPortal() {
   const navigate = useNavigate();
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
+  const authPath = buildLocalizedPath(currentLanguage, "/auth");
   const [, setUserProfile] = useState<{
     email: string | null;
     name: string | null;
@@ -423,9 +427,9 @@ export default function ClientPortal() {
           sessionStorage.getItem("authToken"))) ||
       null;
     if (!token) {
-      navigate("/auth", { replace: true });
+      navigate(authPath, { replace: true });
     }
-  }, [navigate]);
+  }, [authPath, navigate]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -1269,18 +1273,6 @@ export default function ClientPortal() {
                         </div>
                       </div>
                     </ScrollReveal>
-
-                    <div className="mt-5 grid gap-3">
-                      <ScrollReveal amount={0.35}>
-                        <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm max-md:text-xs">
-                          <span className="text-white/70">Serial number</span>
-                          <span className="font-semibold text-white">
-                            {selectedProduct.serial}
-                          </span>
-                        </div>
-                      </ScrollReveal>
-                    </div>
-
                     <div className="mt-5 grid grid-cols-1 gap-4">
                       {specGroups.map((group) => (
                         <ScrollReveal amount={0.35}>

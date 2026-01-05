@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface FocusItem {
   icon: string;
@@ -15,42 +16,36 @@ interface FocusAreasProps {
   className?: string;
 }
 
-const defaultItems: FocusItem[] = [
+const defaultItems = [
   {
     icon: "focus-areas-icon-1.svg",
-    title: "Security",
-    description:
-      "AI-powered security solutions for threat detection and response systems.",
+    titleKey: "main.focusAreas.items.security.title",
+    descriptionKey: "main.focusAreas.items.security.description",
   },
   {
     icon: "focus-areas-icon-2.svg",
-    title: "Drones",
-    description:
-      "Intelligent drone systems with autonomous navigation and mission planning.",
+    titleKey: "main.focusAreas.items.drones.title",
+    descriptionKey: "main.focusAreas.items.drones.description",
   },
   {
     icon: "focus-areas-icon-3.svg",
-    title: "Automation",
-    description:
-      "Industrial automation systems leveraging machine learning and robotics.",
+    titleKey: "main.focusAreas.items.automation.title",
+    descriptionKey: "main.focusAreas.items.automation.description",
   },
   {
     icon: "focus-areas-icon-4.svg",
-    title: "UGV",
-    description:
-      "Unmanned ground vehicles with advanced perception and decision- making capabilities.",
+    titleKey: "main.focusAreas.items.ugv.title",
+    descriptionKey: "main.focusAreas.items.ugv.description",
   },
   {
     icon: "focus-areas-icon-5.svg",
-    title: "Defense",
-    description:
-      "Cutting-edge defense technologies combining AI with tactical operations.",
+    titleKey: "main.focusAreas.items.defense.title",
+    descriptionKey: "main.focusAreas.items.defense.description",
   },
   {
     icon: "focus-areas-icon-6.svg",
-    title: "Automation",
-    description:
-      "Advanced AI systems for next-generation aircraft and autonomous light control.",
+    titleKey: "main.focusAreas.items.automationAdvanced.title",
+    descriptionKey: "main.focusAreas.items.automationAdvanced.description",
   },
 ];
 
@@ -112,9 +107,17 @@ const RadialConnectors = ({ itemCount }: { itemCount: number }) => {
   );
 };
 
-export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
+export default function FocusAreas({ items }: FocusAreasProps) {
+  const { t } = useTranslation();
+  const resolvedItems =
+    items ??
+    defaultItems.map((item) => ({
+      icon: item.icon,
+      title: t(item.titleKey),
+      description: t(item.descriptionKey),
+    }));
   const containerRef = useRef<HTMLDivElement>(null);
-  const positions = getRadialPositions(items.length);
+  const positions = getRadialPositions(resolvedItems.length);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -139,10 +142,10 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           className="pointer-events-none absolute top-8 right-0 left-0 text-center lg:-top-16"
         >
           <p className="text-foreground/70 text-sm font-medium tracking-widest uppercase">
-            Focus areas
+            {t("main.focusAreas.kicker")}
           </p>
           <h1 className="text-foreground text-5xl font-bold capitalize max-lg:text-4xl">
-            Ai at the core
+            {t("main.focusAreas.title")}
           </h1>
         </motion.div>
 
@@ -150,7 +153,9 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
           style={{ y: floatLayer }}
           className="relative hidden h-screen w-full lg:block"
         >
-          <RadialConnectors itemCount={items.length} />
+          {resolvedItems.length ? (
+            <RadialConnectors itemCount={resolvedItems.length} />
+          ) : null}
 
           <motion.div
             style={{ y: slowFloat }}
@@ -163,7 +168,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
             />
           </motion.div>
 
-          {items.map((item, idx) => (
+          {resolvedItems.map((item, idx) => (
             <RadialCard
               key={idx}
               item={item}
@@ -177,7 +182,7 @@ export default function FocusAreas({ items = defaultItems }: FocusAreasProps) {
             <img src="/focus-areas-core.svg" className="z-10 w-50" alt="" />
           </div>
           <div className="relative z-10 mt-12 grid grid-cols-2 gap-6 max-md:grid-cols-1">
-            {items.map((item, idx) => (
+            {resolvedItems.map((item, idx) => (
               <div
                 key={idx}
                 className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"

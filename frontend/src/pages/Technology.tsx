@@ -1,26 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { buildLocalizedPath, resolveLanguage } from "../i18n";
 
 const CARDS = [
   {
-    icon: "technology-1.svg",
+    icon: "/technology-1.svg",
     title: "DEFgroundPilot",
     description:
       "mission planning, flight control, telemetry and health monitoring.",
   },
   {
-    icon: "technology-2.svg",
+    icon: "/technology-2.svg",
     title: "DEFgroundTargeting",
     description:
       "AI video analytics for detection, classification and tracking of targets.",
   },
   {
-    icon: "technology-3.svg",
+    icon: "/technology-3.svg",
     title: "DEFgroundGateway",
     description:
       "secure, multi-link communication management for RF, LTE and satellite links.",
   },
   {
-    icon: "technology-4.svg",
+    icon: "/technology-4.svg",
     title: "DEFgroundInstaller",
     description:
       "software deployment, updates, diagnostics and configuration management.",
@@ -28,6 +29,8 @@ const CARDS = [
 ];
 
 export default function Technology() {
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
   return (
     <main>
       <section>
@@ -57,7 +60,7 @@ export default function Technology() {
             </div>
 
             <Link
-              to={`/solutions`}
+              to={buildLocalizedPath(currentLanguage, "/solutions")}
               className="group relative inline-flex h-12 w-48 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold tracking-wide text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
             >
               Learn more
