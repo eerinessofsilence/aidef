@@ -1,4 +1,5 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 from .models import (
     Product,
     Category,
@@ -13,60 +14,60 @@ from .models import (
 )
 
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(TranslationTabularInline):
     model = ProductImage
     extra = 3
     fields = ('image', 'alt', 'order')
 
-class ProductFeatureInline(admin.TabularInline):
+class ProductFeatureInline(TranslationTabularInline):
     model = ProductFeature
     extra = 1
     ordering = ("order",)
     
-class ProductSubFeatureInline(admin.TabularInline):
+class ProductSubFeatureInline(TranslationTabularInline):
     model = ProductSubFeature
     extra = 1
     ordering = ("order",)
     
-class ProductGalleryInline(admin.TabularInline):
+class ProductGalleryInline(TranslationTabularInline):
     model = ProductGallery
     extra = 1
     ordering = ("order",)
     fields = ("image", "alt", "order")
 
-class ProductTechnologyInline(admin.TabularInline):
+class ProductTechnologyInline(TranslationTabularInline):
     model = ProductTechnology
     extra = 1
     ordering = ("order",)
     fields = ("name", "description", "tags", "order")
     
-class ProductFeatureBlockInline(admin.TabularInline):
+class ProductFeatureBlockInline(TranslationTabularInline):
     model = ProductFeatureBlock
     extra = 1
     ordering = ("order",)
     fields = ("name", "title", "description", "background_image", "with_logo", "order")
     
-class ProductInfoBlockInline(admin.TabularInline):
+class ProductInfoBlockInline(TranslationTabularInline):
     model = ProductInfoBlock
     extra = 1
     ordering = ("order",)
     fields = ("title_1", "description_1", "image_1", "title_2", "description_2", "image_2", "order")
 
-class ProductCTABlockInline(admin.TabularInline):
+class ProductCTABlockInline(TranslationTabularInline):
     model = ProductCTABlock
     extra = 1
     ordering = ("order",)
     fields = ("name", "title", "background_image", "has_button", "order")
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(TranslationAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(TranslationAdmin):
     list_display = ('name', 'slug', 'category', 'available', 'order', 'created_at')
     list_filter = ('available', 'category', 'order')
     search_fields = ('name', 'slug')

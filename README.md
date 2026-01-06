@@ -13,11 +13,12 @@
 3. [Tech stack](#tech-stack)
 4. [Getting started (developer)](#getting-started-developer)
 5. [Environment variables](#environment-variables)
-6. [Architecture & data model (brief)](#architecture--data-model-brief)
-7. [Security & compliance notes](#security--compliance-notes)
-8. [Deployment](#deployment)
-9. [Contributing](#contributing)
-10. [License & contact](#license--contact)
+6. [Translations (modeltranslation)](#translations-modeltranslation)
+7. [Architecture & data model (brief)](#architecture--data-model-brief)
+8. [Security & compliance notes](#security--compliance-notes)
+9. [Deployment](#deployment)
+10. [Contributing](#contributing)
+11. [License & contact](#license--contact)
 
 ---
 
@@ -100,6 +101,37 @@ DB_PORT=5432
 ```
 
 **Do not commit secrets.** Use environment management for production (Vault, cloud secret manager).
+
+---
+
+## Translations (modeltranslation)
+
+This project uses `django-modeltranslation` for database-backed translations.
+
+How to translate a model field:
+
+- Add the field name to `<app>/translation.py` for the model (CharField/TextField only).
+- Run `python manage.py makemigrations` and `python manage.py migrate` to add `_<lang>` columns.
+- Use the admin to fill `*_de` and `*_sk` values; the base field remains English.
+
+Add a new language later:
+
+- Extend `LANGUAGES` and `MODELTRANSLATION_LANGUAGES` in `backend/aidef/settings.py`.
+- Add new `TranslationOptions` fields if needed.
+- Run migrations to create the new columns.
+
+API language selection:
+
+1. `?lang=de|sk|en` query param (highest priority)
+2. `Accept-Language` header
+3. Default `en`
+
+Manual verification:
+
+```bash
+curl -H "Accept-Language: de" http://localhost:8000/api/products/
+curl "http://localhost:8000/api/products/?lang=sk"
+```
 
 ---
 

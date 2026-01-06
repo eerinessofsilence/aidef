@@ -1,4 +1,9 @@
 from django.contrib import admin
+from modeltranslation.admin import (
+    TranslationAdmin,
+    TranslationStackedInline,
+    TranslationTabularInline,
+)
 
 from .models import (
     PortalProduct,
@@ -17,35 +22,35 @@ from .models import (
 )
 
 
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(TranslationTabularInline):
     model = ProductImage
     extra = 0
     fields = ("image", "alt", "is_preview", "order")
     ordering = ("order",)
 
 
-class ProductGalleryInline(admin.TabularInline):
+class ProductGalleryInline(TranslationTabularInline):
     model = ProductGallery
     extra = 0
     fields = ("image", "alt", "order")
     ordering = ("order",)
 
 
-class ProductPresentationInfoInline(admin.TabularInline):
+class ProductPresentationInfoInline(TranslationTabularInline):
     model = ProductPresentationInfo
     extra = 0
     fields = ("title", "description", "order")
     ordering = ("order",)
 
 
-class ProductCharacteristicInline(admin.TabularInline):
+class ProductCharacteristicInline(TranslationTabularInline):
     model = ProductCharacteristic
     extra = 0
     fields = ("name", "description", "block", "order")
     ordering = ("order",)
 
 
-class ProductCharacteristicsBlockInline(admin.StackedInline):
+class ProductCharacteristicsBlockInline(TranslationStackedInline):
     model = ProductCharacteristicsBlock
     extra = 0
     fields = ("title", "icon_type", "icon_lucide", "icon_file")
@@ -82,19 +87,19 @@ class ProductModulePlacementForModuleInline(admin.TabularInline):
     ordering = ("order",)
 
 
-class ProductModuleCharacteristicInline(admin.TabularInline):
+class ProductModuleCharacteristicInline(TranslationTabularInline):
     model = ProductModuleCharacteristic
     extra = 0
     fields = ("name", "description", "order")
     ordering = ("order",)
 
 
-class ProductModulesBlockInline(admin.StackedInline):
+class ProductModulesBlockInline(TranslationStackedInline):
     model = ProductModulesBlock
     extra = 0
     fields = ("subtitle", "title")
 
-class ProductTextBlockInline(admin.TabularInline):
+class ProductTextBlockInline(TranslationTabularInline):
     model = ProductTextBlock
     extra = 0
     fields = ("title", "text", "order")
@@ -102,7 +107,7 @@ class ProductTextBlockInline(admin.TabularInline):
 
 
 @admin.register(PortalProduct)
-class PortalProductAdmin(admin.ModelAdmin):
+class PortalProductAdmin(TranslationAdmin):
     list_display = ("name", "category", "serial_number", "order", "created_at")
     list_filter = ("order", "category")
     search_fields = ("name", "slug", "serial_number", "category__name")
@@ -122,7 +127,7 @@ class PortalProductAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
+class ProductImageAdmin(TranslationAdmin):
     list_display = ("product", "alt", "is_preview", "order")
     list_filter = ("is_preview",)
     search_fields = ("product__name", "alt")
@@ -130,21 +135,21 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductGallery)
-class ProductGalleryAdmin(admin.ModelAdmin):
+class ProductGalleryAdmin(TranslationAdmin):
     list_display = ("product", "alt", "order")
     search_fields = ("product__name", "alt")
     ordering = ("product", "order")
 
 
 @admin.register(ProductPresentationInfo)
-class ProductPresentationInfoAdmin(admin.ModelAdmin):
+class ProductPresentationInfoAdmin(TranslationAdmin):
     list_display = ("product", "title", "order")
     search_fields = ("product__name", "title", "description")
     ordering = ("product", "order", "id")
 
 
 @admin.register(ProductCharacteristicsBlock)
-class ProductCharacteristicsBlockAdmin(admin.ModelAdmin):
+class ProductCharacteristicsBlockAdmin(TranslationAdmin):
     list_display = ("product", "title", "icon_type", "icon_preview")
     search_fields = ("product__name", "title", "icon_lucide")
     list_filter = ("icon_type",)
@@ -158,21 +163,21 @@ class ProductCharacteristicsBlockAdmin(admin.ModelAdmin):
         return "-"
 
 @admin.register(ProductCharacteristic)
-class ProductCharacteristicAdmin(admin.ModelAdmin):
+class ProductCharacteristicAdmin(TranslationAdmin):
     list_display = ("product", "name", "block", "order")
     list_filter = ("block",)
     search_fields = ("product__name", "name", "description")
     ordering = ("product", "order")
 
 
-class ProductModuleImageInline(admin.TabularInline):
+class ProductModuleImageInline(TranslationTabularInline):
     model = ProductModuleImage
     extra = 0
     fields = ("image", "alt")
 
 
 @admin.register(ProductModule)
-class ProductModuleAdmin(admin.ModelAdmin):
+class ProductModuleAdmin(TranslationAdmin):
     list_display = ("name", "tag", "button_text")
     search_fields = ("name", "tag", "description")
     ordering = ("name", "id")
@@ -184,13 +189,13 @@ class ProductModuleAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductModuleImage)
-class ProductModuleImageAdmin(admin.ModelAdmin):
+class ProductModuleImageAdmin(TranslationAdmin):
     list_display = ("module", "alt")
     search_fields = ("module__name", "alt")
 
 
 @admin.register(ProductModulesBlock)
-class ProductModulesBlockAdmin(admin.ModelAdmin):
+class ProductModulesBlockAdmin(TranslationAdmin):
     list_display = ("product", "subtitle", "title")
     search_fields = ("product__name", "subtitle", "title")
 
@@ -204,7 +209,7 @@ class ProductModulePlacementAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductTextBlock)
-class ProductTextBlockAdmin(admin.ModelAdmin):
+class ProductTextBlockAdmin(TranslationAdmin):
     list_display = ("product", "title", "order")
     search_fields = ("product__name", "title", "text")
     ordering = ("product", "order")

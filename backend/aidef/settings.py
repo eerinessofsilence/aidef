@@ -11,6 +11,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["*", "backend", "localhost", "127.0.0.1", "173.242.51.20"]
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -20,14 +21,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'users',
-    'main',
-    'portal',
+    'users.apps.UsersConfig',
+    'main.apps.MainConfig',
+    'portal.apps.PortalConfig',
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'aidef.middleware.QueryLanguageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -63,6 +66,14 @@ DATABASES = {
         'PASSWORD': getenv('DB_PASS', getenv('POSTGRES_PASSWORD', 'aidef_password')),
         'NAME': getenv('DB_NAME', getenv('POSTGRES_DB', 'aidef')),
         'ATOMIC_REQUESTS': True,
+    },
+    "old": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "temp_restore",
+        "USER": "dev_user",
+        "PASSWORD": "password",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -84,7 +95,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = getenv('LANGUAGE_CODE', 'ru-RU')
+LANGUAGE_CODE = 'en'
+LANGUAGES = [
+    ('en', 'English'),
+    ('de', 'German'),
+    ('sk', 'Slovak'),
+]
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+MODELTRANSLATION_LANGUAGES = ('en', 'de', 'sk')
+MODELTRANSLATION_FALLBACK_LANGUAGES = ('en',)
 TIME_ZONE = getenv('TIME_ZONE', 'Europe/Kyiv')
 USE_I18N = True
 USE_TZ = True
