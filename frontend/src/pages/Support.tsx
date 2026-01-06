@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ContactForm } from "../../components/ui/contact-form";
 
 const backgroundImages = ["/support-1.png", "/support-2.png", "/support-3.png"];
 
 export default function Support() {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
@@ -32,7 +34,7 @@ export default function Support() {
             >
               <img
                 src={image || "/placeholder.svg"}
-                alt={`Background ${index + 1}`}
+                alt={t("support.hero.slideAlt", { index: index + 1 })}
                 className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-black/50" />
@@ -42,7 +44,7 @@ export default function Support() {
 
         <div className="relative z-10 container flex h-screen items-center justify-center">
           <h1 className="text-center text-6xl leading-12 font-bold text-white max-lg:text-5xl max-md:max-w-xs max-md:text-4xl lg:leading-16">
-            Technical Support, Maintenance, and Expert Guidance
+            {t("support.hero.title")}
           </h1>
         </div>
         <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 max-md:bottom-6">
@@ -53,7 +55,7 @@ export default function Support() {
               className={`h-2 rounded-full transition-all ${
                 index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
               }`}
-              aria-label={`Go to slide ${index + 1}`}
+              aria-label={t("support.hero.slideAria", { index: index + 1 })}
             />
           ))}
         </div>
@@ -65,7 +67,7 @@ export default function Support() {
             <div className="space-y-7.5">
               <div>
                 <span className="border-border/35 rounded-full border bg-white/5 p-3 px-4 font-semibold uppercase backdrop-blur-lg">
-                  Be safe with us
+                  {t("support.contact.kicker")}
                 </span>
               </div>
               <div className="flex items-center gap-5">
@@ -76,22 +78,24 @@ export default function Support() {
               </div>
             </div>
             <div className="space-y-5">
-              <p className="text-lg font-semibold uppercase">Adresses:</p>
+              <p className="text-lg font-semibold uppercase">
+                {t("support.contact.addressesLabel")}
+              </p>
               <div className="space-y-5">
                 <div className="space-y-2.5">
                   <p className="text-foreground/50 font-semibold uppercase md:text-lg">
-                    MANAGEMENT AND ADMINISTRATION
+                    {t("support.contact.managementTitle")}
                   </p>
                   <p className="max-w-[233px] text-pretty md:text-lg">
-                    Vedecky park - Ilkovicova 8 841 02 Bratislava Slovakia
+                    {t("support.contact.managementAddress")}
                   </p>
                 </div>
                 <div className="space-y-2.5">
                   <p className="text-foreground/50 font-semibold uppercase md:text-lg">
-                    HEADQUARTERS & DEVELOPMENT CENTRE
+                    {t("support.contact.hqTitle")}
                   </p>
                   <p className="max-w-[233px] text-pretty md:text-lg">
-                    Staniná 267/21 906 13 Brezová pod Bradlom Slovakia
+                    {t("support.contact.hqAddress")}
                   </p>
                 </div>
               </div>
@@ -108,7 +112,7 @@ export default function Support() {
                 />
                 {submitted && (
                   <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400/70">
-                    Thanks! We&apos;ll respond within one business day.
+                    {t("support.form.success")}
                   </div>
                 )}
               </div>

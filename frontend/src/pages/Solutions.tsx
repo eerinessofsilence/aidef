@@ -1,6 +1,13 @@
+import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 
 export default function Solutions() {
+  const { t } = useTranslation();
+  const featureItemsRaw = t("solutions.features.items", {
+    returnObjects: true,
+  }) as string[] | string;
+  const featureItems = Array.isArray(featureItemsRaw) ? featureItemsRaw : [];
+
   return (
     <main>
       <section>
@@ -22,7 +29,7 @@ export default function Solutions() {
           <div className="container flex h-screen items-center justify-center">
             <ScrollReveal amount={0.35}>
               <h1 className="text-center text-6xl leading-12 font-bold max-lg:text-5xl max-md:max-w-xs max-md:text-4xl lg:leading-16">
-                Field-Proven UAV, UGV & GCS Solutions
+                {t("solutions.hero.title")}
               </h1>
             </ScrollReveal>
           </div>
@@ -34,7 +41,7 @@ export default function Solutions() {
           <div className="flex">
             <ScrollReveal amount={0.35}>
               <h1 className="max-w-3xl text-5xl leading-13 font-bold text-black">
-                Global command communication & Antidrone system
+                {t("solutions.overview.title")}
               </h1>
             </ScrollReveal>
           </div>
@@ -43,15 +50,10 @@ export default function Solutions() {
               <div className="space-y-7.5">
                 <div className="space-y-2.5">
                   <h1 className="text-4xl font-bold text-black">
-                    Multifunctional indicator with push-button framing and
-                    touchscreen.
+                    {t("solutions.blocks.title")}
                   </h1>
                   <p className="text-lg text-black">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Omnis similique, et repudiandae hic in quibusdam voluptas
-                    vero quia, enim nesciunt id facere. Asperiores ipsa maiores
-                    et accusamus reprehenderit facere soluta magnam aliquam
-                    minima in velit.
+                    {t("solutions.blocks.description")}
                   </p>
                 </div>
                 <div>
@@ -59,7 +61,7 @@ export default function Solutions() {
                     href="#"
                     className="rounded-xl bg-black px-4 py-3 text-lg font-semibold text-white shadow-inner shadow-white/50 transition-all duration-300 hover:bg-black/90 hover:px-5 hover:py-4"
                   >
-                    Learn more
+                    {t("solutions.actions.learnMore")}
                   </a>
                 </div>
               </div>
@@ -80,15 +82,10 @@ export default function Solutions() {
               <div className="space-y-7.5">
                 <div className="space-y-2.5">
                   <h1 className="text-4xl font-bold text-black">
-                    Multifunctional indicator with push-button framing and
-                    touchscreen.
+                    {t("solutions.blocks.title")}
                   </h1>
                   <p className="text-lg text-black">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Omnis similique, et repudiandae hic in quibusdam voluptas
-                    vero quia, enim nesciunt id facere. Asperiores ipsa maiores
-                    et accusamus reprehenderit facere soluta magnam aliquam
-                    minima in velit.
+                    {t("solutions.blocks.description")}
                   </p>
                 </div>
                 <div>
@@ -96,7 +93,7 @@ export default function Solutions() {
                     href="#"
                     className="rounded-xl bg-black px-4 py-3 text-lg font-semibold text-white shadow-inner shadow-white/50 transition-all duration-300 hover:bg-black/90 hover:px-5 hover:py-4"
                   >
-                    Learn more
+                    {t("solutions.actions.learnMore")}
                   </a>
                 </div>
               </div>
@@ -114,15 +111,10 @@ export default function Solutions() {
               <div className="space-y-7.5">
                 <div className="space-y-2.5">
                   <h1 className="text-4xl font-bold text-black">
-                    Multifunctional indicator with push-button framing and
-                    touchscreen.
+                    {t("solutions.blocks.title")}
                   </h1>
                   <p className="text-lg text-black">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Omnis similique, et repudiandae hic in quibusdam voluptas
-                    vero quia, enim nesciunt id facere. Asperiores ipsa maiores
-                    et accusamus reprehenderit facere soluta magnam aliquam
-                    minima in velit.
+                    {t("solutions.blocks.description")}
                   </p>
                 </div>
                 <div>
@@ -130,7 +122,7 @@ export default function Solutions() {
                     href="#"
                     className="rounded-xl bg-black px-4 py-3 text-lg font-semibold text-white shadow-inner shadow-white/50 transition-all duration-300 hover:bg-black/90 hover:px-5 hover:py-4"
                   >
-                    Learn more
+                    {t("solutions.actions.learnMore")}
                   </a>
                 </div>
               </div>
@@ -151,46 +143,25 @@ export default function Solutions() {
             <div>
               <ScrollReveal amount={0.35}>
                 <span className="text-semibold border-border/25 rounded-[30px] bg-white/25 px-[15px] py-2.5 text-center text-white uppercase backdrop-blur-xs">
-                  Characteristics
+                  {t("solutions.features.kicker")}
                 </span>
               </ScrollReveal>
             </div>
             <ScrollReveal amount={0.35}>
-              <h1 className="text-5xl font-bold">Main features:</h1>
+              <h1 className="text-5xl font-bold">
+                {t("solutions.features.title")}
+              </h1>
             </ScrollReveal>
             <ScrollReveal amount={0.35}>
               <ul className="space-y-2.5">
-                <li className="flex items-center gap-5 text-lg">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
-                    <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
-                  </span>
-                  GPS/GALILEO/GLONASS (PPS & SPS)
-                </li>
-                <li className="flex items-center gap-5 text-lg">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
-                    <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
-                  </span>
-                  MIL STD complying
-                </li>
-                <li className="flex items-center gap-5 text-lg">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
-                    <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
-                  </span>
-                  3 GNSS antennas = accuracy up to 0,5m
-                </li>
-                <li className="flex items-center gap-5 text-lg">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
-                    <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
-                  </span>
-                  Bluit-in C2 allows to integrate any analog or IP based
-                  subsytems (engine, alarms etc.)
-                </li>
-                <li className="flex items-center gap-5 text-lg">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
-                    <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
-                  </span>
-                  Customizable graphic and SW functionalities
-                </li>
+                {featureItems.map((item) => (
+                  <li key={item} className="flex items-center gap-5 text-lg">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/30">
+                      <span className="inline-block h-3.5 w-3.5 rounded-full bg-white"></span>
+                    </span>
+                    {item}
+                  </li>
+                ))}
               </ul>
             </ScrollReveal>
           </div>

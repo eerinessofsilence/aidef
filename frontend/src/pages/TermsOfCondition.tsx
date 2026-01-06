@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 
 type TermEntry = {
@@ -410,11 +411,12 @@ const PERSONAL_RIGHTS: string[] = [
 ];
 
 export default function TermOfCondition() {
+  const { t } = useTranslation();
   return (
     <section className="relative space-y-25 overflow-hidden">
       <div className="relative z-10 container mx-auto px-13 pt-52.5 pb-25">
         <div className="mb-25 text-center text-5xl font-bold uppercase">
-          <h1>Terms of Condition</h1>
+          <h1>{t("terms.title")}</h1>
         </div>
         <div className="space-y-25">
           {TERMS_SECTIONS.map((section) => {
@@ -453,9 +455,9 @@ export default function TermOfCondition() {
       </div>
       <div className="container space-y-15">
         <div className="flex flex-col justify-center space-y-7.5 text-center">
-          <h1 className="text-5xl font-bold">Práva dotknutej osoby</h1>
+          <h1 className="text-5xl font-bold">{t("terms.rightsTitle")}</h1>
           <h1 className="text-xl font-semibold uppercase">
-            Dotknutá osoba má právo:
+            {t("terms.rightsSubtitle")}
           </h1>
         </div>
         <div className="space-y-7.5">

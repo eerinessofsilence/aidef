@@ -7,6 +7,7 @@ import React, {
   type JSX,
 } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "../../lib/utils";
 import { motion } from "motion/react";
@@ -66,6 +67,7 @@ export const Carousel = ({
   items = [],
   initialScroll = 0,
 }: CarouselProps) => {
+  const { t } = useTranslation();
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
@@ -140,6 +142,7 @@ export const Carousel = ({
               className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
               onClick={scrollLeft}
               disabled={!canScrollLeft}
+              aria-label={t("carousel.previous")}
             >
               <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
             </button>
@@ -147,6 +150,7 @@ export const Carousel = ({
               className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
               onClick={scrollRight}
               disabled={!canScrollRight}
+              aria-label={t("carousel.next")}
             >
               <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
             </button>
@@ -179,6 +183,7 @@ export const Carousel = ({
             className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
             onClick={scrollLeft}
             disabled={!canScrollLeft}
+            aria-label={t("carousel.previous")}
           >
             <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
           </button>
@@ -186,6 +191,7 @@ export const Carousel = ({
             className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
             onClick={scrollRight}
             disabled={!canScrollRight}
+            aria-label={t("carousel.next")}
           >
             <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
           </button>
@@ -204,6 +210,7 @@ export const Card = ({
   index: number;
   layout?: boolean;
 }) => {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { lng } = useParams();
@@ -245,7 +252,7 @@ export const Card = ({
         <div className="absolute inset-0">
           <img
             src={card.bg}
-            alt={`${card.title} preview`}
+            alt={t("carousel.cardPreviewAlt", { title: card.title })}
             className="h-full w-full object-cover"
           />
           {card.video && (

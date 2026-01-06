@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import Gallery from "../../components/Gallery";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
+import { resolveLanguage } from "../i18n";
 
 interface Product {
   id: number;
@@ -99,7 +101,9 @@ interface ProductDetail extends Product {
 }
 
 export default function ProductDetail() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug, lng } = useParams<{ slug?: string; lng?: string }>();
+  const activeLanguage = resolveLanguage(lng);
+  const { t } = useTranslation();
   const [items, setItems] = useState<Product[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
@@ -118,9 +122,11 @@ export default function ProductDetail() {
   useEffect(() => {
     const controller = new AbortController();
     setStatus("loading");
+    setErrorMessage(null);
     axios
       .get<Product[]>(`${import.meta.env.VITE_API_URL}/items/`, {
         signal: controller.signal,
+        params: { lang: activeLanguage },
       })
       .then((res) => {
         setItems(res.data);
@@ -131,12 +137,12 @@ export default function ProductDetail() {
           return;
         }
         console.error("Unable to load products", err);
-        setErrorMessage("We couldn’t sync the fleet catalog. Try again soon.");
+        setErrorMessage(t("productDetail.errors.list"));
         setStatus("error");
       });
 
     return () => controller.abort();
-  }, []);
+  }, [activeLanguage, t]);
 
   useEffect(() => {
     if (!slug) {
@@ -151,6 +157,7 @@ export default function ProductDetail() {
     axios
       .get<ProductDetail>(`${import.meta.env.VITE_API_URL}/items/${slug}/`, {
         signal: controller.signal,
+        params: { lang: activeLanguage },
       })
       .then((res) => {
         setProductDetail(res.data);
@@ -161,12 +168,12 @@ export default function ProductDetail() {
           return;
         }
         console.error("Unable to load product detail", err);
-        setDetailError("Couldn't load product data.");
+        setDetailError(t("productDetail.errors.detail"));
         setDetailStatus("error");
       });
 
     return () => controller.abort();
-  }, [slug]);
+  }, [activeLanguage, slug, t]);
 
   const heroProduct = useMemo(
     () => productDetail ?? items[0] ?? null,
@@ -285,7 +292,11 @@ export default function ProductDetail() {
                   >
                     <img
                       src={image.url ?? ""}
-                      alt={image.alt ?? heroProduct?.name ?? "Product image"}
+                      alt={
+                        image.alt ??
+                        heroProduct?.name ??
+                        t("productDetail.hero.imageAlt")
+                      }
                       className={`h-full w-full object-cover ${
                         activeSlide === index ? "animate-kenburns-slow" : ""
                       }`}
@@ -325,7 +336,7 @@ export default function ProductDetail() {
                       type="button"
                       onClick={handlePrevSlide}
                       className="absolute top-1/2 left-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:left-10 max-md:left-5 max-md:h-10 max-md:w-10"
-                      aria-label="Previous image"
+                      aria-label={t("productDetail.hero.previousImage")}
                     >
                       <ChevronLeft className="h-5 w-5 max-md:h-4 max-md:w-4" />
                     </button>
@@ -333,7 +344,7 @@ export default function ProductDetail() {
                       type="button"
                       onClick={handleNextSlide}
                       className="absolute top-1/2 right-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:right-10 max-md:right-5 max-md:h-10 max-md:w-10"
-                      aria-label="Next image"
+                      aria-label={t("productDetail.hero.nextImage")}
                     >
                       <ChevronRight className="h-5 w-5 max-md:h-4 max-md:w-4" />
                     </button>
@@ -344,7 +355,7 @@ export default function ProductDetail() {
               <img
                 src="/hero-bg-1.png"
                 className="absolute inset-0 h-full w-full object-cover"
-                alt={heroProduct?.name ?? "Product hero"}
+                alt={heroProduct?.name ?? t("productDetail.hero.heroAlt")}
               />
             )}
           </div>
@@ -355,7 +366,9 @@ export default function ProductDetail() {
                   key={image.id}
                   type="button"
                   onClick={() => setActiveSlide(index)}
-                  aria-label={`Перейти к изображению ${index + 1}`}
+                  aria-label={t("productDetail.hero.goToImage", {
+                    index: index + 1,
+                  })}
                   className={`h-2.5 w-2.5 rounded-full border border-white/35 transition ${
                     activeSlide === index
                       ? "bg-white"
@@ -380,13 +393,14 @@ export default function ProductDetail() {
             <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
               <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
                 <p className="text-sm tracking-wide text-white/50 uppercase">
-                  Characteristics
+                  {t("productDetail.overview.kicker")}
                 </p>
                 <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                  About product
+                  {t("productDetail.overview.title")}
                 </h1>
                 <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                  {heroProduct?.description ?? "Product description"}
+                  {heroProduct?.description ??
+                    t("productDetail.overview.descriptionFallback")}
                 </p>
                 <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
                   {productFeatures.map((feature) => (
@@ -413,7 +427,7 @@ export default function ProductDetail() {
                     onClick={openContactModal}
                     className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
                   >
-                    Contact Us
+                    {t("productDetail.actions.contact")}
                   </a>
                 </div>
               </ScrollReveal>
@@ -447,7 +461,7 @@ export default function ProductDetail() {
                   onClick={openContactModal}
                   className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
                 >
-                  Contact Us
+                  {t("productDetail.actions.contact")}
                 </a>
               </div>
             </div>
@@ -469,15 +483,13 @@ export default function ProductDetail() {
               <ScrollReveal amount={0.25}>
                 <div>
                   <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                    Technology Focus
+                    {t("productDetail.technology.kicker")}
                   </p>
                   <h2 className="text-3xl font-semibold">
-                    Production-grade polish, tuned for rugged autonomy.
+                    {t("productDetail.technology.title")}
                   </h2>
                   <p className="text-foreground/70 mt-2 max-w-2xl">
-                    Across UAVs, UGVs, and GCS, the control stack delivers
-                    precise inputs, smooth dynamics, and intuitive safety layers
-                    that feel instantly familiar to operators.
+                    {t("productDetail.technology.description")}
                   </p>
                 </div>
               </ScrollReveal>
@@ -677,7 +689,7 @@ export default function ProductDetail() {
                           onClick={openContactModal}
                           className="group :ring-[#0A84FF] relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
                         >
-                          Contact Us
+                          {t("productDetail.actions.contact")}
                         </a>
                       </ScrollReveal>
                     ) : null}
@@ -689,22 +701,29 @@ export default function ProductDetail() {
         <section className="space-y-6 py-10 max-sm:py-8">
           <ScrollReveal delay={0.12} amount={0.3}>
             <Carousel
-              carouselTitle="All Products"
-              items={data.map((card, index) => (
-                <Card
-                  key={card.title}
-                  card={{
-                    ...card,
-                    video: `/drone-carousel-video-${index + 1}.MP4`,
-                  }}
-                  index={index}
-                />
-              ))}
+              carouselTitle={t("productDetail.carousel.title")}
+              items={carouselItems.map((card, index) => {
+                const baseKey = `main.droneCarousel.items.${card.key}`;
+                return (
+                  <Card
+                    key={card.key}
+                    card={{
+                      category: t(`${baseKey}.category`),
+                      title: t(`${baseKey}.title`),
+                      description: t(`${baseKey}.description`),
+                      href: card.href,
+                      bg: card.bg,
+                      video: `/drone-carousel-video-${index + 1}.MP4`,
+                    }}
+                    index={index}
+                  />
+                );
+              })}
             />
           </ScrollReveal>
           {status === "error" ? (
             <div className="rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
-              {errorMessage ?? "Catalog data load have failed."}
+              {errorMessage ?? t("productDetail.errors.catalogFallback")}
             </div>
           ) : null}
         </section>
@@ -713,41 +732,36 @@ export default function ProductDetail() {
   );
 }
 
-const data = [
+type CarouselItem = {
+  key: string;
+  href: string;
+  bg: string;
+};
+
+const carouselItems: CarouselItem[] = [
   {
-    category: "Drone",
-    title: "AX2NG KRAKATIT",
+    key: "ax2ng",
     href: "/products/ax2ng-krakatit",
-    description: "Jet engine KAMIKAZE drone with AI",
     bg: "/drone-carousel-bg-1.png",
   },
   {
-    category: "Drone",
-    title: "AV-1 VTOL",
+    key: "av1",
     href: "/products/av-1-vtol",
-    description: "Vertical take-of and landing aircraft",
     bg: "/drone-carousel-bg-2.png",
   },
   {
-    category: "Quadrocopter",
-    title: "AXQ",
+    key: "axq",
     href: "/products/axq-quadrocopter",
-    description: "Lightweight 10-inch multicopter",
     bg: "/drone-carousel-bg-3.png",
   },
-
   {
-    category: "UGV",
-    title: "UGV 150-DUP",
+    key: "ugv",
     href: "/products/ugv-150-dup",
-    description: "Unmanned ground platform",
     bg: "/drone-carousel-bg-4.png",
   },
   {
-    category: "Drone controls",
-    title: "Ground Control Station",
+    key: "gcs",
     href: "/products/ground-control-station",
-    description: " Unihed control for all platforms",
     bg: "/drone-carousel-bg-5.png",
   },
 ];

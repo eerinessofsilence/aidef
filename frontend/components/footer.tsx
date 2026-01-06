@@ -1,8 +1,10 @@
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { dispatchOpenContactModal } from "../lib/contact-modal";
 import { buildLocalizedPath, resolveLanguage } from "../src/i18n";
 
 export default function Footer() {
+  const { t } = useTranslation();
   const { lng } = useParams();
   const currentLanguage = resolveLanguage(lng);
   const withLanguage = (path: string) =>
@@ -26,38 +28,53 @@ export default function Footer() {
             </div>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
-            <h1 className="text-foreground font-bold uppercase">Quick links</h1>
-            <Link to={withLanguage("/solutions")}>Solutions</Link>
-            <Link to={withLanguage("/technology")}>Technology</Link>
-            <Link to={withLanguage("/support")}>Support</Link>
+            <h1 className="text-foreground font-bold uppercase">
+              {t("footer.quickLinks.title")}
+            </h1>
+            <Link to={withLanguage("/solutions")}>
+              {t("footer.quickLinks.solutions")}
+            </Link>
+            <Link to={withLanguage("/technology")}>
+              {t("footer.quickLinks.technology")}
+            </Link>
+            <Link to={withLanguage("/support")}>
+              {t("footer.quickLinks.support")}
+            </Link>
             <a className="cursor-pointer" onClick={openContactModal}>
-              Contact
+              {t("footer.quickLinks.contact")}
             </a>
-            <Link to={withLanguage("/terms-of-condition")} className="text-nowrap">
-              Terms of Condition
+            <Link
+              to={withLanguage("/terms-of-condition")}
+              className="text-nowrap"
+            >
+              {t("footer.quickLinks.terms")}
             </Link>
           </div>
           <div className="text-foreground/70 flex flex-col space-y-3 lg:space-y-5">
-            <h1 className="text-foreground font-bold uppercase">Contact</h1>
+            <h1 className="text-foreground font-bold uppercase">
+              {t("footer.contact.title")}
+            </h1>
             <p className="text-nowrap">office@ai-def.com</p>
           </div>
           <div className="space-y-4">
-            <h1 className="text-foreground font-bold uppercase">Adresses</h1>
+            <h1 className="text-foreground font-bold uppercase">
+              {t("footer.addresses.title")}
+            </h1>
             <div className="grid grid-cols-2 gap-5">
               <div className="max-w-90">
                 <h1 className="text-foreground/50 font-bold uppercase">
-                  Management and administration
+                  {t("footer.addresses.managementTitle")}
                 </h1>
                 <p className="text-foreground/50 text-[15px]">
-                  Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia
+                  {t("footer.addresses.managementAddress")}
                 </p>
               </div>
               <div className="max-w-90">
                 <h1 className="text-foreground/50 font-bold uppercase">
-                  Headquarters & Development centre
+                  {t("footer.addresses.hqTitle")}
                 </h1>
                 <p className="text-foreground/50 text-[15px]">
-                  Staničná 267/21, 906 13 Brezová pod Bradlom
+                  {t("footer.addresses.hqAddress")}
                 </p>
               </div>
               <div className="flex max-w-90 items-center gap-4.5">
@@ -79,7 +96,7 @@ export default function Footer() {
         </div>
         <div>
           <p className="text-foreground/50 text-center uppercase">
-            © AI DEF A.S. 2026. All rights reserved.
+            {t("footer.legal.notice")}
           </p>
         </div>
       </div>

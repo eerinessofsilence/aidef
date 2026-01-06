@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const MODAL_TRANSITION_MS = 220;
 
@@ -42,6 +43,7 @@ type GallerySectionProps = {
 };
 
 export default function GallerySection({ images }: GallerySectionProps) {
+  const { t } = useTranslation();
   const galleryImages = useMemo(
     () => (images === undefined ? defaultGalleryImages : images),
     [images],
@@ -146,14 +148,13 @@ export default function GallerySection({ images }: GallerySectionProps) {
         <div className="flex w-full flex-col gap-10 max-lg:gap-5">
           <div className="space-y-6 max-lg:space-y-3">
             <p className="text-text/70 tracking-widest uppercase">
-              Characteristics
+              {t("gallery.kicker")}
             </p>
             <h2 className="text-text text-6xl font-bold capitalize max-lg:text-5xl max-md:text-4xl">
-              Highlights from recent projects
+              {t("gallery.title")}
             </h2>
             <p className="text-text/70 max-w-3xl text-xl max-lg:text-lg">
-              Browse a curated selection of work, showcasing clarity,
-              reliability, and performance across a range of environments.
+              {t("gallery.description")}
             </p>
           </div>
 
@@ -168,14 +169,14 @@ export default function GallerySection({ images }: GallerySectionProps) {
                 <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-[#3a414d] transition-transform duration-500 group-hover:scale-[1.02]">
                   <img
                     src={image.src}
-                    alt={image.alt ?? "Gallery image"}
+                    alt={image.alt ?? t("gallery.imageAltFallback")}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   <div className="pointer-events-none absolute inset-x-4 bottom-4 text-left opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <p className="text-sm leading-tight font-medium text-white">
-                      {image.alt ?? "View image"}
+                      {image.alt ?? t("gallery.viewImage")}
                     </p>
                   </div>
                 </div>
@@ -196,7 +197,7 @@ export default function GallerySection({ images }: GallerySectionProps) {
             <div onClick={(event) => event.stopPropagation()}>
               <button
                 type="button"
-                aria-label="Show previous image"
+                aria-label={t("gallery.modal.previous")}
                 onClick={showPreviousImage}
                 className="bg-background text-foreground hover:bg-muted absolute left-0 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full text-2xl leading-none transition-colors duration-300 max-xl:w-10 max-lg:h-10 xl:top-1/2 xl:left-20 2xl:left-90"
               >
@@ -204,7 +205,7 @@ export default function GallerySection({ images }: GallerySectionProps) {
               </button>
               <button
                 type="button"
-                aria-label="Show next image"
+                aria-label={t("gallery.modal.next")}
                 onClick={showNextImage}
                 className="bg-background text-foreground hover:bg-muted absolute right-0 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full text-2xl leading-none transition-colors duration-300 max-xl:w-10 max-lg:h-10 xl:top-1/2 xl:right-20 2xl:right-90"
               >

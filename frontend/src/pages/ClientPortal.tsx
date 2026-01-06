@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import * as LucideIcons from "lucide-react";
 import {
@@ -255,13 +256,14 @@ function ProductDropdown({
   variant,
   onChange,
 }: ProductDropdownProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const isDisabled = disabled || options.length === 0;
   const selectedLabel =
     options.find((option) => option.value === value)?.label ??
     options[0]?.label ??
-    "No products available";
+    t("clientPortal.fallbacks.noProducts");
 
   useEffect(() => {
     if (!open) return;
@@ -358,7 +360,7 @@ function ProductDropdown({
               ))
             ) : (
               <div className="px-3 py-2 text-white/60">
-                No products available
+                {t("clientPortal.fallbacks.noProducts")}
               </div>
             )}
           </div>
@@ -369,6 +371,7 @@ function ProductDropdown({
 }
 
 export default function ClientPortal() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { lng } = useParams();
   const currentLanguage = resolveLanguage(lng);
@@ -386,6 +389,24 @@ export default function ClientPortal() {
     if (!trimmed) return "/api";
     return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
   }, []);
+  const withLanguageParam = useCallback(
+    (url: string) => {
+      const separator = url.includes("?") ? "&" : "?";
+      return `${url}${separator}lang=${currentLanguage}`;
+    },
+    [currentLanguage],
+  );
+  const fallbackDetailLabel = t("clientPortal.fallbacks.detail");
+  const fallbackDetailValue = t("clientPortal.fallbacks.na");
+  const fallbackSpecTitle = t("clientPortal.fallbacks.specifications");
+  const fallbackModuleTitle = t("clientPortal.fallbacks.module");
+  const fallbackModuleAction = t("clientPortal.fallbacks.request");
+  const fallbackUntitledProduct = t("clientPortal.fallbacks.untitledProduct");
+  const fallbackNoProducts = t("clientPortal.fallbacks.noProducts");
+  const fallbackNoProductsSummary = t("clientPortal.fallbacks.noProductsSummary");
+  const fallbackAdditionalTitle = t("clientPortal.fallbacks.additional");
+  const fallbackNotesTitle = t("clientPortal.fallbacks.notesTitle");
+  const fallbackNotesBody = t("clientPortal.fallbacks.notesBody");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -451,9 +472,12 @@ export default function ClientPortal() {
 
     const loadProducts = async () => {
       try {
-        const response = await fetch(`${apiBase}/portal/products/`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          withLanguageParam(`${apiBase}/portal/products/`),
+          {
+            signal: controller.signal,
+          },
+        );
         if (!response.ok) {
           throw new Error(`Unexpected response: ${response.status}`);
         }
@@ -466,7 +490,7 @@ export default function ClientPortal() {
               const previewImage = item.preview_image || images[0] || "";
               return {
                 slug: item.slug,
-                name: item.name || "Untitled product",
+                name: item.name || fallbackUntitledProduct,
                 category: item.category || "",
                 serial: item.serial || "",
                 preview_image: previewImage,
@@ -493,7 +517,7 @@ export default function ClientPortal() {
 
     loadProducts();
     return () => controller.abort();
-  }, [apiBase]);
+  }, [apiBase, fallbackUntitledProduct, withLanguageParam]);
 
   const [selectedProductKey, setSelectedProductKey] = useState<string | null>(
     null,
@@ -543,12 +567,12 @@ export default function ClientPortal() {
   const selectedProduct = useMemo(() => {
     if (!products.length) {
       return {
-        name: "No products available",
+        name: fallbackNoProducts,
         category: "",
         serial: "",
         preview_image: "",
         images: [],
-        summary: "Products will appear here after they are assigned.",
+        summary: fallbackNoProductsSummary,
         highlight: "",
       };
     }
@@ -561,7 +585,12 @@ export default function ClientPortal() {
       }
     }
     return products[0];
-  }, [products, selectedProductKey]);
+  }, [
+    fallbackNoProducts,
+    fallbackNoProductsSummary,
+    products,
+    selectedProductKey,
+  ]);
   const selectedProductSlug = selectedProduct?.slug ?? null;
 
   useEffect(() => {
@@ -575,7 +604,9 @@ export default function ClientPortal() {
     const loadProductDetail = async () => {
       try {
         const response = await fetch(
-          `${apiBase}/portal/products/${selectedProductSlug}/`,
+          withLanguageParam(
+            `${apiBase}/portal/products/${selectedProductSlug}/`,
+          ),
           { signal: controller.signal },
         );
         if (!response.ok) {
@@ -599,7 +630,7 @@ export default function ClientPortal() {
 
     loadProductDetail();
     return () => controller.abort();
-  }, [apiBase, selectedProductSlug]);
+  }, [apiBase, selectedProductSlug, withLanguageParam]);
 
   const specGroups = useMemo(() => {
     const characteristics = selectedProductDetail?.characteristics;
@@ -618,8 +649,8 @@ export default function ClientPortal() {
           const value = (item.value || item.description || "").trim();
           if (!label && !value) return null;
           return {
-            label: label || "Detail",
-            value: value || "N/A",
+            label: label || fallbackDetailLabel,
+            value: value || fallbackDetailValue,
           };
         })
         .filter((item): item is { label: string; value: string } =>
@@ -637,7 +668,7 @@ export default function ClientPortal() {
           : null;
       const resolvedIcon = lucideName ? resolveLucideIcon(lucideName) : null;
       return {
-        title: (block.title || block.subtitle || "Specifications").trim(),
+        title: (block.title || block.subtitle || fallbackSpecTitle).trim(),
         icon: resolvedIcon ?? fallbackIcon,
         iconUrl,
         items: normalizedItems,
@@ -651,8 +682,8 @@ export default function ClientPortal() {
           const value = (item.value || item.description || "").trim();
           if (!label && !value) return null;
           return {
-            label: label || "Detail",
-            value: value || "N/A",
+            label: label || fallbackDetailLabel,
+            value: value || fallbackDetailValue,
           };
         })
         .filter((item): item is { label: string; value: string } =>
@@ -660,7 +691,7 @@ export default function ClientPortal() {
         );
       if (normalizedLoose.length) {
         groups.push({
-          title: "Additional",
+          title: fallbackAdditionalTitle,
           icon: SPEC_ICON_POOL[groups.length % SPEC_ICON_POOL.length],
           iconUrl: "",
           items: normalizedLoose,
@@ -669,7 +700,13 @@ export default function ClientPortal() {
     }
 
     return groups.filter((group) => group.items.length > 0);
-  }, [selectedProductDetail]);
+  }, [
+    fallbackAdditionalTitle,
+    fallbackDetailLabel,
+    fallbackDetailValue,
+    fallbackSpecTitle,
+    selectedProductDetail,
+  ]);
 
   const textBlocks = useMemo(() => {
     const blocks = selectedProductDetail?.text_blocks;
@@ -683,8 +720,8 @@ export default function ClientPortal() {
         if (!title && !text) return null;
         return {
           id: block.id ?? index,
-          title: title || "Notes",
-          text: text || "Details will be added soon.",
+          title: title || fallbackNotesTitle,
+          text: text || fallbackNotesBody,
           order: typeof block.order === "number" ? block.order : index,
         };
       })
@@ -700,7 +737,7 @@ export default function ClientPortal() {
       )
       .sort((a, b) => a.order - b.order)
       .map(({ order, ...rest }) => rest);
-  }, [selectedProductDetail]);
+  }, [fallbackNotesBody, fallbackNotesTitle, selectedProductDetail]);
 
   const productGallery = useMemo(() => {
     const gallery = selectedProductDetail?.gallery;
@@ -716,7 +753,13 @@ export default function ClientPortal() {
           (a.order ?? Number.MAX_SAFE_INTEGER) -
             (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
       );
-  }, [selectedProductDetail]);
+  }, [
+    fallbackDetailLabel,
+    fallbackDetailValue,
+    fallbackModuleAction,
+    fallbackModuleTitle,
+    selectedProductDetail,
+  ]);
 
   const presentationInfo = useMemo(() => {
     const items = selectedProductDetail?.presentation_info;
@@ -796,8 +839,8 @@ export default function ClientPortal() {
             if (!label && !value) return null;
             return {
               id: item.id ?? index,
-              label: label || "Detail",
-              value: value || "N/A",
+              label: label || fallbackDetailLabel,
+              value: value || fallbackDetailValue,
               order: typeof item.order === "number" ? item.order : index,
             };
           })
@@ -819,10 +862,10 @@ export default function ClientPortal() {
           : undefined;
         return {
           id: module.id,
-          title: module.title || module.name || "Module",
+          title: module.title || module.name || fallbackModuleTitle,
           description: module.description || "",
           image: module.image || imageFromList || "",
-          action: module.action || module.button_text || "Request",
+          action: module.action || module.button_text || fallbackModuleAction,
           tag: module.tag || "",
           images: imageList,
           moduleImages,
@@ -1012,7 +1055,7 @@ export default function ClientPortal() {
                     >
                       <div className="max-md:text-center">
                         <p className="text-foreground/70 font-semibold tracking-widest uppercase max-md:text-center">
-                          Your product
+                          {t("clientPortal.hero.kicker")}
                         </p>
                         <h1 className="text-foreground text-4xl font-semibold max-md:text-3xl">
                           {selectedProduct.name}
@@ -1022,7 +1065,9 @@ export default function ClientPortal() {
                         <div>
                           <ProductDropdown
                             id="product-select-desktop"
-                            label={`All products (${products.length})`}
+                            label={t("clientPortal.productSelector.label", {
+                              count: products.length,
+                            })}
                             value={selectedProductKey}
                             options={productOptions}
                             disabled={!productOptions.length}
@@ -1036,7 +1081,9 @@ export default function ClientPortal() {
                         <div className="hidden md:block">
                           <ProductDropdown
                             id="product-select-desktop"
-                            label={`All products (${products.length})`}
+                            label={t("clientPortal.productSelector.label", {
+                              count: products.length,
+                            })}
                             value={selectedProductKey}
                             options={productOptions}
                             disabled={!productOptions.length}
@@ -1057,7 +1104,10 @@ export default function ClientPortal() {
                         <img
                           key={`${selectedProduct.name}-${index}`}
                           src={imageSrc}
-                          alt={`${selectedProduct.name} view ${index + 1}`}
+                          alt={t("clientPortal.media.productImageAlt", {
+                            name: selectedProduct.name,
+                            index: index + 1,
+                          })}
                           className={`absolute inset-0 transition duration-300 ease-out ${
                             index === activeMediaIndex
                               ? "opacity-100"
@@ -1073,7 +1123,7 @@ export default function ClientPortal() {
                           <button
                             type="button"
                             onClick={showPreviousImage}
-                            aria-label="Show previous image"
+                            aria-label={t("clientPortal.media.previousImage")}
                             className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                           >
                             <ChevronLeft
@@ -1084,7 +1134,7 @@ export default function ClientPortal() {
                           <button
                             type="button"
                             onClick={showNextImage}
-                            aria-label="Show next image"
+                            aria-label={t("clientPortal.media.nextImage")}
                             className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                           >
                             <ChevronRight
@@ -1099,7 +1149,10 @@ export default function ClientPortal() {
                             <button
                               key={`${selectedProduct.name}-dot-${index}`}
                               type="button"
-                              aria-label={`Show image ${index + 1} of ${productImages.length}`}
+                              aria-label={t("clientPortal.media.imageIndex", {
+                                index: index + 1,
+                                count: productImages.length,
+                              })}
                               onClick={() => setActiveMediaIndex(index)}
                               className={`pointer-events-auto h-2.5 w-2.5 cursor-pointer rounded-full border transition ${
                                 index === activeMediaIndex
@@ -1116,7 +1169,9 @@ export default function ClientPortal() {
                         <div className="absolute inset-x-0 -bottom-12 container py-3">
                           <ProductDropdown
                             id="product-select-mobile"
-                            label={`All products (${products.length})`}
+                            label={t("clientPortal.productSelector.label", {
+                              count: products.length,
+                            })}
                             value={selectedProductKey}
                             options={productOptions}
                             disabled={!productOptions.length}
@@ -1137,14 +1192,17 @@ export default function ClientPortal() {
                     <div className="relative min-h-80 overflow-hidden max-md:hidden">
                       <div className="relative h-full">
                         {productImages.map((imageSrc, index) => (
-                          <img
-                            key={`${selectedProduct.name}-${index}`}
-                            src={imageSrc}
-                            alt={`${selectedProduct.name} view ${index + 1}`}
-                            className={`absolute inset-0 transition duration-700 ease-out ${
-                              index === activeMediaIndex
-                                ? "opacity-100"
-                                : "opacity-0"
+                        <img
+                          key={`${selectedProduct.name}-${index}`}
+                          src={imageSrc}
+                          alt={t("clientPortal.media.productImageAlt", {
+                            name: selectedProduct.name,
+                            index: index + 1,
+                          })}
+                          className={`absolute inset-0 transition duration-700 ease-out ${
+                            index === activeMediaIndex
+                              ? "opacity-100"
+                              : "opacity-0"
                             }`}
                           />
                         ))}
@@ -1156,7 +1214,7 @@ export default function ClientPortal() {
                             <button
                               type="button"
                               onClick={showPreviousImage}
-                              aria-label="Show previous image"
+                              aria-label={t("clientPortal.media.previousImage")}
                               className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                             >
                               <ChevronLeft
@@ -1167,7 +1225,7 @@ export default function ClientPortal() {
                             <button
                               type="button"
                               onClick={showNextImage}
-                              aria-label="Show next image"
+                              aria-label={t("clientPortal.media.nextImage")}
                               className="pointer-events-auto inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-white shadow-lg transition hover:border-white/30 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                             >
                               <ChevronRight
@@ -1179,14 +1237,17 @@ export default function ClientPortal() {
 
                           <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
                             {productImages.map((_, index) => (
-                              <button
-                                key={`${selectedProduct.name}-dot-${index}`}
-                                type="button"
-                                aria-label={`Show image ${index + 1} of ${productImages.length}`}
-                                onClick={() => setActiveMediaIndex(index)}
-                                className={`pointer-events-auto h-2.5 w-2.5 cursor-pointer rounded-full border transition ${
-                                  index === activeMediaIndex
-                                    ? "border-white/70 bg-white"
+                            <button
+                              key={`${selectedProduct.name}-dot-${index}`}
+                              type="button"
+                              aria-label={t("clientPortal.media.imageIndex", {
+                                index: index + 1,
+                                count: productImages.length,
+                              })}
+                              onClick={() => setActiveMediaIndex(index)}
+                              className={`pointer-events-auto h-2.5 w-2.5 cursor-pointer rounded-full border transition ${
+                                index === activeMediaIndex
+                                  ? "border-white/70 bg-white"
                                     : "border-white/30 bg-white/20 hover:border-white/60"
                                 }`}
                               />
@@ -1202,10 +1263,12 @@ export default function ClientPortal() {
                     <div className="flex flex-col justify-between gap-6 p-5">
                       <div className="space-y-3">
                         <p className="text-sm font-semibold tracking-[0.18em] text-white/60 uppercase">
-                          Serial {selectedProduct.serial}
+                          {t("clientPortal.overview.serial", {
+                            serial: selectedProduct.serial,
+                          })}
                         </p>
                         <h3 className="text-2xl font-semibold text-white">
-                          Overview
+                          {t("clientPortal.overview.title")}
                         </h3>
                         <p className="text-sm text-white/65">
                           {selectedProduct.summary}
@@ -1227,26 +1290,30 @@ export default function ClientPortal() {
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
                           <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                            Ownership
+                            {t("clientPortal.overview.cards.ownership.label")}
                           </p>
                           <p className="mt-1 text-lg font-semibold text-white">
-                            Active / Owned
+                            {t("clientPortal.overview.cards.ownership.value")}
                           </p>
                           <p className="text-xs text-white/60">
-                            Cleared for operational deployment under your
-                            program.
+                            {t("clientPortal.overview.cards.ownership.note")}
                           </p>
                         </div>
                         <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-4">
                           <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                            Documentation
+                            {t(
+                              "clientPortal.overview.cards.documentation.label",
+                            )}
                           </p>
                           <p className="mt-1 text-lg font-semibold text-white">
-                            Confidential bundle
+                            {t(
+                              "clientPortal.overview.cards.documentation.value",
+                            )}
                           </p>
                           <p className="text-xs text-white/60">
-                            Technical orders, wiring, and maintenance notes
-                            secured to this session.
+                            {t(
+                              "clientPortal.overview.cards.documentation.note",
+                            )}
                           </p>
                         </div>
                       </div>
@@ -1262,10 +1329,10 @@ export default function ClientPortal() {
                       <div className="flex items-center justify-between gap-3">
                         <div>
                           <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                            Specifications & Technical Details
+                            {t("clientPortal.specs.kicker")}
                           </p>
                           <h3 className="text-xl font-semibold text-white">
-                            Engineering sheet
+                            {t("clientPortal.specs.title")}
                           </h3>
                         </div>
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
@@ -1327,17 +1394,19 @@ export default function ClientPortal() {
                   <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
                       <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                        Product gallery
+                        {t("clientPortal.gallery.kicker")}
                       </p>
                       <h2 className="text-2xl font-semibold text-white">
-                        Visual dossier
+                        {t("clientPortal.gallery.title")}
                       </h2>
                       <p className="text-sm text-white/65">
-                        Imagery pulled directly from your synced fleet records.
+                        {t("clientPortal.gallery.description")}
                       </p>
                     </div>
                     <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                      {productGallery.length} assets
+                      {t("clientPortal.gallery.assets", {
+                        count: productGallery.length,
+                      })}
                     </span>
                   </div>
                 </ScrollReveal>
@@ -1354,7 +1423,10 @@ export default function ClientPortal() {
                         <button
                           type="button"
                           onClick={() => openGallery(index)}
-                          aria-label={`Open gallery image ${index + 1} of ${productGallery.length}`}
+                          aria-label={t("clientPortal.gallery.openImage", {
+                            index: index + 1,
+                            count: productGallery.length,
+                          })}
                           className={`group relative cursor-pointer overflow-hidden rounded-3xl border bg-white/5 shadow-[0_25px_70px_rgba(0,0,0,0.35)] transition hover:-translate-y-1 ${
                             isActive ? "border-sky-400/60" : "border-white/10"
                           }`}
@@ -1364,14 +1436,17 @@ export default function ClientPortal() {
                               src={image.url}
                               alt={
                                 image.alt ||
-                                `${selectedProduct.name} gallery ${index + 1}`
+                                t("clientPortal.gallery.imageAlt", {
+                                  name: selectedProduct.name,
+                                  index: index + 1,
+                                })
                               }
                               loading="lazy"
                               className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                             />
                             <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                             <div className="pointer-events-none absolute bottom-3 left-3 text-xs font-semibold tracking-[0.2em] text-white/80 uppercase opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                              View image
+                              {t("clientPortal.gallery.viewImage")}
                             </div>
                           </div>
                         </button>
@@ -1404,10 +1479,10 @@ export default function ClientPortal() {
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                          Operational notes
+                          {t("clientPortal.notes.kicker")}
                         </p>
                         <h3 className="text-xl font-semibold text-white">
-                          Briefing cards
+                          {t("clientPortal.notes.title")}
                         </h3>
                       </div>
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sky-100">
@@ -1441,14 +1516,14 @@ export default function ClientPortal() {
         ) : (
           <div className="container flex flex-col items-center justify-center">
             <h1 className="text-foreground text-center text-3xl leading-15 font-bold max-lg:leading-10 md:text-4xl xl:text-5xl">
-              No products in your portal yet. <br />
-              Purchased products and documentation will appear here.
+              {t("clientPortal.empty.title")} <br />
+              {t("clientPortal.empty.subtitle")}
             </h1>
             <a
               onClick={openContactModal}
               className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
             >
-              Contact Us
+              {t("clientPortal.actions.contact")}
             </a>
           </div>
         )}
@@ -1458,10 +1533,10 @@ export default function ClientPortal() {
               <div className="flex items-center gap-3">
                 <div>
                   <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                    Available upgrades
+                    {t("clientPortal.upgrades.kicker")}
                   </p>
                   <h2 className="text-2xl font-semibold text-white">
-                    Modules built for contested environments
+                    {t("clientPortal.upgrades.title")}
                   </h2>
                 </div>
               </div>
@@ -1488,7 +1563,7 @@ export default function ClientPortal() {
                           {upgrade.title}
                         </h3>
                         <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
-                          Add-on
+                          {t("clientPortal.upgrades.badge")}
                         </span>
                       </div>
                       <p className="text-sm text-white/65">
@@ -1513,54 +1588,50 @@ export default function ClientPortal() {
             <ScrollReveal amount={0.35}>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
                 <p className="text-sm font-semibold tracking-widest text-white/50 uppercase">
-                  Overview
+                  {t("clientPortal.summary.kicker")}
                 </p>
                 <h1 className="mt-3 text-3xl leading-tight font-semibold text-white md:text-4xl">
-                  Centralized products overview
+                  {t("clientPortal.summary.title")}
                 </h1>
                 <p className="mt-3 text-base text-white/65">
-                  Browse your full lineup, compare key specs, and access
-                  manuals, service notes, and integration materials in one
-                  place.
+                  {t("clientPortal.summary.description")}
                 </p>
 
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <p className="text-xs font-semibold tracking-[0.18em] text-white/50 uppercase">
-                      Products
+                      {t("clientPortal.summary.cards.products.label")}
                     </p>
                     <div className="mt-2 flex items-center gap-2 text-2xl font-bold text-white">
                       {products.length}
                       <span className="text-2xl font-semibold text-emerald-300">
-                        Active
+                        {t("clientPortal.summary.cards.products.value")}
                       </span>
                     </div>
                     <p className="text-sm text-white/60">
-                      Ready to deploy. More assets appear instantly when
-                      acquired.
+                      {t("clientPortal.summary.cards.products.note")}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <p className="text-xs font-semibold tracking-[0.18em] text-white/50 uppercase">
-                      Clearance
+                      {t("clientPortal.summary.cards.clearance.label")}
                     </p>
                     <div className="mt-2 flex items-center gap-2 text-2xl font-bold text-white">
-                      Verified
+                      {t("clientPortal.summary.cards.clearance.value")}
                     </div>
                     <p className="text-sm text-white/60">
-                      Session encrypted, device fingerprint recorded.
+                      {t("clientPortal.summary.cards.clearance.note")}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                     <p className="text-xs font-semibold tracking-[0.18em] text-white/50 uppercase">
-                      Documents
+                      {t("clientPortal.summary.cards.documents.label")}
                     </p>
                     <div className="mt-2 flex items-center gap-2 text-2xl font-bold text-white">
-                      Controlled
+                      {t("clientPortal.summary.cards.documents.value")}
                     </div>
                     <p className="text-sm text-white/60">
-                      Specs, export notes, and field manuals stay inside this
-                      session.
+                      {t("clientPortal.summary.cards.documents.note")}
                     </p>
                   </div>
                 </div>
@@ -1570,7 +1641,7 @@ export default function ClientPortal() {
             <ScrollReveal className="flex items-center" amount={0.35}>
               <div className="h-fit space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
                 <p className="text-sm font-semibold tracking-widest text-white/50 uppercase">
-                  Product lineup
+                  {t("clientPortal.lineup.title")}
                 </p>
                 <div className="grid max-h-48.75 grid-cols-1 gap-3 overflow-scroll">
                   {products.map((product) => {
@@ -1606,8 +1677,7 @@ export default function ClientPortal() {
                   })}
                 </div>
                 <p className="text-foreground/70 tracking-wider">
-                  Future purchases will appear here automatically — select a
-                  unit to view specs and documentation.
+                  {t("clientPortal.lineup.note")}
                 </p>
               </div>
             </ScrollReveal>
@@ -1622,17 +1692,15 @@ export default function ClientPortal() {
                 </span>
                 <div className="space-y-1">
                   <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                    Security & Confidentiality Notice
+                    {t("clientPortal.security.kicker")}
                   </p>
                   <p className="text-sm text-white">
-                    This information is confidential and available only to
-                    authorized users. Unauthorized distribution is strictly
-                    prohibited.
+                    {t("clientPortal.security.message")}
                   </p>
                 </div>
               </div>
               <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-center text-[11px] font-semibold tracking-[0.14em] text-nowrap text-white/70 uppercase">
-                Session monitored
+                {t("clientPortal.security.badge")}
               </span>
             </div>
           </section>
@@ -1647,13 +1715,13 @@ export default function ClientPortal() {
               className="relative z-10 container w-full pt-24 pb-8"
               role="dialog"
               aria-modal="true"
-              aria-label="Product gallery"
+              aria-label={t("clientPortal.gallery.modalLabel")}
             >
               <div className="relative max-h-[calc(100vh-8rem)] overflow-hidden rounded-3xl border border-white/10 bg-slate-950/95 shadow-2xl">
                 <button
                   type="button"
                   onClick={closeGallery}
-                  aria-label="Close gallery"
+                  aria-label={t("clientPortal.gallery.close")}
                   className="absolute top-4 right-4 z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
                 >
                   <X className="h-4 w-4" />
@@ -1663,7 +1731,7 @@ export default function ClientPortal() {
                     <button
                       type="button"
                       onClick={showPreviousGalleryImage}
-                      aria-label="Show previous image"
+                      aria-label={t("clientPortal.media.previousImage")}
                       className="absolute top-1/2 left-4 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
                     >
                       <ChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -1671,7 +1739,7 @@ export default function ClientPortal() {
                     <button
                       type="button"
                       onClick={showNextGalleryImage}
-                      aria-label="Show next image"
+                      aria-label={t("clientPortal.media.nextImage")}
                       className="absolute top-1/2 right-4 z-20 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
                     >
                       <ChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -1683,7 +1751,10 @@ export default function ClientPortal() {
                     src={activeGalleryItem?.url ?? ""}
                     alt={
                       activeGalleryItem?.alt ||
-                      `${selectedProduct.name} gallery ${clampedGalleryIndex + 1}`
+                      t("clientPortal.gallery.imageAlt", {
+                        name: selectedProduct.name,
+                        index: clampedGalleryIndex + 1,
+                      })
                     }
                     className="max-h-[calc(100vh-16rem)] w-full object-contain"
                   />
@@ -1710,7 +1781,7 @@ export default function ClientPortal() {
                   className="relative max-h-[calc(100vh-9rem)] overflow-x-hidden overflow-y-scroll rounded-3xl border border-white/10 bg-slate-950/95 p-5 text-white shadow-xl"
                   role="dialog"
                   aria-modal="true"
-                  aria-label="Module details"
+                  aria-label={t("clientPortal.modules.modalLabel")}
                 >
                   <button
                     type="button"
@@ -1739,7 +1810,7 @@ export default function ClientPortal() {
                           </div>
                         ) : (
                           <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/60">
-                            Images are not available for this module yet.
+                            {t("clientPortal.modules.imagesUnavailable")}
                           </div>
                         )}
                       </div>
@@ -1754,7 +1825,7 @@ export default function ClientPortal() {
                             </p>
                           ) : (
                             <p className="text-sm text-white/50">
-                              Detailed description is not available yet.
+                              {t("clientPortal.modules.descriptionUnavailable")}
                             </p>
                           )}
                         </div>
@@ -1763,10 +1834,10 @@ export default function ClientPortal() {
                     <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-5">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
-                          Module details
+                          {t("clientPortal.modules.detailsTitle")}
                         </p>
                         <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-wide text-nowrap text-white/60 uppercase">
-                          {activeModule.tag || "Add-on"}
+                          {activeModule.tag || t("clientPortal.upgrades.badge")}
                         </span>
                       </div>
                       <div className="mt-4 flex max-h-68 flex-col gap-2 overflow-scroll">

@@ -91,10 +91,669 @@
       "cta": "Kontaktujte nás"
     }
   },
-  "auth": {},
-  "clientPortal": {},
-  "productDetail": {},
-  "solutions": {},
-  "technology": {},
-  "support": {}
+  "solutions": {
+    "hero": {
+      "title": "Bojom overené riešenia UAV, UGV a GCS"
+    },
+    "overview": {
+      "title": "Globálny systém velenia, komunikácie a antidronovej obrany"
+    },
+    "blocks": {
+      "title": "Multifunkčný indikátor s tlačidlovým rámovaním a dotykovou obrazovkou.",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis similique, et repudiandae hic in quibusdam voluptas vero quia, enim nesciunt id facere. Asperiores ipsa maiores et accusamus reprehenderit facere soluta magnam aliquam minima in velit."
+    },
+    "actions": {
+      "learnMore": "Zistiť viac"
+    },
+    "features": {
+      "kicker": "Vlastnosti",
+      "title": "Hlavné funkcie:",
+      "items": [
+        "GPS/GALILEO/GLONASS (PPS & SPS)",
+        "V súlade s MIL-STD",
+        "3 GNSS antény = presnosť do 0,5 m",
+        "Vstavané C2 umožňuje integráciu ľubovoľných analógových alebo IP subsystémov (motor, alarmy atď.)",
+        "Prispôsobiteľná grafika a softvérové funkcie"
+      ]
+    }
+  },
+  "technology": {
+    "hero": {
+      "kicker": "Tvoríme budúcnosť",
+      "title": "AI-DEF Software",
+      "cta": "Zistiť viac"
+    },
+    "overview": {
+      "title": "Prehľad",
+      "description": "AI-DEF Software Suite je plne integrovaný softvérový ekosystém pre plánovanie misií, velenie a riadenie bezpilotných systémov a spracovanie senzorových dát. Pozostáva z viacerých modulov, ktoré spolupracujú a poskytujú end-to-end podporu pre operácie UAV a UGV."
+    },
+    "modules": {
+      "title": "Moduly",
+      "cards": {
+        "defgroundPilot": {
+          "title": "DEFgroundPilot",
+          "description": "Plánovanie misií, riadenie letu, telemetria a monitorovanie stavu."
+        },
+        "defgroundTargeting": {
+          "title": "DEFgroundTargeting",
+          "description": "AI video analytika na detekciu, klasifikáciu a sledovanie cieľov."
+        },
+        "defgroundGateway": {
+          "title": "DEFgroundGateway",
+          "description": "Bezpečná správa viacnásobných komunikačných liniek pre RF, LTE a satelitné spojenia."
+        },
+        "defgroundInstaller": {
+          "title": "DEFgroundInstaller",
+          "description": "Nasadenie softvéru, aktualizácie, diagnostika a správa konfigurácie."
+        }
+      }
+    },
+    "integration": {
+      "title": "Integrácia s platformami AI-DEF",
+      "description": "Softvérová sada je natívne integrovaná s avionikou AX2NG KRAKATIT, AV-1 VTOL, kvadrokoptéry AXQ a UGV 150-DUP. To zabezpečuje konzistentný používateľský zážitok, jednotné plánovanie misií a zjednodušené školenie naprieč celým portfóliom AI-DEF."
+    }
+  },
+  "support": {
+    "hero": {
+      "title": "Technická podpora, údržba a odborné poradenstvo",
+      "slideAlt": "Pozadie {{index}}",
+      "slideAria": "Prejsť na snímku {{index}}"
+    },
+    "contact": {
+      "kicker": "S nami bezpečne",
+      "addressesLabel": "Adresy:",
+      "managementTitle": "Manažment a administratíva",
+      "managementAddress": "Vedecký park - Ilkovičova 8, 841 02 Bratislava, Slovensko",
+      "hqTitle": "Ústredie & vývojové centrum",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom, Slovensko"
+    },
+    "form": {
+      "success": "Ďakujeme! Odpovieme do jedného pracovného dňa."
+    }
+  },
+  "auth": {
+    "tabs": {
+      "signup": "Registrácia",
+      "signin": "Prihlásiť sa"
+    },
+    "signup": {
+      "kicker": "Kontakt",
+      "title": "Povedzte nám o vašom projekte",
+      "description": "Ozveme sa do jedného pracovného dňa.",
+      "cta": "Odoslať správu"
+    },
+    "signin": {
+      "title": "Prihláste sa do AI-DEF Command",
+      "description": "Pokračujte v plánovaní misií, spravujte flotily a monitorujte živú telemetriu zo zabezpečenej konzoly.",
+      "cta": "Prihlásiť sa",
+      "processing": "Spracováva sa..."
+    },
+    "fields": {
+      "firstName": "Meno",
+      "lastName": "Priezvisko",
+      "email": "E-mail",
+      "phone": "Telefónne číslo",
+      "product": "Produkt / strategické partnerstvo",
+      "country": "Krajina",
+      "addressLine1": "Adresa riadok 1",
+      "addressLine2": "Adresa riadok 2",
+      "addressLine3Optional": "Adresa riadok 3 (voliteľné)",
+      "website": "Webová stránka",
+      "message": "Správa",
+      "workEmail": "Pracovný e-mail",
+      "password": "Heslo",
+      "rememberMe": "Zapamätať si ma"
+    },
+    "placeholders": {
+      "firstName": "Ján",
+      "lastName": "Novák",
+      "email": "you@example.com",
+      "phone": "+1 555 123 4567",
+      "selectProduct": "Vybrať produkt",
+      "country": "Začnite písať názov krajiny",
+      "addressLine1": "Štát/kraj a mesto",
+      "addressLine2": "Hlavná 123",
+      "addressLine3": "Byt, apartmán a pod.",
+      "website": "Zadajte URL vašej webovej stránky",
+      "message": "Krátko opíšte, čo potrebujete...",
+      "workEmail": "you@aidef.com",
+      "password": "********"
+    },
+    "products": {
+      "all": "Všetky produkty",
+      "partnership": "Strategické partnerstvo"
+    },
+    "status": {
+      "updatingCountries": "Aktualizácia krajín..."
+    },
+    "disclaimer": "Odoslaním súhlasíte, že vás budeme kontaktovať ohľadom vašej požiadavky.",
+    "actions": {
+      "forgotPassword": "Zabudli ste heslo?"
+    },
+    "errors": {
+      "countryLoad": "Nepodarilo sa aktualizovať zoznam krajín, používame náhradný zoznam.",
+      "countryRequired": "Prosím, vyberte krajinu z návrhov.",
+      "unexpectedResponse": "Neočakávaná odpoveď servera.",
+      "requestFailed": "Požiadavku sa nepodarilo spracovať. Skúste to znova.",
+      "missingCredentials": "E-mail a heslo sú povinné.",
+      "network": "Nepodarilo sa pripojiť k serveru. Skúste to znova."
+    },
+    "success": {
+      "signup": "Ďakujeme! Odpovieme do jedného pracovného dňa.",
+      "signin": "Úspešne prihlásené."
+    },
+    "security": {
+      "title": "Bezpečné prístupové pravidlá",
+      "bodyPrefix": "Pokračovaním súhlasíte s prevádzkovými pravidlami prístupu a",
+      "bodySuffix": ". Pre zvýšené role je vyžadovaná hardvérovo podložená MFA."
+    }
+  },
+  "clientPortal": {
+    "productSelector": {
+      "label": "Všetky produkty ({{count}})"
+    },
+    "hero": {
+      "kicker": "Váš produkt"
+    },
+    "media": {
+      "productImageAlt": "{{name}} pohľad {{index}}",
+      "previousImage": "Zobraziť predchádzajúci obrázok",
+      "nextImage": "Zobraziť nasledujúci obrázok",
+      "imageIndex": "Zobraziť obrázok {{index}} z {{count}}"
+    },
+    "overview": {
+      "serial": "Sériové číslo {{serial}}",
+      "title": "Prehľad",
+      "cards": {
+        "ownership": {
+          "label": "Vlastníctvo",
+          "value": "Aktívne / Vlastnené",
+          "note": "Schválené pre operačné nasadenie v rámci vášho programu."
+        },
+        "documentation": {
+          "label": "Dokumentácia",
+          "value": "Dôverný balík",
+          "note": "Technické pokyny, zapojenie a servisné poznámky sú zabezpečené pre túto reláciu."
+        }
+      }
+    },
+    "specs": {
+      "kicker": "Špecifikácie a technické detaily",
+      "title": "Technický list"
+    },
+    "gallery": {
+      "kicker": "Produktová galéria",
+      "title": "Vizuálny dossier",
+      "description": "Obrázky priamo z vašich synchronizovaných záznamov flotily.",
+      "assets": "{{count}} položiek",
+      "openImage": "Otvoriť obrázok galérie {{index}} z {{count}}",
+      "imageAlt": "{{name}} galéria {{index}}",
+      "viewImage": "Zobraziť obrázok",
+      "modalLabel": "Produktová galéria",
+      "close": "Zavrieť galériu"
+    },
+    "notes": {
+      "kicker": "Operačné poznámky",
+      "title": "Briefingové karty"
+    },
+    "empty": {
+      "title": "Vo vašom portáli zatiaľ nie sú žiadne produkty.",
+      "subtitle": "Zakúpené produkty a dokumentácia sa zobrazia tu."
+    },
+    "actions": {
+      "contact": "Kontaktujte nás"
+    },
+    "upgrades": {
+      "kicker": "Dostupné rozšírenia",
+      "title": "Moduly pre náročné prostredia",
+      "badge": "Doplnok"
+    },
+    "summary": {
+      "kicker": "Prehľad",
+      "title": "Centralizovaný prehľad produktov",
+      "description": "Prezrite si celý sortiment, porovnajte kľúčové parametre a pristupujte k manuálom, servisným poznámkam a integračným materiálom na jednom mieste.",
+      "cards": {
+        "products": {
+          "label": "Produkty",
+          "value": "Aktívne",
+          "note": "Pripravené na nasadenie. Ďalšie položky sa objavia okamžite po získaní."
+        },
+        "clearance": {
+          "label": "Schválenie",
+          "value": "Overené",
+          "note": "Relácia je šifrovaná, odtlačok zariadenia zaznamenaný."
+        },
+        "documents": {
+          "label": "Dokumenty",
+          "value": "Kontrolované",
+          "note": "Špecifikácie, exportné poznámky a poľné manuály zostávajú v tejto relácii."
+        }
+      }
+    },
+    "lineup": {
+      "title": "Produktová línia",
+      "note": "Budúce nákupy sa tu zobrazia automaticky — vyberte jednotku a zobrazte špecifikácie a dokumentáciu."
+    },
+    "security": {
+      "kicker": "Bezpečnostné a dôvernostné upozornenie",
+      "message": "Tieto informácie sú dôverné a dostupné iba oprávneným používateľom. Neoprávnené šírenie je prísne zakázané.",
+      "badge": "Relácia monitorovaná"
+    },
+    "modules": {
+      "modalLabel": "Detaily modulu",
+      "imagesUnavailable": "Obrázky pre tento modul zatiaľ nie sú dostupné.",
+      "descriptionUnavailable": "Podrobný popis zatiaľ nie je k dispozícii.",
+      "detailsTitle": "Detaily modulu"
+    },
+    "fallbacks": {
+      "detail": "Detail",
+      "na": "N/A",
+      "specifications": "Špecifikácie",
+      "additional": "Ďalšie",
+      "notesTitle": "Poznámky",
+      "notesBody": "Podrobnosti budú doplnené čoskoro.",
+      "module": "Modul",
+      "request": "Požiadavka",
+      "untitledProduct": "Produkt bez názvu",
+      "noProducts": "Žiadne produkty nie sú dostupné",
+      "noProductsSummary": "Produkty sa zobrazia po ich priradení."
+    }
+  },
+  "productDetail": {
+    "hero": {
+      "imageAlt": "Obrázok produktu",
+      "heroAlt": "Úvodný obrázok produktu",
+      "previousImage": "Predchádzajúci obrázok",
+      "nextImage": "Nasledujúci obrázok",
+      "goToImage": "Prejsť na obrázok {{index}}"
+    },
+    "overview": {
+      "kicker": "Vlastnosti",
+      "title": "O produkte",
+      "descriptionFallback": "Popis produktu"
+    },
+    "technology": {
+      "kicker": "Technologické zameranie",
+      "title": "Produkčne vyladené, pripravené na odolnú autonómiu.",
+      "description": "Naprieč UAV, UGV a GCS poskytuje riadiaci stack presné vstupy, plynulú dynamiku a intuitívne bezpečnostné vrstvy, ktoré sú operátorom okamžite známe."
+    },
+    "actions": {
+      "contact": "Kontaktujte nás"
+    },
+    "carousel": {
+      "title": "Všetky produkty"
+    },
+    "errors": {
+      "list": "Katalóg flotily sa nepodarilo synchronizovať. Skúste to neskôr.",
+      "detail": "Údaje o produkte sa nepodarilo načítať.",
+      "catalogFallback": "Načítanie katalógových dát zlyhalo."
+    }
+  },
+  "aboutUs": {
+    "hero": {
+      "pill": "O skupine AI-DEF",
+      "title": "Vertikálne integrované bezpilotné systémy pre náročné misie.",
+      "descriptionPrimary": "AI-DEF Group je vertikálne integrovaný európsky vývojár moderných bezpilotných systémov a podporných technológií. Skupina zahŕňa platformy UAV/UGV, radar, autonómiu, softvér, multisenzorové systémy a priemyselnú integráciu.",
+      "descriptionSecondary": "Spájame hlboké inžinierske know-how s operačnými potrebami, aby sme dodali systémy, ktoré ostávajú pripravené na misiu, interoperabilné a bezpečné.",
+      "highlights": [
+        {
+          "title": "Navrhnuté pre náročné prostredia",
+          "description": "Operačne relevantné bezpilotné systémy konštruované pre odolnosť voči elektronickému boju, GNSS-denied operácie a náročné misie."
+        },
+        {
+          "title": "Vlastníctvo životného cyklu",
+          "description": "Od aerodynamiky a kompozitov po mikroprúdové motory, avioniku, radar, autonómiu, servis a výcvik v rámci jednej skupiny."
+        },
+        {
+          "title": "Otvorená integrácia",
+          "description": "Interoperabilné s existujúcimi C2/C4ISR a legacy platformami, s centralizovanou kontrolou exportu a súladu so štandardmi."
+        }
+      ]
+    },
+    "missionVision": [
+      {
+        "title": "Naša misia",
+        "description": "Dodávať spoľahlivé, operačne relevantné bezpilotné systémy a umožňujúce technológie pre náročné prostredia a misie."
+      },
+      {
+        "title": "Naša vízia",
+        "description": "Vnímať autonómiu, robustnú senzorovú fúziu a priemyselnú automatizáciu ako dlhodobé schopnosti, nie krátkodobé trendy."
+      }
+    ],
+    "lifecycle": {
+      "kicker": "Životný cyklus",
+      "phases": [
+        "výskum",
+        "dizajn",
+        "aerodynamika",
+        "kompozity",
+        "mikroprúdové motory",
+        "elektronika & avionika",
+        "radar & C-UAS",
+        "autonómia & softvér",
+        "servis, MRO & výcvik"
+      ],
+      "cards": [
+        {
+          "title": "Interoperabilné už v návrhu",
+          "description": "Systémy sú navrhnuté na integráciu s existujúcimi architektúrami C2/C4ISR a legacy platformami, čím zabezpečujú interoperabilitu a hladké nasadenie."
+        },
+        {
+          "title": "Súlad riadený centrálne",
+          "description": "Kontrola exportu, súlad so štandardmi a licencovanie sú riadené centrálne, aby programy spĺňali regulačné a operačné požiadavky."
+        }
+      ]
+    },
+    "org": {
+      "kicker": "Organizačná štruktúra",
+      "title": "Zjednotené tímy naprieč radarom, softvérom, autonómiou a servisom",
+      "badge": "UAV + UGV + Radar + Softvér",
+      "units": [
+        {
+          "title": "AI-DEF Group (HQ)",
+          "description": "Strategické vedenie, systémová architektúra a end-to-end integrácia s vojenskými platformami a systémami C2/C4ISR.",
+          "bullets": [
+            "Centralizovaná kontrola exportu, štandardov a licencovania.",
+            "Zjednotená softvérová architektúra naprieč všetkými UAV a UGV platformami."
+          ]
+        },
+        {
+          "title": "AI-DEF RADAR",
+          "description": "Navrhuje radarové a proti-UAS systémy s multisenzorovou fúziou naprieč radarom, EO/IR a akustikou.",
+          "bullets": [
+            "Vysoká odolnosť voči elektronickému boju.",
+            "Nasaditeľné na vzdušných, pozemných a stacionárnych inštaláciách."
+          ]
+        },
+        {
+          "title": "AI-DEF R&D",
+          "description": "Vedie vývoj UAV platforiem, aerodynamiky, prúdových motorov, kompozitov, elektroniky, avioniky a autonómie pre taktické multikoptéry a FPV systémy.",
+          "bullets": [
+            "Reprezentatívne platformy: AX-2 / AX-2NG \"Krakatit\", AX-6, AX-8, FPV línia a ďalšie taktické multirotory.",
+            "Plná inžinierska hĺbka na prispôsobenie platforiem pre špecifické misie."
+          ]
+        },
+        {
+          "title": "AI-DEF Service",
+          "description": "CNC a kovovýroba, montáž, modernizácia, opravy a MRO s podporou nasadenia v teréne.",
+          "bullets": [
+            "Mobilné tímy, logistika a zásobovanie náhradnými dielmi pre trvalú pripravenosť.",
+            "Modernizačné programy predlžujúce životnosť a schopnosti platforiem."
+          ]
+        },
+        {
+          "title": "AI-DEF Software",
+          "description": "Dodáva jednotný softvérový ekosystém pre riadenie letu, telemetriu, AI asistované zameriavanie a velenie misie.",
+          "bullets": [
+            "AI-DEF Pilot, AI-DEF Targeting a AI-DEF GCS pre GNSS-denied navigáciu a edge AI.",
+            "Integrácia s C2/C4ISR cez Starlink, LTE, 5G a taktické mesh siete."
+          ]
+        },
+        {
+          "title": "Team1 – Advanced Edge AI & Autonomy",
+          "description": "Buduje end-to-end edge AI stack na Jetson, ROS2 a DeepStream s HMI/UI, simuláciami, cloudom, DevOps a bezpečnosťou.",
+          "bullets": [
+            "Zamerané na robustnú autonómiu, senzorovú fúziu a spoľahlivé nasadenia na okraji.",
+            "Simulácie (Gazebo s vlastnou fyzikou) a Secure Boot/šifrovanie sú súčasťou."
+          ]
+        },
+        {
+          "title": "AI-DEF Academy",
+          "description": "Školí pilotov, operátorov GCS, technikov a operátorov radar/C-UAS s misiovo zameranými osnovami.",
+          "bullets": [
+            "Relevantné certifikácie, aby tímy zostali aktuálne a pripravené.",
+            "Prenos znalostí, ktorý udržiava operačnú kompetenciu naprieč rolami."
+          ]
+        }
+      ]
+    },
+    "capabilities": {
+      "kicker": "Systémy a schopnosti",
+      "title": "Senzorová fúzia, inžinierska hĺbka a softvérovo orientovaná autonómia",
+      "badge": "Edge AI + odolnosť voči EW",
+      "areas": [
+        {
+          "title": "Senzory a senzorová architektúra",
+          "description": "Vyvíja a spája EO/IR, LIDAR, radar, IMU a súvisiace senzorové súpravy kalibrované na presnosť a odolnosť v prostrediach s vysokým rušením.",
+          "bullets": [
+            "Multisenzorové zostavy vyladené pre náročné prostredia.",
+            "Fúzne pipeline navrhnuté pre spoľahlivé zameriavanie a navigáciu."
+          ]
+        },
+        {
+          "title": "Inžinierske a R&D schopnosti",
+          "description": "Spája aerodynamiku, pohon, materiály, elektroniku a autonómiu, aby poskytla kompletné systémy, nie izolované komponenty.",
+          "bullets": [
+            "Aerodynamika a návrh draku s CFD, analýzou zaťaženia a optimalizáciou pôdorysu.",
+            "Vývoj mikroprúdových motorov a hybridná integrácia jet/elektrický.",
+            "Kompozitné štruktúry z CFK/Kevlar so sendvičovou konštrukciou pre vysokopevnostné draky.",
+            "Interná elektronika, avionika a integrácia senzorov podľa misie.",
+            "Autonómna navigácia, GNSS-denied operácie a robustná komunikácia (Starlink, LTE, 5G, mesh)."
+          ]
+        },
+        {
+          "title": "Softvér, edge AI a autonómia",
+          "description": "AI-DEF Pilot, AI-DEF Targeting a AI-DEF GCS tvoria jednotný ekosystém pre riadenie letu, telemetriu, AI zameriavanie a velenie misie.",
+          "bullets": [
+            "GNSS-denied navigácia a multisenzorová fúzia udržiavajú systémy v prevádzke v degradovaných podmienkach.",
+            "Embedded a edge AI na Jetson s ROS2, DeepStream, pokročilým computer vision a bezpečnostným dizajnom.",
+            "Simulácia (Gazebo s vlastnou fyzikou) zabezpečuje pripravenosť pred nasadením."
+          ]
+        },
+        {
+          "title": "Priemyselná automatizácia a smart prevádzky",
+          "description": "Navrhuje a optimalizuje automatizované fabriky a výrobné linky, integruje robotiku a modernizuje procesy ako priame rozšírenie know-how z bezpilotných systémov.",
+          "bullets": [
+            "Aplikuje prísnosť letectva a obrany na výsledky priemyselnej automatizácie.",
+            "Zaisťuje súlad výroby s regulačnými a operačnými požiadavkami."
+          ]
+        }
+      ]
+    },
+    "people": {
+      "kicker": "Ľudia a pripravenosť",
+      "title": "Tímy, partneri a výcvik, ktoré udržiavajú systémy v prevádzke",
+      "badge": "60+ špecialistov",
+      "items": [
+        {
+          "title": "Ľudia a ekosystém",
+          "description": "Približne 60 špecialistov tvorí jadro tímu AI-DEF, podporované subdodávateľmi a externými expertmi.",
+          "bullets": [
+            "Inžinierska hĺbka spojená s operačnými skúsenosťami.",
+            "Spolupráca s partnermi na riešení komplexných technických výziev."
+          ]
+        },
+        {
+          "title": "Výcvik a prenos znalostí",
+          "description": "AI-DEF Academy udržiava kompetencie pilotov, operátorov GCS, MRO technikov a radar/C-UAS špecialistov.",
+          "bullets": [
+            "Misiovo zameraný výcvik s relevantnými medzinárodnými certifikáciami.",
+            "Prenos znalostí naprieč životným cyklom na udržanie operačnej pripravenosti."
+          ]
+        }
+      ]
+    },
+    "differentiators": {
+      "kicker": "Kľúčové odlišnosti",
+      "title": "Čím sa AI-DEF odlišuje",
+      "items": [
+        "Plná vertikálna integrácia od aerodynamiky a prúdových motorov po radar, softvér, servis a výcvik.",
+        "Navrhnuté pre náročné prostredia s vysokou odolnosťou voči EW a GNSS-denied schopnosťou.",
+        "Pokročilá edge AI a autonómia s vlastným softvérom a simulačnými nástrojmi.",
+        "Interné prototypovanie a malosériová výroba v oblasti kompozitov, elektroniky a pohonu.",
+        "Prístup životného cyklu: návrh, výroba, integrácia, údržba a výcvik v jednej skupine.",
+        "Overená multisenzorová fúzia a integrácia C2/C4ISR naprieč legacy aj modernými platformami.",
+        "Zdieľaný technologický základ využiteľný v priemyselnej automatizácii a smart prevádzkach."
+      ],
+      "cta": "Vyžiadať technický briefing",
+      "note": "AI-DEF Group je pripravená zosúladiť sa s vašimi operačnými a priemyselnými požiadavkami."
+    }
+  },
+  "terms": {
+    "title": "Všeobecné podmienky",
+    "rightsTitle": "Práva dotknutej osoby",
+    "rightsSubtitle": "Dotknutá osoba má právo na:"
+  },
+  "contactForm": {
+    "description": "Ozveme sa do jedného pracovného dňa.",
+    "default": {
+      "kicker": "Kontakt",
+      "title": "Povedzte nám o vašom projekte",
+      "messageLabel": "Správa",
+      "messagePlaceholder": "Krátko opíšte, čo potrebujete..."
+    },
+    "support": {
+      "kicker": "Podpora",
+      "title": "Povedzte nám o probléme",
+      "messageLabel": "Popis problému",
+      "messagePlaceholder": "Opíšte problém, s ktorým sa stretávate..."
+    },
+    "fields": {
+      "firstName": "Meno",
+      "lastName": "Priezvisko",
+      "email": "E-mail",
+      "phone": "Telefónne číslo",
+      "product": "Produkt / strategické partnerstvo",
+      "country": "Krajina",
+      "addressLine1": "Adresa riadok 1",
+      "addressLine2": "Adresa riadok 2",
+      "addressLine3Optional": "Adresa riadok 3 (voliteľné)",
+      "website": "Webová stránka"
+    },
+    "placeholders": {
+      "firstName": "Ján",
+      "lastName": "Novák",
+      "email": "you@example.com",
+      "phone": "+1 555 123 4567",
+      "selectProduct": "Vybrať produkt",
+      "country": "Začnite písať názov krajiny",
+      "addressLine1": "Štát/kraj a mesto",
+      "addressLine2": "Hlavná 123",
+      "addressLine3": "Byt, apartmán a pod.",
+      "website": "Zadajte URL vašej webovej stránky"
+    },
+    "status": {
+      "updatingCountries": "Aktualizujú sa krajiny..."
+    },
+    "products": {
+      "all": "Všetky produkty",
+      "partnership": "Strategické partnerstvo"
+    },
+    "actions": {
+      "send": "Odoslať správu"
+    },
+    "disclaimer": "Odoslaním súhlasíte, že vás budeme kontaktovať ohľadom vašej požiadavky.",
+    "errors": {
+      "countryLoad": "Nepodarilo sa aktualizovať zoznam krajín, používame náhradný zoznam.",
+      "countryRequired": "Prosím, vyberte krajinu z návrhov."
+    },
+    "details": {
+      "title": "Kontaktné údaje",
+      "quickLinks": "Rýchle odkazy",
+      "addresses": "Adresy",
+      "managementTitle": "Manažment a administratíva",
+      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovensko",
+      "hqTitle": "Ústredie & vývojové centrum",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom",
+      "links": {
+        "product": "Produkt",
+        "services": "Služby",
+        "support": "Podpora"
+      }
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "Domov",
+      "solutions": "Riešenia",
+      "products": "Produkty",
+      "technology": "Technológie",
+      "company": "Spoločnosť",
+      "support": "Podpora",
+      "contact": "Kontakt"
+    },
+    "menus": {
+      "products": {
+        "ax2ng": "AX2NG KRAKATIT",
+        "axq": "AXQ QUADROCOPTER",
+        "gcs": "Ground Control Station",
+        "ugv": "UGV 150-DUP",
+        "av2": "AV2 VTOL"
+      },
+      "company": {
+        "about": "O nás",
+        "careers": "Kariéra"
+      }
+    },
+    "languages": {
+      "label": "Jazyky",
+      "en": "Angličtina",
+      "de": "Nemčina",
+      "sk": "Slovenčina"
+    },
+    "account": {
+      "title": "Účet",
+      "profile": "Profil",
+      "settings": "Nastavenia",
+      "signOut": "Odhlásiť sa",
+      "operator": "Operátor"
+    },
+    "actions": {
+      "clientPortal": "Klientsky portál"
+    },
+    "contactModal": {
+      "ariaLabel": "Kontaktný formulár"
+    }
+  },
+  "footer": {
+    "quickLinks": {
+      "title": "Rýchle odkazy",
+      "solutions": "Riešenia",
+      "technology": "Technológie",
+      "support": "Podpora",
+      "contact": "Kontakt",
+      "terms": "Všeobecné podmienky"
+    },
+    "contact": {
+      "title": "Kontakt"
+    },
+    "addresses": {
+      "title": "Adresy",
+      "managementTitle": "Manažment a administratíva",
+      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovensko",
+      "hqTitle": "Ústredie & vývojové centrum",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom"
+    },
+    "legal": {
+      "notice": "© AI DEF A.S. 2026. Všetky práva vyhradené."
+    }
+  },
+  "gallery": {
+    "kicker": "Vlastnosti",
+    "title": "Najzaujímavejšie z nedávnych projektov",
+    "description": "Prezrite si kurátorovaný výber prác, ktorý ukazuje prehľadnosť, spoľahlivosť a výkon v rôznych prostrediach.",
+    "imageAltFallback": "Obrázok galérie",
+    "viewImage": "Zobraziť obrázok",
+    "modal": {
+      "previous": "Zobraziť predchádzajúci obrázok",
+      "next": "Zobraziť nasledujúci obrázok"
+    }
+  },
+  "cookieConsent": {
+    "title": "Používame cookies",
+    "description": "Cookies používame na zabezpečenie stránky, zapamätanie vašich preferencií a pochopenie, ako používate naše produkty. Zatiaľ ide o štandardné oznámenie — kliknite na súhlas a pokračujte.",
+    "actions": {
+      "accept": "Prijať všetko",
+      "decline": "Odmietnuť"
+    },
+    "aria": {
+      "dismiss": "Zavrieť upozornenie na cookies",
+      "dialogLabel": "Súhlas s cookies"
+    }
+  },
+  "carousel": {
+    "previous": "Predchádzajúce",
+    "next": "Nasledujúce",
+    "cardPreviewAlt": "{{title}} náhľad"
+  }
 }

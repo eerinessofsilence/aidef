@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type ContactFormProps = {
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -52,7 +53,7 @@ const fallbackCountries: CountryOption[] = [
   { code: "NG", name: "Nigeria" },
 ];
 
-const buildCountryOptions = (): CountryOption[] => {
+const buildCountryOptions = (language = "en"): CountryOption[] => {
   const intl = Intl as typeof Intl & {
     supportedValuesOf?: (key: string) => string[];
   };
@@ -63,7 +64,7 @@ const buildCountryOptions = (): CountryOption[] => {
 
   if (canUseIntl) {
     try {
-      const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+      const displayNames = new Intl.DisplayNames([language], { type: "region" });
       return intl
         .supportedValuesOf("region")
         .filter((code) => /^[A-Z]{2}$/.test(code))
@@ -83,26 +84,18 @@ const buildCountryOptions = (): CountryOption[] => {
 const getCountryOptionLabel = (country: CountryOption) =>
   `${country.name} (${country.code})`;
 
-const productOptions: ProductOption[] = [
-  { value: "all-products", label: "All products" },
-  { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
-  { value: "av-1-vtol", label: "AV-1 VTOL" },
-  { value: "axq-quadrocopter", label: "AXQ QUADROCOPTER" },
-  { value: "ground-control-station", label: "Ground Control Station" },
-  { value: "ugv-150-dup", label: "UGV 150-DUP" },
-  { value: "strategic-partnership", label: "Strategic partnership" },
-];
 
 export const ContactForm = ({
   onSubmit,
   showDetails = true,
   variant = "default",
 }: ContactFormProps) => {
+  const { t, i18n } = useTranslation();
   const isSupportForm = variant === "support";
   const countryDatalistId = React.useId();
 
   const [countries, setCountries] = React.useState<CountryOption[]>(() =>
-    buildCountryOptions(),
+    buildCountryOptions(i18n.language),
   );
   const [countryQuery, setCountryQuery] = React.useState("");
   const [selectedCountry, setSelectedCountry] =
@@ -179,16 +172,14 @@ export const ContactForm = ({
           setCountries(dynamicCountries);
           return;
         }
-        setCountries(buildCountryOptions());
+        setCountries(buildCountryOptions(i18n.language));
       } catch (error) {
         if (controller.signal.aborted) {
           return;
         }
         console.error("Unable to load countries", error);
-        setCountryError(
-          "Не удалось обновить список стран, используем запасной список.",
-        );
-        setCountries(buildCountryOptions());
+        setCountryError(t("contactForm.errors.countryLoad"));
+        setCountries(buildCountryOptions(i18n.language));
       } finally {
         if (!controller.signal.aborted) {
           setIsLoadingCountries(false);
@@ -198,20 +189,24 @@ export const ContactForm = ({
 
     fetchCountries();
     return () => controller.abort();
-  }, [isSupportForm]);
+  }, [i18n.language, isSupportForm, t]);
 
   const inputClass = isSupportForm
     ? "text-foreground placeholder:text-foreground/50 focus:border-foreground/50 focus:ring-foreground/40 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base transition focus:ring-2 focus:outline-none"
     : "w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 shadow-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-50/10";
   const selectClass = `${inputClass} appearance-none pr-12`;
-  const formKicker = isSupportForm ? "Support" : "Contact";
+  const formKicker = isSupportForm
+    ? t("contactForm.support.kicker")
+    : t("contactForm.default.kicker");
   const formTitle = isSupportForm
-    ? "Tell us about the issue"
-    : "Tell us about your project";
-  const messageLabel = isSupportForm ? "Problem description" : "Message";
+    ? t("contactForm.support.title")
+    : t("contactForm.default.title");
+  const messageLabel = isSupportForm
+    ? t("contactForm.support.messageLabel")
+    : t("contactForm.default.messageLabel");
   const messagePlaceholder = isSupportForm
-    ? "Describe the issue you're facing..."
-    : "Share a bit about what you need...";
+    ? t("contactForm.support.messagePlaceholder")
+    : t("contactForm.default.messagePlaceholder");
   const formClass = isSupportForm ? "flex flex-col gap-y-5" : "space-y-5";
   const labelClass = isSupportForm
     ? "flex flex-col gap-y-1 text-sm"
@@ -263,7 +258,7 @@ export const ContactForm = ({
     if (!isSupportForm) {
       const match = selectedCountry ?? findCountryFromInput(countryQuery);
       if (!match) {
-        setCountryError("Пожалуйста, выберите страну из подсказок.");
+        setCountryError(t("contactForm.errors.countryRequired"));
         return;
       }
       setSelectedCountry(match);
@@ -271,13 +266,26 @@ export const ContactForm = ({
     onSubmit?.(event);
   };
 
+  const productOptions: ProductOption[] = [
+    { value: "all-products", label: t("contactForm.products.all") },
+    { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
+    { value: "av-1-vtol", label: "AV-1 VTOL" },
+    { value: "axq-quadrocopter", label: "AXQ QUADROCOPTER" },
+    { value: "ground-control-station", label: "Ground Control Station" },
+    { value: "ugv-150-dup", label: "UGV 150-DUP" },
+    {
+      value: "strategic-partnership",
+      label: t("contactForm.products.partnership"),
+    },
+  ];
+
   return (
     <div className="w-full space-y-6">
       <div>
         <p className={kickerClass}>{formKicker}</p>
         <h3 className={titleClass}>{formTitle}</h3>
         <p className={descriptionClass}>
-          We will get back to you within one business day.
+          {t("contactForm.description")}
         </p>
       </div>
       <form className={formClass} onSubmit={handleSubmit}>
@@ -286,40 +294,43 @@ export const ContactForm = ({
             <div className="grid gap-4 md:grid-cols-2">
               <label className={labelClass}>
                 <span className={labelSpanClass}>
-                  First name <span className="text-red-500">*</span>
+                  {t("contactForm.fields.firstName")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="firstName"
                   type="text"
                   autoComplete="given-name"
-                  placeholder="John"
+                  placeholder={t("contactForm.placeholders.firstName")}
                   required
                 />
               </label>
               <label className={labelClass}>
                 <span className={labelSpanClass}>
-                  Last name <span className="text-red-500">*</span>
+                  {t("contactForm.fields.lastName")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="lastName"
                   type="text"
                   autoComplete="family-name"
-                  placeholder="Doe"
+                  placeholder={t("contactForm.placeholders.lastName")}
                   required
                 />
               </label>
               <label className={`md:col-span-2 ${labelClass}`}>
                 <span className={labelSpanClass}>
-                  Email <span className="text-red-500">*</span>
+                  {t("contactForm.fields.email")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder={t("contactForm.placeholders.email")}
                   required
                 />
               </label>
@@ -341,59 +352,63 @@ export const ContactForm = ({
             <div className="grid gap-4 md:grid-cols-2">
               <label className={labelClass}>
                 <span className={labelSpanClass}>
-                  First name <span className="text-red-500">*</span>
+                  {t("contactForm.fields.firstName")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="firstName"
                   type="text"
                   autoComplete="given-name"
-                  placeholder="John"
+                  placeholder={t("contactForm.placeholders.firstName")}
                   required
                 />
               </label>
               <label className={labelClass}>
                 <span className={labelSpanClass}>
-                  Last name <span className="text-red-500">*</span>
+                  {t("contactForm.fields.lastName")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="lastName"
                   type="text"
                   autoComplete="family-name"
-                  placeholder="Doe"
+                  placeholder={t("contactForm.placeholders.lastName")}
                   required
                 />
               </label>
               <label className={labelClass}>
                 <span className={labelSpanClass}>
-                  Email <span className="text-red-500">*</span>
+                  {t("contactForm.fields.email")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder={t("contactForm.placeholders.email")}
                   required
                 />
               </label>
               <label className={labelClass}>
                 <span className={labelSpanClass}>
-                  Phone number <span className="text-red-500">*</span>
+                  {t("contactForm.fields.phone")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <input
                   className={inputClass}
                   name="phone"
                   type="tel"
                   autoComplete="tel"
-                  placeholder="+1 555 123 4567"
+                  placeholder={t("contactForm.placeholders.phone")}
                   required
                 />
               </label>
               <label className={`col-span-2 ${labelClass}`}>
                 <span className={labelSpanClass}>
-                  Product / Strategic partnership
+                  {t("contactForm.fields.product")}
                   <span className="text-red-500">*</span>
                 </span>
                 <div className="relative">
@@ -405,7 +420,7 @@ export const ContactForm = ({
                     required
                   >
                     <option value="" disabled>
-                      Select a product
+                      {t("contactForm.placeholders.selectProduct")}
                     </option>
                     {productOptions.map((product) => (
                       <option key={product.value} value={product.value}>
@@ -418,7 +433,8 @@ export const ContactForm = ({
               </label>
               <label className={`col-span-2 ${labelClass}`}>
                 <span className={labelSpanClass}>
-                  Country <span className="text-red-500">*</span>
+                  {t("contactForm.fields.country")}{" "}
+                  <span className="text-red-500">*</span>
                 </span>
                 <div className="space-y-2">
                   <div className="relative">
@@ -430,7 +446,7 @@ export const ContactForm = ({
                       onChange={handleCountryInputChange}
                       onBlur={handleCountryBlur}
                       autoComplete="country-name"
-                      placeholder="Start typing a country"
+                      placeholder={t("contactForm.placeholders.country")}
                       list={countryDatalistId}
                       required
                     />
@@ -452,7 +468,7 @@ export const ContactForm = ({
                     <p className="text-xs text-red-500">{countryError}</p>
                   ) : isLoadingCountries ? (
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      Updating countries...
+                      {t("contactForm.status.updatingCountries")}
                     </p>
                   ) : null}
                 </div>
@@ -467,7 +483,8 @@ export const ContactForm = ({
               >
                 <label className={`col-span-2 ${labelClass}`}>
                   <span className={labelSpanClass}>
-                    Address line 1 <span className="text-red-500">*</span>
+                    {t("contactForm.fields.addressLine1")}{" "}
+                    <span className="text-red-500">*</span>
                   </span>
                   <div className="space-y-2">
                     <div className="relative">
@@ -478,7 +495,7 @@ export const ContactForm = ({
                         value={cityQuery}
                         onChange={(event) => setCityQuery(event.target.value)}
                         autoComplete="address-line1"
-                        placeholder="State/province and city"
+                        placeholder={t("contactForm.placeholders.addressLine1")}
                         required={Boolean(selectedCountry)}
                         disabled={!selectedCountry}
                       />
@@ -487,38 +504,39 @@ export const ContactForm = ({
                 </label>
                 <label className={`md:col-span-2 ${labelClass}`}>
                   <span className={labelSpanClass}>
-                    Address line 2 <span className="text-red-500">*</span>
+                    {t("contactForm.fields.addressLine2")}{" "}
+                    <span className="text-red-500">*</span>
                   </span>
                   <input
                     className={inputClass}
                     name="addressLine1"
                     type="text"
                     autoComplete="address-line1"
-                    placeholder="123 Main Street"
+                    placeholder={t("contactForm.placeholders.addressLine2")}
                     required={Boolean(selectedCountry)}
                     disabled={!selectedCountry}
                   />
                 </label>
                 <label className={`md:col-span-2 ${labelClass}`}>
-                  Address line 3 (optional)
+                  {t("contactForm.fields.addressLine3Optional")}
                   <input
                     className={inputClass}
                     name="addressLine2"
                     type="text"
                     autoComplete="address-line2"
-                    placeholder="Apartment, suite, etc."
+                    placeholder={t("contactForm.placeholders.addressLine3")}
                     disabled={!selectedCountry}
                   />
                 </label>
               </div>
               <label className={`col-span-2 ${labelClass}`}>
-                Website
+                {t("contactForm.fields.website")}
                 <input
                   className={inputClass}
                   name="website"
                   type="text"
                   autoComplete="website"
-                  placeholder="Add your website URL"
+                  placeholder={t("contactForm.placeholders.website")}
                 />
               </label>
             </div>
@@ -537,10 +555,10 @@ export const ContactForm = ({
         )}
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" className={submitButtonClass}>
-            Send message
+            {t("contactForm.actions.send")}
           </button>
           <p className={submitNoteClass}>
-            By submitting, you agree to be contacted about your request.
+            {t("contactForm.disclaimer")}
           </p>
         </div>
       </form>
@@ -548,12 +566,12 @@ export const ContactForm = ({
         <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
             <p className="text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-              Contact details
+              {t("contactForm.details.title")}
             </p>
             <div className="mt-4 space-y-4 text-neutral-900 dark:text-neutral-100">
               <div className="space-y-1">
                 <p className="text-[13px] font-semibold text-neutral-500 uppercase dark:text-neutral-400">
-                  Email
+                  {t("contactForm.fields.email")}
                 </p>
                 <a
                   href="mailto:office@ai-def.com"
@@ -565,49 +583,49 @@ export const ContactForm = ({
             </div>
             <div className="mt-5">
               <p className="text-[13px] font-semibold text-neutral-500 uppercase dark:text-neutral-400">
-                Quick links
+                {t("contactForm.details.quickLinks")}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <a
                   href="#"
                   className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:text-white"
                 >
-                  Product
+                  {t("contactForm.details.links.product")}
                 </a>
                 <a
                   href="#"
                   className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:text-white"
                 >
-                  Services
+                  {t("contactForm.details.links.services")}
                 </a>
                 <a
                   href="#"
                   className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:text-white"
                 >
-                  Support
+                  {t("contactForm.details.links.support")}
                 </a>
               </div>
             </div>
           </div>
           <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
             <p className="text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-              Addresses
+              {t("contactForm.details.addresses")}
             </p>
             <div className="mt-4 grid gap-5 sm:grid-cols-2">
               <div className="space-y-1">
                 <p className="text-[13px] font-semibold text-neutral-600 uppercase dark:text-neutral-300">
-                  Management and administration
+                  {t("contactForm.details.managementTitle")}
                 </p>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                  Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia
+                  {t("contactForm.details.managementAddress")}
                 </p>
               </div>
               <div className="space-y-1 sm:col-span-2">
                 <p className="text-[13px] font-semibold text-neutral-600 uppercase dark:text-neutral-300">
-                  Headquarters & Development centre
+                  {t("contactForm.details.hqTitle")}
                 </p>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                  Staničná 267/21, 906 13 Brezová pod Bradlom
+                  {t("contactForm.details.hqAddress")}
                 </p>
               </div>
             </div>

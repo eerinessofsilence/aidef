@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ChevronDown,
@@ -19,86 +20,114 @@ import {
   type SupportedLanguage,
 } from "../src/i18n";
 
-const NAV_LINKS = [
-  { text: "Home", href: "/" },
-  { text: "Solutions", href: "/solutions" },
-  { text: "Products", href: "#", hasDropdown: true },
-  { text: "Technology", href: "/technology" },
-  { text: "Company", href: "#", hasDropdown: true },
-  { text: "Support", href: "/support" },
-  { text: "Contact", href: "#" },
+type NavKey =
+  | "home"
+  | "solutions"
+  | "products"
+  | "technology"
+  | "company"
+  | "support"
+  | "contact";
+type MenuKey = "products" | "company";
+
+const NAV_LINKS: Array<{
+  key: NavKey;
+  href: string;
+  hasDropdown?: boolean;
+  isContact?: boolean;
+}> = [
+  { key: "home", href: "/" },
+  { key: "solutions", href: "/solutions" },
+  { key: "products", href: "#", hasDropdown: true },
+  { key: "technology", href: "/technology" },
+  { key: "company", href: "#", hasDropdown: true },
+  { key: "support", href: "/support" },
+  { key: "contact", href: "#", isContact: true },
 ];
 
 const LANGUAGES: Array<{
   id: number;
   code: SupportedLanguage;
-  title: string;
+  labelKey: string;
   img: string;
 }> = [
   {
     id: 1,
     code: "en",
-    title: "English",
+    labelKey: "header.languages.en",
     img: "/en.svg",
   },
   {
     id: 2,
     code: "de",
-    title: "German",
+    labelKey: "header.languages.de",
     img: "/de.svg",
   },
   {
     id: 3,
     code: "sk",
-    title: "Slovakia",
+    labelKey: "header.languages.sk",
     img: "/sv.svg",
   },
 ];
 
 type Item = {
-  title: string;
+  titleKey: string;
   href: string;
   icon?: string;
   description?: string;
 };
 
-type Menus = Record<"Products" | "Company", Item[]>;
+type Menus = Record<MenuKey, Item[]>;
 
 const DROPDOWN_MENUS: Menus = {
-  Products: [
+  products: [
     {
-      title: "AX2NG KRAKATIT",
+      titleKey: "header.menus.products.ax2ng",
       href: "/products/ax2ng-krakatit",
       icon: "/products-1.png",
     },
     {
-      title: "AXQ QUADROCOPTER",
+      titleKey: "header.menus.products.axq",
       href: "/products/axq-quadrocopter",
       icon: "/products-3.png",
     },
     {
-      title: "Ground Control Station",
+      titleKey: "header.menus.products.gcs",
       href: "/products/ground-control-station",
       icon: "/products-4.png",
     },
     {
-      title: "UGV 150-DUP",
+      titleKey: "header.menus.products.ugv",
       href: "/products/ugv-150-dup",
       icon: "/products-5.png",
     },
-    { title: "AV2 VTOL", href: "/products/av2-vtol", icon: "/products-2.png" },
+    {
+      titleKey: "header.menus.products.av2",
+      href: "/products/av2-vtol",
+      icon: "/products-2.png",
+    },
   ],
-  Company: [
-    { title: "About Us", href: "/about-us", icon: "/company-1.svg" },
-    { title: "Careers", href: "#", icon: "/company-2.svg" },
+  company: [
+    {
+      titleKey: "header.menus.company.about",
+      href: "/about-us",
+      icon: "/company-1.svg",
+    },
+    {
+      titleKey: "header.menus.company.careers",
+      href: "#",
+      icon: "/company-2.svg",
+    },
   ],
 };
 
 export default function Header() {
+  const { t } = useTranslation();
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [languageSelectorIsOpen, setLanguageSelectorOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // used for desktop hover
+  const [activeDropdown, setActiveDropdown] = useState<MenuKey | null>(null); // used for desktop hover
   const [dropdownTimeout, setDropdownTimeout] = useState<number | null>(null);
   const [languageDropdownTimeout, setLanguageDropdownTimeout] = useState<
     number | null
@@ -133,7 +162,8 @@ export default function Header() {
 
   const mobileMenuId = "mobile-menu";
   const clientPortalHref = withLanguage(isAuthed ? "/client-portal" : "/auth");
-  const displayName = userProfile.name || userProfile.email || "Operator";
+  const displayName =
+    userProfile.name || userProfile.email || t("header.account.operator");
   const API_BASE = useMemo(() => {
     const raw =
       import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
@@ -155,7 +185,7 @@ export default function Header() {
 
   const closeContactModal = () => setContactModalOpen(false);
 
-  const handleMouseEnter = (name: string) => {
+  const handleMouseEnter = (name: MenuKey) => {
     if (dropdownTimeout) {
       clearTimeout(dropdownTimeout);
     }
@@ -419,40 +449,47 @@ export default function Header() {
             </Link>
 
             <div className="flex items-center gap-5 max-xl:hidden">
-              {NAV_LINKS.map((link) => (
-                <div
-                  key={link.text}
-                  className="relative"
-                  onMouseEnter={() => handleMouseEnter(link.text)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  {link.hasDropdown ? (
-                    <button className="group text-foreground hover:text-foreground/70 flex cursor-pointer items-center gap-1 text-[17px] font-medium transition-colors">
-                      {link.text}
-                      <ChevronDown
-                        className={`h-4 w-4 transition-transform duration-300 ${
-                          activeDropdown === link.text ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                  ) : link.text === "Contact" ? (
-                    <button
-                      type="button"
-                      onClick={() => openContactModal()}
-                      className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
-                    >
-                      {link.text}
-                    </button>
-                  ) : (
-                    <Link
-                      to={withLanguage(link.href)}
-                      className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
-                    >
-                      {link.text}
-                    </Link>
-                  )}
-                </div>
-              ))}
+              {NAV_LINKS.map((link) => {
+                const label = t(`header.nav.${link.key}`);
+                return (
+                  <div
+                    key={link.key}
+                    className="relative"
+                    onMouseEnter={() =>
+                      link.hasDropdown
+                        ? handleMouseEnter(link.key as MenuKey)
+                        : setActiveDropdown(null)
+                    }
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    {link.hasDropdown ? (
+                      <button className="group text-foreground hover:text-foreground/70 flex cursor-pointer items-center gap-1 text-[17px] font-medium transition-colors">
+                        {label}
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-300 ${
+                            activeDropdown === link.key ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    ) : link.isContact ? (
+                      <button
+                        type="button"
+                        onClick={() => openContactModal()}
+                        className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
+                      >
+                        {label}
+                      </button>
+                    ) : (
+                      <Link
+                        to={withLanguage(link.href)}
+                        className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
+                      >
+                        {label}
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             <div className="flex items-center gap-2.5 max-lg:gap-3">
@@ -493,28 +530,28 @@ export default function Header() {
                   {accountMenuOpen ? (
                     <div className="border-border/25 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-38 space-y-1 rounded-2xl border bg-black p-2.5 backdrop-blur-xl">
                       <div className="pt-2.5 text-xs font-semibold tracking-widest text-white/70 uppercase">
-                        Account
+                        {t("header.account.title")}
                       </div>
                       <Link
                         to={withLanguage("/client-portal")}
                         className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                        Client portal
+                        {t("header.actions.clientPortal")}
                       </Link>
                       <button
                         type="button"
                         className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                        Profile
+                        {t("header.account.profile")}
                       </button>
                       <button
                         type="button"
                         className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                        Settings
+                        {t("header.account.settings")}
                       </button>
                       <button
                         type="button"
@@ -522,7 +559,7 @@ export default function Header() {
                         className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
                       >
                         <LogOut className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                        Sign out
+                        {t("header.account.signOut")}
                       </button>
                     </div>
                   ) : null}
@@ -532,7 +569,7 @@ export default function Header() {
                   to={clientPortalHref}
                   className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
                 >
-                  Client Portal
+                  {t("header.actions.clientPortal")}
                 </Link>
               )}
 
@@ -554,9 +591,10 @@ export default function Header() {
           </div>
         </header>
         {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
-          const isOpen = activeDropdown === name;
+          const menuKey = name as MenuKey;
+          const isOpen = activeDropdown === menuKey;
           const visibilityClasses = getDropdownVisibilityClasses(isOpen);
-          if (name === "Products") {
+          if (name === "products") {
             return (
               <div
                 key={name}
@@ -568,7 +606,7 @@ export default function Header() {
                 <div className="grid grid-cols-3 gap-5 p-5">
                   {items.map((item) => (
                     <Link
-                      key={item.title}
+                      key={item.titleKey}
                       to={withLanguage(item.href)}
                       className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
                       onClick={() => setActiveDropdown(null)}
@@ -579,7 +617,7 @@ export default function Header() {
                       />
                       <div className="flex h-full items-center">
                         <h3 className="text-sm font-semibold text-black">
-                          {item.title}
+                          {t(item.titleKey)}
                         </h3>
                       </div>
                     </Link>
@@ -589,7 +627,7 @@ export default function Header() {
             );
           }
 
-          if (name === "Company") {
+          if (name === "company") {
             return (
               <div
                 key={name}
@@ -601,7 +639,7 @@ export default function Header() {
                 <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
                   {items.map((item) => (
                     <Link
-                      key={item.title}
+                      key={item.titleKey}
                       to={withLanguage(item.href)}
                       className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
                     >
@@ -609,7 +647,7 @@ export default function Header() {
                         <img src={item.icon} className="h-8.5 w-8.5" alt="" />
                       </div>
                       <h3 className="text-lg font-semibold text-black">
-                        {item.title}
+                        {t(item.titleKey)}
                       </h3>
                     </Link>
                   ))}
@@ -642,7 +680,7 @@ export default function Header() {
                 </div>
                 <div className="flex items-center">
                   <h3 className="text-sm font-semibold text-black">
-                    {item.title}
+                    {t(item.labelKey)}
                   </h3>
                 </div>
               </button>
@@ -663,19 +701,19 @@ export default function Header() {
           >
             <nav className="text-foreground flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain text-lg font-medium">
               {NAV_LINKS.map((link) => {
+                const label = t(`header.nav.${link.key}`);
                 if (link.hasDropdown) {
-                  const submenu =
-                    DROPDOWN_MENUS[link.text as keyof Menus] || [];
-                  const expanded = !!mobileExpanded[link.text];
+                  const submenu = DROPDOWN_MENUS[link.key as MenuKey] || [];
+                  const expanded = !!mobileExpanded[link.key];
                   return (
-                    <div key={link.text} className="relative">
+                    <div key={link.key} className="relative">
                       <button
-                        onClick={() => toggleMobileDropdown(link.text)}
+                        onClick={() => toggleMobileDropdown(link.key)}
                         className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
                         aria-expanded={expanded}
-                        aria-controls={`mobile-submenu-${link.text}`}
+                        aria-controls={`mobile-submenu-${link.key}`}
                       >
-                        <span>{link.text}</span>
+                        <span>{label}</span>
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-200 ${
                             expanded ? "rotate-180" : ""
@@ -685,7 +723,7 @@ export default function Header() {
 
                       {/* Submenu as plain text links under the parent item */}
                       <div
-                        id={`mobile-submenu-${link.text}`}
+                        id={`mobile-submenu-${link.key}`}
                         className={`flex flex-col gap-2 pl-4 transition-all ${
                           expanded
                             ? "mt-2 max-h-[1000px] opacity-100"
@@ -694,17 +732,17 @@ export default function Header() {
                       >
                         {submenu.map((s, subIdx) => (
                           <Link
-                            key={s.title}
+                            key={s.titleKey}
                             to={withLanguage(s.href)}
                             onClick={handleMobileMenuLinkClick}
                             className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
                             <img
-                              src={`/${link.text.toLowerCase()}-white-${subIdx + 1}.svg`}
+                              src={`/${link.key}-white-${subIdx + 1}.svg`}
                               className="h-6 w-6"
                               alt=""
                             />
-                            {s.title}
+                            {t(s.titleKey)}
                           </Link>
                         ))}
                       </div>
@@ -713,8 +751,8 @@ export default function Header() {
                 }
 
                 return (
-                  <div key={link.text} className="relative">
-                    {link.text === "Contact" ? (
+                  <div key={link.key} className="relative">
+                    {link.isContact ? (
                       <button
                         type="button"
                         onClick={(event) => {
@@ -723,7 +761,7 @@ export default function Header() {
                         }}
                         className="text-foreground hover:text-foreground/70 block w-full cursor-pointer text-left text-lg font-medium transition-colors"
                       >
-                        {link.text}
+                        {label}
                       </button>
                     ) : (
                       <Link
@@ -731,7 +769,7 @@ export default function Header() {
                         onClick={handleMobileMenuLinkClick}
                         className="text-foreground hover:text-foreground/70 block cursor-pointer text-lg font-medium transition-colors"
                       >
-                        {link.text}
+                        {label}
                       </Link>
                     )}
                   </div>
@@ -740,15 +778,15 @@ export default function Header() {
 
               <div className="relative">
                 <button
-                  onClick={() => toggleMobileDropdown("Languages")}
+                  onClick={() => toggleMobileDropdown("languages")}
                   className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
-                  aria-expanded={!!mobileExpanded.Languages}
+                  aria-expanded={!!mobileExpanded.languages}
                   aria-controls="mobile-submenu-languages"
                 >
-                  <span>Languages</span>
+                  <span>{t("header.languages.label")}</span>
                   <ChevronDown
                     className={`h-4 w-4 transition-transform duration-200 ${
-                      mobileExpanded.Languages ? "rotate-180" : ""
+                      mobileExpanded.languages ? "rotate-180" : ""
                     }`}
                   />
                 </button>
@@ -756,7 +794,7 @@ export default function Header() {
                 <div
                   id="mobile-submenu-languages"
                   className={`mt-2 flex flex-col gap-2 pl-4 transition-all ${
-                    mobileExpanded.Languages
+                    mobileExpanded.languages
                       ? "max-h-[1000px] opacity-100"
                       : "max-h-0 opacity-0"
                   } overflow-hidden`}
@@ -775,7 +813,9 @@ export default function Header() {
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 shadow-inner shadow-black/20">
                         <img src={language.img} className="h-6 w-6" alt="" />
                       </div>
-                      <span className="font-medium">{language.title}</span>
+                      <span className="font-medium">
+                        {t(language.labelKey)}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -812,28 +852,28 @@ export default function Header() {
                 {mobileAccountMenuOpen ? (
                   <div className="border-border/10 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full rounded-2xl border bg-black/5 p-1 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-lg">
                     <div className="px-3 py-2 text-xs font-semibold tracking-widest text-white/70 uppercase">
-                      Account
+                      {t("header.account.title")}
                     </div>
                     <Link
                       to={withLanguage("/client-portal")}
                       className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                     >
                       <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                      Client portal
+                      {t("header.actions.clientPortal")}
                     </Link>
                     <button
                       type="button"
                       className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                     >
                       <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                      Profile
+                      {t("header.account.profile")}
                     </button>
                     <button
                       type="button"
                       className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
                     >
                       <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
-                      Settings
+                      {t("header.account.settings")}
                     </button>
                     <button
                       type="button"
@@ -841,7 +881,7 @@ export default function Header() {
                       className="text-foreground flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition duration-300 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
                     >
                       <LogOut className="h-3.5 w-3.5 shrink-0" />
-                      Sign out
+                      {t("header.account.signOut")}
                     </button>
                   </div>
                 ) : null}
@@ -852,7 +892,7 @@ export default function Header() {
                 onClick={handleMobileMenuLinkClick}
                 className="group relative inline-flex h-11 w-full items-center justify-center rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
               >
-                Client Portal
+                {t("header.actions.clientPortal")}
               </Link>
             )}
           </div>
@@ -868,7 +908,7 @@ export default function Header() {
           <div
             className="relative z-10 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl md:p-10 dark:bg-neutral-900"
             aria-modal="true"
-            aria-label="Contact form"
+            aria-label={t("header.contactModal.ariaLabel")}
           >
             <button
               type="button"

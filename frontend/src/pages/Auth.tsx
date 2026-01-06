@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { buildLocalizedPath, resolveLanguage } from "../i18n";
 import { Fingerprint, Eye, EyeClosed, ChevronDown } from "lucide-react";
@@ -71,7 +72,7 @@ const fallbackCountries: CountryOption[] = [
   { code: "NG", name: "Nigeria" },
 ];
 
-const buildCountryOptions = (): CountryOption[] => {
+const buildCountryOptions = (language = "en"): CountryOption[] => {
   const intl = Intl as typeof Intl & {
     supportedValuesOf?: (key: string) => string[];
   };
@@ -82,7 +83,7 @@ const buildCountryOptions = (): CountryOption[] => {
 
   if (canUseIntl) {
     try {
-      const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+      const displayNames = new Intl.DisplayNames([language], { type: "region" });
       return intl
         .supportedValuesOf("region")
         .filter((code) => /^[A-Z]{2}$/.test(code))
@@ -102,17 +103,9 @@ const buildCountryOptions = (): CountryOption[] => {
 const getCountryOptionLabel = (country: CountryOption) =>
   `${country.name} (${country.code})`;
 
-const productOptions: ProductOption[] = [
-  { value: "all-products", label: "All products" },
-  { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
-  { value: "av-1-vtol", label: "AV-1 VTOL" },
-  { value: "axq-quadrocopter", label: "AXQ QUADROCOPTER" },
-  { value: "ground-control-station", label: "Ground Control Station" },
-  { value: "ugv-150-dup", label: "UGV 150-DUP" },
-  { value: "strategic-partnership", label: "Strategic partnership" },
-];
 
 export default function Auth() {
+  const { t, i18n } = useTranslation();
   const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [signInLoading, setSignInLoading] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
@@ -121,7 +114,7 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false);
   const countryDatalistId = useId();
   const [countries, setCountries] = useState<CountryOption[]>(() =>
-    buildCountryOptions(),
+    buildCountryOptions(i18n.language),
   );
   const [countryQuery, setCountryQuery] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
@@ -148,16 +141,15 @@ export default function Auth() {
 
   const copy: { signin: AuthCopy; signup: AuthCopy } = {
     signin: {
-      title: "Sign in to AI-DEF Command",
-      description:
-        "Resume mission planning, manage fleets, and monitor live telemetry from a secure console.",
-      cta: "Sign in",
+      title: t("auth.signin.title"),
+      description: t("auth.signin.description"),
+      cta: t("auth.signin.cta"),
     },
     signup: {
-      kicker: "Contact",
-      title: "Tell us about your project",
-      description: "We will get back to you within one business day.",
-      cta: "Send message",
+      kicker: t("auth.signup.kicker"),
+      title: t("auth.signup.title"),
+      description: t("auth.signup.description"),
+      cta: t("auth.signup.cta"),
     },
   };
   const activeCopy = isSignUp ? copy.signup : copy.signin;
@@ -165,9 +157,23 @@ export default function Auth() {
   const inputClass =
     "text-foreground placeholder:text-foreground/50 focus:border-foreground/50 focus:ring-foreground/40 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base transition focus:ring-2 focus:outline-none";
   const selectClass = `${inputClass} appearance-none pr-12`;
+  const productOptions: ProductOption[] = [
+    { value: "all-products", label: t("auth.products.all") },
+    { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
+    { value: "av-1-vtol", label: "AV-1 VTOL" },
+    { value: "axq-quadrocopter", label: "AXQ QUADROCOPTER" },
+    { value: "ground-control-station", label: "Ground Control Station" },
+    { value: "ugv-150-dup", label: "UGV 150-DUP" },
+    {
+      value: "strategic-partnership",
+      label: t("auth.products.partnership"),
+    },
+  ];
 
   const extractErrorMessage = (data: unknown) => {
-    if (!data || typeof data !== "object") return "Unexpected server response.";
+    if (!data || typeof data !== "object") {
+      return t("auth.errors.unexpectedResponse");
+    }
     const record = data as Record<string, unknown>;
     if (typeof record.detail === "string") return record.detail;
 
@@ -177,7 +183,7 @@ export default function Auth() {
       return value[0];
     }
     if (typeof value === "string") return value;
-    return "Unable to process request. Please try again.";
+    return t("auth.errors.requestFailed");
   };
 
   const filteredCountries = useMemo(() => {
@@ -243,16 +249,14 @@ export default function Auth() {
           setCountries(dynamicCountries);
           return;
         }
-        setCountries(buildCountryOptions());
+        setCountries(buildCountryOptions(i18n.language));
       } catch (error) {
         if (controller.signal.aborted) {
           return;
         }
         console.error("Unable to load countries", error);
-        setCountryError(
-          "\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u043f\u0438\u0441\u043e\u043a \u0441\u0442\u0440\u0430\u043d, \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u043c \u0437\u0430\u043f\u0430\u0441\u043d\u043e\u0439 \u0441\u043f\u0438\u0441\u043e\u043a.",
-        );
-        setCountries(buildCountryOptions());
+        setCountryError(t("auth.errors.countryLoad"));
+        setCountries(buildCountryOptions(i18n.language));
       } finally {
         if (!controller.signal.aborted) {
           setIsLoadingCountries(false);
@@ -262,7 +266,7 @@ export default function Auth() {
 
     fetchCountries();
     return () => controller.abort();
-  }, []);
+  }, [i18n.language, t]);
 
   const handleModeChange = (nextMode: "signup" | "signin") => {
     if (nextMode === mode) return;
@@ -300,13 +304,11 @@ export default function Auth() {
 
     const match = selectedCountry ?? findCountryFromInput(countryQuery);
     if (!match) {
-      setCountryError(
-        "\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u0442\u0440\u0430\u043d\u0443 \u0438\u0437 \u043f\u043e\u0434\u0441\u043a\u0430\u0437\u043e\u043a.",
-      );
+      setCountryError(t("auth.errors.countryRequired"));
       return;
     }
     setSelectedCountry(match);
-    setSignUpSuccess("Thanks! We'll respond within one business day.");
+    setSignUpSuccess(t("auth.success.signup"));
   };
 
   const handleSignInSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -320,7 +322,7 @@ export default function Auth() {
     const remember = formData.get("remember") === "on";
 
     if (!email || !password) {
-      setSignInError("Email and password are required.");
+      setSignInError(t("auth.errors.missingCredentials"));
       return;
     }
 
@@ -354,12 +356,12 @@ export default function Auth() {
         storage.setItem("authUser", JSON.stringify(parsed.user));
       }
 
-      setSignInSuccess("Signed in successfully.");
+      setSignInSuccess(t("auth.success.signin"));
       window.dispatchEvent(new Event("auth-updated"));
       navigate(withLanguage("/client-portal"), { replace: true });
     } catch (err) {
       console.error(err);
-      setSignInError("Unable to connect to the server. Please try again.");
+      setSignInError(t("auth.errors.network"));
     } finally {
       setSignInLoading(false);
     }
@@ -393,7 +395,7 @@ export default function Auth() {
                       : "text-foreground/60 hover:text-foreground/80"
                   }`}
                 >
-                  Sign up
+                  {t("auth.tabs.signup")}
                 </button>
                 <button
                   type="button"
@@ -406,7 +408,7 @@ export default function Auth() {
                       : "bg-white text-black shadow"
                   }`}
                 >
-                  Sign in
+                  {t("auth.tabs.signin")}
                 </button>
               </div>
 
@@ -433,59 +435,63 @@ export default function Auth() {
                     <div className="grid gap-4 md:grid-cols-2">
                       <label className="flex flex-col gap-y-1 text-sm">
                         <span className="text-foreground/70">
-                          First name <span className="text-red-500">*</span>
+                          {t("auth.fields.firstName")}{" "}
+                          <span className="text-red-500">*</span>
                         </span>
                         <input
                           className={inputClass}
                           name="firstName"
                           type="text"
                           autoComplete="given-name"
-                          placeholder="John"
+                          placeholder={t("auth.placeholders.firstName")}
                           required
                         />
                       </label>
                       <label className="flex flex-col gap-y-1 text-sm">
                         <span className="text-foreground/70">
-                          Last name <span className="text-red-500">*</span>
+                          {t("auth.fields.lastName")}{" "}
+                          <span className="text-red-500">*</span>
                         </span>
                         <input
                           className={inputClass}
                           name="lastName"
                           type="text"
                           autoComplete="family-name"
-                          placeholder="Doe"
+                          placeholder={t("auth.placeholders.lastName")}
                           required
                         />
                       </label>
                       <label className="flex flex-col gap-y-1 text-sm">
                         <span className="text-foreground/70">
-                          Email <span className="text-red-500">*</span>
+                          {t("auth.fields.email")}{" "}
+                          <span className="text-red-500">*</span>
                         </span>
                         <input
                           className={inputClass}
                           name="email"
                           type="email"
                           autoComplete="email"
-                          placeholder="you@example.com"
+                          placeholder={t("auth.placeholders.email")}
                           required
                         />
                       </label>
                       <label className="flex flex-col gap-y-1 text-sm">
                         <span className="text-foreground/70">
-                          Phone number <span className="text-red-500">*</span>
+                          {t("auth.fields.phone")}{" "}
+                          <span className="text-red-500">*</span>
                         </span>
                         <input
                           className={inputClass}
                           name="phone"
                           type="tel"
                           autoComplete="tel"
-                          placeholder="+1 555 123 4567"
+                          placeholder={t("auth.placeholders.phone")}
                           required
                         />
                       </label>
                       <label className="col-span-2 flex flex-col gap-y-1 text-sm">
                         <span className="text-foreground/70">
-                          Product / Strategic partnership{" "}
+                          {t("auth.fields.product")}{" "}
                           <span className="text-red-500">*</span>
                         </span>
                         <div className="relative">
@@ -497,7 +503,7 @@ export default function Auth() {
                             required
                           >
                             <option value="" disabled>
-                              Select a product
+                              {t("auth.placeholders.selectProduct")}
                             </option>
                             {productOptions.map((product) => (
                               <option key={product.value} value={product.value}>
@@ -510,7 +516,8 @@ export default function Auth() {
                       </label>
                       <label className="col-span-2 flex flex-col gap-y-1 text-sm">
                         <span className="text-foreground/70">
-                          Country <span className="text-red-500">*</span>
+                          {t("auth.fields.country")}{" "}
+                          <span className="text-red-500">*</span>
                         </span>
                         <div className="space-y-2">
                           <div className="relative">
@@ -522,7 +529,7 @@ export default function Auth() {
                               onChange={handleCountryInputChange}
                               onBlur={handleCountryBlur}
                               autoComplete="country-name"
-                              placeholder="Start typing a country"
+                              placeholder={t("auth.placeholders.country")}
                               list={countryDatalistId}
                               required
                             />
@@ -546,7 +553,7 @@ export default function Auth() {
                             </p>
                           ) : isLoadingCountries ? (
                             <p className="text-foreground/60 text-xs">
-                              Updating countries...
+                              {t("auth.status.updatingCountries")}
                             </p>
                           ) : null}
                         </div>
@@ -561,7 +568,7 @@ export default function Auth() {
                       >
                         <label className="col-span-2 flex flex-col gap-y-1 text-sm">
                           <span className="text-foreground/70">
-                            Address line 1{" "}
+                            {t("auth.fields.addressLine1")}{" "}
                             <span className="text-red-500">*</span>
                           </span>
                           <input
@@ -573,14 +580,14 @@ export default function Auth() {
                               setCityQuery(event.target.value)
                             }
                             autoComplete="address-line1"
-                            placeholder="State/province and city"
+                            placeholder={t("auth.placeholders.addressLine1")}
                             required={Boolean(selectedCountry)}
                             disabled={!selectedCountry}
                           />
                         </label>
                         <label className="flex flex-col gap-y-1 text-sm md:col-span-2">
                           <span className="text-foreground/70">
-                            Address line 2{" "}
+                            {t("auth.fields.addressLine2")}{" "}
                             <span className="text-red-500">*</span>
                           </span>
                           <input
@@ -588,44 +595,47 @@ export default function Auth() {
                             name="addressLine1"
                             type="text"
                             autoComplete="address-line1"
-                            placeholder="123 Main Street"
+                            placeholder={t("auth.placeholders.addressLine2")}
                             required={Boolean(selectedCountry)}
                             disabled={!selectedCountry}
                           />
                         </label>
                         <label className="flex flex-col gap-y-1 text-sm md:col-span-2">
                           <span className="text-foreground/70">
-                            Address line 3 (optional)
+                            {t("auth.fields.addressLine3Optional")}
                           </span>
                           <input
                             className={inputClass}
                             name="addressLine2"
                             type="text"
                             autoComplete="address-line2"
-                            placeholder="Apartment, suite, etc."
+                            placeholder={t("auth.placeholders.addressLine3")}
                             disabled={!selectedCountry}
                           />
                         </label>
                       </div>
                       <label className="col-span-2 flex flex-col gap-y-1 text-sm">
-                        <span className="text-foreground/70">Website</span>
+                        <span className="text-foreground/70">
+                          {t("auth.fields.website")}
+                        </span>
                         <input
                           className={inputClass}
                           name="website"
                           type="text"
                           autoComplete="website"
-                          placeholder="Add your website URL"
+                          placeholder={t("auth.placeholders.website")}
                         />
                       </label>
                     </div>
                     <label className="flex flex-col gap-y-1 text-sm">
                       <span className="text-foreground/70">
-                        Message <span className="text-red-500">*</span>
+                        {t("auth.fields.message")}{" "}
+                        <span className="text-red-500">*</span>
                       </span>
                       <textarea
                         className={`${inputClass} min-h-[140px] resize-none`}
                         name="message"
-                        placeholder="Share a bit about what you need..."
+                        placeholder={t("auth.placeholders.message")}
                         required
                       />
                     </label>
@@ -637,8 +647,7 @@ export default function Auth() {
                         <span className="relative">{activeCopy.cta}</span>
                       </button>
                       <p className="text-foreground/60 text-xs">
-                        By submitting, you agree to be contacted about your
-                        request.
+                        {t("auth.disclaimer")}
                       </p>
                     </div>
                   </form>
@@ -656,23 +665,27 @@ export default function Auth() {
                     onSubmit={handleSignInSubmit}
                   >
                     <label className="flex flex-col gap-y-1 text-sm">
-                      <span className="text-foreground/70">Work email</span>
+                      <span className="text-foreground/70">
+                        {t("auth.fields.workEmail")}
+                      </span>
                       <input
                         type="email"
                         name="email"
                         required
-                        placeholder="you@aidef.com"
+                        placeholder={t("auth.placeholders.workEmail")}
                         className={inputClass}
                       />
                     </label>
 
                     <label className="relative flex flex-col gap-y-1 text-sm">
-                      <span className="text-foreground/70">Password</span>
+                      <span className="text-foreground/70">
+                        {t("auth.fields.password")}
+                      </span>
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         required
-                        placeholder="********"
+                        placeholder={t("auth.placeholders.password")}
                         className={`${inputClass} pr-24`}
                       />
                       <button
@@ -691,13 +704,13 @@ export default function Auth() {
                           name="remember"
                           className="text-foreground/50 h-4 w-4 rounded border border-white/20 bg-white/10 focus:ring-white/40"
                         />
-                        Remember me
+                        {t("auth.fields.rememberMe")}
                       </label>
                       <button
                         type="button"
                         className="text-foreground/50 hover:text-foreground/70 font-medium transition-all duration-300"
                       >
-                        Forgot password?
+                        {t("auth.actions.forgotPassword")}
                       </button>
                     </div>
 
@@ -707,7 +720,9 @@ export default function Auth() {
                       className="group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       <span className="relative">
-                        {signInLoading ? "Processing..." : activeCopy.cta}
+                        {signInLoading
+                          ? t("auth.signin.processing")
+                          : activeCopy.cta}
                       </span>
                     </button>
                   </form>
@@ -728,17 +743,17 @@ export default function Auth() {
               <div className="text-foreground/70 mt-6 space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs">
                 <div className="flex items-center gap-2 text-sm font-semibold text-white">
                   <Fingerprint className="h-5 w-5" />
-                  Secure access policies
+                  {t("auth.security.title")}
                 </div>
                 <p>
-                  By continuing you agree to the operational access policy and{" "}
+                  {t("auth.security.bodyPrefix")}{" "}
                   <Link
                     to={withLanguage("/terms-of-condition")}
                     className="hover:text-foreground/70 font-medium text-white transition duration-300"
                   >
-                    Terms of Condition
+                    {t("terms.title")}
                   </Link>
-                  . For elevated roles, hardware-backed MFA is required.
+                  {t("auth.security.bodySuffix")}
                 </p>
               </div>
             </div>

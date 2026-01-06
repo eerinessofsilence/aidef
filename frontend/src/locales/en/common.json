@@ -91,10 +91,669 @@
       "cta": "Contact Us"
     }
   },
-  "auth": {},
-  "clientPortal": {},
-  "productDetail": {},
-  "solutions": {},
-  "technology": {},
-  "support": {}
+  "auth": {
+    "tabs": {
+      "signup": "Sign up",
+      "signin": "Sign in"
+    },
+    "signup": {
+      "kicker": "Contact",
+      "title": "Tell us about your project",
+      "description": "We will get back to you within one business day.",
+      "cta": "Send message"
+    },
+    "signin": {
+      "title": "Sign in to AI-DEF Command",
+      "description": "Resume mission planning, manage fleets, and monitor live telemetry from a secure console.",
+      "cta": "Sign in",
+      "processing": "Processing..."
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone number",
+      "product": "Product / Strategic partnership",
+      "country": "Country",
+      "addressLine1": "Address line 1",
+      "addressLine2": "Address line 2",
+      "addressLine3Optional": "Address line 3 (optional)",
+      "website": "Website",
+      "message": "Message",
+      "workEmail": "Work email",
+      "password": "Password",
+      "rememberMe": "Remember me"
+    },
+    "placeholders": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "you@example.com",
+      "phone": "+1 555 123 4567",
+      "selectProduct": "Select a product",
+      "country": "Start typing a country",
+      "addressLine1": "State/province and city",
+      "addressLine2": "123 Main Street",
+      "addressLine3": "Apartment, suite, etc.",
+      "website": "Add your website URL",
+      "message": "Share a bit about what you need...",
+      "workEmail": "you@aidef.com",
+      "password": "********"
+    },
+    "products": {
+      "all": "All products",
+      "partnership": "Strategic partnership"
+    },
+    "status": {
+      "updatingCountries": "Updating countries..."
+    },
+    "disclaimer": "By submitting, you agree to be contacted about your request.",
+    "actions": {
+      "forgotPassword": "Forgot password?"
+    },
+    "errors": {
+      "countryLoad": "We couldn't update the country list, using the fallback list.",
+      "countryRequired": "Please select a country from the suggestions.",
+      "unexpectedResponse": "Unexpected server response.",
+      "requestFailed": "Unable to process request. Please try again.",
+      "missingCredentials": "Email and password are required.",
+      "network": "Unable to connect to the server. Please try again."
+    },
+    "success": {
+      "signup": "Thanks! We'll respond within one business day.",
+      "signin": "Signed in successfully."
+    },
+    "security": {
+      "title": "Secure access policies",
+      "bodyPrefix": "By continuing you agree to the operational access policy and",
+      "bodySuffix": ". For elevated roles, hardware-backed MFA is required."
+    }
+  },
+  "clientPortal": {
+    "productSelector": {
+      "label": "All products ({{count}})"
+    },
+    "hero": {
+      "kicker": "Your product"
+    },
+    "media": {
+      "productImageAlt": "{{name}} view {{index}}",
+      "previousImage": "Show previous image",
+      "nextImage": "Show next image",
+      "imageIndex": "Show image {{index}} of {{count}}"
+    },
+    "overview": {
+      "serial": "Serial {{serial}}",
+      "title": "Overview",
+      "cards": {
+        "ownership": {
+          "label": "Ownership",
+          "value": "Active / Owned",
+          "note": "Cleared for operational deployment under your program."
+        },
+        "documentation": {
+          "label": "Documentation",
+          "value": "Confidential bundle",
+          "note": "Technical orders, wiring, and maintenance notes secured to this session."
+        }
+      }
+    },
+    "specs": {
+      "kicker": "Specifications & Technical Details",
+      "title": "Engineering sheet"
+    },
+    "gallery": {
+      "kicker": "Product gallery",
+      "title": "Visual dossier",
+      "description": "Imagery pulled directly from your synced fleet records.",
+      "assets": "{{count}} assets",
+      "openImage": "Open gallery image {{index}} of {{count}}",
+      "imageAlt": "{{name}} gallery {{index}}",
+      "viewImage": "View image",
+      "modalLabel": "Product gallery",
+      "close": "Close gallery"
+    },
+    "notes": {
+      "kicker": "Operational notes",
+      "title": "Briefing cards"
+    },
+    "empty": {
+      "title": "No products in your portal yet.",
+      "subtitle": "Purchased products and documentation will appear here."
+    },
+    "actions": {
+      "contact": "Contact Us"
+    },
+    "upgrades": {
+      "kicker": "Available upgrades",
+      "title": "Modules built for contested environments",
+      "badge": "Add-on"
+    },
+    "summary": {
+      "kicker": "Overview",
+      "title": "Centralized products overview",
+      "description": "Browse your full lineup, compare key specs, and access manuals, service notes, and integration materials in one place.",
+      "cards": {
+        "products": {
+          "label": "Products",
+          "value": "Active",
+          "note": "Ready to deploy. More assets appear instantly when acquired."
+        },
+        "clearance": {
+          "label": "Clearance",
+          "value": "Verified",
+          "note": "Session encrypted, device fingerprint recorded."
+        },
+        "documents": {
+          "label": "Documents",
+          "value": "Controlled",
+          "note": "Specs, export notes, and field manuals stay inside this session."
+        }
+      }
+    },
+    "lineup": {
+      "title": "Product lineup",
+      "note": "Future purchases will appear here automatically — select a unit to view specs and documentation."
+    },
+    "security": {
+      "kicker": "Security & Confidentiality Notice",
+      "message": "This information is confidential and available only to authorized users. Unauthorized distribution is strictly prohibited.",
+      "badge": "Session monitored"
+    },
+    "modules": {
+      "modalLabel": "Module details",
+      "imagesUnavailable": "Images are not available for this module yet.",
+      "descriptionUnavailable": "Detailed description is not available yet.",
+      "detailsTitle": "Module details"
+    },
+    "fallbacks": {
+      "detail": "Detail",
+      "na": "N/A",
+      "specifications": "Specifications",
+      "additional": "Additional",
+      "notesTitle": "Notes",
+      "notesBody": "Details will be added soon.",
+      "module": "Module",
+      "request": "Request",
+      "untitledProduct": "Untitled product",
+      "noProducts": "No products available",
+      "noProductsSummary": "Products will appear here after they are assigned."
+    }
+  },
+  "productDetail": {
+    "hero": {
+      "imageAlt": "Product image",
+      "heroAlt": "Product hero",
+      "previousImage": "Previous image",
+      "nextImage": "Next image",
+      "goToImage": "Go to image {{index}}"
+    },
+    "overview": {
+      "kicker": "Characteristics",
+      "title": "About product",
+      "descriptionFallback": "Product description"
+    },
+    "technology": {
+      "kicker": "Technology Focus",
+      "title": "Production-grade polish, tuned for rugged autonomy.",
+      "description": "Across UAVs, UGVs, and GCS, the control stack delivers precise inputs, smooth dynamics, and intuitive safety layers that feel instantly familiar to operators."
+    },
+    "actions": {
+      "contact": "Contact Us"
+    },
+    "carousel": {
+      "title": "All Products"
+    },
+    "errors": {
+      "list": "We couldn't sync the fleet catalog. Try again soon.",
+      "detail": "Couldn't load product data.",
+      "catalogFallback": "Catalog data load have failed."
+    }
+  },
+  "solutions": {
+    "hero": {
+      "title": "Field-Proven UAV, UGV & GCS Solutions"
+    },
+    "overview": {
+      "title": "Global command communication & Antidrone system"
+    },
+    "blocks": {
+      "title": "Multifunctional indicator with push-button framing and touchscreen.",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis similique, et repudiandae hic in quibusdam voluptas vero quia, enim nesciunt id facere. Asperiores ipsa maiores et accusamus reprehenderit facere soluta magnam aliquam minima in velit."
+    },
+    "actions": {
+      "learnMore": "Learn more"
+    },
+    "features": {
+      "kicker": "Characteristics",
+      "title": "Main features:",
+      "items": [
+        "GPS/GALILEO/GLONASS (PPS & SPS)",
+        "MIL-STD compliant",
+        "3 GNSS antennas = accuracy up to 0.5 m",
+        "Built-in C2 allows integration of any analog or IP-based subsystems (engine, alarms, etc.)",
+        "Customizable graphics and software functionality"
+      ]
+    }
+  },
+  "technology": {
+    "hero": {
+      "kicker": "We create the future",
+      "title": "AI-DEF Software",
+      "cta": "Learn more"
+    },
+    "overview": {
+      "title": "Overview",
+      "description": "The AI-DEF Software Suite is a fully integrated software ecosystem for mission planning, command and control of unmanned systems and exploitation of sensor data. It consists of several modules that work together to provide end-to-end support for UAV and UGV operations."
+    },
+    "modules": {
+      "title": "Modules",
+      "cards": {
+        "defgroundPilot": {
+          "title": "DEFgroundPilot",
+          "description": "Mission planning, flight control, telemetry and health monitoring."
+        },
+        "defgroundTargeting": {
+          "title": "DEFgroundTargeting",
+          "description": "AI video analytics for detection, classification and tracking of targets."
+        },
+        "defgroundGateway": {
+          "title": "DEFgroundGateway",
+          "description": "Secure, multi-link communication management for RF, LTE and satellite links."
+        },
+        "defgroundInstaller": {
+          "title": "DEFgroundInstaller",
+          "description": "Software deployment, updates, diagnostics and configuration management."
+        }
+      }
+    },
+    "integration": {
+      "title": "Integration with AI-DEF Platforms",
+      "description": "The Software Suite is natively integrated with the avionics of AX2NG KRAKATIT, AV-1 VTOL, AXQ quadcopter and UGV 150-DUP. This ensures consistent user experience, unified mission planning and simplified training across the entire AI-DEF portfolio."
+    }
+  },
+  "support": {
+    "hero": {
+      "title": "Technical Support, Maintenance, and Expert Guidance",
+      "slideAlt": "Background {{index}}",
+      "slideAria": "Go to slide {{index}}"
+    },
+    "contact": {
+      "kicker": "Be safe with us",
+      "addressesLabel": "Addresses:",
+      "managementTitle": "Management and administration",
+      "managementAddress": "Vedecky park - Ilkovicova 8 841 02 Bratislava Slovakia",
+      "hqTitle": "Headquarters & Development centre",
+      "hqAddress": "Staniná 267/21 906 13 Brezová pod Bradlom Slovakia"
+    },
+    "form": {
+      "success": "Thanks! We'll respond within one business day."
+    }
+  },
+  "aboutUs": {
+    "hero": {
+      "pill": "About AI-DEF Group",
+      "title": "Vertically integrated unmanned systems for contested missions.",
+      "descriptionPrimary": "AI-DEF Group is a vertically integrated European developer of modern unmanned systems and supporting technologies. The group spans UAV/UGV platforms, radar, autonomy, software, multi-sensor stacks, and industrial integration.",
+      "descriptionSecondary": "We align engineering depth with operational needs to deliver systems that stay mission-ready, interoperable, and secure.",
+      "highlights": [
+        {
+          "title": "Built for contested environments",
+          "description": "Operationally relevant unmanned systems engineered for EW resilience, GNSS-denied operations, and demanding missions."
+        },
+        {
+          "title": "Lifecycle ownership",
+          "description": "From aerodynamics and composites to micro jet engines, avionics, radar, autonomy, service, and training within one group."
+        },
+        {
+          "title": "Open integration",
+          "description": "Interoperable with existing C2/C4ISR and legacy platforms, with export control and standards compliance managed centrally."
+        }
+      ]
+    },
+    "missionVision": [
+      {
+        "title": "Our Mission",
+        "description": "Deliver reliable, operationally relevant unmanned systems and enabling technologies built for contested environments and demanding missions."
+      },
+      {
+        "title": "Our Vision",
+        "description": "Treat autonomy, robust sensor fusion, and industrial automation as enduring capabilities engineered for long-term readiness, not short-term trends."
+      }
+    ],
+    "lifecycle": {
+      "kicker": "Lifecycle",
+      "phases": [
+        "research",
+        "design",
+        "aerodynamics",
+        "composites",
+        "micro jet engines",
+        "electronics & avionics",
+        "radar & C-UAS",
+        "autonomy & software",
+        "service, MRO & training"
+      ],
+      "cards": [
+        {
+          "title": "Interoperable by design",
+          "description": "Systems are built to integrate with existing C2/C4ISR architectures and legacy platforms, ensuring interoperability and smooth fielding."
+        },
+        {
+          "title": "Compliance handled centrally",
+          "description": "Export control, standards compliance, and licensing are managed centrally to keep programs aligned with regulatory and operational requirements."
+        }
+      ]
+    },
+    "org": {
+      "kicker": "Organizational Structure",
+      "title": "Unified teams across radar, software, autonomy, and service",
+      "badge": "UAV + UGV + Radar + Software",
+      "units": [
+        {
+          "title": "AI-DEF Group (HQ)",
+          "description": "Strategic leadership, systems architecture, and end-to-end integration with military platforms and C2/C4ISR systems.",
+          "bullets": [
+            "Centralized export control, standards, and licensing.",
+            "Unified software architecture across all UAV and UGV platforms."
+          ]
+        },
+        {
+          "title": "AI-DEF RADAR",
+          "description": "Designs radar and counter-UAS systems with multi-sensor fusion across radar, EO/IR, and acoustics.",
+          "bullets": [
+            "High resilience against electronic warfare.",
+            "Deployable on airborne, ground, and fixed installations."
+          ]
+        },
+        {
+          "title": "AI-DEF R&D",
+          "description": "Leads UAV platform development, aerodynamics, jet engines, composites, electronics, avionics, and autonomy for tactical multicopters and FPV systems.",
+          "bullets": [
+            "Representative platforms: AX-2 / AX-2NG \"Krakatit\", AX-6, AX-8, FPV line, and other tactical multirotors.",
+            "Full-stack engineering depth to customize mission-specific platforms."
+          ]
+        },
+        {
+          "title": "AI-DEF Service",
+          "description": "CNC and metalworking, assembly, modernization, repair, and MRO with field deployment support.",
+          "bullets": [
+            "Mobile teams, logistics, and spare-parts supply for sustained readiness.",
+            "Modernization programs that extend platform life and capability."
+          ]
+        },
+        {
+          "title": "AI-DEF Software",
+          "description": "Delivers the unified software ecosystem for flight control, telemetry, AI-assisted targeting, and mission command.",
+          "bullets": [
+            "AI-DEF Pilot, AI-DEF Targeting, and AI-DEF GCS built for GNSS-denied navigation and edge AI.",
+            "Integrates with C2/C4ISR over Starlink, LTE, 5G, and tactical mesh networks."
+          ]
+        },
+        {
+          "title": "Team1 - Advanced Edge AI & Autonomy",
+          "description": "Builds the end-to-end edge AI stack on Jetson, ROS2, and DeepStream with HMI/UI, simulation, cloud, DevOps, and security.",
+          "bullets": [
+            "Focus on robust autonomy, sensor fusion, and reliable deployments at the edge.",
+            "Simulation (Gazebo with custom physics) and Secure Boot/encryption baked in."
+          ]
+        },
+        {
+          "title": "AI-DEF Academy",
+          "description": "Trains pilots, GCS operators, technicians, and radar/C-UAS operators with mission-focused curricula.",
+          "bullets": [
+            "Applicable certifications to keep teams current and mission-ready.",
+            "Knowledge transfer that preserves operational competence across roles."
+          ]
+        }
+      ]
+    },
+    "capabilities": {
+      "kicker": "Systems & Capabilities",
+      "title": "Sensor fusion, engineering depth, and software-first autonomy",
+      "badge": "Edge AI + EW Resilience",
+      "areas": [
+        {
+          "title": "Sensors & Sensor Architecture",
+          "description": "Develops and fuses EO/IR, LIDAR, radar, IMU, and related sensor suites calibrated for precision and resilience in interference-heavy environments.",
+          "bullets": [
+            "Multi-sensor stacks tuned for contested domains.",
+            "Fusion pipelines engineered for reliable targeting and navigation."
+          ]
+        },
+        {
+          "title": "Engineering & R&D Capabilities",
+          "description": "Combines aerodynamics, propulsion, materials, electronics, and autonomy to deliver complete systems rather than isolated components.",
+          "bullets": [
+            "Aerodynamics and airframe design with CFD, load analysis, and planform optimization.",
+            "Micro jet engine development and hybrid jet/electric integration.",
+            "Composite structures in CFK/Kevlar with sandwich construction for high-strength airframes.",
+            "In-house electronics, avionics, and mission-specific sensor integration.",
+            "Autonomous navigation, GNSS-denied operation, and robust comms (Starlink, LTE, 5G, mesh)."
+          ]
+        },
+        {
+          "title": "Software, Edge AI & Autonomy",
+          "description": "AI-DEF Pilot, AI-DEF Targeting, and AI-DEF GCS form a unified ecosystem for flight control, telemetry, AI-based targeting, and mission command.",
+          "bullets": [
+            "GNSS-denied navigation and multi-sensor fusion keep systems operational in degraded environments.",
+            "Embedded and edge AI on Jetson with ROS2, DeepStream, advanced computer vision, and security-first design.",
+            "Simulation (Gazebo with custom physics) ensures readiness before deployment."
+          ]
+        },
+        {
+          "title": "Industrial Automation & Smart Facilities",
+          "description": "Designs and optimizes automated factories and production lines, integrating robotics and modernizing processes as a direct extension of unmanned systems expertise.",
+          "bullets": [
+            "Applies aerospace and defense rigor to industrial automation outcomes.",
+            "Keeps production aligned with regulatory and operational requirements."
+          ]
+        }
+      ]
+    },
+    "people": {
+      "kicker": "People & Readiness",
+      "title": "Teams, partners, and training that keep systems operational",
+      "badge": "60+ specialists",
+      "items": [
+        {
+          "title": "People & Ecosystem",
+          "description": "Around 60 specialists form the AI-DEF core team, supported by subcontractors and external experts.",
+          "bullets": [
+            "Engineering depth paired with operational experience.",
+            "Collaboration with partners to solve complex technical challenges."
+          ]
+        },
+        {
+          "title": "Training & Knowledge Transfer",
+          "description": "AI-DEF Academy maintains competence across pilots, GCS operators, MRO technicians, and radar/C-UAS specialists.",
+          "bullets": [
+            "Mission-focused training with applicable international certifications.",
+            "Lifecycle knowledge transfer to sustain operational readiness."
+          ]
+        }
+      ]
+    },
+    "differentiators": {
+      "kicker": "Key Differentiators",
+      "title": "What makes AI-DEF different",
+      "items": [
+        "Full vertical integration from aerodynamics and jet engines to radar, software, service, and training.",
+        "Designed for contested environments with strong EW resilience and GNSS-denied capability.",
+        "Advanced edge AI and autonomy with in-house software and simulation tools.",
+        "In-house prototyping and small-series production across composites, electronics, and propulsion.",
+        "Lifecycle approach: design, build, integrate, maintain, and train within one group.",
+        "Proven multi-sensor fusion and C2/C4ISR integration across legacy and modern platforms.",
+        "Shared technology base applicable to industrial automation and smart facilities."
+      ],
+      "cta": "Request technical briefing",
+      "note": "AI-DEF Group is ready to align with your operational and industrial requirements."
+    }
+  },
+  "terms": {
+    "title": "Terms of Condition",
+    "rightsTitle": "Rights of the data subject",
+    "rightsSubtitle": "The data subject has the right to:"
+  },
+  "contactForm": {
+    "description": "We will get back to you within one business day.",
+    "default": {
+      "kicker": "Contact",
+      "title": "Tell us about your project",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Share a bit about what you need..."
+    },
+    "support": {
+      "kicker": "Support",
+      "title": "Tell us about the issue",
+      "messageLabel": "Problem description",
+      "messagePlaceholder": "Describe the issue you're facing..."
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone number",
+      "product": "Product / Strategic partnership",
+      "country": "Country",
+      "addressLine1": "Address line 1",
+      "addressLine2": "Address line 2",
+      "addressLine3Optional": "Address line 3 (optional)",
+      "website": "Website"
+    },
+    "placeholders": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "you@example.com",
+      "phone": "+1 555 123 4567",
+      "selectProduct": "Select a product",
+      "country": "Start typing a country",
+      "addressLine1": "State/province and city",
+      "addressLine2": "123 Main Street",
+      "addressLine3": "Apartment, suite, etc.",
+      "website": "Add your website URL"
+    },
+    "status": {
+      "updatingCountries": "Updating countries..."
+    },
+    "products": {
+      "all": "All products",
+      "partnership": "Strategic partnership"
+    },
+    "actions": {
+      "send": "Send message"
+    },
+    "disclaimer": "By submitting, you agree to be contacted about your request.",
+    "errors": {
+      "countryLoad": "We couldn't update the country list, using the fallback list.",
+      "countryRequired": "Please select a country from the suggestions."
+    },
+    "details": {
+      "title": "Contact details",
+      "quickLinks": "Quick links",
+      "addresses": "Addresses",
+      "managementTitle": "Management and administration",
+      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia",
+      "hqTitle": "Headquarters & Development centre",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom",
+      "links": {
+        "product": "Product",
+        "services": "Services",
+        "support": "Support"
+      }
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "Home",
+      "solutions": "Solutions",
+      "products": "Products",
+      "technology": "Technology",
+      "company": "Company",
+      "support": "Support",
+      "contact": "Contact"
+    },
+    "menus": {
+      "products": {
+        "ax2ng": "AX2NG KRAKATIT",
+        "axq": "AXQ QUADROCOPTER",
+        "gcs": "Ground Control Station",
+        "ugv": "UGV 150-DUP",
+        "av2": "AV2 VTOL"
+      },
+      "company": {
+        "about": "About Us",
+        "careers": "Careers"
+      }
+    },
+    "languages": {
+      "label": "Languages",
+      "en": "English",
+      "de": "Deutsch",
+      "sk": "Slovak"
+    },
+    "account": {
+      "title": "Account",
+      "profile": "Profile",
+      "settings": "Settings",
+      "signOut": "Sign out",
+      "operator": "Operator"
+    },
+    "actions": {
+      "clientPortal": "Client portal"
+    },
+    "contactModal": {
+      "ariaLabel": "Contact form"
+    }
+  },
+  "footer": {
+    "quickLinks": {
+      "title": "Quick links",
+      "solutions": "Solutions",
+      "technology": "Technology",
+      "support": "Support",
+      "contact": "Contact",
+      "terms": "Terms of Condition"
+    },
+    "contact": {
+      "title": "Contact"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "managementTitle": "Management and administration",
+      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia",
+      "hqTitle": "Headquarters & Development centre",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom"
+    },
+    "legal": {
+      "notice": "© AI DEF A.S. 2026. All rights reserved."
+    }
+  },
+  "gallery": {
+    "kicker": "Characteristics",
+    "title": "Highlights from recent projects",
+    "description": "Browse a curated selection of work, showcasing clarity, reliability, and performance across a range of environments.",
+    "imageAltFallback": "Gallery image",
+    "viewImage": "View image",
+    "modal": {
+      "previous": "Show previous image",
+      "next": "Show next image"
+    }
+  },
+  "cookieConsent": {
+    "title": "We use cookies",
+    "description": "We rely on cookies to keep the site secure, remember your preferences, and understand how you use our products. This is a standard notice for now — click accept to continue.",
+    "actions": {
+      "accept": "Accept all",
+      "decline": "Decline"
+    },
+    "aria": {
+      "dismiss": "Dismiss cookie notice",
+      "dialogLabel": "Cookie consent"
+    }
+  },
+  "carousel": {
+    "previous": "Previous",
+    "next": "Next",
+    "cardPreviewAlt": "{{title}} preview"
+  }
 }
