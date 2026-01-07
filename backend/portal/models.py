@@ -94,8 +94,58 @@ class ProductImage(models.Model):
         verbose_name = "Product image"
         verbose_name_plural = "Product images"
 
+    def save(self, *args, **kwargs):
+        creating = self.pk is None
+        super().save(*args, **kwargs)
+        if creating:
+            self.ensure_translations()
+
+    def ensure_translations(self, english_alt=None):
+        if english_alt is None:
+            english_alt = (
+                ProductImageTranslation.objects.filter(
+                    image=self, lang="en"
+                )
+                .values_list("alt", flat=True)
+                .first()
+                or self.alt
+                or ""
+            )
+        if isinstance(english_alt, str):
+            english_alt = english_alt.strip()
+        for lang, _ in ProductImageTranslation.Lang.choices:
+            if lang == "en":
+                alt = english_alt
+            else:
+                alt = english_alt if english_alt else ""
+            ProductImageTranslation.objects.get_or_create(
+                image=self,
+                lang=lang,
+                defaults={"alt": alt},
+            )
+
     def __str__(self):
         return f"{self.product.name} — image {self.pk}"
+
+class ProductImageTranslation(models.Model):
+    class Lang(models.TextChoices):
+        EN = "en", "English"
+        DE = "de", "German"
+        SK = "sk", "Slovak"
+
+    image = models.ForeignKey(
+        ProductImage, on_delete=models.CASCADE, related_name="translations"
+    )
+    lang = models.CharField(max_length=2, choices=Lang.choices)
+    alt = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ("image", "lang")
+        verbose_name = "Product image translation"
+        verbose_name_plural = "Product image translations"
+
+    def __str__(self):
+        return f"{self.image_id} ({self.lang})"
 
 class ProductGallery(models.Model):
     product = models.ForeignKey(

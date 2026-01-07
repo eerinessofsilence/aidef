@@ -1,0 +1,33 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <style>
+    .lang-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin: 8px 0 12px;
+    }
+    .lang-switcher__label {
+      font-weight: 600;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% if language_tabs %}
+    <div class="lang-switcher">
+      <span class="lang-switcher__label">Alt text language:</span>
+      {% for tab in language_tabs %}
+        <a
+          href="{{ tab.url }}"
+          class="button{% if tab.active %} default{% endif %}"
+          aria-current="{% if tab.active %}true{% else %}false{% endif %}"
+        >{{ tab.label }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

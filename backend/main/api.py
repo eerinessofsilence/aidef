@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
+from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_GET
 
@@ -27,6 +28,63 @@ def _absolute_media_url(request, image_field) -> str | None:
     return request.build_absolute_uri(url)
 
 
+SUPPORTED_LANGUAGES = {code.lower() for code, _ in settings.LANGUAGES}
+DEFAULT_LANGUAGE = "en"
+
+
+def _parse_accept_language(raw: str) -> List[str]:
+    if not raw:
+        return []
+    choices: List[tuple[float, int, str]] = []
+    for index, part in enumerate(raw.split(",")):
+        chunk = part.strip()
+        if not chunk:
+            continue
+        lang_range, *params = chunk.split(";")
+        lang = lang_range.strip().lower()
+        if not lang:
+            continue
+        base = lang.split("-")[0]
+        q = 1.0
+        for param in params:
+            param = param.strip()
+            if param.startswith("q="):
+                try:
+                    q = float(param[2:])
+                except ValueError:
+                    q = 0.0
+        choices.append((q, index, base))
+    choices.sort(key=lambda item: (-item[0], item[1]))
+    return [lang for _, _, lang in choices]
+
+
+def _get_request_language(request) -> str:
+    header = request.headers.get("Accept-Language", "")
+    for lang in _parse_accept_language(header):
+        if lang in SUPPORTED_LANGUAGES:
+            return lang
+    fallback = getattr(request, "LANGUAGE_CODE", "")
+    if fallback:
+        base = fallback.split("-")[0].lower()
+        if base in SUPPORTED_LANGUAGES:
+            return base
+    return DEFAULT_LANGUAGE
+
+
+def _get_image_alt(image: ProductImage, lang: str) -> str:
+    translations = list(image.translations.all())
+    for translation in translations:
+        if translation.lang == lang:
+            return translation.alt
+    if lang != DEFAULT_LANGUAGE:
+        for translation in translations:
+            if translation.lang == DEFAULT_LANGUAGE:
+                return translation.alt
+    if image.alt:
+        return image.alt
+    return ""
+
+
 def _serialize_product_base(product: Product) -> Dict[str, Any]:
     return {
         'id': product.id,
@@ -44,6 +102,7 @@ def _serialize_product_list(product: Product) -> Dict[str, Any]:
 
 def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
     data = _serialize_product_list(product)
+    language = _get_request_language(request)
     data.update(
         {
             'description': product.description,
@@ -57,7 +116,7 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         {
             'id': image.id,
             'url': _absolute_media_url(request, image.image),
-            'alt': image.alt,
+            'alt': _get_image_alt(image, language),
             'order': image.order,
         }
         for image in images
@@ -161,7 +220,7 @@ def item_list_api(request):
     products = (
         Product.objects.filter(available=True)
         .select_related('category')
-        .prefetch_related('features', 'sub_features', 'images')
+        .prefetch_related('features', 'sub_features', 'images__translations')
         .order_by('order', 'name')
     )
 
@@ -178,7 +237,7 @@ def item_detail_api(request, slug: str):
             .prefetch_related(
                 'features',
                 'sub_features',
-                'images',
+                'images__translations',
                 'gallery',
                 'technologies',
                 'feature_blocks',

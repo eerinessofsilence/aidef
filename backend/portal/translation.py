@@ -5,7 +5,6 @@ from .models import (
     ProductCharacteristic,
     ProductCharacteristicsBlock,
     ProductGallery,
-    ProductImage,
     ProductModule,
     ProductModuleCharacteristic,
     ProductModuleImage,
@@ -18,11 +17,6 @@ from .models import (
 @register(PortalProduct)
 class PortalProductTranslationOptions(TranslationOptions):
     fields = ("name", "description")
-
-
-@register(ProductImage)
-class ProductImageTranslationOptions(TranslationOptions):
-    fields = ("alt",)
 
 
 @register(ProductGallery)

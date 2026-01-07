@@ -7,7 +7,6 @@ from .models import (
     ProductFeature,
     ProductFeatureBlock,
     ProductGallery,
-    ProductImage,
     ProductInfoBlock,
     ProductSubFeature,
     ProductTechnology,
@@ -22,11 +21,6 @@ class CategoryTranslationOptions(TranslationOptions):
 @register(Product)
 class ProductTranslationOptions(TranslationOptions):
     fields = ("name", "description")
-
-
-@register(ProductImage)
-class ProductImageTranslationOptions(TranslationOptions):
-    fields = ("alt",)
 
 
 @register(ProductFeature)
