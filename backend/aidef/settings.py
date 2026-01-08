@@ -66,14 +66,6 @@ DATABASES = {
         'PASSWORD': getenv('DB_PASS', getenv('POSTGRES_PASSWORD', 'aidef_password')),
         'NAME': getenv('DB_NAME', getenv('POSTGRES_DB', 'aidef')),
         'ATOMIC_REQUESTS': True,
-    },
-    "old": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "temp_restore",
-        "USER": "dev_user",
-        "PASSWORD": "password",
-        "HOST": "localhost",
-        "PORT": "5432",
     }
 }
 

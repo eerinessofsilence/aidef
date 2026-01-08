@@ -54,19 +54,19 @@ const LANGUAGES: Array<{
   {
     id: 1,
     code: "en",
-    labelKey: "header.languages.en",
+    labelKey: "English",
     img: "/en.svg",
   },
   {
     id: 2,
     code: "de",
-    labelKey: "header.languages.de",
+    labelKey: "German",
     img: "/de.svg",
   },
   {
     id: 3,
     code: "sk",
-    labelKey: "header.languages.sk",
+    labelKey: "Slovak",
     img: "/sv.svg",
   },
 ];
@@ -236,10 +236,7 @@ export default function Header() {
       return;
     }
 
-    const targetPath = replaceLanguageInPath(
-      location.pathname,
-      nextLanguage,
-    );
+    const targetPath = replaceLanguageInPath(location.pathname, nextLanguage);
     navigate({
       pathname: targetPath,
       search: location.search,
@@ -448,7 +445,7 @@ export default function Header() {
               <img src="/logo-ai-def.svg" className="w-40 max-md:w-35" alt="" />
             </Link>
 
-            <div className="flex items-center gap-5 max-xl:hidden">
+            <div className="flex items-center gap-4 max-xl:hidden">
               {NAV_LINKS.map((link) => {
                 const label = t(`header.nav.${link.key}`);
                 return (
@@ -492,7 +489,7 @@ export default function Header() {
               })}
             </div>
 
-            <div className="flex items-center gap-2.5 max-lg:gap-3">
+            <div className="flex items-center gap-2 max-lg:gap-3">
               <div
                 onMouseEnter={handleLanguageMouseEnter}
                 onMouseLeave={handleLanguageMouseLeave}
@@ -567,7 +564,7 @@ export default function Header() {
               ) : (
                 <Link
                   to={clientPortalHref}
-                  className="group relative inline-flex h-10 w-[139px] items-center justify-center overflow-hidden rounded-xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
+                  className="group relative inline-flex h-10 items-center justify-center overflow-hidden rounded-xl bg-white px-2 text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
                 >
                   {t("header.actions.clientPortal")}
                 </Link>
@@ -813,9 +810,7 @@ export default function Header() {
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 shadow-inner shadow-black/20">
                         <img src={language.img} className="h-6 w-6" alt="" />
                       </div>
-                      <span className="font-medium">
-                        {t(language.labelKey)}
-                      </span>
+                      <span className="font-medium">{language.labelKey}</span>
                     </button>
                   ))}
                 </div>
