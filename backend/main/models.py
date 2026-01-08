@@ -138,7 +138,7 @@ class ProductFeature(models.Model):
     )
     name = models.CharField(max_length=100)
     value = models.CharField(max_length=100)
-    description = models.TextField(max_length=256, blank=True)
+    description = models.TextField(max_length=512, blank=True)
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
@@ -156,7 +156,7 @@ class ProductSubFeature(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=256, blank=True)
+    description = models.TextField(max_length=512, blank=True)
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
@@ -193,7 +193,7 @@ class ProductTechnology(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=256, blank=True)
+    description = models.TextField(max_length=512, blank=True)
     tags = models.JSONField(
         default=list,
         blank=True,
@@ -218,7 +218,7 @@ class ProductFeatureBlock(models.Model):
     )
     name = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
-    description = models.TextField(max_length=256, blank=True)
+    description = models.TextField(max_length=512, blank=True)
     background_image = models.ImageField(upload_to='products/%Y/%m/', blank=True)
     with_logo = models.BooleanField(blank=False)
     order = models.PositiveIntegerField(default=0)
@@ -238,10 +238,10 @@ class ProductInfoBlock(models.Model):
         on_delete=models.CASCADE,
     )
     title_1 = models.CharField(max_length=128)
-    description_1 = models.JSONField(max_length=512, blank=True, null=True)
+    description_1 = models.JSONField(max_length=1024, blank=True, null=True)
     image_1 = models.ImageField(upload_to='products/%Y/%m/', blank=True)
     title_2 = models.CharField(max_length=128)
-    description_2 = models.JSONField(max_length=512, blank=True, null=True)
+    description_2 = models.JSONField(max_length=1024, blank=True, null=True)
     image_2 = models.ImageField(upload_to='products/%Y/%m/', blank=True)
     order = models.PositiveIntegerField(default=0)
     

@@ -172,7 +172,7 @@ class ProductPresentationInfo(models.Model):
         on_delete=models.CASCADE,
     )
     title = models.CharField(max_length=128)
-    description = models.TextField(max_length=4096)
+    description = models.TextField(max_length=8192)
     order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
@@ -197,7 +197,7 @@ class ProductCharacteristic(models.Model):
         blank=True,
     )
     name = models.CharField(max_length=128)
-    description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(max_length=512, blank=True)
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
@@ -256,7 +256,7 @@ class ProductModule(models.Model):
     )
     name = models.CharField(max_length=128)
     tag = models.CharField(max_length=16)
-    description = models.TextField(max_length=1024, blank=True)
+    description = models.TextField(max_length=2048, blank=True)
     button_text = models.CharField(max_length=32, blank=False, null=False, default="Request")
 
     class Meta:
@@ -315,7 +315,7 @@ class ProductModuleCharacteristic(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=256)
-    description = models.TextField(max_length=512, blank=True)
+    description = models.TextField(max_length=1024, blank=True)
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
