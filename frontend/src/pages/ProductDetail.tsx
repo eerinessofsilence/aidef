@@ -276,7 +276,7 @@ export default function ProductDetail() {
 
   return (
     <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
-      <ScrollReveal amount={0.35} className="w-full">
+      <ScrollReveal amount={0.2} className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
             {detailStatus === "loading" ? (
@@ -391,7 +391,7 @@ export default function ProductDetail() {
             <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
             <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
             <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <ScrollReveal amount={0.35} className="h-full max-lg:col-span-2">
+              <ScrollReveal amount={0.2} className="h-full max-lg:col-span-2">
                 <p className="text-sm tracking-wide text-white/50 uppercase">
                   {t("productDetail.overview.kicker")}
                 </p>
@@ -432,7 +432,7 @@ export default function ProductDetail() {
                 </div>
               </ScrollReveal>
               <ScrollReveal
-                amount={0.35}
+                amount={0.2}
                 className="relative max-lg:col-span-2"
               >
                 <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
@@ -480,7 +480,7 @@ export default function ProductDetail() {
         {productTechnologies.length > 0 ? (
           <section className="space-y-8 py-16 max-sm:py-12">
             <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <ScrollReveal amount={0.25}>
+              <ScrollReveal amount={0.2}>
                 <div>
                   <p className="text-foreground/50 text-sm tracking-wider uppercase">
                     {t("productDetail.technology.kicker")}
@@ -548,7 +548,7 @@ export default function ProductDetail() {
                   }
                 >
                   <ScrollReveal
-                    amount={0.35}
+                    amount={0.2}
                     className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25"
                   >
                     <div>
@@ -567,7 +567,7 @@ export default function ProductDetail() {
               ) : (
                 <section className="py-16 max-sm:py-12">
                   <ScrollReveal
-                    amount={0.25}
+                    amount={0.2}
                     className="flex items-center justify-between max-md:flex-col max-md:space-y-10"
                   >
                     <div className="max-md:text-center">
@@ -600,7 +600,7 @@ export default function ProductDetail() {
                   <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
                     <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                       <ScrollReveal
-                        amount={0.25}
+                        amount={0.2}
                         className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
                       >
                         <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
@@ -617,7 +617,7 @@ export default function ProductDetail() {
                         </ul>
                       </ScrollReveal>
                       <ScrollReveal
-                        amount={0.25}
+                        amount={0.2}
                         className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
                       >
                         <img
@@ -629,7 +629,7 @@ export default function ProductDetail() {
                     </div>
                     <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
                       <ScrollReveal
-                        amount={0.25}
+                        amount={0.2}
                         delay={0.06}
                         className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
                       >
@@ -640,7 +640,7 @@ export default function ProductDetail() {
                         />
                       </ScrollReveal>
                       <ScrollReveal
-                        amount={0.25}
+                        amount={0.2}
                         delay={0.12}
                         className="flex flex-col justify-center gap-4 text-left"
                       >
@@ -668,7 +668,7 @@ export default function ProductDetail() {
               <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
                 <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
                   <ScrollReveal
-                    amount={0.25}
+                    amount={0.2}
                     className="space-y-5 max-md:space-y-4 max-md:text-center"
                   >
                     <div>
@@ -699,7 +699,7 @@ export default function ProductDetail() {
             ))
           : null}
         <section className="space-y-6 py-10 max-sm:py-8">
-          <ScrollReveal delay={0.12} amount={0.3}>
+          <ScrollReveal delay={0.12} amount={0.2}>
             <Carousel
               carouselTitle={t("productDetail.carousel.title")}
               items={carouselItems.map((card, index) => {
