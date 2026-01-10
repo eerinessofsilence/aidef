@@ -52,7 +52,7 @@ export default function Technology() {
               <p className="text-foreground/50 text-lg uppercase max-md:text-base lg:tracking-widest">
                 {t("technology.hero.kicker")}
               </p>
-              <h1 className="text-center text-6xl leading-12 font-bold uppercase max-lg:text-5xl max-md:max-w-xs max-md:text-4xl lg:leading-16">
+              <h1 className="text-center text-6xl leading-12 font-bold uppercase max-md:max-w-xs max-md:text-5xl lg:leading-16">
                 {t("technology.hero.title")}
               </h1>
             </div>

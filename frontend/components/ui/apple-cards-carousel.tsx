@@ -178,7 +178,7 @@ export const Carousel = ({
             ))}
           </div>
         </div>
-        <div className="flex justify-center gap-2 lg:hidden">
+        <div className="flex justify-between lg:hidden">
           <button
             className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
             onClick={scrollLeft}
