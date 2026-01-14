@@ -5,21 +5,30 @@ export default function Solutions() {
     <main>
       <section>
         <div className="relative min-h-screen">
-          <img
-            src="/solutions-hero-bg.png"
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls={false}
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            disablePictureInPicture
+            onContextMenu={(e) => e.preventDefault()}
+            preload="none"
+            src="/solutions-video.mp4"
             className="absolute inset-0 -z-1 h-screen w-full object-cover"
-          />
+          ></video>
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,rgba(23,43,74,0)_0%,rgba(23,43,74,0.6)_55%,#172b4a_100%)]"
           />
-          <div className="relative z-10 container flex h-screen items-center">
-            <ScrollReveal amount={0.2} className="space-y-7.5">
-              <div className="space-y-2.5">
+          <div className="relative z-10 container flex h-screen items-center justify-center">
+            <ScrollReveal>
+              <div className="flex flex-col items-center justify-center space-y-5 text-center">
                 <h1 className="text-7xl leading-12 font-bold max-lg:text-6xl max-md:max-w-xs max-md:text-5xl lg:leading-16">
                   AI-DEF Solutions
                 </h1>
-                <p className="text-foreground/90 max-w-120 text-lg">
+                <p className="text-foreground/90 max-w-120 text-xl">
                   Shortening the decision cycle — from detection to action —
                   faster than the situation evolves.
                 </p>
@@ -29,8 +38,8 @@ export default function Solutions() {
         </div>
       </section>
 
-      <section className="container py-37.5 pt-30">
-        <div className="space-y-7.5">
+      <section className="py-37.5 pt-30">
+        <div className="container space-y-7.5">
           <h1 className="text-5xl font-bold">Our Solutions</h1>
           <div className="space-y-5 text-lg">
             <p>
@@ -53,7 +62,7 @@ export default function Solutions() {
 
       <section className="bg-white py-25">
         <div className="container space-y-25 text-[#3F3737]">
-          <ScrollReveal amount={0.2}>
+          <ScrollReveal>
             <div className="space-y-7.5">
               <h1 className="text-5xl font-bold">Why AI makes decisions</h1>
               <p className="text-lg">
@@ -65,7 +74,7 @@ export default function Solutions() {
           </ScrollReveal>
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
-            <ScrollReveal amount={0.2} className="max-w-125 space-y-7.5">
+            <ScrollReveal className="max-w-125 space-y-7.5">
               <div className="space-y-5">
                 <div className="space-y-3">
                   <h2 className="text-4xl font-bold">FIND</h2>
@@ -106,7 +115,7 @@ export default function Solutions() {
                 </p>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125">
+            <ScrollReveal className="max-w-125">
               <img
                 src="/solutions-page-1.png"
                 className="w-full rounded-2xl"
@@ -117,7 +126,6 @@ export default function Solutions() {
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
             <ScrollReveal
-              amount={0.2}
               className="max-w-125 space-y-7.5 lg:order-1"
             >
               <div className="space-y-5">
@@ -155,7 +163,7 @@ export default function Solutions() {
                 </ul>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125 lg:order-0">
+            <ScrollReveal className="max-w-125 lg:order-0">
               <img
                 src="/solutions-page-2.png"
                 className="w-full rounded-2xl"
@@ -165,7 +173,7 @@ export default function Solutions() {
           </div>
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
-            <ScrollReveal amount={0.2} className="max-w-125 space-y-7.5">
+            <ScrollReveal className="max-w-125 space-y-7.5">
               <div className="space-y-5">
                 <div className="space-y-3">
                   <h2 className="text-4xl font-bold">DECIDE + ASSESS</h2>
@@ -218,7 +226,7 @@ export default function Solutions() {
                 </p>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125">
+            <ScrollReveal className="max-w-125">
               <img
                 src="/solutions-page-3.png"
                 className="w-full rounded-2xl"
@@ -229,7 +237,6 @@ export default function Solutions() {
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
             <ScrollReveal
-              amount={0.2}
               className="max-w-125 space-y-7.5 lg:order-1"
             >
               <div className="space-y-5">
@@ -271,7 +278,7 @@ export default function Solutions() {
                 </p>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125 lg:order-0">
+            <ScrollReveal className="max-w-125 lg:order-0">
               <img
                 src="/solutions-page-1.png"
                 className="w-full rounded-2xl"
@@ -281,7 +288,7 @@ export default function Solutions() {
           </div>
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
-            <ScrollReveal amount={0.2} className="max-w-125 space-y-7.5">
+            <ScrollReveal className="max-w-125 space-y-7.5">
               <div className="space-y-5">
                 <div className="space-y-3">
                   <h2 className="text-4xl font-bold">BDA</h2>
@@ -315,7 +322,7 @@ export default function Solutions() {
                 </ul>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125">
+            <ScrollReveal className="max-w-125">
               <img
                 src="/solutions-page-2.png"
                 className="w-full rounded-2xl"
@@ -326,7 +333,6 @@ export default function Solutions() {
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
             <ScrollReveal
-              amount={0.2}
               className="max-w-125 space-y-7.5 lg:order-1"
             >
               <div className="space-y-5">
@@ -368,7 +374,7 @@ export default function Solutions() {
                 </p>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125 lg:order-0">
+            <ScrollReveal className="max-w-125 lg:order-0">
               <img
                 src="/solutions-page-3.png"
                 className="w-full rounded-2xl"
@@ -378,7 +384,7 @@ export default function Solutions() {
           </div>
 
           <div className="flex flex-col items-center gap-5 lg:flex-row lg:justify-between">
-            <ScrollReveal amount={0.2} className="max-w-125 space-y-7.5">
+            <ScrollReveal className="max-w-125 space-y-7.5">
               <div className="space-y-5">
                 <div className="space-y-3">
                   <h2 className="text-4xl font-bold">The result</h2>
@@ -418,7 +424,7 @@ export default function Solutions() {
                 </ul>
               </div>
             </ScrollReveal>
-            <ScrollReveal amount={0.2} className="max-w-125">
+            <ScrollReveal className="max-w-125">
               <img
                 src="/solutions-page-1.png"
                 className="w-full rounded-2xl"

@@ -23,7 +23,7 @@ export default function DroneCarouselSection() {
 
   return (
     <div className="container mx-auto h-full w-full px-5 py-25">
-      <ScrollReveal delay={0.12} amount={0.3}>
+      <ScrollReveal delay={0.12}>
         <Carousel
           paragraph={t("main.droneCarousel.description")}
           carouselTitle={t("main.droneCarousel.title")}

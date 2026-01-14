@@ -721,7 +721,7 @@ export default function Header() {
                       {/* Submenu as plain text links under the parent item */}
                       <div
                         id={`mobile-submenu-${link.key}`}
-                        className={`flex flex-col gap-2 pl-4 transition-all ${
+                        className={`flex flex-col gap-5 pt-5 pl-4 transition-all ${
                           expanded
                             ? "mt-2 max-h-[1000px] opacity-100"
                             : "max-h-0 opacity-0"

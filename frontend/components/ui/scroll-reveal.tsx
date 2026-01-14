@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView, type Easing } from "motion/react";
-import { useRef, type PropsWithChildren } from "react";
+import { motion, type Easing } from "motion/react";
+import { type PropsWithChildren } from "react";
+import { useInViewOnce } from "../../hooks/use-in-view-once";
 import { cn } from "../../lib/utils";
 
 type Direction = "up" | "down" | "left" | "right";
@@ -29,12 +30,10 @@ export function ScrollReveal({
   delay = 0,
   duration = 0.7,
   from = "up",
-  amount = 0.3,
   distance,
   ease = [0.22, 1, 0.36, 1],
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount });
+  const { ref, inView } = useInViewOnce();
 
   const baseOffset = directionOffsets[from];
   const appliedOffset = {
@@ -53,7 +52,7 @@ export function ScrollReveal({
       ref={ref}
       className={cn("will-change-transform", className)}
       initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
+      animate={inView ? "visible" : "hidden"}
       variants={{
         hidden: {
           opacity: 0,

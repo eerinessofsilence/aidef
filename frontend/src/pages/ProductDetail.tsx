@@ -276,7 +276,7 @@ export default function ProductDetail() {
 
   return (
     <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
-      <ScrollReveal amount={0.2} className="w-full">
+      <ScrollReveal className="w-full">
         <div>
           <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
             {detailStatus === "loading" ? (
@@ -326,7 +326,7 @@ export default function ProductDetail() {
                   <p className="text-foreground/70 hidden text-xl tracking-widest uppercase lg:inline">
                     {productDetail?.category}
                   </p>
-                  <h1 className="text-6xl leading-18 font-bold max-lg:text-5xl max-md:text-4xl max-sm:text-xl max-sm:text-nowrap">
+                  <h1 className="text-6xl leading-18 font-bold max-lg:text-5xl max-md:text-4xl max-sm:text-3xl max-sm:text-nowrap">
                     {productDetail?.name}
                   </h1>
                 </div>
@@ -391,7 +391,7 @@ export default function ProductDetail() {
             <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
             <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
             <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <ScrollReveal amount={0.2} className="h-full max-lg:col-span-2">
+              <ScrollReveal className="h-full max-lg:col-span-2">
                 <p className="text-sm tracking-wide text-white/50 uppercase">
                   {t("productDetail.overview.kicker")}
                 </p>
@@ -431,10 +431,7 @@ export default function ProductDetail() {
                   </a>
                 </div>
               </ScrollReveal>
-              <ScrollReveal
-                amount={0.2}
-                className="relative max-lg:col-span-2"
-              >
+              <ScrollReveal className="relative max-lg:col-span-2">
                 <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
                 <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
                   <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
@@ -480,7 +477,7 @@ export default function ProductDetail() {
         {productTechnologies.length > 0 ? (
           <section className="space-y-8 py-16 max-sm:py-12">
             <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <ScrollReveal amount={0.2}>
+              <ScrollReveal>
                 <div>
                   <p className="text-foreground/50 text-sm tracking-wider uppercase">
                     {t("productDetail.technology.kicker")}
@@ -500,7 +497,6 @@ export default function ProductDetail() {
                 return (
                   <ScrollReveal
                     key={technology.id}
-                    amount={0.2}
                     delay={0.06 * technology.id}
                   >
                     <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
@@ -548,7 +544,6 @@ export default function ProductDetail() {
                   }
                 >
                   <ScrollReveal
-                    amount={0.2}
                     className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25"
                   >
                     <div>
@@ -567,7 +562,6 @@ export default function ProductDetail() {
               ) : (
                 <section className="py-16 max-sm:py-12">
                   <ScrollReveal
-                    amount={0.2}
                     className="flex items-center justify-between max-md:flex-col max-md:space-y-10"
                   >
                     <div className="max-md:text-center">
@@ -600,7 +594,6 @@ export default function ProductDetail() {
                   <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
                     <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
                       <ScrollReveal
-                        amount={0.2}
                         className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
                       >
                         <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
@@ -617,7 +610,6 @@ export default function ProductDetail() {
                         </ul>
                       </ScrollReveal>
                       <ScrollReveal
-                        amount={0.2}
                         className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
                       >
                         <img
@@ -629,7 +621,6 @@ export default function ProductDetail() {
                     </div>
                     <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
                       <ScrollReveal
-                        amount={0.2}
                         delay={0.06}
                         className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
                       >
@@ -640,7 +631,6 @@ export default function ProductDetail() {
                         />
                       </ScrollReveal>
                       <ScrollReveal
-                        amount={0.2}
                         delay={0.12}
                         className="flex flex-col justify-center gap-4 text-left"
                       >
@@ -668,7 +658,6 @@ export default function ProductDetail() {
               <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
                 <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
                   <ScrollReveal
-                    amount={0.2}
                     className="space-y-5 max-md:space-y-4 max-md:text-center"
                   >
                     <div>
@@ -681,7 +670,6 @@ export default function ProductDetail() {
                     </h1>
                     {block.has_button ? (
                       <ScrollReveal
-                        amount={0.2}
                         delay={0.1}
                         className="flex max-md:justify-center"
                       >
@@ -699,7 +687,7 @@ export default function ProductDetail() {
             ))
           : null}
         <section className="space-y-6 py-10 max-sm:py-8">
-          <ScrollReveal delay={0.12} amount={0.2}>
+          <ScrollReveal delay={0.12}>
             <Carousel
               carouselTitle={t("productDetail.carousel.title")}
               items={carouselItems.map((card, index) => {
@@ -734,6 +722,9 @@ export default function ProductDetail() {
 
 type CarouselItem = {
   key: string;
+  categoryKey: string;
+  titleKey: string;
+  descriptionKey: string;
   href: string;
   bg: string;
 };
@@ -741,27 +732,42 @@ type CarouselItem = {
 const carouselItems: CarouselItem[] = [
   {
     key: "ax2ng",
-    href: "/products/ax2ng-krakatit",
+    categoryKey: "main.droneCarousel.items.ax2ng.category",
+    titleKey: "main.droneCarousel.items.ax2ng.title",
+    descriptionKey: "main.droneCarousel.items.ax2ng.description",
+    href: "products/ax2ng-krakatit",
     bg: "/drone-carousel-bg-1.png",
   },
   {
-    key: "av1",
-    href: "/products/av-1-vtol",
+    key: "axq",
+    categoryKey: "main.droneCarousel.items.axq.category",
+    titleKey: "main.droneCarousel.items.axq.title",
+    descriptionKey: "main.droneCarousel.items.axq.description",
+    href: "products/axq-quadrocopter",
     bg: "/drone-carousel-bg-2.png",
   },
   {
-    key: "axq",
-    href: "/products/axq-quadrocopter",
+    key: "gcs",
+    categoryKey: "main.droneCarousel.items.gcs.category",
+    titleKey: "main.droneCarousel.items.gcs.title",
+    descriptionKey: "main.droneCarousel.items.gcs.description",
+    href: "products/ground-control-station",
     bg: "/drone-carousel-bg-3.png",
   },
   {
     key: "ugv",
-    href: "/products/ugv-150-dup",
+    categoryKey: "main.droneCarousel.items.ugv.category",
+    titleKey: "main.droneCarousel.items.ugv.title",
+    descriptionKey: "main.droneCarousel.items.ugv.description",
+    href: "products/ugv-150-dup",
     bg: "/drone-carousel-bg-4.png",
   },
   {
-    key: "gcs",
-    href: "/products/ground-control-station",
+    key: "av1",
+    categoryKey: "main.droneCarousel.items.av1.category",
+    titleKey: "main.droneCarousel.items.av1.title",
+    descriptionKey: "main.droneCarousel.items.av1.description",
+    href: "products/av-1-vtol",
     bg: "/drone-carousel-bg-5.png",
   },
 ];

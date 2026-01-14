@@ -12,7 +12,6 @@ export default function SystemIntegrationSection() {
     <section className="container mx-auto flex flex-col items-center justify-center space-y-25 px-5 py-25 max-lg:space-y-15 max-lg:py-12.5">
       <ScrollReveal
         className="flex flex-col items-center gap-y-8 max-md:gap-y-4"
-        amount={0.35}
         from="down"
         duration={0.5}
         distance={0}

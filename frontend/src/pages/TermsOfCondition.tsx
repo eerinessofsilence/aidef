@@ -422,8 +422,8 @@ export default function TermOfCondition() {
           {TERMS_SECTIONS.map((section) => {
             return (
               <div className="space-y-7.5">
-                <ScrollReveal amount={0.35} className="space-y-7.5">
-                  <ScrollReveal amount={0.35}>
+                <ScrollReveal className="space-y-7.5">
+                  <ScrollReveal>
                     <div className="text-4xl font-bold capitalize">
                       <h1>{section.title}</h1>
                     </div>
@@ -431,7 +431,7 @@ export default function TermOfCondition() {
                   <div className="space-y-7.5">
                     {section.entries.map((entry) => {
                       return (
-                        <ScrollReveal amount={0.35}>
+                        <ScrollReveal>
                           <div className="space-y-2">
                             <div className="text-lg font-semibold uppercase">
                               <h1>{entry.label}</h1>

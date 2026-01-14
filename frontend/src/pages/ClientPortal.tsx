@@ -1325,7 +1325,7 @@ export default function ClientPortal() {
                     id="tech-specs"
                     className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)] lg:p-7"
                   >
-                    <ScrollReveal amount={0.35}>
+                    <ScrollReveal>
                       <div className="flex items-center justify-between gap-3">
                         <div>
                           <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
@@ -1342,7 +1342,7 @@ export default function ClientPortal() {
                     </ScrollReveal>
                     <div className="mt-5 grid grid-cols-1 gap-4">
                       {specGroups.map((group) => (
-                        <ScrollReveal amount={0.35}>
+                        <ScrollReveal>
                           <div
                             key={group.title}
                             className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm max-md:text-xs"
@@ -1390,7 +1390,7 @@ export default function ClientPortal() {
             </section>
             {productGallery.length ? (
               <section className="container mt-12 space-y-5">
-                <ScrollReveal amount={0.35}>
+                <ScrollReveal>
                   <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
                       <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
@@ -1417,7 +1417,6 @@ export default function ClientPortal() {
                       isGalleryOpen && index === clampedGalleryIndex;
                     return (
                       <ScrollReveal
-                        amount={0.35}
                         key={image.id ?? `${image.url}-${index}`}
                       >
                         <button
@@ -1459,7 +1458,7 @@ export default function ClientPortal() {
             {presentationInfo.length ? (
               <section className="container mt-12 space-y-6">
                 {presentationInfo.map((item) => (
-                  <ScrollReveal amount={0.35} key={item.id}>
+                  <ScrollReveal key={item.id}>
                     <div className="space-y-3">
                       <h3 className="text-2xl font-semibold text-white">
                         {item.title}
@@ -1475,7 +1474,7 @@ export default function ClientPortal() {
             {textBlocks.length ? (
               <section className="container mt-12">
                 <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-                  <ScrollReveal amount={0.35}>
+                  <ScrollReveal>
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
@@ -1494,7 +1493,6 @@ export default function ClientPortal() {
                   <div className="mt-5 columns-1 gap-x-4 md:columns-2">
                     {textBlocks.map((block) => (
                       <ScrollReveal
-                        amount={0.35}
                         key={block.id}
                         className="mb-4 break-inside-avoid"
                       >
@@ -1529,7 +1527,7 @@ export default function ClientPortal() {
         )}
         {upgrades.length ? (
           <section className="container mt-12 space-y-5">
-            <ScrollReveal amount={0.35}>
+            <ScrollReveal>
               <div className="flex items-center gap-3">
                 <div>
                   <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
@@ -1544,7 +1542,7 @@ export default function ClientPortal() {
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {upgrades.map((upgrade) => (
-                <ScrollReveal amount={0.35}>
+                <ScrollReveal>
                   <article
                     key={upgrade.title}
                     onClick={() => openModuleModal(upgrade)}
@@ -1585,7 +1583,7 @@ export default function ClientPortal() {
         ) : null}
         {products.length > 0 ? (
           <section className="container mt-12 grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
-            <ScrollReveal amount={0.35}>
+            <ScrollReveal>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
                 <p className="text-sm font-semibold tracking-widest text-white/50 uppercase">
                   {t("clientPortal.summary.kicker")}
@@ -1638,7 +1636,7 @@ export default function ClientPortal() {
               </div>
             </ScrollReveal>
 
-            <ScrollReveal className="flex items-center" amount={0.35}>
+            <ScrollReveal className="flex items-center">
               <div className="h-fit space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
                 <p className="text-sm font-semibold tracking-widest text-white/50 uppercase">
                   {t("clientPortal.lineup.title")}
@@ -1683,7 +1681,7 @@ export default function ClientPortal() {
             </ScrollReveal>
           </section>
         ) : null}
-        <ScrollReveal amount={0.35}>
+        <ScrollReveal>
           <section className="container mt-12">
             <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-slate-900/80 p-5 text-sm text-white/70 shadow-[0_20px_50px_rgba(0,0,0,0.35)] md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col items-start gap-3 md:flex-row">
