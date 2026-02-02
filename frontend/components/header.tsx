@@ -67,7 +67,7 @@ const LANGUAGES: Array<{
     id: 3,
     code: "sk",
     labelKey: "Slovak",
-    img: "/sv.svg",
+    img: "/sk.svg",
   },
 ];
 
