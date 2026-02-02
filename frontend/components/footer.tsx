@@ -55,6 +55,7 @@ export default function Footer() {
               {t("footer.contact.title")}
             </h1>
             <p className="text-nowrap">office@ai-def.com</p>
+            <p className="text-nowrap">Board@ai-def.com</p>
           </div>
           <div className="space-y-4">
             <h1 className="text-foreground font-bold uppercase">
