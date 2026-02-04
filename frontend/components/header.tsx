@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -71,59 +72,52 @@ const LANGUAGES: Array<{
   },
 ];
 
-type Item = {
+type CompanyMenuItem = {
   titleKey: string;
   href: string;
   icon?: string;
-  description?: string;
 };
 
-type Menus = Record<MenuKey, Item[]>;
-
-const DROPDOWN_MENUS: Menus = {
-  products: [
-    {
-      titleKey: "header.menus.products.ax2ng",
-      href: "/products/ax2ng-krakatit",
-      icon: "/products-1.png",
-    },
-    {
-      titleKey: "header.menus.products.axq",
-      href: "/products/axq-quadrocopter",
-      icon: "/products-3.png",
-    },
-    {
-      titleKey: "header.menus.products.gcs",
-      href: "/products/ground-control-station",
-      icon: "/products-4.png",
-    },
-    {
-      titleKey: "header.menus.products.ugv",
-      href: "/products/ugv-150-dup",
-      icon: "/products-5.png",
-    },
-    {
-      titleKey: "header.menus.products.av2",
-      href: "/products/av2-vtol",
-      icon: "/products-2.png",
-    },
-  ],
-  company: [
-    {
-      titleKey: "header.menus.company.about",
-      href: "/about-us",
-      icon: "/company-1.svg",
-    },
-    {
-      titleKey: "header.menus.company.careers",
-      href: "#",
-      icon: "/company-2.svg",
-    },
-  ],
+type ProductImagePreview = {
+  url: string | null;
+  alt?: string | null;
 };
+
+type ProductListApiItem = {
+  id: number;
+  slug: string;
+  name: string;
+  order?: number | null;
+  first_image?: ProductImagePreview | null;
+};
+
+type ProductMenuItem = {
+  id: number;
+  name: string;
+  href: string;
+  icon: string;
+  iconAlt: string;
+  order?: number | null;
+};
+
+const COMPANY_MENU_ITEMS: CompanyMenuItem[] = [
+  {
+    titleKey: "header.menus.company.about",
+    href: "/about-us",
+    icon: "/company-1.svg",
+  },
+  {
+    titleKey: "header.menus.company.careers",
+    href: "#",
+    icon: "/company-2.svg",
+  },
+];
 
 export default function Header() {
   const { t } = useTranslation();
+  const [productMenuItems, setProductMenuItems] = useState<ProductMenuItem[]>(
+    [],
+  );
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [languageSelectorIsOpen, setLanguageSelectorOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -218,6 +212,42 @@ export default function Header() {
     }, 300);
     setLanguageDropdownTimeout(timeout);
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    axios
+      .get<ProductListApiItem[]>(`${API_BASE}/items/`, {
+        signal: controller.signal,
+        params: { lang: currentLanguage },
+      })
+      .then((res) => {
+        const items = [...res.data]
+          .filter((product) => Boolean(product.slug))
+          .sort(
+            (a, b) =>
+              (a.order ?? Number.MAX_SAFE_INTEGER) -
+                (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+          )
+          .map((product) => ({
+            id: product.id,
+            name: product.name,
+            href: `/products/${product.slug}`,
+            icon: product.first_image?.url ?? "/placeholder.svg",
+            iconAlt: product.first_image?.alt?.trim() || product.name,
+            order: product.order,
+          }));
+        setProductMenuItems(items);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
+        console.error("Unable to load header products", error);
+        setProductMenuItems([]);
+      });
+
+    return () => controller.abort();
+  }, [API_BASE, currentLanguage]);
 
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
@@ -587,74 +617,58 @@ export default function Header() {
             </div>
           </div>
         </header>
-        {Object.entries(DROPDOWN_MENUS).map(([name, items]) => {
-          const menuKey = name as MenuKey;
-          const isOpen = activeDropdown === menuKey;
-          const visibilityClasses = getDropdownVisibilityClasses(isOpen);
-          if (name === "products") {
-            return (
-              <div
-                key={name}
-                onMouseEnter={handleDropdownEnter}
-                onMouseLeave={handleMouseLeave}
-                aria-hidden={!isOpen}
-                className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${visibilityClasses}`}
+        <div
+          onMouseEnter={handleDropdownEnter}
+          onMouseLeave={handleMouseLeave}
+          aria-hidden={activeDropdown !== "products"}
+          className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "products")}`}
+        >
+          <div className="grid grid-cols-3 gap-5 p-5">
+            {productMenuItems.map((item) => (
+              <Link
+                key={item.id}
+                to={withLanguage(item.href)}
+                className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
+                onClick={() => setActiveDropdown(null)}
               >
-                <div className="grid grid-cols-3 gap-5 p-5">
-                  {items.map((item) => (
-                    <Link
-                      key={item.titleKey}
-                      to={withLanguage(item.href)}
-                      className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
-                      onClick={() => setActiveDropdown(null)}
-                    >
-                      <img
-                        src={item.icon}
-                        className="max-h-30 w-full rounded-t-xl"
-                      />
-                      <div className="flex h-full items-center">
-                        <h3 className="text-sm font-semibold text-black">
-                          {t(item.titleKey)}
-                        </h3>
-                      </div>
-                    </Link>
-                  ))}
+                <img
+                  src={item.icon}
+                  className="max-h-30 w-full rounded-t-xl object-cover"
+                  alt={item.iconAlt}
+                />
+                <div className="flex h-full items-center">
+                  <h3 className="text-sm font-semibold text-black">
+                    {item.name}
+                  </h3>
                 </div>
-              </div>
-            );
-          }
+              </Link>
+            ))}
+          </div>
+        </div>
 
-          if (name === "company") {
-            return (
-              <div
-                key={name}
-                onMouseEnter={handleDropdownEnter}
-                onMouseLeave={handleMouseLeave}
-                aria-hidden={!isOpen}
-                className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${dropdownTransitionClasses} ${visibilityClasses}`}
+        <div
+          onMouseEnter={handleDropdownEnter}
+          onMouseLeave={handleMouseLeave}
+          aria-hidden={activeDropdown !== "company"}
+          className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "company")}`}
+        >
+          <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
+            {COMPANY_MENU_ITEMS.map((item) => (
+              <Link
+                key={item.titleKey}
+                to={withLanguage(item.href)}
+                className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
               >
-                <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
-                  {items.map((item) => (
-                    <Link
-                      key={item.titleKey}
-                      to={withLanguage(item.href)}
-                      className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
-                    >
-                      <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                        <img src={item.icon} className="h-8.5 w-8.5" alt="" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-black">
-                        {t(item.titleKey)}
-                      </h3>
-                    </Link>
-                  ))}
+                <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                  <img src={item.icon} className="h-8.5 w-8.5" alt="" />
                 </div>
-              </div>
-            );
-          }
-
-          return null;
-        })}
+                <h3 className="text-lg font-semibold text-black">
+                  {t(item.titleKey)}
+                </h3>
+              </Link>
+            ))}
+          </div>
+        </div>
 
         <div
           onMouseEnter={handleLanguageMouseEnter}
@@ -699,8 +713,7 @@ export default function Header() {
             <nav className="text-foreground flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain text-lg font-medium">
               {NAV_LINKS.map((link) => {
                 const label = t(`header.nav.${link.key}`);
-                if (link.hasDropdown) {
-                  const submenu = DROPDOWN_MENUS[link.key as MenuKey] || [];
+                if (link.hasDropdown && link.key === "products") {
                   const expanded = !!mobileExpanded[link.key];
                   return (
                     <div key={link.key} className="relative">
@@ -718,7 +731,6 @@ export default function Header() {
                         />
                       </button>
 
-                      {/* Submenu as plain text links under the parent item */}
                       <div
                         id={`mobile-submenu-${link.key}`}
                         className={`flex flex-col gap-5 pt-5 pl-4 transition-all ${
@@ -727,19 +739,65 @@ export default function Header() {
                             : "max-h-0 opacity-0"
                         } overflow-hidden`}
                       >
-                        {submenu.map((s, subIdx) => (
+                        {productMenuItems.map((product) => (
                           <Link
-                            key={s.titleKey}
-                            to={withLanguage(s.href)}
+                            key={product.id}
+                            to={withLanguage(product.href)}
                             onClick={handleMobileMenuLinkClick}
                             className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
                             <img
-                              src={`/${link.key}-white-${subIdx + 1}.svg`}
+                              src={product.icon}
+                              className="h-6 w-6 rounded-sm object-cover"
+                              alt={product.iconAlt}
+                            />
+                            {product.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (link.hasDropdown && link.key === "company") {
+                  const expanded = !!mobileExpanded[link.key];
+                  return (
+                    <div key={link.key} className="relative">
+                      <button
+                        onClick={() => toggleMobileDropdown(link.key)}
+                        className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                        aria-expanded={expanded}
+                        aria-controls={`mobile-submenu-${link.key}`}
+                      >
+                        <span>{label}</span>
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 ${
+                            expanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+
+                      <div
+                        id={`mobile-submenu-${link.key}`}
+                        className={`flex flex-col gap-5 pt-5 pl-4 transition-all ${
+                          expanded
+                            ? "mt-2 max-h-[1000px] opacity-100"
+                            : "max-h-0 opacity-0"
+                        } overflow-hidden`}
+                      >
+                        {COMPANY_MENU_ITEMS.map((item, subIdx) => (
+                          <Link
+                            key={item.titleKey}
+                            to={withLanguage(item.href)}
+                            onClick={handleMobileMenuLinkClick}
+                            className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
+                          >
+                            <img
+                              src={`/company-white-${subIdx + 1}.svg`}
                               className="h-6 w-6"
                               alt=""
                             />
-                            {t(s.titleKey)}
+                            {t(item.titleKey)}
                           </Link>
                         ))}
                       </div>

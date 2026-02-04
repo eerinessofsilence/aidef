@@ -101,12 +101,24 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'order': product.order,
     }
 
-def _serialize_product_list(product: Product) -> Dict[str, Any]:
+def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     data = _serialize_product_base(product)
+    language = _get_request_language(request)
+    first_image = next((image for image in product.images.all() if image.image), None)
+    data["first_image"] = (
+        {
+            "id": first_image.id,
+            "url": _absolute_media_url(request, first_image.image),
+            "alt": _get_image_alt(first_image, language),
+            "order": first_image.order,
+        }
+        if first_image
+        else None
+    )
     return data
 
 def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
-    data = _serialize_product_list(product)
+    data = _serialize_product_list(request, product)
     language = _get_request_language(request)
     data.update(
         {
@@ -229,7 +241,7 @@ def item_list_api(request):
         .order_by('order', 'name')
     )
 
-    payload = [_serialize_product_list(product) for product in products]
+    payload = [_serialize_product_list(request, product) for product in products]
     return JsonResponse(payload, safe=False)
 
 
