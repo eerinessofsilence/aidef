@@ -26,6 +26,7 @@ import i18n, {
   replaceLanguageInPath,
   resolveLanguage,
 } from "./i18n";
+import { gtmPageView } from "./analytics/gtm";
 
 function LanguageLayout() {
   const { lng } = useParams();
@@ -33,6 +34,7 @@ function LanguageLayout() {
   const activeLanguage = resolveLanguage(lng);
   const isValidLanguage = isSupportedLanguage(lng);
 
+  // i18n
   useEffect(() => {
     if (i18n.language !== activeLanguage) {
       void i18n.changeLanguage(activeLanguage);
@@ -59,6 +61,11 @@ function LanguageLayout() {
     );
   }
 
+  // GTM
+  useEffect(() => {
+    if (!isValidLanguage) return;
+    gtmPageView(location.pathname + location.search + location.hash);
+  }, [isValidLanguage, location.pathname, location.search, location.hash]);
   return (
     <>
       <ScrollToTop />
