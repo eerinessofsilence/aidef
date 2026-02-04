@@ -272,3 +272,38 @@ class ProductCTABlock(models.Model):
         
     def __str__(self):
         return f"{self.product.name} — CTA block {self.pk}"
+
+
+class ContactRequest(models.Model):
+    class Variant(models.TextChoices):
+        DEFAULT = "default", "Default"
+        SUPPORT = "support", "Support"
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    variant = models.CharField(
+        max_length=20, choices=Variant.choices, default=Variant.DEFAULT
+    )
+    first_name = models.CharField(max_length=120)
+    last_name = models.CharField(max_length=120)
+    email = models.EmailField()
+    phone = models.CharField(max_length=60, blank=True)
+    product = models.CharField(max_length=120, blank=True)
+    country_code = models.CharField(max_length=2, blank=True)
+    country_name = models.CharField(max_length=120, blank=True)
+    address_line1 = models.CharField(max_length=255, blank=True)
+    address_line2 = models.CharField(max_length=255, blank=True)
+    address_line3 = models.CharField(max_length=255, blank=True)
+    website = models.CharField(max_length=255, blank=True)
+    message = models.TextField()
+    source = models.CharField(max_length=255, blank=True)
+    language = models.CharField(max_length=16, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        verbose_name = "Contact request"
+        verbose_name_plural = "Contact requests"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} — {self.email}"

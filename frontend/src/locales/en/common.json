@@ -144,7 +144,8 @@
       "partnership": "Strategic partnership"
     },
     "status": {
-      "updatingCountries": "Updating countries..."
+      "updatingCountries": "Updating countries...",
+      "submitting": "Sending..."
     },
     "disclaimer": "By submitting, you agree to be contacted about your request.",
     "actions": {
@@ -645,8 +646,11 @@
     "disclaimer": "By submitting, you agree to be contacted about your request.",
     "errors": {
       "countryLoad": "We couldn't update the country list, using the fallback list.",
-      "countryRequired": "Please select a country from the suggestions."
+      "countryRequired": "Please select a country from the suggestions.",
+      "submitFailed": "We couldn't send your message. Please try again.",
+      "network": "Unable to connect to the server. Please try again."
     },
+    "success": "Thanks! We'll respond within one business day.",
     "details": {
       "title": "Contact details",
       "quickLinks": "Quick links",

@@ -7,7 +7,6 @@ const backgroundImages = ["/support-1.png", "/support-2.png", "/support-3.png"];
 export default function Support() {
   const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -16,10 +15,6 @@ export default function Support() {
 
     return () => clearInterval(timer);
   }, []);
-
-  const handleSubmit = () => {
-    setSubmitted(true);
-  };
 
   return (
     <div className="flex flex-col gap-16">
@@ -105,16 +100,7 @@ export default function Support() {
             <div className="relative w-full max-w-4xl">
               <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-white/8 via-white/4 to-white/2 blur-3xl" />
               <div className="relative rounded-3xl border border-white/10 bg-white/10 p-2.5 shadow-2xl backdrop-blur-xl lg:p-5">
-                <ContactForm
-                  showDetails={false}
-                  onSubmit={handleSubmit}
-                  variant="support"
-                />
-                {submitted && (
-                  <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400/70">
-                    {t("support.form.success")}
-                  </div>
-                )}
+                <ContactForm showDetails={false} variant="support" />
               </div>
             </div>
           </div>

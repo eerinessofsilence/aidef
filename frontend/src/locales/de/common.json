@@ -224,7 +224,8 @@
       "partnership": "Strategische Partnerschaft"
     },
     "status": {
-      "updatingCountries": "Länder werden aktualisiert..."
+      "updatingCountries": "Länder werden aktualisiert...",
+      "submitting": "Wird gesendet..."
     },
     "disclaimer": "Mit dem Absenden stimmen Sie zu, dass wir Sie zu Ihrer Anfrage kontaktieren.",
     "actions": {
@@ -645,8 +646,11 @@
     "disclaimer": "Mit dem Absenden stimmen Sie zu, dass wir Sie zu Ihrer Anfrage kontaktieren.",
     "errors": {
       "countryLoad": "Die Länderliste konnte nicht aktualisiert werden, es wird die Ersatzliste verwendet.",
-      "countryRequired": "Bitte wählen Sie ein Land aus den Vorschlägen."
+      "countryRequired": "Bitte wählen Sie ein Land aus den Vorschlägen.",
+      "submitFailed": "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "network": "Verbindung zum Server nicht möglich. Bitte versuchen Sie es erneut."
     },
+    "success": "Danke! Wir melden uns innerhalb eines Werktags.",
     "details": {
       "title": "Kontaktdaten",
       "quickLinks": "Schnelllinks",

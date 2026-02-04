@@ -13,7 +13,8 @@ from .models import (
     ProductTechnology,
     ProductFeatureBlock,
     ProductInfoBlock,
-    ProductCTABlock
+    ProductCTABlock,
+    ContactRequest
 )
 
 LANGUAGE_CHOICES = (
@@ -116,6 +117,49 @@ class ProductAdmin(TabbedTranslationAdmin):
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('order', '-created_at')
     inlines = [ProductImageInline, ProductFeatureInline, ProductSubFeatureInline, ProductGalleryInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline]
+
+
+@admin.register(ContactRequest)
+class ContactRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "created_at",
+        "variant",
+        "first_name",
+        "last_name",
+        "email",
+        "product",
+        "country_code",
+    )
+    list_filter = ("variant", "created_at")
+    search_fields = (
+        "first_name",
+        "last_name",
+        "email",
+        "message",
+        "product",
+        "country_name",
+        "country_code",
+    )
+    readonly_fields = (
+        "created_at",
+        "variant",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "product",
+        "country_code",
+        "country_name",
+        "address_line1",
+        "address_line2",
+        "address_line3",
+        "website",
+        "message",
+        "source",
+        "language",
+        "ip_address",
+        "user_agent",
+    )
 
 
 @admin.register(ProductImage)

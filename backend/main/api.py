@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import json
 from typing import Any, Dict, List
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import Http404, JsonResponse
-from django.views.decorators.http import require_GET
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_POST
 
 from .models import (
+    ContactRequest,
     Product,
     ProductImage,
     ProductFeature,
@@ -251,3 +256,131 @@ def item_detail_api(request, slug: str):
 
     payload = _serialize_product_detail(request, product)
     return JsonResponse(payload)
+
+
+def _clean_payload_value(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value.strip()
+    return str(value).strip()
+
+
+def _get_request_payload(request) -> Dict[str, Any] | None:
+    content_type = request.content_type or ""
+    if "application/json" in content_type:
+        try:
+            raw_body = request.body.decode("utf-8") if request.body else ""
+            payload = json.loads(raw_body) if raw_body else {}
+        except json.JSONDecodeError:
+            return None
+        return payload if isinstance(payload, dict) else None
+    if request.POST:
+        return request.POST.dict()
+    return {}
+
+
+def _get_client_ip(request) -> str | None:
+    forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR")
+
+
+@csrf_exempt
+@require_POST
+def contact_request_api(request):
+    payload = _get_request_payload(request)
+    if payload is None:
+        return JsonResponse(
+            {"detail": "Invalid request payload."}, status=400
+        )
+
+    variant = _clean_payload_value(payload.get("variant")).lower()
+    if not variant:
+        variant = ContactRequest.Variant.DEFAULT
+    if variant not in (
+        ContactRequest.Variant.DEFAULT,
+        ContactRequest.Variant.SUPPORT,
+    ):
+        return JsonResponse({"detail": "Invalid form variant."}, status=400)
+
+    first_name = _clean_payload_value(payload.get("firstName"))
+    last_name = _clean_payload_value(payload.get("lastName"))
+    email = _clean_payload_value(payload.get("email"))
+    phone = _clean_payload_value(payload.get("phone"))
+    product = _clean_payload_value(payload.get("product"))
+    country_code = _clean_payload_value(payload.get("country"))
+    country_name = _clean_payload_value(
+        payload.get("countryName") or payload.get("country_name")
+    )
+    address_line1 = _clean_payload_value(
+        payload.get("city") or payload.get("addressLine1")
+    )
+    address_line2 = _clean_payload_value(
+        payload.get("addressLine1") or payload.get("addressLine2")
+    )
+    address_line3 = _clean_payload_value(
+        payload.get("addressLine2") or payload.get("addressLine3")
+    )
+    website = _clean_payload_value(payload.get("website"))
+    message = _clean_payload_value(payload.get("message"))
+    source = _clean_payload_value(payload.get("source"))
+    language = _clean_payload_value(payload.get("language"))
+
+    required_fields = {
+        "firstName": first_name,
+        "lastName": last_name,
+        "email": email,
+        "message": message,
+    }
+    if variant != ContactRequest.Variant.SUPPORT:
+        required_fields.update(
+            {
+                "phone": phone,
+                "product": product,
+                "country": country_code,
+            }
+        )
+
+    errors: Dict[str, str] = {}
+    for key, value in required_fields.items():
+        if not value:
+            errors[key] = "This field is required."
+
+    if email:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errors["email"] = "Enter a valid email address."
+
+    if errors:
+        return JsonResponse(
+            {"detail": "Validation failed.", "errors": errors}, status=400
+        )
+
+    contact_request = ContactRequest.objects.create(
+        variant=variant,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone=phone,
+        product=product,
+        country_code=country_code,
+        country_name=country_name,
+        address_line1=address_line1,
+        address_line2=address_line2,
+        address_line3=address_line3,
+        website=website,
+        message=message,
+        source=source,
+        language=language or _get_request_language(request),
+        ip_address=_get_client_ip(request),
+        user_agent=_clean_payload_value(
+            request.META.get("HTTP_USER_AGENT")
+        ),
+    )
+
+    return JsonResponse(
+        {"status": "ok", "id": contact_request.id}, status=201
+    )

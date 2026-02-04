@@ -20,6 +20,8 @@ type ProductOption = {
   label: string;
 };
 
+type SubmissionStatus = "idle" | "submitting" | "success" | "error";
+
 type RestCountry = {
   cca2?: string;
   name?: { common?: string };
@@ -84,6 +86,13 @@ const buildCountryOptions = (language = "en"): CountryOption[] => {
 const getCountryOptionLabel = (country: CountryOption) =>
   `${country.name} (${country.code})`;
 
+const API_BASE = (() => {
+  const raw =
+    import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+  const trimmed = raw.replace(/\/+$/, "");
+  if (!trimmed) return "/api";
+  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+})();
 
 export const ContactForm = ({
   onSubmit,
@@ -102,6 +111,9 @@ export const ContactForm = ({
     React.useState<CountryOption | null>(null);
   const [isLoadingCountries, setIsLoadingCountries] = React.useState(false);
   const [countryError, setCountryError] = React.useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] =
+    React.useState<SubmissionStatus>("idle");
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
   const [cityQuery, setCityQuery] = React.useState("");
   const [selectedProduct, setSelectedProduct] = React.useState("");
@@ -229,6 +241,17 @@ export const ContactForm = ({
   const submitNoteClass = isSupportForm
     ? "text-foreground/60 text-xs"
     : "text-xs text-neutral-500 dark:text-neutral-400";
+  const successMessageClass = isSupportForm
+    ? "rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100/80"
+    : "rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-100";
+  const errorMessageClass = isSupportForm
+    ? "rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-100/80"
+    : "rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-100";
+  const submitLabel =
+    submitStatus === "submitting"
+      ? t("contactForm.status.submitting")
+      : t("contactForm.actions.send");
+  const submitButtonDisabled = submitStatus === "submitting";
 
   const handleCountryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -253,17 +276,78 @@ export const ContactForm = ({
     setSelectedProduct(event.target.value);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    let resolvedCountry: CountryOption | null = null;
     if (!isSupportForm) {
-      const match = selectedCountry ?? findCountryFromInput(countryQuery);
-      if (!match) {
+      resolvedCountry = selectedCountry ?? findCountryFromInput(countryQuery);
+      if (!resolvedCountry) {
         setCountryError(t("contactForm.errors.countryRequired"));
         return;
       }
-      setSelectedCountry(match);
+      setSelectedCountry(resolvedCountry);
     }
-    onSubmit?.(event);
+    if (submitStatus === "submitting") {
+      return;
+    }
+
+    setSubmitError(null);
+    setSubmitStatus("submitting");
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload: Record<string, string> = {};
+    formData.forEach((value, key) => {
+      if (typeof value === "string") {
+        payload[key] = value.trim();
+      }
+    });
+    if (resolvedCountry) {
+      payload.country = resolvedCountry.code;
+      payload.countryName = resolvedCountry.name;
+    }
+    payload.variant = variant;
+    payload.language = i18n.language;
+    if (typeof window !== "undefined") {
+      payload.source = window.location.pathname;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/contact/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        setSubmitError(t("contactForm.errors.submitFailed"));
+        setSubmitStatus("error");
+        return;
+      }
+      setSubmitStatus("success");
+      form.reset();
+      setSelectedProduct("");
+      setCountryQuery("");
+      setSelectedCountry(null);
+      setCityQuery("");
+      setCountryError(null);
+      onSubmit?.(event);
+    } catch (error) {
+      console.error("Unable to submit contact form", error);
+      setSubmitError(t("contactForm.errors.network"));
+      setSubmitStatus("error");
+    }
+  };
+
+  const handleFormChange = () => {
+    if (submitStatus === "submitting") {
+      return;
+    }
+    if (submitStatus !== "idle") {
+      setSubmitStatus("idle");
+    }
+    if (submitError) {
+      setSubmitError(null);
+    }
   };
 
   const productOptions: ProductOption[] = [
@@ -288,7 +372,7 @@ export const ContactForm = ({
           {t("contactForm.description")}
         </p>
       </div>
-      <form className={formClass} onSubmit={handleSubmit}>
+      <form className={formClass} onSubmit={handleSubmit} onChange={handleFormChange}>
         {isSupportForm ? (
           <>
             <div className="grid gap-4 md:grid-cols-2">
@@ -554,13 +638,27 @@ export const ContactForm = ({
           </>
         )}
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className={submitButtonClass}>
-            {t("contactForm.actions.send")}
+          <button
+            type="submit"
+            className={`${submitButtonClass} ${submitButtonDisabled ? "pointer-events-none opacity-70" : ""}`}
+            disabled={submitButtonDisabled}
+            aria-busy={submitButtonDisabled}
+          >
+            {submitLabel}
           </button>
           <p className={submitNoteClass}>
             {t("contactForm.disclaimer")}
           </p>
         </div>
+        {submitStatus === "success" ? (
+          <p className={successMessageClass} role="status" aria-live="polite">
+            {t("contactForm.success")}
+          </p>
+        ) : submitStatus === "error" ? (
+          <p className={errorMessageClass} role="alert">
+            {submitError ?? t("contactForm.errors.submitFailed")}
+          </p>
+        ) : null}
       </form>
       {showDetails && (
         <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">

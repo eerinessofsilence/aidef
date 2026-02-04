@@ -633,7 +633,8 @@
       "website": "Zadajte URL vašej webovej stránky"
     },
     "status": {
-      "updatingCountries": "Aktualizujú sa krajiny..."
+      "updatingCountries": "Aktualizujú sa krajiny...",
+      "submitting": "Odosiela sa..."
     },
     "products": {
       "all": "Všetky produkty",
@@ -645,8 +646,11 @@
     "disclaimer": "Odoslaním súhlasíte, že vás budeme kontaktovať ohľadom vašej požiadavky.",
     "errors": {
       "countryLoad": "Nepodarilo sa aktualizovať zoznam krajín, používame náhradný zoznam.",
-      "countryRequired": "Prosím, vyberte krajinu z návrhov."
+      "countryRequired": "Prosím, vyberte krajinu z návrhov.",
+      "submitFailed": "Správu sa nepodarilo odoslať. Skúste to prosím znova.",
+      "network": "Nepodarilo sa pripojiť k serveru. Skúste to prosím znova."
     },
+    "success": "Ďakujeme! Ozveme sa do jedného pracovného dňa.",
     "details": {
       "title": "Kontaktné údaje",
       "quickLinks": "Rýchle odkazy",
