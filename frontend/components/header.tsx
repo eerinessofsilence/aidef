@@ -621,7 +621,7 @@ export default function Header() {
           onMouseEnter={handleDropdownEnter}
           onMouseLeave={handleMouseLeave}
           aria-hidden={activeDropdown !== "products"}
-          className={`absolute top-full left-1/4 max-w-152.5 -translate-x-1/4 rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "products")}`}
+          className={`absolute top-full left-1/4 max-h-[464px] max-w-152.5 -translate-x-1/4 overflow-y-auto overscroll-contain rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "products")}`}
         >
           <div className="grid grid-cols-3 gap-5 p-5">
             {productMenuItems.map((item) => (
