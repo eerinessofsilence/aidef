@@ -96,7 +96,9 @@ type ProductMenuItem = {
   id: number;
   name: string;
   href: string;
-  icon: string;
+  imageUrl: string;
+  imageAlt: string;
+  iconUrl: string;
   iconAlt: string;
   order?: number | null;
 };
@@ -233,7 +235,15 @@ export default function Header() {
             id: product.id,
             name: product.name,
             href: `/products/${product.slug}`,
-            icon:
+            imageUrl:
+              product.first_image?.url ??
+              product.icon?.url ??
+              "/placeholder.svg",
+            imageAlt:
+              product.first_image?.alt?.trim() ||
+              product.icon?.alt?.trim() ||
+              product.name,
+            iconUrl:
               product.icon?.url ??
               product.first_image?.url ??
               "/placeholder.svg",
@@ -639,9 +649,9 @@ export default function Header() {
                 onClick={() => setActiveDropdown(null)}
               >
                 <img
-                  src={item.icon}
+                  src={item.imageUrl}
                   className="max-h-30 w-full rounded-t-xl object-cover"
-                  alt={item.iconAlt}
+                  alt={item.imageAlt}
                 />
                 <div className="flex h-full items-center">
                   <h3 className="text-sm font-semibold text-black">
@@ -754,7 +764,7 @@ export default function Header() {
                             className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
                             <img
-                              src={product.icon}
+                              src={product.iconUrl}
                               className="h-6 w-6 rounded-sm object-cover"
                               alt={product.iconAlt}
                             />
