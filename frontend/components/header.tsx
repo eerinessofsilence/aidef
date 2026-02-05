@@ -88,6 +88,7 @@ type ProductListApiItem = {
   slug: string;
   name: string;
   order?: number | null;
+  icon?: ProductImagePreview | null;
   first_image?: ProductImagePreview | null;
 };
 
@@ -232,8 +233,14 @@ export default function Header() {
             id: product.id,
             name: product.name,
             href: `/products/${product.slug}`,
-            icon: product.first_image?.url ?? "/placeholder.svg",
-            iconAlt: product.first_image?.alt?.trim() || product.name,
+            icon:
+              product.icon?.url ??
+              product.first_image?.url ??
+              "/placeholder.svg",
+            iconAlt:
+              product.icon?.alt?.trim() ||
+              product.first_image?.alt?.trim() ||
+              product.name,
             order: product.order,
           }));
         setProductMenuItems(items);
@@ -650,7 +657,7 @@ export default function Header() {
           onMouseEnter={handleDropdownEnter}
           onMouseLeave={handleMouseLeave}
           aria-hidden={activeDropdown !== "company"}
-          className={`absolute top-full right-0 left-1/3 max-w-[930px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "company")}`}
+          className={`absolute top-full right-0 left-1/3 max-w-[600px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "company")}`}
         >
           <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
             {COMPANY_MENU_ITEMS.map((item) => (

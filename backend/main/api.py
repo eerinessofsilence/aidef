@@ -105,6 +105,15 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     data = _serialize_product_base(product)
     language = _get_request_language(request)
     first_image = next((image for image in product.images.all() if image.image), None)
+    icon_url = _absolute_media_url(request, product.icon)
+    data["icon"] = (
+        {
+            "url": icon_url,
+            "alt": (product.name or "").strip(),
+        }
+        if icon_url
+        else None
+    )
     data["first_image"] = (
         {
             "id": first_image.id,

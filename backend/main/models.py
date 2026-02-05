@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils.text import slugify
 
@@ -15,6 +16,35 @@ def validate_tags_max_three(value):
             raise ValidationError("Each tag must be a string.")
         if len(tag) > 40:
             raise ValidationError("Tag length must be 40 characters or less.")
+
+
+_ICON_EXTENSIONS = ["svg", "svgz", "png", "jpg", "jpeg", "webp", "gif"]
+_icon_extension_validator = FileExtensionValidator(
+    allowed_extensions=_ICON_EXTENSIONS
+)
+
+
+def validate_svg_file(value):
+    if not value:
+        return
+    _icon_extension_validator(value)
+    name = getattr(value, "name", "")
+    if not isinstance(name, str) or not name.lower().endswith(".svg"):
+        return
+    file_obj = getattr(value, "file", value)
+    try:
+        position = file_obj.tell() if hasattr(file_obj, "tell") else None
+        chunk = file_obj.read(1024)
+        if hasattr(file_obj, "seek") and position is not None:
+            file_obj.seek(position)
+    except Exception:
+        return
+    if isinstance(chunk, bytes):
+        snippet = chunk.decode("utf-8", errors="ignore").lower()
+    else:
+        snippet = str(chunk).lower()
+    if "<svg" not in snippet:
+        raise ValidationError("Загрузи валидный SVG файл.")
 
 class Category(models.Model):
     name = models.CharField(max_length=120, unique=True)
@@ -38,6 +68,12 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(blank=True)
+    icon = models.FileField(
+        upload_to='product_icons/%Y/%m/',
+        blank=True,
+        null=True,
+        validators=[validate_svg_file],
+    )
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
