@@ -386,7 +386,7 @@ export default function ProductDetail() {
         </div>
       </ScrollReveal>
       <div className="container">
-        {productDetail ? (
+        {productDetail && productDetail.description ? (
           <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
             <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
             <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
@@ -433,25 +433,27 @@ export default function ProductDetail() {
               </ScrollReveal>
               <ScrollReveal className="relative max-lg:col-span-2">
                 <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
-                <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                  <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                    {productSubFeatures.map((sub_feature) => (
-                      <div
-                        key={sub_feature.id}
-                        className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
-                      >
-                        <h3 className="text-lg font-semibold">
-                          {sub_feature.name}
-                        </h3>
-                        {sub_feature.description ? (
-                          <p className="text-foreground/70">
-                            {sub_feature.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    ))}
+                {productSubFeatures.length > 0 && (
+                  <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
+                    <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                      {productSubFeatures.map((sub_feature) => (
+                        <div
+                          key={sub_feature.id}
+                          className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
+                        >
+                          <h3 className="text-lg font-semibold">
+                            {sub_feature.name}
+                          </h3>
+                          {sub_feature.description ? (
+                            <p className="text-foreground/70">
+                              {sub_feature.description}
+                            </p>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </ScrollReveal>
               <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
                 <a
@@ -543,9 +545,7 @@ export default function ProductDetail() {
                       : undefined
                   }
                 >
-                  <ScrollReveal
-                    className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25"
-                  >
+                  <ScrollReveal className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25">
                     <div>
                       <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
                         {block.name}
@@ -561,9 +561,7 @@ export default function ProductDetail() {
                 </section>
               ) : (
                 <section className="py-16 max-sm:py-12">
-                  <ScrollReveal
-                    className="flex items-center justify-between max-md:flex-col max-md:space-y-10"
-                  >
+                  <ScrollReveal className="flex items-center justify-between max-md:flex-col max-md:space-y-10">
                     <div className="max-md:text-center">
                       <p className="tracking-wider uppercase">{block.name}</p>
                       <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
@@ -593,9 +591,7 @@ export default function ProductDetail() {
                 <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
                   <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
                     <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                      <ScrollReveal
-                        className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]"
-                      >
+                      <ScrollReveal className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]">
                         <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
                           {block.title_1}
                         </h1>
@@ -609,9 +605,7 @@ export default function ProductDetail() {
                           ))}
                         </ul>
                       </ScrollReveal>
-                      <ScrollReveal
-                        className="w-full max-w-150 max-lg:max-w-100 lg:w-auto"
-                      >
+                      <ScrollReveal className="w-full max-w-150 max-lg:max-w-100 lg:w-auto">
                         <img
                           src={block.image_1}
                           alt=""
@@ -657,9 +651,7 @@ export default function ProductDetail() {
           ? productCTABlocks.map((block) => (
               <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
                 <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
-                  <ScrollReveal
-                    className="space-y-5 max-md:space-y-4 max-md:text-center"
-                  >
+                  <ScrollReveal className="space-y-5 max-md:space-y-4 max-md:text-center">
                     <div>
                       <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
                         {block.name}
