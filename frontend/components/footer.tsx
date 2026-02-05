@@ -60,7 +60,7 @@ export default function Footer() {
             <h1 className="text-foreground font-bold uppercase">
               {t("footer.strategic_partnership.title")}
             </h1>
-            <p className="text-nowrap">Besarioni.k@gmail.com</p>
+            <p className="text-nowrap">Board@ai-def.com</p>
           </div>
           <div className="space-y-4">
             <h1 className="text-foreground font-bold uppercase">
