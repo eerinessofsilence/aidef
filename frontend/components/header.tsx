@@ -732,7 +732,7 @@ export default function Header() {
                       >
                         <span>{label}</span>
                         <ChevronDown
-                          className={`h-4 w-4 transition-transform duration-200 ${
+                          className={`h-6 w-6 transition-transform duration-200 ${
                             expanded ? "rotate-180" : ""
                           }`}
                         />
@@ -740,10 +740,10 @@ export default function Header() {
 
                       <div
                         id={`mobile-submenu-${link.key}`}
-                        className={`flex flex-col gap-5 pt-5 pl-4 transition-all ${
+                        className={`flex flex-col gap-5 pl-4 transition-all ${
                           expanded
-                            ? "mt-2 max-h-[1000px] opacity-100"
-                            : "max-h-0 opacity-0"
+                            ? "mt-2 max-h-[1000px] pt-2.5 opacity-100"
+                            : "max-h-0 pt-0 opacity-0"
                         } overflow-hidden`}
                       >
                         {productMenuItems.map((product) => (
@@ -778,7 +778,7 @@ export default function Header() {
                       >
                         <span>{label}</span>
                         <ChevronDown
-                          className={`h-4 w-4 transition-transform duration-200 ${
+                          className={`h-6 w-6 transition-transform duration-200 ${
                             expanded ? "rotate-180" : ""
                           }`}
                         />
@@ -786,10 +786,10 @@ export default function Header() {
 
                       <div
                         id={`mobile-submenu-${link.key}`}
-                        className={`flex flex-col gap-5 pt-5 pl-4 transition-all ${
+                        className={`flex flex-col gap-5 pl-4 transition-all ${
                           expanded
-                            ? "mt-2 max-h-[1000px] opacity-100"
-                            : "max-h-0 opacity-0"
+                            ? "mt-2 max-h-[1000px] pt-2.5 opacity-100"
+                            : "max-h-0 pt-0 opacity-0"
                         } overflow-hidden`}
                       >
                         {COMPANY_MENU_ITEMS.map((item, subIdx) => (
@@ -847,7 +847,7 @@ export default function Header() {
                 >
                   <span>{t("header.languages.label")}</span>
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${
+                    className={`h-6 w-6 transition-transform duration-200 ${
                       mobileExpanded.languages ? "rotate-180" : ""
                     }`}
                   />
@@ -855,10 +855,10 @@ export default function Header() {
 
                 <div
                   id="mobile-submenu-languages"
-                  className={`mt-2 flex flex-col gap-2 pl-4 transition-all ${
+                  className={`flex flex-col gap-2.5 pl-4 transition-all ${
                     mobileExpanded.languages
-                      ? "max-h-[1000px] opacity-100"
-                      : "max-h-0 opacity-0"
+                      ? "mt-2 max-h-[1000px] pt-2.5 opacity-100"
+                      : "mt-0 max-h-0 pt-0 opacity-0"
                   } overflow-hidden`}
                 >
                   {LANGUAGES.map((language) => (
