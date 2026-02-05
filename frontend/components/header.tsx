@@ -162,8 +162,8 @@ export default function Header() {
   const displayName =
     userProfile.name || userProfile.email || t("header.account.operator");
   const API_BASE = useMemo(() => {
-    const raw =
-      import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+    const metaEnv = (import.meta as any).env || {};
+    const raw = metaEnv.VITE_API_BASE_URL || metaEnv.VITE_API_URL || "";
     const trimmed = raw.replace(/\/+$/, "");
     if (!trimmed) return "/api";
     return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
@@ -704,7 +704,7 @@ export default function Header() {
                 className="group flex cursor-pointer items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
               >
                 <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                  <img src={item.img} className="h-7 w-7" alt="" />
+                  <img src={item.img} className="h-7.5 w-7.5" alt="" />
                 </div>
                 <div className="flex items-center">
                   <h3 className="text-sm font-semibold text-black">
@@ -880,10 +880,10 @@ export default function Header() {
                           closeMobile: true,
                         })
                       }
-                      className="text-foreground/80 hover:text-foreground/50 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
+                      className="text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
                     >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/20 shadow-inner shadow-black/20">
-                        <img src={language.img} className="h-6 w-6" alt="" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black/10 shadow-inner shadow-black/75">
+                        <img src={language.img} className="h-7 w-7" alt="" />
                       </div>
                       <span className="font-medium">{language.labelKey}</span>
                     </button>

@@ -11,43 +11,13 @@ export type GalleryImage = {
   alt?: string | null;
 };
 
-const defaultGalleryImages = [
-  {
-    src: "./gallery-1.png",
-    alt: "",
-  },
-  {
-    src: "./gallery-2.png",
-    alt: "",
-  },
-  {
-    src: "./gallery-3.png",
-    alt: "",
-  },
-  {
-    src: "./gallery-4.png",
-    alt: "",
-  },
-  {
-    src: "./gallery-5.png",
-    alt: "",
-  },
-  {
-    src: "./gallery-6.png",
-    alt: "",
-  },
-] as const;
-
 type GallerySectionProps = {
-  images?: Array<GalleryImage>;
+  images: Array<GalleryImage>;
 };
 
 export default function GallerySection({ images }: GallerySectionProps) {
   const { t } = useTranslation();
-  const galleryImages = useMemo(
-    () => (images === undefined ? defaultGalleryImages : images),
-    [images],
-  );
+  const galleryImages = useMemo(() => images, [images]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
