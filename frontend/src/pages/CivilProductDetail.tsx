@@ -100,6 +100,28 @@ interface ProductDetail extends Product {
   cta_blocks?: ProductCTABlock[];
 }
 
+type ProductInfoSection = {
+  title: string;
+  description: string[];
+  image: string | null;
+};
+
+type ProductInfoBlockPrepared = ProductInfoBlock & {
+  section_1: ProductInfoSection | null;
+  section_2: ProductInfoSection | null;
+};
+
+const hasText = (value?: string | null): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+const hasAnyText = (...values: Array<string | null | undefined>): boolean =>
+  values.some((value) => hasText(value));
+
+const normalizeTextArray = (value?: Array<string> | null): string[] =>
+  (value ?? [])
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+
 export default function CivilProductDetail() {
   const { slug, lng } = useParams<{ slug?: string; lng?: string }>();
   const activeLanguage = resolveLanguage(lng);
@@ -193,20 +215,26 @@ export default function CivilProductDetail() {
 
   const productFeatures = useMemo(() => {
     const features = productDetail?.features ?? [];
-    return [...features].sort(
-      (a, b) =>
-        (a.order ?? Number.MAX_SAFE_INTEGER) -
-          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-    );
+    return [...features]
+      .filter((feature) =>
+        hasAnyText(feature.name, feature.value, feature.description),
+      )
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
 
   const productSubFeatures = useMemo(() => {
     const sub_features = productDetail?.sub_features ?? [];
-    return [...sub_features].sort(
-      (a, b) =>
-        (a.order ?? Number.MAX_SAFE_INTEGER) -
-          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-    );
+    return [...sub_features]
+      .filter((subFeature) => hasAnyText(subFeature.name, subFeature.description))
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
 
   const productGallery = useMemo(() => {
@@ -224,39 +252,99 @@ export default function CivilProductDetail() {
 
   const productTechnologies = useMemo(() => {
     const technologies = productDetail?.technologies ?? [];
-    return [...technologies].sort(
-      (a, b) =>
-        (a.order ?? Number.MAX_SAFE_INTEGER) -
-          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-    );
+    return [...technologies]
+      .map((technology) => ({
+        ...technology,
+        name: technology.name.trim(),
+        description: technology.description?.trim() || undefined,
+        tags: normalizeTextArray(technology.tags),
+      }))
+      .filter(
+        (technology) =>
+          hasAnyText(technology.name, technology.description) ||
+          technology.tags.length > 0,
+      )
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
 
   const productFeatureBlocks = useMemo(() => {
     const blocks = productDetail?.feature_blocks ?? [];
-    return [...blocks].sort(
-      (a, b) =>
-        (a.order ?? Number.MAX_SAFE_INTEGER) -
-          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-    );
+    return [...blocks]
+      .filter((block) => hasAnyText(block.name, block.title, block.description))
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
 
-  const productInfoBlocks = useMemo(() => {
+  const productInfoBlocks = useMemo<ProductInfoBlockPrepared[]>(() => {
     const blocks = productDetail?.info_blocks ?? [];
-    return [...blocks].sort(
-      (a, b) =>
-        (a.order ?? Number.MAX_SAFE_INTEGER) -
-          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-    );
+    return [...blocks]
+      .map<ProductInfoBlockPrepared | null>((block) => {
+        const description1 = normalizeTextArray(block.description_1);
+        const description2 = normalizeTextArray(block.description_2);
+
+        const section1 =
+          hasAnyText(block.title_1, block.image_1) || description1.length > 0
+            ? {
+                title: block.title_1.trim(),
+                description: description1,
+                image: hasText(block.image_1) ? block.image_1 : null,
+              }
+            : null;
+
+        const section2 =
+          hasAnyText(block.title_2, block.image_2) || description2.length > 0
+            ? {
+                title: block.title_2.trim(),
+                description: description2,
+                image: hasText(block.image_2) ? block.image_2 : null,
+              }
+            : null;
+
+        if (!section1 && !section2) {
+          return null;
+        }
+
+        return {
+          ...block,
+          section_1: section1,
+          section_2: section2,
+        };
+      })
+      .filter((block): block is ProductInfoBlockPrepared => block !== null)
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
 
   const productCTABlocks = useMemo(() => {
     const blocks = productDetail?.cta_blocks ?? [];
-    return [...blocks].sort(
-      (a, b) =>
-        (a.order ?? Number.MAX_SAFE_INTEGER) -
-          (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-    );
+    return [...blocks]
+      .filter(
+        (block) =>
+          hasAnyText(block.name, block.title, block.background_image) ||
+          block.has_button,
+      )
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
   }, [productDetail]);
+
+  const overviewDescription = heroProduct?.description?.trim();
+  const hasOverviewSection =
+    Boolean(overviewDescription) ||
+    productFeatures.length > 0 ||
+    productSubFeatures.length > 0;
 
   useEffect(() => {
     setActiveSlide(0);
@@ -386,7 +474,7 @@ export default function CivilProductDetail() {
         </div>
       </ScrollReveal>
       <div className="container">
-        {productDetail && productDetail.description ? (
+        {productDetail && hasOverviewSection ? (
           <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
             <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
             <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
@@ -398,30 +486,37 @@ export default function CivilProductDetail() {
                 <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
                   {t("productDetail.overview.title")}
                 </h1>
-                <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                  {heroProduct?.description ??
-                    t("productDetail.overview.descriptionFallback")}
-                </p>
-                <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                  {productFeatures.map((feature) => (
-                    <div
-                      key={feature.id}
-                      className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
-                    >
-                      <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                        {feature.name}
-                      </p>
-                      <p className="text-3xl font-semibold max-md:text-2xl">
-                        {feature.value}
-                      </p>
-                      {feature.description ? (
-                        <p className="text-foreground/70">
-                          {feature.description}
-                        </p>
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
+                {overviewDescription ? (
+                  <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
+                    {overviewDescription}
+                  </p>
+                ) : null}
+                {productFeatures.length > 0 ? (
+                  <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                    {productFeatures.map((feature) => (
+                      <div
+                        key={feature.id}
+                        className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
+                      >
+                        {hasText(feature.name) ? (
+                          <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                            {feature.name}
+                          </p>
+                        ) : null}
+                        {hasText(feature.value) ? (
+                          <p className="text-3xl font-semibold max-md:text-2xl">
+                            {feature.value}
+                          </p>
+                        ) : null}
+                        {hasText(feature.description) ? (
+                          <p className="text-foreground/70">
+                            {feature.description}
+                          </p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
                 <div className="max-lg:hidden">
                   <a
                     onClick={openContactModal}
@@ -441,10 +536,12 @@ export default function CivilProductDetail() {
                           key={sub_feature.id}
                           className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
                         >
-                          <h3 className="text-lg font-semibold">
-                            {sub_feature.name}
-                          </h3>
-                          {sub_feature.description ? (
+                          {hasText(sub_feature.name) ? (
+                            <h3 className="text-lg font-semibold">
+                              {sub_feature.name}
+                            </h3>
+                          ) : null}
+                          {hasText(sub_feature.description) ? (
                             <p className="text-foreground/70">
                               {sub_feature.description}
                             </p>
@@ -502,19 +599,21 @@ export default function CivilProductDetail() {
                     delay={0.06 * technology.id}
                   >
                     <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
-                      <h3 className="text-2xl font-semibold">
-                        {technology.name}
-                      </h3>
-                      {technology.description ? (
+                      {hasText(technology.name) ? (
+                        <h3 className="text-2xl font-semibold">
+                          {technology.name}
+                        </h3>
+                      ) : null}
+                      {hasText(technology.description) ? (
                         <p className="text-foreground/70 mt-3 text-sm">
                           {technology.description}
                         </p>
                       ) : null}
                       {tags.length > 0 ? (
                         <div className="mt-6 flex flex-wrap gap-2">
-                          {tags.map((tag) => (
+                          {tags.map((tag, tagIndex) => (
                             <span
-                              key={tag}
+                              key={`${technology.id}-${tag}-${tagIndex}`}
                               className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
                             >
                               {tag}
@@ -530,46 +629,62 @@ export default function CivilProductDetail() {
           </section>
         ) : null}
         {productFeatureBlocks.length > 0
-          ? productFeatureBlocks.map((block) =>
-              !block.with_logo ? (
-                <section
-                  key={block.id}
-                  className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end ${
-                    block.background_image
-                      ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
-                      : ""
-                  }`}
-                  style={
-                    block.background_image
-                      ? { backgroundImage: `url(${block.background_image})` }
-                      : undefined
-                  }
-                >
-                  <ScrollReveal className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25">
-                    <div>
-                      <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                        {block.name}
-                      </span>
-                    </div>
-                    <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                      {block.title}
-                    </h1>
-                    <p className="text-foreground/70 text-lg max-md:text-base">
-                      {block.description}
-                    </p>
-                  </ScrollReveal>
-                </section>
-              ) : (
-                <section className="py-16 max-sm:py-12">
+          ? productFeatureBlocks.map((block) => {
+              if (!block.with_logo) {
+                return (
+                  <section
+                    key={block.id}
+                    className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end ${
+                      block.background_image
+                        ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                        : ""
+                    }`}
+                    style={
+                      block.background_image
+                        ? { backgroundImage: `url(${block.background_image})` }
+                        : undefined
+                    }
+                  >
+                    <ScrollReveal className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25">
+                      {hasText(block.name) ? (
+                        <div>
+                          <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                            {block.name}
+                          </span>
+                        </div>
+                      ) : null}
+                      {hasText(block.title) ? (
+                        <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                          {block.title}
+                        </h1>
+                      ) : null}
+                      {hasText(block.description) ? (
+                        <p className="text-foreground/70 text-lg max-md:text-base">
+                          {block.description}
+                        </p>
+                      ) : null}
+                    </ScrollReveal>
+                  </section>
+                );
+              }
+
+              return (
+                <section key={block.id} className="py-16 max-sm:py-12">
                   <ScrollReveal className="flex items-center justify-between max-md:flex-col max-md:space-y-10">
                     <div className="max-md:text-center">
-                      <p className="tracking-wider uppercase">{block.name}</p>
-                      <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
-                        {block.title}
-                      </h1>
-                      <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
-                        {block.description}
-                      </p>
+                      {hasText(block.name) ? (
+                        <p className="tracking-wider uppercase">{block.name}</p>
+                      ) : null}
+                      {hasText(block.title) ? (
+                        <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
+                          {block.title}
+                        </h1>
+                      ) : null}
+                      {hasText(block.description) ? (
+                        <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
+                          {block.description}
+                        </p>
+                      ) : null}
                     </div>
                     <div>
                       <img
@@ -580,68 +695,91 @@ export default function CivilProductDetail() {
                     </div>
                   </ScrollReveal>
                 </section>
-              ),
-            )
+              );
+            })
           : null}
         {productInfoBlocks.length > 0
           ? productInfoBlocks.map((block) => {
-              const description1 = block.description_1 ?? [];
-              const description2 = block.description_2 ?? [];
               return (
-                <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
+                <section
+                  key={block.id}
+                  className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white"
+                >
                   <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
-                    <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                      <ScrollReveal className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]">
-                        <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
-                          {block.title_1}
-                        </h1>
-                        <ul className="space-y-3 text-black">
-                          {description1.map((tag) => (
-                            <li className="flex max-w-[420px] items-center gap-3">
-                              <span className="text-lg max-md:text-base">
-                                {tag}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollReveal>
-                      <ScrollReveal className="w-full max-w-150 max-lg:max-w-100 lg:w-auto">
-                        <img
-                          src={block.image_1}
-                          alt=""
-                          className="w-full object-contain"
-                        />
-                      </ScrollReveal>
-                    </div>
-                    <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
-                      <ScrollReveal
-                        delay={0.06}
-                        className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
-                      >
-                        <img
-                          src={block.image_2}
-                          alt=""
-                          className="w-full object-contain"
-                        />
-                      </ScrollReveal>
-                      <ScrollReveal
-                        delay={0.12}
-                        className="flex flex-col justify-center gap-4 text-left"
-                      >
-                        <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
-                          {block.title_2}
-                        </h1>
-                        <ul className="space-y-3 text-black">
-                          {description2.map((tag) => (
-                            <li className="flex max-w-[420px] items-center gap-3">
-                              <span className="text-lg max-md:text-base">
-                                {tag}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollReveal>
-                    </div>
+                    {block.section_1 ? (
+                      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                        <ScrollReveal className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]">
+                          {hasText(block.section_1.title) ? (
+                            <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
+                              {block.section_1.title}
+                            </h1>
+                          ) : null}
+                          {block.section_1.description.length > 0 ? (
+                            <ul className="space-y-3 text-black">
+                              {block.section_1.description.map((tag, index) => (
+                                <li
+                                  key={`${block.id}-section1-${index}`}
+                                  className="flex max-w-[420px] items-center gap-3"
+                                >
+                                  <span className="text-lg max-md:text-base">
+                                    {tag}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </ScrollReveal>
+                        {block.section_1.image ? (
+                          <ScrollReveal className="w-full max-w-150 max-lg:max-w-100 lg:w-auto">
+                            <img
+                              src={block.section_1.image}
+                              alt={block.section_1.title || ""}
+                              className="w-full object-contain"
+                            />
+                          </ScrollReveal>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    {block.section_2 ? (
+                      <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
+                        {block.section_2.image ? (
+                          <ScrollReveal
+                            delay={0.06}
+                            className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
+                          >
+                            <img
+                              src={block.section_2.image}
+                              alt={block.section_2.title || ""}
+                              className="w-full object-contain"
+                            />
+                          </ScrollReveal>
+                        ) : null}
+                        <ScrollReveal
+                          delay={0.12}
+                          className="flex flex-col justify-center gap-4 text-left"
+                        >
+                          {hasText(block.section_2.title) ? (
+                            <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
+                              {block.section_2.title}
+                            </h1>
+                          ) : null}
+                          {block.section_2.description.length > 0 ? (
+                            <ul className="space-y-3 text-black">
+                              {block.section_2.description.map((tag, index) => (
+                                <li
+                                  key={`${block.id}-section2-${index}`}
+                                  className="flex max-w-[420px] items-center gap-3"
+                                >
+                                  <span className="text-lg max-md:text-base">
+                                    {tag}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </ScrollReveal>
+                      </div>
+                    ) : null}
                   </div>
                 </section>
               );
@@ -649,17 +787,27 @@ export default function CivilProductDetail() {
           : null}
         {productCTABlocks.length > 0
           ? productCTABlocks.map((block) => (
-              <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+              <section
+                key={block.id}
+                className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                style={{
+                  backgroundImage: `url(${block.background_image || "/pdetail-bg-img-2.png"})`,
+                }}
+              >
                 <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
                   <ScrollReveal className="space-y-5 max-md:space-y-4 max-md:text-center">
-                    <div>
-                      <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                        {block.name}
-                      </span>
-                    </div>
-                    <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
-                      {block.title}
-                    </h1>
+                    {hasText(block.name) ? (
+                      <div>
+                        <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                          {block.name}
+                        </span>
+                      </div>
+                    ) : null}
+                    {hasText(block.title) ? (
+                      <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
+                        {block.title}
+                      </h1>
+                    ) : null}
                     {block.has_button ? (
                       <ScrollReveal
                         delay={0.1}
