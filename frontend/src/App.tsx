@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProductDetail from "./pages/ProductDetail";
+import CivilProductDetail from "./pages/CivilProductDetail";
 import Technology from "./pages/Technology";
 import TermsOfCondition from "./pages/TermsOfCondition";
 import Support from "./pages/Support";
@@ -100,6 +101,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="solutions" element={<Solutions />} />
         <Route path="products/:slug" element={<ProductDetail />} />
+        <Route path="civil-products/:slug" element={<CivilProductDetail />} />
         <Route path="technology" element={<Technology />} />
         <Route path="about-us" element={<AboutUs />} />
         <Route path="terms-of-condition" element={<TermsOfCondition />} />
