@@ -11,16 +11,25 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import (
+    CivilProduct,
+    CivilProductCTABlock,
+    CivilProductFeature,
+    CivilProductFeatureBlock,
+    CivilProductGallery,
+    CivilProductImage,
+    CivilProductInfoBlock,
+    CivilProductSubFeature,
+    CivilProductTechnology,
     ContactRequest,
     Product,
-    ProductImage,
+    ProductCTABlock,
     ProductFeature,
-    ProductSubFeature,
-    ProductGallery,
-    ProductTechnology,
     ProductFeatureBlock,
+    ProductGallery,
+    ProductImage,
     ProductInfoBlock,
-    ProductCTABlock
+    ProductSubFeature,
+    ProductTechnology,
 )
 
 def _absolute_media_url(request, image_field) -> str | None:
@@ -241,6 +250,173 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
     return data
 
 
+def _get_civil_image_alt(image: CivilProductImage, lang: str) -> str:
+    translations = list(image.translations.all())
+    for translation in translations:
+        if translation.lang == lang:
+            return translation.alt
+    if lang != DEFAULT_LANGUAGE:
+        for translation in translations:
+            if translation.lang == DEFAULT_LANGUAGE:
+                return translation.alt
+    if image.alt:
+        return image.alt
+    return ""
+
+
+def _serialize_civil_product_base(product: CivilProduct) -> Dict[str, Any]:
+    return {
+        'id': product.id,
+        'slug': product.slug,
+        'name': product.name,
+        'description': product.description,
+        'category': product.category.slug if product.category else None,
+        'available': product.available,
+        'order': product.order,
+    }
+
+
+def _serialize_civil_product_list(request, product: CivilProduct) -> Dict[str, Any]:
+    data = _serialize_civil_product_base(product)
+    language = _get_request_language(request)
+    first_image = next((image for image in product.images.all() if image.image), None)
+    icon_url = _absolute_media_url(request, product.icon)
+    data["icon"] = (
+        {
+            "url": icon_url,
+            "alt": (product.name or "").strip(),
+        }
+        if icon_url
+        else None
+    )
+    data["first_image"] = (
+        {
+            "id": first_image.id,
+            "url": _absolute_media_url(request, first_image.image),
+            "alt": _get_civil_image_alt(first_image, language),
+            "order": first_image.order,
+        }
+        if first_image
+        else None
+    )
+    return data
+
+
+def _serialize_civil_product_detail(request, product: CivilProduct) -> Dict[str, Any]:
+    data = _serialize_civil_product_list(request, product)
+    language = _get_request_language(request)
+    data.update(
+        {
+            'description': product.description,
+            'created_at': product.created_at.isoformat(),
+            'updated_at': product.updated_at.isoformat(),
+        }
+    )
+
+    images: List[CivilProductImage] = list(product.images.all())
+    data['images'] = [
+        {
+            'id': image.id,
+            'url': _absolute_media_url(request, image.image),
+            'alt': _get_civil_image_alt(image, language),
+            'order': image.order,
+        }
+        for image in images
+        if image.image
+    ]
+
+    features: List[CivilProductFeature] = list(product.features.all())
+    data['features'] = [
+        {
+            'id': feature.id,
+            'name': feature.name,
+            'value': feature.value,
+            'description': feature.description,
+            'order': feature.order,
+        }
+        for feature in features
+    ]
+
+    sub_features: List[CivilProductSubFeature] = list(product.sub_features.all())
+    data['sub_features'] = [
+        {
+            'id': sub_feature.id,
+            'name': sub_feature.name,
+            'description': sub_feature.description,
+            'order': sub_feature.order,
+        }
+        for sub_feature in sub_features
+    ]
+
+    gallery: List[CivilProductGallery] = list(product.gallery.all())
+    data['gallery'] = [
+        {
+            'id': gallery_item.id,
+            'url': _absolute_media_url(request, gallery_item.image),
+            'alt': gallery_item.alt,
+            'order': gallery_item.order,
+        }
+        for gallery_item in gallery
+        if gallery_item.image
+    ]
+
+    technologies: List[CivilProductTechnology] = list(product.technologies.all())
+    data['technologies'] = [
+        {
+            'id': technology.id,
+            'name': technology.name,
+            'description': technology.description,
+            'tags': technology.tags or [],
+            'order': technology.order,
+        }
+        for technology in technologies
+    ]
+
+    feature_blocks: List[CivilProductFeatureBlock] = list(product.feature_blocks.all())
+    data['feature_blocks'] = [
+        {
+            'id': block.id,
+            'name': block.name,
+            'title': block.title,
+            'description': block.description,
+            'background_image': _absolute_media_url(request, block.background_image),
+            'with_logo': block.with_logo,
+            'order': block.order,
+        }
+        for block in feature_blocks
+    ]
+
+    info_blocks: List[CivilProductInfoBlock] = list(product.info_blocks.all())
+    data['info_blocks'] = [
+        {
+            'id': block.id,
+            'title_1': block.title_1,
+            'description_1': block.description_1 or [],
+            'image_1': _absolute_media_url(request, block.image_1),
+            'title_2': block.title_2,
+            'description_2': block.description_2 or [],
+            'image_2': _absolute_media_url(request, block.image_2),
+            'order': block.order,
+        }
+        for block in info_blocks
+    ]
+
+    cta_blocks: List[CivilProductCTABlock] = list(product.cta_blocks.all())
+    data['cta_blocks'] = [
+        {
+            'id': block.id,
+            'name': block.name,
+            'title': block.title,
+            'background_image': _absolute_media_url(request, block.background_image),
+            'has_button': block.has_button,
+            'order': block.order,
+        }
+        for block in cta_blocks
+    ]
+
+    return data
+
+
 @require_GET
 def item_list_api(request):
     products = (
@@ -276,6 +452,44 @@ def item_detail_api(request, slug: str):
         raise Http404('Product not found') from exc
 
     payload = _serialize_product_detail(request, product)
+    return JsonResponse(payload)
+
+
+@require_GET
+def civil_item_list_api(request):
+    products = (
+        CivilProduct.objects.filter(available=True)
+        .select_related('category')
+        .prefetch_related('features', 'sub_features', 'images__translations')
+        .order_by('order', 'name')
+    )
+
+    payload = [_serialize_civil_product_list(request, product) for product in products]
+    return JsonResponse(payload, safe=False)
+
+
+@require_GET
+def civil_item_detail_api(request, slug: str):
+    try:
+        product = (
+            CivilProduct.objects
+            .select_related('category')
+            .prefetch_related(
+                'features',
+                'sub_features',
+                'images__translations',
+                'gallery',
+                'technologies',
+                'feature_blocks',
+                'info_blocks',
+                'cta_blocks',
+            )
+            .get(slug=slug, available=True)
+        )
+    except CivilProduct.DoesNotExist as exc:
+        raise Http404('Civil product not found') from exc
+
+    payload = _serialize_civil_product_detail(request, product)
     return JsonResponse(payload)
 
 

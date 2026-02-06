@@ -2,6 +2,15 @@ from modeltranslation.translator import TranslationOptions, register
 
 from .models import (
     Category,
+    CivilCategory,
+    CivilProduct,
+    CivilProductCTABlock,
+    CivilProductFeature,
+    CivilProductFeatureBlock,
+    CivilProductGallery,
+    CivilProductInfoBlock,
+    CivilProductSubFeature,
+    CivilProductTechnology,
     Product,
     ProductCTABlock,
     ProductFeature,
@@ -55,4 +64,49 @@ class ProductInfoBlockTranslationOptions(TranslationOptions):
 
 @register(ProductCTABlock)
 class ProductCTABlockTranslationOptions(TranslationOptions):
+    fields = ("name", "title")
+
+
+@register(CivilCategory)
+class CivilCategoryTranslationOptions(TranslationOptions):
+    fields = ("name",)
+
+
+@register(CivilProduct)
+class CivilProductTranslationOptions(TranslationOptions):
+    fields = ("name", "description")
+
+
+@register(CivilProductFeature)
+class CivilProductFeatureTranslationOptions(TranslationOptions):
+    fields = ("name", "value", "description")
+
+
+@register(CivilProductSubFeature)
+class CivilProductSubFeatureTranslationOptions(TranslationOptions):
+    fields = ("name", "description")
+
+
+@register(CivilProductGallery)
+class CivilProductGalleryTranslationOptions(TranslationOptions):
+    fields = ("alt",)
+
+
+@register(CivilProductTechnology)
+class CivilProductTechnologyTranslationOptions(TranslationOptions):
+    fields = ("name", "description")
+
+
+@register(CivilProductFeatureBlock)
+class CivilProductFeatureBlockTranslationOptions(TranslationOptions):
+    fields = ("name", "title", "description")
+
+
+@register(CivilProductInfoBlock)
+class CivilProductInfoBlockTranslationOptions(TranslationOptions):
+    fields = ("title_1", "title_2")
+
+
+@register(CivilProductCTABlock)
+class CivilProductCTABlockTranslationOptions(TranslationOptions):
     fields = ("name", "title")

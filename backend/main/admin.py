@@ -3,18 +3,28 @@ from django.contrib import admin
 from django.utils.html import format_html
 from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline
 from .models import (
-    Product,
     Category,
+    CivilCategory,
+    CivilProduct,
+    CivilProductCTABlock,
+    CivilProductFeature,
+    CivilProductFeatureBlock,
+    CivilProductGallery,
+    CivilProductImage,
+    CivilProductInfoBlock,
+    CivilProductSubFeature,
+    CivilProductTechnology,
+    ContactRequest,
+    Product,
+    ProductCTABlock,
+    ProductFeature,
+    ProductFeatureBlock,
+    ProductGallery,
     ProductImage,
     ProductImageTranslation,
-    ProductFeature,
-    ProductSubFeature,
-    ProductGallery,
-    ProductTechnology,
-    ProductFeatureBlock,
     ProductInfoBlock,
-    ProductCTABlock,
-    ContactRequest
+    ProductSubFeature,
+    ProductTechnology,
 )
 
 LANGUAGE_CHOICES = (
@@ -117,6 +127,101 @@ class ProductAdmin(TabbedTranslationAdmin):
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('order', '-created_at')
     inlines = [ProductImageInline, ProductFeatureInline, ProductSubFeatureInline, ProductGalleryInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline]
+
+
+class CivilProductImageInline(admin.StackedInline):
+    model = CivilProductImage
+    extra = 0
+    fields = ("image", "alt", "order")
+    ordering = ("order",)
+
+
+class CivilProductFeatureInline(TranslationStackedInline):
+    model = CivilProductFeature
+    extra = 1
+    ordering = ("order",)
+
+
+class CivilProductSubFeatureInline(TranslationStackedInline):
+    model = CivilProductSubFeature
+    extra = 1
+    ordering = ("order",)
+
+
+class CivilProductGalleryInline(TranslationStackedInline):
+    model = CivilProductGallery
+    extra = 1
+    ordering = ("order",)
+    fields = ("image", "alt", "order")
+
+
+class CivilProductTechnologyInline(TranslationStackedInline):
+    model = CivilProductTechnology
+    extra = 1
+    ordering = ("order",)
+    fields = ("name", "description", "tags", "order")
+
+
+class CivilProductFeatureBlockInline(TranslationStackedInline):
+    model = CivilProductFeatureBlock
+    extra = 1
+    ordering = ("order",)
+    fields = (
+        "name",
+        "title",
+        "description",
+        "background_image",
+        "with_logo",
+        "order",
+    )
+
+
+class CivilProductInfoBlockInline(TranslationStackedInline):
+    model = CivilProductInfoBlock
+    extra = 1
+    ordering = ("order",)
+    fields = (
+        "title_1",
+        "description_1",
+        "image_1",
+        "title_2",
+        "description_2",
+        "image_2",
+        "order",
+    )
+
+
+class CivilProductCTABlockInline(TranslationStackedInline):
+    model = CivilProductCTABlock
+    extra = 1
+    ordering = ("order",)
+    fields = ("name", "title", "background_image", "has_button", "order")
+
+
+@admin.register(CivilCategory)
+class CivilCategoryAdmin(TabbedTranslationAdmin):
+    list_display = ("name", "slug")
+    search_fields = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(CivilProduct)
+class CivilProductAdmin(TabbedTranslationAdmin):
+    list_display = ("name", "slug", "category", "available", "order", "created_at")
+    list_filter = ("available", "category", "order")
+    search_fields = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
+    ordering = ("order", "-created_at")
+    inlines = [
+        CivilProductImageInline,
+        CivilProductFeatureInline,
+        CivilProductSubFeatureInline,
+        CivilProductGalleryInline,
+        CivilProductTechnologyInline,
+        CivilProductFeatureBlockInline,
+        CivilProductInfoBlockInline,
+        CivilProductCTABlockInline,
+    ]
 
 
 @admin.register(ContactRequest)
