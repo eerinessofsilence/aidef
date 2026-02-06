@@ -22,14 +22,14 @@ import {
 } from "../src/i18n";
 
 type NavKey =
-  | "home"
   | "solutions"
   | "products"
+  | "civilProducts"
   | "technology"
   | "company"
   | "support"
   | "contact";
-type MenuKey = "products" | "company";
+type MenuKey = "products" | "civilProducts" | "company";
 
 const NAV_LINKS: Array<{
   key: NavKey;
@@ -37,9 +37,9 @@ const NAV_LINKS: Array<{
   hasDropdown?: boolean;
   isContact?: boolean;
 }> = [
-  { key: "home", href: "/" },
   { key: "solutions", href: "/solutions" },
   { key: "products", href: "#", hasDropdown: true },
+  { key: "civilProducts", href: "#", hasDropdown: true },
   { key: "technology", href: "/technology" },
   { key: "company", href: "#", hasDropdown: true },
   { key: "support", href: "/support" },
@@ -121,6 +121,9 @@ export default function Header() {
   const [productMenuItems, setProductMenuItems] = useState<ProductMenuItem[]>(
     [],
   );
+  const [civilProductMenuItems, setCivilProductMenuItems] = useState<
+    ProductMenuItem[]
+  >([]);
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [languageSelectorIsOpen, setLanguageSelectorOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -261,6 +264,56 @@ export default function Header() {
         }
         console.error("Unable to load header products", error);
         setProductMenuItems([]);
+      });
+
+    return () => controller.abort();
+  }, [API_BASE, currentLanguage]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    axios
+      .get<ProductListApiItem[]>(`${API_BASE}/civil-items/`, {
+        signal: controller.signal,
+        params: { lang: currentLanguage },
+      })
+      .then((res) => {
+        const items = [...res.data]
+          .filter((product) => Boolean(product.slug))
+          .sort(
+            (a, b) =>
+              (a.order ?? Number.MAX_SAFE_INTEGER) -
+                (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+          )
+          .map((product) => ({
+            id: product.id,
+            name: product.name,
+            href: `/civil-products/${product.slug}`,
+            imageUrl:
+              product.first_image?.url ??
+              product.icon?.url ??
+              "/placeholder.svg",
+            imageAlt:
+              product.first_image?.alt?.trim() ||
+              product.icon?.alt?.trim() ||
+              product.name,
+            iconUrl:
+              product.icon?.url ??
+              product.first_image?.url ??
+              "/placeholder.svg",
+            iconAlt:
+              product.icon?.alt?.trim() ||
+              product.first_image?.alt?.trim() ||
+              product.name,
+            order: product.order,
+          }));
+        setCivilProductMenuItems(items);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          return;
+        }
+        console.error("Unable to load header civil products", error);
+        setCivilProductMenuItems([]);
       });
 
     return () => controller.abort();
@@ -507,7 +560,7 @@ export default function Header() {
                     onMouseLeave={handleMouseLeave}
                   >
                     {link.hasDropdown ? (
-                      <button className="group text-foreground hover:text-foreground/70 flex cursor-pointer items-center gap-1 text-[17px] font-medium transition-colors">
+                      <button className="group text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-1 text-[17px] font-medium transition-colors">
                         {label}
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-300 ${
@@ -519,14 +572,14 @@ export default function Header() {
                       <button
                         type="button"
                         onClick={() => openContactModal()}
-                        className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 cursor-pointer text-[17px] font-medium transition-colors"
                       >
                         {label}
                       </button>
                     ) : (
                       <Link
                         to={withLanguage(link.href)}
-                        className="text-foreground hover:text-foreground/70 cursor-pointer text-[17px] font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 cursor-pointer text-[17px] font-medium transition-colors"
                       >
                         {label}
                       </Link>
@@ -666,6 +719,35 @@ export default function Header() {
         <div
           onMouseEnter={handleDropdownEnter}
           onMouseLeave={handleMouseLeave}
+          aria-hidden={activeDropdown !== "civilProducts"}
+          className={`absolute top-full left-1/3 max-h-[464px] max-w-152.5 -translate-x-1/4 overflow-y-auto overscroll-contain rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "civilProducts")}`}
+        >
+          <div className="grid grid-cols-3 gap-5 p-5">
+            {civilProductMenuItems.map((item) => (
+              <Link
+                key={item.id}
+                to={withLanguage(item.href)}
+                className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
+                onClick={() => setActiveDropdown(null)}
+              >
+                <img
+                  src={item.imageUrl}
+                  className="max-h-30 w-full rounded-t-xl object-cover"
+                  alt={item.imageAlt}
+                />
+                <div className="flex h-full items-center">
+                  <h3 className="text-sm font-semibold text-black">
+                    {item.name}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div
+          onMouseEnter={handleDropdownEnter}
+          onMouseLeave={handleMouseLeave}
           aria-hidden={activeDropdown !== "company"}
           className={`absolute top-full right-0 left-1/3 max-w-[600px] rounded-[20px] bg-[#ececec] shadow-sm shadow-black ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "company")}`}
         >
@@ -736,7 +818,7 @@ export default function Header() {
                     <div key={link.key} className="relative">
                       <button
                         onClick={() => toggleMobileDropdown(link.key)}
-                        className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
                         aria-expanded={expanded}
                         aria-controls={`mobile-submenu-${link.key}`}
                       >
@@ -761,7 +843,53 @@ export default function Header() {
                             key={product.id}
                             to={withLanguage(product.href)}
                             onClick={handleMobileMenuLinkClick}
-                            className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
+                            className="text-foreground hover:text-foreground/75 flex items-center gap-4 pl-2 text-base transition-all duration-300"
+                          >
+                            <img
+                              src={product.iconUrl}
+                              className="h-6 w-6 rounded-sm object-cover"
+                              alt={product.iconAlt}
+                            />
+                            {product.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (link.hasDropdown && link.key === "civilProducts") {
+                  const expanded = !!mobileExpanded[link.key];
+                  return (
+                    <div key={link.key} className="relative">
+                      <button
+                        onClick={() => toggleMobileDropdown(link.key)}
+                        className="text-foreground hover:text-foreground/75 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                        aria-expanded={expanded}
+                        aria-controls={`mobile-submenu-${link.key}`}
+                      >
+                        <span>{label}</span>
+                        <ChevronDown
+                          className={`h-6 w-6 transition-transform duration-200 ${
+                            expanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+
+                      <div
+                        id={`mobile-submenu-${link.key}`}
+                        className={`flex flex-col gap-5 pl-4 transition-all ${
+                          expanded
+                            ? "mt-2 max-h-[1000px] pt-2.5 opacity-100"
+                            : "max-h-0 pt-0 opacity-0"
+                        } overflow-hidden`}
+                      >
+                        {civilProductMenuItems.map((product) => (
+                          <Link
+                            key={product.id}
+                            to={withLanguage(product.href)}
+                            onClick={handleMobileMenuLinkClick}
+                            className="text-foreground hover:text-foreground/75 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
                             <img
                               src={product.iconUrl}
@@ -782,7 +910,7 @@ export default function Header() {
                     <div key={link.key} className="relative">
                       <button
                         onClick={() => toggleMobileDropdown(link.key)}
-                        className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
                         aria-expanded={expanded}
                         aria-controls={`mobile-submenu-${link.key}`}
                       >
@@ -807,7 +935,7 @@ export default function Header() {
                             key={item.titleKey}
                             to={withLanguage(item.href)}
                             onClick={handleMobileMenuLinkClick}
-                            className="text-foreground/70 hover:text-foreground/50 flex items-center gap-4 pl-2 text-base transition-all duration-300"
+                            className="text-foreground hover:text-foreground/75 flex items-center gap-4 pl-2 text-base transition-all duration-300"
                           >
                             <img
                               src={`/company-white-${subIdx + 1}.svg`}
@@ -831,7 +959,7 @@ export default function Header() {
                           event.preventDefault();
                           openContactModal(true);
                         }}
-                        className="text-foreground hover:text-foreground/70 block w-full cursor-pointer text-left text-lg font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 block w-full cursor-pointer text-left text-lg font-medium transition-colors"
                       >
                         {label}
                       </button>
@@ -839,7 +967,7 @@ export default function Header() {
                       <Link
                         to={withLanguage(link.href)}
                         onClick={handleMobileMenuLinkClick}
-                        className="text-foreground hover:text-foreground/70 block cursor-pointer text-lg font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 block cursor-pointer text-lg font-medium transition-colors"
                       >
                         {label}
                       </Link>
@@ -851,7 +979,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => toggleMobileDropdown("languages")}
-                  className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
+                  className="text-foreground hover:text-foreground/75 flex w-full cursor-pointer items-center justify-between text-lg font-medium transition-colors"
                   aria-expanded={!!mobileExpanded.languages}
                   aria-controls="mobile-submenu-languages"
                 >
