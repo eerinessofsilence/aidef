@@ -21,6 +21,9 @@ interface CarouselProps {
   initialScroll?: number;
 }
 
+const SCROLL_STEP = 300;
+const SCROLL_EDGE_TOLERANCE = 2;
+
 type Card = {
   bg: string;
   title: string;
@@ -80,23 +83,39 @@ export const Carousel = ({
     }
   }, [initialScroll]);
 
-  const checkScrollability = () => {
+  const checkScrollability = React.useCallback(() => {
     if (carouselRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+      const maxScrollLeft = Math.max(scrollWidth - clientWidth, 0);
+      setCanScrollLeft(scrollLeft > SCROLL_EDGE_TOLERANCE);
+      setCanScrollRight(
+        scrollLeft < maxScrollLeft - SCROLL_EDGE_TOLERANCE,
+      );
     }
-  };
+  }, []);
+
+  const scheduleScrollabilityCheck = React.useCallback(() => {
+    window.requestAnimationFrame(checkScrollability);
+    window.setTimeout(checkScrollability, 350);
+  }, [checkScrollability]);
+
+  useEffect(() => {
+    const handleResize = () => checkScrollability();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [checkScrollability]);
 
   const scrollLeft = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -300, behavior: "smooth" });
+      carouselRef.current.scrollBy({ left: -SCROLL_STEP, behavior: "smooth" });
+      scheduleScrollabilityCheck();
     }
   };
 
   const scrollRight = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: 300, behavior: "smooth" });
+      carouselRef.current.scrollBy({ left: SCROLL_STEP, behavior: "smooth" });
+      scheduleScrollabilityCheck();
     }
   };
 
@@ -110,6 +129,7 @@ export const Carousel = ({
         behavior: "smooth",
       });
       setCurrentIndex(index);
+      scheduleScrollabilityCheck();
     }
   };
 
@@ -132,7 +152,7 @@ export const Carousel = ({
               </div>
             ) : null}
             {paragraph ? (
-              <div className="text-foreground/70">
+              <div className="text-foreground/70 lg:max-w-[90%]">
                 <p>{paragraph}</p>
               </div>
             ) : null}
@@ -144,7 +164,7 @@ export const Carousel = ({
               disabled={!canScrollLeft}
               aria-label={t("carousel.previous")}
             >
-              <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+              <IconArrowNarrowLeft className="h-7 w-7 text-[#515151]" />
             </button>
             <button
               className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
@@ -152,7 +172,7 @@ export const Carousel = ({
               disabled={!canScrollRight}
               aria-label={t("carousel.next")}
             >
-              <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+              <IconArrowNarrowRight className="h-7 w-7 text-[#515151]" />
             </button>
           </div>
         </div>
@@ -167,11 +187,11 @@ export const Carousel = ({
             )}
           ></div>
 
-          <div className="flex max-w-7xl flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
+          <div className="inline-flex flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
             {items.map((item, index) => (
               <div
                 key={"card" + index}
-                className="h-162.5 w-125 max-md:h-97.5 max-md:w-75"
+                className="aspect-5/7 w-81 shrink-0 max-lg:w-72 max-md:w-63"
               >
                 {item}
               </div>
@@ -244,7 +264,7 @@ export const Card = ({
       <motion.a
         href={localizedHref}
         layoutId={layout ? `card-${card.title}` : undefined}
-        className="relative z-10 flex h-162.5 w-125 cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50 max-md:h-97.5 max-md:w-75"
+        className="relative z-10 flex h-full w-full cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         data-card-index={index}
