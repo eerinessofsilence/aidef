@@ -151,6 +151,7 @@ export default function Header() {
   const location = useLocation();
   const { lng } = useParams();
   const currentLanguage = resolveLanguage(lng);
+  const currentLanguageLabel = currentLanguage.toUpperCase();
   const withLanguage = (path: string) =>
     buildLocalizedPath(currentLanguage, path);
   const dropdownTransitionClasses =
@@ -159,6 +160,10 @@ export default function Header() {
     isOpen
       ? "pointer-events-auto opacity-100 -translate-y-3"
       : "pointer-events-none opacity-0 -translate-y-5";
+  const accountActionClass =
+    "flex w-full cursor-pointer items-center gap-2 rounded-lg border border-transparent px-2.5 py-2 text-[13px] font-semibold text-white/95 transition-all duration-200 hover:border-white/15 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-sky-400/60 focus-visible:outline-none";
+  const accountDangerActionClass =
+    "flex w-full cursor-pointer items-center gap-2 rounded-lg border border-transparent px-2.5 py-2 text-[13px] font-semibold text-rose-100 transition-all duration-200 hover:border-rose-300/35 hover:bg-rose-500/12 focus-visible:ring-2 focus-visible:ring-rose-400/60 focus-visible:outline-none";
 
   const mobileMenuId = "mobile-menu";
   const clientPortalHref = withLanguage(isAuthed ? "/client-portal" : "/auth");
@@ -542,7 +547,7 @@ export default function Header() {
               to={withLanguage("/")}
               className="flex items-center space-x-2"
             >
-              <img src="/logo-ai-def.svg" className="w-40 max-md:w-35" alt="" />
+              <img src="/logo-ai-def.svg" className="w-35" alt="" />
             </Link>
 
             <div className="flex items-center gap-4 max-xl:hidden">
@@ -593,9 +598,12 @@ export default function Header() {
               <div
                 onMouseEnter={handleLanguageMouseEnter}
                 onMouseLeave={handleLanguageMouseLeave}
-                className="border-border/25 active:translate-y-2px flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/10 to-black/0 backdrop-blur-lg transition-all duration-300 will-change-transform hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.25)] active:scale-[0.93] max-xl:hidden"
+                className="border-border/25 active:translate-y-2px relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/10 to-black/0 backdrop-blur-lg transition-all duration-300 will-change-transform hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.25)] active:scale-[0.93] max-xl:hidden"
               >
                 <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
+                <span className="absolute -right-1.5 -bottom-1.5 rounded-full bg-white px-1.5 py-0.5 text-[10px] leading-none font-bold text-black shadow-sm">
+                  {currentLanguageLabel}
+                </span>
               </div>
               {isAuthed ? (
                 <div ref={accountMenuRef} className="relative max-xl:hidden">
@@ -604,58 +612,62 @@ export default function Header() {
                     aria-haspopup="menu"
                     aria-expanded={accountMenuOpen}
                     onClick={() => setAccountMenuOpen((prev) => !prev)}
-                    className="border-border/25 flex w-38 cursor-pointer items-center justify-between gap-1 rounded-xl border bg-black/2 p-2 backdrop-blur-xl transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.35)]"
+                    className="group border-border/20 flex w-36 min-w-0 cursor-pointer items-center justify-between gap-1.5 rounded-xl border bg-linear-to-br px-2 py-1.5 shadow-[inset_0_1px_8px_rgba(255,255,255,0.1)] backdrop-blur-xl transition-all duration-300 hover:border-white/35 hover:shadow-[inset_0_2px_10px_rgba(255,255,255,0.24)]"
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
-                        <UserRound className="h-4 w-4" aria-hidden="true" />
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/18 ring-1 ring-white/20">
+                        <UserRound
+                          className="h-3.5 w-3.5 text-white/95"
+                          aria-hidden="true"
+                        />
                       </span>
-                      <p className="max-w-16.5 min-w-0 truncate text-sm font-semibold tracking-tight">
+                      <p className="truncate text-[13px] font-semibold tracking-tight text-white">
                         {displayName}
                       </p>
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 transition duration-300 ${
+                      className={`h-4 w-4 shrink-0 transition duration-300 ${
                         accountMenuOpen
                           ? "rotate-180 text-white"
-                          : "text-white/70"
+                          : "text-white/65 group-hover:text-white/85"
                       }`}
                       aria-hidden="true"
                     />
                   </button>
 
                   {accountMenuOpen ? (
-                    <div className="border-border/25 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-38 space-y-1 rounded-2xl border bg-black p-2.5 backdrop-blur-xl">
-                      <div className="pt-2.5 text-xs font-semibold tracking-widest text-white/70 uppercase">
-                        {t("header.account.title")}
+                    <div className="border-border/20 absolute top-[calc(100%+0.5rem)] right-0 z-20 w-48 overflow-hidden rounded-xl border bg-linear-to-b from-black/92 via-black/88 to-black/84 p-1.5 shadow-[0_18px_36px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+                      <div className="border-border/20 mb-1.5 rounded-lg border bg-white/5 px-2.5 py-2">
+                        <p className="truncate text-[13px] font-semibold text-white">
+                          {displayName}
+                        </p>
+                        {userProfile.email ? (
+                          <p className="truncate text-[11px] text-white/60">
+                            {userProfile.email}
+                          </p>
+                        ) : null}
                       </div>
                       <Link
                         to={withLanguage("/client-portal")}
-                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
+                        className={accountActionClass}
                       >
                         <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         {t("header.actions.clientPortal")}
                       </Link>
-                      <button
-                        type="button"
-                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
-                      >
+                      <button type="button" className={accountActionClass}>
                         <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         {t("header.account.profile")}
                       </button>
-                      <button
-                        type="button"
-                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
-                      >
+                      <button type="button" className={accountActionClass}>
                         <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
                         {t("header.account.settings")}
                       </button>
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="hover:border-border/50 flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent p-2.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)]"
+                        className={accountDangerActionClass}
                       >
-                        <LogOut className="h-3.5 w-3.5 shrink-0 text-white/70" />
+                        <LogOut className="h-3.5 w-3.5 shrink-0 text-rose-200/90" />
                         {t("header.account.signOut")}
                       </button>
                     </div>
@@ -776,25 +788,39 @@ export default function Header() {
           className={`absolute top-full left-1/2 w-fit -translate-x-1/17 rounded-[20px] bg-[#f5f5f5] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(languageSelectorIsOpen)}`}
         >
           <div className="grid grid-cols-3 gap-8 p-4.5 px-6">
-            {LANGUAGES.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() =>
-                  handleLanguageChange(item.code, { closeDropdown: true })
-                }
-                className="group flex cursor-pointer items-center gap-5 rounded-xl p-3 text-center transition-colors duration-300 hover:bg-[#c4c4c4]/35"
-              >
-                <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                  <img src={item.img} className="h-7.5 w-7.5" alt="" />
-                </div>
-                <div className="flex items-center">
-                  <h3 className="text-sm font-semibold text-black">
-                    {t(item.labelKey)}
-                  </h3>
-                </div>
-              </button>
-            ))}
+            {LANGUAGES.map((item) => {
+              const isActiveLanguage = item.code === currentLanguage;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() =>
+                    handleLanguageChange(item.code, { closeDropdown: true })
+                  }
+                  aria-current={isActiveLanguage ? "true" : undefined}
+                  className={`group flex cursor-pointer items-center gap-3 rounded-xl p-3 text-center transition-colors duration-300 ${
+                    isActiveLanguage
+                      ? "bg-[#d5d5d5]/50 shadow-inner ring-1 shadow-white/35 ring-black/15"
+                      : "hover:bg-[#c4c4c4]/35"
+                  }`}
+                >
+                  <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
+                    <img src={item.img} className="h-7.5 w-7.5" alt="" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-sm font-semibold text-black">
+                      {t(item.labelKey)}
+                    </h3>
+                    {isActiveLanguage ? (
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.22)]"
+                      />
+                    ) : null}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
         {/* Mobile menu */}
@@ -983,7 +1009,12 @@ export default function Header() {
                   aria-expanded={!!mobileExpanded.languages}
                   aria-controls="mobile-submenu-languages"
                 >
-                  <span>{t("header.languages.label")}</span>
+                  <span className="flex items-center gap-2">
+                    {t("header.languages.label")}
+                    <span className="rounded-full bg-white px-2 py-0.5 text-xs leading-none font-semibold text-black">
+                      {currentLanguageLabel}
+                    </span>
+                  </span>
                   <ChevronDown
                     className={`h-6 w-6 transition-transform duration-200 ${
                       mobileExpanded.languages ? "rotate-180" : ""
@@ -999,23 +1030,39 @@ export default function Header() {
                       : "mt-0 max-h-0 pt-0 opacity-0"
                   } overflow-hidden`}
                 >
-                  {LANGUAGES.map((language) => (
-                    <button
-                      key={language.id}
-                      type="button"
-                      onClick={() =>
-                        handleLanguageChange(language.code, {
-                          closeMobile: true,
-                        })
-                      }
-                      className="text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-base transition-all duration-300"
-                    >
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black/10 shadow-inner shadow-black/75">
-                        <img src={language.img} className="h-7 w-7" alt="" />
-                      </div>
-                      <span className="font-medium">{language.labelKey}</span>
-                    </button>
-                  ))}
+                  {LANGUAGES.map((language) => {
+                    const isActiveLanguage = language.code === currentLanguage;
+                    return (
+                      <button
+                        key={language.id}
+                        type="button"
+                        onClick={() =>
+                          handleLanguageChange(language.code, {
+                            closeMobile: true,
+                          })
+                        }
+                        aria-current={isActiveLanguage ? "true" : undefined}
+                        className={`text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-left text-base transition-all duration-300 ${
+                          isActiveLanguage
+                            ? "border-emerald-300/70 bg-white/15 shadow-[0_0_0_1px_rgba(16,185,129,0.35)]"
+                            : "border-white/10 bg-white/5"
+                        }`}
+                      >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black/10 shadow-inner shadow-black/75">
+                          <img src={language.img} className="h-7 w-7" alt="" />
+                        </div>
+                        <span className="flex items-center gap-2 font-medium">
+                          {language.labelKey}
+                          {isActiveLanguage ? (
+                            <span
+                              aria-hidden="true"
+                              className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.25)]"
+                            />
+                          ) : null}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </nav>
@@ -1029,56 +1076,62 @@ export default function Header() {
                   onClick={() =>
                     setMobileAccountMenuOpen((prevState) => !prevState)
                   }
-                  className="border-border/10 flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-xl border bg-black/10 px-4 py-2 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] transition-all duration-300 hover:contrast-150"
+                  className="group border-border/20 flex w-full min-w-0 cursor-pointer items-center justify-between gap-1.5 rounded-xl border bg-linear-to-br from-white/10 via-white/5 to-white/0 px-2.5 py-2 shadow-[inset_0_1px_8px_rgba(255,255,255,0.18)] backdrop-blur-xl transition-all duration-300 hover:border-white/35 hover:shadow-[inset_0_2px_10px_rgba(255,255,255,0.24)]"
                 >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
-                    <UserRound className="h-4 w-4" aria-hidden="true" />
-                  </span>
-                  <p className="max-w-40 min-w-0 truncate text-sm tracking-tight sm:max-w-48">
-                    {displayName}
-                  </p>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/18 ring-1 ring-white/20">
+                      <UserRound
+                        className="h-4 w-4 text-white/95"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <p className="truncate text-[13px] font-semibold tracking-tight text-white">
+                      {displayName}
+                    </p>
+                  </div>
                   <ChevronDown
-                    className={`h-4 w-4 transition duration-300 ${
+                    className={`h-4 w-4 shrink-0 transition duration-300 ${
                       mobileAccountMenuOpen
                         ? "rotate-180 text-white"
-                        : "text-white/60"
+                        : "text-white/65 group-hover:text-white/85"
                     }`}
                     aria-hidden="true"
                   />
                 </button>
 
                 {mobileAccountMenuOpen ? (
-                  <div className="border-border/10 absolute top-[calc(100%+0.6rem)] right-0 z-20 w-full rounded-2xl border bg-black/5 p-1 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-lg">
-                    <div className="px-3 py-2 text-xs font-semibold tracking-widest text-white/70 uppercase">
-                      {t("header.account.title")}
+                  <div className="border-border/20 absolute top-[calc(100%+0.5rem)] right-0 z-20 w-full overflow-hidden rounded-xl border bg-linear-to-b from-black/92 via-black/88 to-black/84 p-1.5 shadow-[0_18px_36px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+                    <div className="border-border/20 mb-1.5 rounded-lg border bg-white/5 px-2.5 py-2">
+                      <p className="truncate text-[13px] font-semibold text-white">
+                        {displayName}
+                      </p>
+                      {userProfile.email ? (
+                        <p className="truncate text-[11px] text-white/60">
+                          {userProfile.email}
+                        </p>
+                      ) : null}
                     </div>
                     <Link
                       to={withLanguage("/client-portal")}
-                      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
+                      className={accountActionClass}
                     >
                       <LayoutDashboard className="h-3.5 w-3.5 shrink-0 text-white/70" />
                       {t("header.actions.clientPortal")}
                     </Link>
-                    <button
-                      type="button"
-                      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                    >
+                    <button type="button" className={accountActionClass}>
                       <UserRound className="h-3.5 w-3.5 shrink-0 text-white/70" />
                       {t("header.account.profile")}
                     </button>
-                    <button
-                      type="button"
-                      className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:outline-none"
-                    >
+                    <button type="button" className={accountActionClass}>
                       <Settings className="h-3.5 w-3.5 shrink-0 text-white/70" />
                       {t("header.account.settings")}
                     </button>
                     <button
                       type="button"
                       onClick={handleSignOut}
-                      className="text-foreground flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition duration-300 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-rose-500/60 focus-visible:outline-none"
+                      className={accountDangerActionClass}
                     >
-                      <LogOut className="h-3.5 w-3.5 shrink-0" />
+                      <LogOut className="h-3.5 w-3.5 shrink-0 text-rose-200/90" />
                       {t("header.account.signOut")}
                     </button>
                   </div>
