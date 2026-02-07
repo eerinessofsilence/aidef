@@ -1,0 +1,770 @@
+{
+  "main": {
+    "hero": {
+      "title": "UAV de combat autonomes et systèmes robotiques",
+      "description": "Nous sommes un intégrateur de systèmes fournissant des UAV kamikazes, UGV et GCS, intégrés aux systèmes de véhicules militaires via des API C2 ouvertes et l'intégration de systèmes tiers.",
+      "slideAlt": "Arrière-plan {{index}}",
+      "slideAria": "Aller à la diapositive {{index}}"
+    },
+    "droneCarousel": {
+      "title": "Vue d'ensemble de l'écosystème AI-DEF",
+      "description": "Nos systèmes combinent un effet cinétique à grande vitesse, une résilience face au brouillage GNSS et une autonomie pilotée par l'IA. Un noyau avionique AI-DEF commun (pilote automatique, système de données air avec tube de Pitot, GNSS double, contrôleur de charge Safe-Arm, modules d'alimentation et IA embarquée) crée une plateforme technique unifiée sur l'ensemble des produits.",
+      "items": {
+        "ax2ng": {
+          "category": "Drone",
+          "title": "AX2NG KRAKATIT",
+          "description": "Drone KAMIKAZE à moteur à réaction avec IA"
+        },
+        "axq": {
+          "category": "Quadricoptère",
+          "title": "AXQ",
+          "description": "Multicoptère léger de 10 pouces"
+        },
+        "gcs": {
+          "category": "Contrôle des drones",
+          "title": "Station de contrôle au sol",
+          "description": "Contrôle unifié pour toutes les plateformes"
+        },
+        "ugv": {
+          "category": "UGV",
+          "title": "UGV 150-DUP",
+          "description": "Plateforme terrestre sans pilote"
+        },
+        "av1": {
+          "category": "Drone",
+          "title": "AV-1 VTOL",
+          "description": "Aéronef à décollage et atterrissage vertical"
+        }
+      }
+    },
+    "focusAreas": {
+      "kicker": "Domaines prioritaires",
+      "title": "L'IA au coeur",
+      "items": {
+        "security": {
+          "title": "Sécurité",
+          "description": "Solutions de sécurité alimentées par l'IA pour les systèmes de détection et de réponse aux menaces."
+        },
+        "drones": {
+          "title": "Drones",
+          "description": "Systèmes de drones intelligents avec navigation autonome et planification de mission."
+        },
+        "automation": {
+          "title": "Automatisation",
+          "description": "Systèmes d'automatisation industrielle exploitant l'apprentissage automatique et la robotique."
+        },
+        "ugv": {
+          "title": "UGV",
+          "description": "Véhicules terrestres sans pilote avec des capacités avancées de perception et de prise de décision."
+        },
+        "defense": {
+          "title": "Défense",
+          "description": "Technologies de défense de pointe combinant IA et opérations tactiques."
+        },
+        "automationAdvanced": {
+          "title": "Automatisation",
+          "description": "Systèmes d'IA avancés pour les aéronefs de nouvelle génération et le contrôle de vol autonome."
+        }
+      }
+    },
+    "systemIntegration": {
+      "title": "Intégration des systèmes pour véhicules militaires",
+      "description": "Nous intégrons nos UAV, UGV et GCS dans des véhicules militaires blindés et non blindés. Nos systèmes exposent des API C2 ouvertes et sont conçus pour s'intégrer à des capteurs et effecteurs tiers.",
+      "cards": {
+        "c2": {
+          "title": "Intégration via API C2",
+          "description": "Connexion BMS/C2 utilisateur"
+        },
+        "terminals": {
+          "title": "Terminaux de contrôle embarqués",
+          "description": "GCS à l'intérieur du véhicule de combat"
+        },
+        "thirdParty": {
+          "title": "Intégration de systèmes tiers",
+          "description": "Intégration de capteurs, stations d'armes et modules ISR"
+        }
+      }
+    },
+    "customerBenefits": {
+      "title": "Avantages clients",
+      "description": "Nous maîtrisons toute la chaîne - conception, logiciel, avionique, cellules et intégration. Cela nous permet de garantir la disponibilité, des adaptations rapides aux exigences clients, le transfert de technologie et la production locale sous licence dans les pays partenaires.",
+      "cta": "Nous contacter"
+    }
+  },
+  "auth": {
+    "tabs": {
+      "signup": "S'inscrire",
+      "signin": "Se connecter"
+    },
+    "signup": {
+      "kicker": "Contact",
+      "title": "Parlez-nous de votre projet",
+      "description": "Nous vous répondrons sous un jour ouvré.",
+      "cta": "Envoyer un message"
+    },
+    "signin": {
+      "title": "Connectez-vous à AI-DEF Command",
+      "description": "Reprenez la planification de mission, gérez les flottes et surveillez la télémétrie en direct depuis une console sécurisée.",
+      "cta": "Se connecter",
+      "processing": "Traitement en cours..."
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "phone": "Numéro de téléphone",
+      "product": "Produit / Partenariat stratégique",
+      "country": "Pays",
+      "addressLine1": "Adresse ligne 1",
+      "addressLine2": "Adresse ligne 2",
+      "addressLine3Optional": "Adresse ligne 3 (optionnel)",
+      "website": "Site web",
+      "message": "Message",
+      "workEmail": "E-mail professionnel",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi"
+    },
+    "placeholders": {
+      "firstName": "Jean",
+      "lastName": "Dupont",
+      "email": "you@example.com",
+      "phone": "+1 555 123 4567",
+      "selectProduct": "Sélectionnez un produit",
+      "country": "Commencez à saisir un pays",
+      "addressLine1": "État/région et ville",
+      "addressLine2": "123 rue Principale",
+      "addressLine3": "Appartement, suite, etc.",
+      "website": "Ajoutez l'URL de votre site web",
+      "message": "Décrivez brièvement votre besoin...",
+      "workEmail": "you@aidef.com",
+      "password": "********"
+    },
+    "products": {
+      "all": "Tous les produits",
+      "partnership": "Partenariat stratégique"
+    },
+    "status": {
+      "updatingCountries": "Mise à jour des pays...",
+      "submitting": "Envoi en cours..."
+    },
+    "disclaimer": "En envoyant ce formulaire, vous acceptez d'être contacté au sujet de votre demande.",
+    "actions": {
+      "forgotPassword": "Mot de passe oublié ?"
+    },
+    "errors": {
+      "countryLoad": "Impossible de mettre à jour la liste des pays, utilisation de la liste de secours.",
+      "countryRequired": "Veuillez sélectionner un pays dans les suggestions.",
+      "unexpectedResponse": "Réponse serveur inattendue.",
+      "requestFailed": "Impossible de traiter la demande. Veuillez réessayer.",
+      "missingCredentials": "L'e-mail et le mot de passe sont requis.",
+      "network": "Impossible de se connecter au serveur. Veuillez réessayer."
+    },
+    "success": {
+      "signup": "Merci. Nous vous répondrons sous un jour ouvré.",
+      "signin": "Connexion réussie."
+    },
+    "security": {
+      "title": "Politiques d'accès sécurisé",
+      "bodyPrefix": "En continuant, vous acceptez la politique d'accès opérationnel et",
+      "bodySuffix": ". Pour les rôles à privilèges élevés, une MFA adossée au matériel est requise."
+    }
+  },
+  "clientPortal": {
+    "productSelector": {
+      "label": "Tous les produits ({{count}})"
+    },
+    "hero": {
+      "kicker": "Votre produit"
+    },
+    "media": {
+      "productImageAlt": "{{name}} vue {{index}}",
+      "previousImage": "Afficher l'image précédente",
+      "nextImage": "Afficher l'image suivante",
+      "imageIndex": "Afficher l'image {{index}} sur {{count}}"
+    },
+    "overview": {
+      "serial": "Série {{serial}}",
+      "title": "Vue d'ensemble",
+      "cards": {
+        "ownership": {
+          "label": "Propriété",
+          "value": "Actif / Propriété",
+          "note": "Autorisé pour le déploiement opérationnel dans le cadre de votre programme."
+        },
+        "documentation": {
+          "label": "Documentation",
+          "value": "Pack confidentiel",
+          "note": "Ordres techniques, câblage et notes de maintenance sécurisés dans cette session."
+        }
+      }
+    },
+    "specs": {
+      "kicker": "Spécifications et détails techniques",
+      "title": "Fiche d'ingénierie"
+    },
+    "gallery": {
+      "kicker": "Galerie produit",
+      "title": "Dossier visuel",
+      "description": "Images extraites directement de vos enregistrements de flotte synchronisés.",
+      "assets": "{{count}} éléments",
+      "openImage": "Ouvrir l'image de galerie {{index}} sur {{count}}",
+      "imageAlt": "{{name}} galerie {{index}}",
+      "viewImage": "Voir l'image",
+      "modalLabel": "Galerie produit",
+      "close": "Fermer la galerie"
+    },
+    "notes": {
+      "kicker": "Notes opérationnelles",
+      "title": "Cartes de briefing"
+    },
+    "empty": {
+      "title": "Aucun produit dans votre portail pour le moment.",
+      "subtitle": "Les produits achetés et la documentation apparaîtront ici."
+    },
+    "actions": {
+      "contact": "Nous contacter"
+    },
+    "upgrades": {
+      "kicker": "Mises à niveau disponibles",
+      "title": "Modules conçus pour les environnements contestés",
+      "badge": "Extension"
+    },
+    "summary": {
+      "kicker": "Vue d'ensemble",
+      "title": "Vue centralisée des produits",
+      "description": "Parcourez l'ensemble de votre gamme, comparez les spécifications clés et accédez aux manuels, notes de service et documents d'intégration en un seul endroit.",
+      "cards": {
+        "products": {
+          "label": "Produits",
+          "value": "Actifs",
+          "note": "Prêts au déploiement. D'autres éléments apparaissent instantanément lors de l'acquisition."
+        },
+        "clearance": {
+          "label": "Autorisation",
+          "value": "Vérifiée",
+          "note": "Session chiffrée, empreinte de l'appareil enregistrée."
+        },
+        "documents": {
+          "label": "Documents",
+          "value": "Contrôlés",
+          "note": "Spécifications, notes d'export et manuels terrain restent dans cette session."
+        }
+      }
+    },
+    "lineup": {
+      "title": "Gamme de produits",
+      "note": "Les achats futurs apparaîtront ici automatiquement - sélectionnez une unité pour voir les spécifications et la documentation."
+    },
+    "security": {
+      "kicker": "Avis de sécurité et de confidentialité",
+      "message": "Ces informations sont confidentielles et accessibles uniquement aux utilisateurs autorisés. Toute diffusion non autorisée est strictement interdite.",
+      "badge": "Session surveillée"
+    },
+    "modules": {
+      "modalLabel": "Détails du module",
+      "imagesUnavailable": "Les images ne sont pas encore disponibles pour ce module.",
+      "descriptionUnavailable": "La description détaillée n'est pas encore disponible.",
+      "detailsTitle": "Détails du module"
+    },
+    "fallbacks": {
+      "detail": "Détail",
+      "na": "N/A",
+      "specifications": "Spécifications",
+      "additional": "Supplémentaire",
+      "notesTitle": "Notes",
+      "notesBody": "Les détails seront ajoutés prochainement.",
+      "module": "Module",
+      "request": "Demande",
+      "untitledProduct": "Produit sans titre",
+      "noProducts": "Aucun produit disponible",
+      "noProductsSummary": "Les produits apparaîtront ici après attribution."
+    }
+  },
+  "productDetail": {
+    "hero": {
+      "imageAlt": "Image du produit",
+      "heroAlt": "Visuel principal du produit",
+      "previousImage": "Image précédente",
+      "nextImage": "Image suivante",
+      "goToImage": "Aller à l'image {{index}}"
+    },
+    "overview": {
+      "kicker": "Caractéristiques",
+      "title": "À propos du produit",
+      "descriptionFallback": "Description du produit"
+    },
+    "technology": {
+      "kicker": "Focus technologique",
+      "title": "Finition de niveau production, calibrée pour une autonomie robuste.",
+      "description": "Sur UAV, UGV et GCS, la pile de contrôle offre des entrées précises, une dynamique fluide et des couches de sécurité intuitives immédiatement familières pour les opérateurs."
+    },
+    "actions": {
+      "contact": "Nous contacter"
+    },
+    "carousel": {
+      "title": "Tous les produits"
+    },
+    "errors": {
+      "list": "Nous n'avons pas pu synchroniser le catalogue de flotte. Réessayez bientôt.",
+      "detail": "Impossible de charger les données du produit.",
+      "catalogFallback": "Le chargement des données du catalogue a échoué."
+    }
+  },
+  "solutions": {
+    "hero": {
+      "title": "Solutions UAV, UGV et GCS éprouvées sur le terrain"
+    },
+    "overview": {
+      "title": "Communication de commandement globale et système anti-drone"
+    },
+    "blocks": {
+      "title": "Indicateur multifonction avec cadre à boutons poussoirs et écran tactile.",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis similique, et repudiandae hic in quibusdam voluptas vero quia, enim nesciunt id facere. Asperiores ipsa maiores et accusamus reprehenderit facere soluta magnam aliquam minima in velit."
+    },
+    "actions": {
+      "learnMore": "En savoir plus"
+    },
+    "features": {
+      "kicker": "Caractéristiques",
+      "title": "Principales caractéristiques :",
+      "items": [
+        "GPS/GALILEO/GLONASS (PPS et SPS)",
+        "Conforme MIL-STD",
+        "3 antennes GNSS = précision jusqu'à 0,5 m",
+        "Le C2 intégré permet l'intégration de tout sous-système analogique ou IP (moteur, alarmes, etc.)",
+        "Graphiques et fonctionnalités logicielles personnalisables"
+      ]
+    }
+  },
+  "technology": {
+    "hero": {
+      "kicker": "Nous créons le futur",
+      "title": "Logiciel AI-DEF",
+      "cta": "En savoir plus"
+    },
+    "overview": {
+      "title": "Vue d'ensemble",
+      "description": "La suite logicielle AI-DEF est un écosystème logiciel entièrement intégré pour la planification de mission, le commandement et le contrôle des systèmes sans pilote, ainsi que l'exploitation des données capteurs. Elle se compose de plusieurs modules qui fonctionnent ensemble pour fournir un support de bout en bout aux opérations UAV et UGV."
+    },
+    "modules": {
+      "title": "Modules",
+      "cards": {
+        "defgroundPilot": {
+          "title": "DEFgroundPilot",
+          "description": "Planification de mission, contrôle de vol, télémétrie et surveillance de l'état de santé."
+        },
+        "defgroundTargeting": {
+          "title": "DEFgroundTargeting",
+          "description": "Analyse vidéo IA pour la détection, la classification et le suivi des cibles."
+        },
+        "defgroundGateway": {
+          "title": "DEFgroundGateway",
+          "description": "Gestion sécurisée des communications multi-liens pour RF, LTE et liaisons satellite."
+        },
+        "defgroundInstaller": {
+          "title": "DEFgroundInstaller",
+          "description": "Déploiement logiciel, mises à jour, diagnostics et gestion de configuration."
+        }
+      }
+    },
+    "integration": {
+      "title": "Intégration avec les plateformes AI-DEF",
+      "description": "La suite logicielle est nativement intégrée à l'avionique des AX2NG KRAKATIT, AV-1 VTOL, quadricoptère AXQ et UGV 150-DUP. Cela garantit une expérience utilisateur cohérente, une planification de mission unifiée et une formation simplifiée sur l'ensemble du portefeuille AI-DEF."
+    }
+  },
+  "support": {
+    "hero": {
+      "title": "Support technique, maintenance et accompagnement expert",
+      "slideAlt": "Arrière-plan {{index}}",
+      "slideAria": "Aller à la diapositive {{index}}"
+    },
+    "contact": {
+      "kicker": "Restez en sécurité avec nous",
+      "addressesLabel": "Adresses :",
+      "managementTitle": "Direction et administration",
+      "managementAddress": "Vedecky park - Ilkovicova 8 841 02 Bratislava Slovakia",
+      "hqTitle": "Siège et centre de développement",
+      "hqAddress": "Staniná 267/21 906 13 Brezová pod Bradlom Slovakia"
+    },
+    "form": {
+      "success": "Merci. Nous vous répondrons sous un jour ouvré."
+    }
+  },
+  "aboutUs": {
+    "hero": {
+      "pill": "À propos d'AI-DEF Group",
+      "title": "Systèmes sans pilote intégrés verticalement pour missions contestées.",
+      "descriptionPrimary": "AI-DEF Group est un développeur européen intégré verticalement de systèmes sans pilote modernes et de technologies associées. Le groupe couvre les plateformes UAV/UGV, le radar, l'autonomie, le logiciel, les piles multi-capteurs et l'intégration industrielle.",
+      "descriptionSecondary": "Nous alignons la profondeur d'ingénierie avec les besoins opérationnels pour fournir des systèmes prêts pour la mission, interopérables et sécurisés.",
+      "highlights": [
+        {
+          "title": "Conçu pour les environnements contestés",
+          "description": "Systèmes sans pilote pertinents sur le plan opérationnel, conçus pour la résilience EW, les opérations sans GNSS et les missions exigeantes."
+        },
+        {
+          "title": "Maîtrise du cycle de vie",
+          "description": "De l'aérodynamique et des composites aux micro-turboréacteurs, avionique, radar, autonomie, service et formation au sein d'un même groupe."
+        },
+        {
+          "title": "Intégration ouverte",
+          "description": "Interopérable avec les plateformes C2/C4ISR existantes et héritées, avec gestion centralisée du contrôle export et de la conformité aux normes."
+        }
+      ]
+    },
+    "missionVision": [
+      {
+        "title": "Notre mission",
+        "description": "Fournir des systèmes sans pilote fiables et pertinents opérationnellement, ainsi que des technologies habilitantes conçues pour les environnements contestés et les missions exigeantes."
+      },
+      {
+        "title": "Notre vision",
+        "description": "Considérer l'autonomie, la fusion robuste de capteurs et l'automatisation industrielle comme des capacités durables conçues pour la préparation à long terme, et non pour des tendances à court terme."
+      }
+    ],
+    "lifecycle": {
+      "kicker": "Cycle de vie",
+      "phases": [
+        "recherche",
+        "conception",
+        "aérodynamique",
+        "composites",
+        "micro-turboréacteurs",
+        "électronique et avionique",
+        "radar et C-UAS",
+        "autonomie et logiciel",
+        "service, MRO et formation"
+      ],
+      "cards": [
+        {
+          "title": "Interopérable par conception",
+          "description": "Les systèmes sont conçus pour s'intégrer aux architectures C2/C4ISR existantes et aux plateformes héritées, garantissant l'interopérabilité et une mise en service fluide."
+        },
+        {
+          "title": "Conformité gérée de manière centralisée",
+          "description": "Le contrôle des exportations, la conformité aux normes et les licences sont gérés de manière centralisée afin de maintenir les programmes alignés sur les exigences réglementaires et opérationnelles."
+        }
+      ]
+    },
+    "org": {
+      "kicker": "Structure organisationnelle",
+      "title": "Équipes unifiées autour du radar, du logiciel, de l'autonomie et du service",
+      "badge": "UAV + UGV + Radar + Software",
+      "units": [
+        {
+          "title": "AI-DEF Group (HQ)",
+          "description": "Leadership stratégique, architecture système et intégration de bout en bout avec les plateformes militaires et systèmes C2/C4ISR.",
+          "bullets": [
+            "Contrôle export, normes et licences centralisés.",
+            "Architecture logicielle unifiée sur toutes les plateformes UAV et UGV."
+          ]
+        },
+        {
+          "title": "AI-DEF RADAR",
+          "description": "Conçoit des systèmes radar et anti-UAS avec fusion multi-capteurs entre radar, EO/IR et acoustique.",
+          "bullets": [
+            "Haute résilience face à la guerre électronique.",
+            "Déployable sur installations aériennes, terrestres et fixes."
+          ]
+        },
+        {
+          "title": "AI-DEF R&D",
+          "description": "Pilote le développement des plateformes UAV, l'aérodynamique, les moteurs à réaction, les composites, l'électronique, l'avionique et l'autonomie pour les multicoptères tactiques et les systèmes FPV.",
+          "bullets": [
+            "Plateformes représentatives : AX-2 / AX-2NG \"Krakatit\", AX-6, AX-8, gamme FPV et autres multirotors tactiques.",
+            "Profondeur d'ingénierie full-stack pour personnaliser les plateformes selon la mission."
+          ]
+        },
+        {
+          "title": "AI-DEF Service",
+          "description": "CNC et travail des métaux, assemblage, modernisation, réparation et MRO avec support de déploiement terrain.",
+          "bullets": [
+            "Équipes mobiles, logistique et approvisionnement en pièces détachées pour une disponibilité durable.",
+            "Programmes de modernisation prolongeant la durée de vie et les capacités des plateformes."
+          ]
+        },
+        {
+          "title": "AI-DEF Software",
+          "description": "Fournit l'écosystème logiciel unifié pour le contrôle de vol, la télémétrie, le ciblage assisté par IA et le commandement de mission.",
+          "bullets": [
+            "AI-DEF Pilot, AI-DEF Targeting et AI-DEF GCS conçus pour la navigation sans GNSS et l'IA en périphérie.",
+            "Intégration C2/C4ISR via Starlink, LTE, 5G et réseaux maillés tactiques."
+          ]
+        },
+        {
+          "title": "Team1 - Advanced Edge AI & Autonomy",
+          "description": "Développe la pile IA edge de bout en bout sur Jetson, ROS2 et DeepStream avec HMI/UI, simulation, cloud, DevOps et sécurité.",
+          "bullets": [
+            "Focus sur une autonomie robuste, la fusion capteurs et des déploiements fiables en périphérie.",
+            "Simulation (Gazebo avec physique personnalisée) et Secure Boot/chiffrement intégrés."
+          ]
+        },
+        {
+          "title": "AI-DEF Academy",
+          "description": "Forme les pilotes, opérateurs GCS, techniciens et opérateurs radar/C-UAS avec des programmes orientés mission.",
+          "bullets": [
+            "Certifications applicables pour maintenir les équipes à niveau et prêtes pour la mission.",
+            "Transfert de connaissances préservant la compétence opérationnelle entre les rôles."
+          ]
+        }
+      ]
+    },
+    "capabilities": {
+      "kicker": "Systèmes et capacités",
+      "title": "Fusion capteurs, profondeur d'ingénierie et autonomie software-first",
+      "badge": "Edge AI + Résilience EW",
+      "areas": [
+        {
+          "title": "Capteurs et architecture capteurs",
+          "description": "Développe et fusionne des suites EO/IR, LIDAR, radar, IMU et capteurs associés, calibrées pour la précision et la résilience dans des environnements fortement brouillés.",
+          "bullets": [
+            "Piles multi-capteurs adaptées aux domaines contestés.",
+            "Pipelines de fusion conçus pour un ciblage et une navigation fiables."
+          ]
+        },
+        {
+          "title": "Capacités d'ingénierie et de R&D",
+          "description": "Combine aérodynamique, propulsion, matériaux, électronique et autonomie pour livrer des systèmes complets plutôt que des composants isolés.",
+          "bullets": [
+            "Conception aérodynamique et cellule avec CFD, analyse de charge et optimisation de planform.",
+            "Développement de micro-turboréacteurs et intégration hybride jet/électrique.",
+            "Structures composites en CFK/Kevlar avec construction sandwich pour des cellules à haute résistance.",
+            "Électronique, avionique et intégration capteurs spécifiques mission en interne.",
+            "Navigation autonome, opérations sans GNSS et communications robustes (Starlink, LTE, 5G, mesh)."
+          ]
+        },
+        {
+          "title": "Logiciel, IA edge et autonomie",
+          "description": "AI-DEF Pilot, AI-DEF Targeting et AI-DEF GCS forment un écosystème unifié pour le contrôle de vol, la télémétrie, le ciblage IA et le commandement de mission.",
+          "bullets": [
+            "La navigation sans GNSS et la fusion multi-capteurs maintiennent les systèmes opérationnels dans des environnements dégradés.",
+            "IA embarquée et edge sur Jetson avec ROS2, DeepStream, vision par ordinateur avancée et conception orientée sécurité.",
+            "La simulation (Gazebo avec physique personnalisée) garantit la préparation avant déploiement."
+          ]
+        },
+        {
+          "title": "Automatisation industrielle et sites intelligents",
+          "description": "Conçoit et optimise des usines automatisées et des lignes de production, en intégrant la robotique et en modernisant les processus comme extension directe de l'expertise des systèmes sans pilote.",
+          "bullets": [
+            "Applique la rigueur aéronautique et défense aux résultats d'automatisation industrielle.",
+            "Maintient la production alignée sur les exigences réglementaires et opérationnelles."
+          ]
+        }
+      ]
+    },
+    "people": {
+      "kicker": "Équipes et préparation",
+      "title": "Équipes, partenaires et formation qui maintiennent les systèmes opérationnels",
+      "badge": "60+ spécialistes",
+      "items": [
+        {
+          "title": "Équipe et écosystème",
+          "description": "Environ 60 spécialistes forment le noyau AI-DEF, soutenus par des sous-traitants et des experts externes.",
+          "bullets": [
+            "Profondeur d'ingénierie associée à l'expérience opérationnelle.",
+            "Collaboration avec des partenaires pour résoudre des défis techniques complexes."
+          ]
+        },
+        {
+          "title": "Formation et transfert de connaissances",
+          "description": "AI-DEF Academy maintient les compétences des pilotes, opérateurs GCS, techniciens MRO et spécialistes radar/C-UAS.",
+          "bullets": [
+            "Formation orientée mission avec certifications internationales applicables.",
+            "Transfert de connaissances sur le cycle de vie pour soutenir la préparation opérationnelle."
+          ]
+        }
+      ]
+    },
+    "differentiators": {
+      "kicker": "Différenciateurs clés",
+      "title": "Ce qui rend AI-DEF différent",
+      "items": [
+        "Intégration verticale complète, de l'aérodynamique et des moteurs à réaction au radar, logiciel, service et formation.",
+        "Conçu pour les environnements contestés avec forte résilience EW et capacité sans GNSS.",
+        "IA edge avancée et autonomie avec logiciels et outils de simulation développés en interne.",
+        "Prototypage interne et production en petites séries sur composites, électronique et propulsion.",
+        "Approche cycle de vie : conception, fabrication, intégration, maintenance et formation au sein d'un même groupe.",
+        "Fusion multi-capteurs éprouvée et intégration C2/C4ISR sur plateformes héritées et modernes.",
+        "Base technologique commune applicable à l'automatisation industrielle et aux installations intelligentes."
+      ],
+      "cta": "Demander un briefing technique",
+      "note": "AI-DEF Group est prêt à s'aligner sur vos exigences opérationnelles et industrielles."
+    }
+  },
+  "terms": {
+    "title": "Conditions générales",
+    "rightsTitle": "Droits de la personne concernée",
+    "rightsSubtitle": "La personne concernée a le droit de :"
+  },
+  "contactForm": {
+    "description": "Nous vous répondrons sous un jour ouvré.",
+    "default": {
+      "kicker": "Contact",
+      "title": "Parlez-nous de votre projet",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Décrivez brièvement votre besoin..."
+    },
+    "support": {
+      "kicker": "Assistance",
+      "title": "Parlez-nous du problème",
+      "messageLabel": "Description du problème",
+      "messagePlaceholder": "Décrivez le problème rencontré..."
+    },
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "phone": "Numéro de téléphone",
+      "product": "Produit / Partenariat stratégique",
+      "country": "Pays",
+      "addressLine1": "Adresse ligne 1",
+      "addressLine2": "Adresse ligne 2",
+      "addressLine3Optional": "Adresse ligne 3 (optionnel)",
+      "website": "Site web"
+    },
+    "placeholders": {
+      "firstName": "Jean",
+      "lastName": "Dupont",
+      "email": "you@example.com",
+      "phone": "+1 555 123 4567",
+      "selectProduct": "Sélectionnez un produit",
+      "country": "Commencez à saisir un pays",
+      "addressLine1": "État/région et ville",
+      "addressLine2": "123 rue Principale",
+      "addressLine3": "Appartement, suite, etc.",
+      "website": "Ajoutez l'URL de votre site web"
+    },
+    "status": {
+      "updatingCountries": "Mise à jour des pays..."
+    },
+    "products": {
+      "all": "Tous les produits",
+      "partnership": "Partenariat stratégique"
+    },
+    "actions": {
+      "send": "Envoyer le message"
+    },
+    "disclaimer": "En envoyant ce formulaire, vous acceptez d'être contacté au sujet de votre demande.",
+    "errors": {
+      "countryLoad": "Impossible de mettre à jour la liste des pays, utilisation de la liste de secours.",
+      "countryRequired": "Veuillez sélectionner un pays dans les suggestions.",
+      "submitFailed": "Nous n'avons pas pu envoyer votre message. Veuillez réessayer.",
+      "network": "Impossible de se connecter au serveur. Veuillez réessayer."
+    },
+    "success": "Merci. Nous vous répondrons sous un jour ouvré.",
+    "details": {
+      "title": "Coordonnées",
+      "quickLinks": "Liens rapides",
+      "addresses": "Adresses",
+      "managementTitle": "Direction et administration",
+      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia",
+      "hqTitle": "Siège et centre de développement",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom",
+      "links": {
+        "product": "Produit",
+        "services": "Services",
+        "support": "Assistance"
+      }
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "Accueil",
+      "solutions": "Solutions",
+      "products": "Produits",
+      "civilProducts": "Produits civils",
+      "technology": "Technologie",
+      "company": "Entreprise",
+      "support": "Assistance",
+      "contact": "Contact"
+    },
+    "menus": {
+      "products": {
+        "ax2ng": "AX2NG KRAKATIT",
+        "axq": "AXQ QUADROCOPTER",
+        "gcs": "Station de contrôle au sol",
+        "ugv": "UGV 150-DUP",
+        "av2": "AV2 VTOL"
+      },
+      "company": {
+        "about": "À propos",
+        "careers": "Carrières"
+      }
+    },
+    "languages": {
+      "label": "Langues",
+      "en": "Anglais",
+      "de": "Allemand",
+      "sk": "Slovaque",
+      "es": "Espagnol",
+      "fr": "Français",
+      "it": "Italien"
+    },
+    "account": {
+      "title": "Compte",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "signOut": "Se déconnecter",
+      "operator": "Opérateur"
+    },
+    "actions": {
+      "clientPortal": "Portail client"
+    },
+    "contactModal": {
+      "ariaLabel": "Formulaire de contact"
+    }
+  },
+  "footer": {
+    "quickLinks": {
+      "title": "Liens rapides",
+      "solutions": "Solutions",
+      "technology": "Technologie",
+      "support": "Assistance",
+      "contact": "Contact",
+      "terms": "Conditions générales"
+    },
+    "contact": {
+      "title": "Contact"
+    },
+    "strategic_partnership": {
+      "title": "Partenariat stratégique"
+    },
+    "addresses": {
+      "title": "Adresses",
+      "managementTitle": "Direction et administration",
+      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia",
+      "hqTitle": "Siège et centre de développement",
+      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom"
+    },
+    "legal": {
+      "notice": "© AI DEF A.S. 2026. Tous droits réservés."
+    }
+  },
+  "gallery": {
+    "kicker": "Caractéristiques",
+    "title": "Points forts des projets récents",
+    "description": "Parcourez une sélection de réalisations mettant en avant clarté, fiabilité et performance dans des environnements variés.",
+    "imageAltFallback": "Image de galerie",
+    "viewImage": "Voir l'image",
+    "modal": {
+      "previous": "Afficher l'image précédente",
+      "next": "Afficher l'image suivante"
+    }
+  },
+  "cookieConsent": {
+    "title": "Nous utilisons des cookies",
+    "description": "Nous utilisons des cookies pour sécuriser le site, mémoriser vos préférences et comprendre comment vous utilisez nos produits. Il s'agit d'un avis standard pour le moment - cliquez sur accepter pour continuer.",
+    "actions": {
+      "accept": "Tout accepter",
+      "decline": "Refuser"
+    },
+    "aria": {
+      "dismiss": "Fermer l'avis sur les cookies",
+      "dialogLabel": "Consentement aux cookies"
+    }
+  },
+  "carousel": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "cardPreviewAlt": "Aperçu {{title}}"
+  }
+}

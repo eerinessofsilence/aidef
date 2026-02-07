@@ -694,7 +694,10 @@
       "label": "Languages",
       "en": "English",
       "de": "Deutsch",
-      "sk": "Slovak"
+      "sk": "Slovak",
+      "es": "Español",
+      "fr": "Français",
+      "it": "Italiano"
     },
     "account": {
       "title": "Account",

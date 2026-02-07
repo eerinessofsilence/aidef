@@ -4,8 +4,18 @@ import { initReactI18next } from "react-i18next";
 import enCommon from "./locales/en/common.json";
 import deCommon from "./locales/de/common.json";
 import skCommon from "./locales/sk/common.json";
+import esCommon from "./locales/es/common.json";
+import frCommon from "./locales/fr/common.json";
+import itCommon from "./locales/it/common.json";
 
-export const SUPPORTED_LANGUAGES = ["en", "de", "sk"] as const;
+export const SUPPORTED_LANGUAGES = [
+  "en",
+  "de",
+  "sk",
+  "es",
+  "fr",
+  "it",
+] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 export const DEFAULT_LANGUAGE: SupportedLanguage = "en";
 
@@ -39,6 +49,9 @@ i18n.use(initReactI18next).init({
     en: { common: enCommon },
     de: { common: deCommon },
     sk: { common: skCommon },
+    es: { common: esCommon },
+    fr: { common: frCommon },
+    it: { common: itCommon },
   },
   lng: DEFAULT_LANGUAGE,
   fallbackLng: DEFAULT_LANGUAGE,

@@ -694,7 +694,10 @@
       "label": "Jazyky",
       "en": "Angličtina",
       "de": "Nemčina",
-      "sk": "Slovenčina"
+      "sk": "Slovenčina",
+      "es": "Španielčina",
+      "fr": "Francúzština",
+      "it": "Taliančina"
     },
     "account": {
       "title": "Účet",

@@ -49,29 +49,46 @@ const NAV_LINKS: Array<{
 const LANGUAGES: Array<{
   id: number;
   code: SupportedLanguage;
-  labelKey: string;
+  label: string;
   img: string;
 }> = [
   {
     id: 1,
     code: "en",
-    labelKey: "English",
-    img: "/en.svg",
+    label: "English",
+    img: "/languages/en.svg",
   },
   {
     id: 2,
     code: "de",
-    labelKey: "German",
-    img: "/de.svg",
+    label: "German",
+    img: "/languages/de.svg",
   },
   {
     id: 3,
     code: "sk",
-    labelKey: "Slovak",
-    img: "/sk.svg",
+    label: "Slovak",
+    img: "/languages/sk.svg",
+  },
+  {
+    id: 4,
+    code: "es",
+    label: "Spanish",
+    img: "/languages/es.svg",
+  },
+  {
+    id: 5,
+    code: "fr",
+    label: "French",
+    img: "/languages/fr.svg",
+  },
+  {
+    id: 6,
+    code: "it",
+    label: "Italian",
+    img: "/languages/it.svg",
   },
 ];
-
 type CompanyMenuItem = {
   titleKey: string;
   href: string;
@@ -809,7 +826,7 @@ export default function Header() {
                   </div>
                   <div className="flex items-center gap-3">
                     <h3 className="text-sm font-semibold text-black">
-                      {t(item.labelKey)}
+                      {item.label}
                     </h3>
                     {isActiveLanguage ? (
                       <span
@@ -1010,7 +1027,7 @@ export default function Header() {
                   aria-controls="mobile-submenu-languages"
                 >
                   <span className="flex items-center gap-2">
-                    {t("header.languages.label")}
+                    Languages
                     <span className="rounded-full bg-white px-2 py-0.5 text-xs leading-none font-semibold text-black">
                       {currentLanguageLabel}
                     </span>
@@ -1052,7 +1069,7 @@ export default function Header() {
                           <img src={language.img} className="h-7 w-7" alt="" />
                         </div>
                         <span className="flex items-center gap-2 font-medium">
-                          {language.labelKey}
+                          {language.label}
                           {isActiveLanguage ? (
                             <span
                               aria-hidden="true"
