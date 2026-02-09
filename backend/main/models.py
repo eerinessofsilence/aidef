@@ -22,6 +22,10 @@ _ICON_EXTENSIONS = ["svg", "svgz", "png", "jpg", "jpeg", "webp", "gif"]
 _icon_extension_validator = FileExtensionValidator(
     allowed_extensions=_ICON_EXTENSIONS
 )
+_DRONE_SLIDER_VIDEO_EXTENSIONS = ["mp4", "webm", "mov", "m4v"]
+_drone_slider_video_extension_validator = FileExtensionValidator(
+    allowed_extensions=_DRONE_SLIDER_VIDEO_EXTENSIONS
+)
 
 
 def validate_svg_file(value):
@@ -98,6 +102,28 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProductDroneSliderMedia(models.Model):
+    product = models.OneToOneField(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="drone_slider_media",
+    )
+    image = models.ImageField(upload_to="products/drone_slider/%Y/%m/", blank=True)
+    video = models.FileField(
+        upload_to="products/drone_slider/%Y/%m/",
+        blank=True,
+        validators=[_drone_slider_video_extension_validator],
+        help_text="Optional preview video played on card hover.",
+    )
+
+    class Meta:
+        verbose_name = "Product DroneSlider media"
+        verbose_name_plural = "Product DroneSlider media"
+
+    def __str__(self):
+        return f"{self.product.name} — DroneSlider media"
 
 
 class ProductImage(models.Model):

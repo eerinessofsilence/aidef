@@ -23,6 +23,7 @@ from .models import (
     ContactRequest,
     Product,
     ProductCTABlock,
+    ProductDroneSliderMedia,
     ProductFeature,
     ProductFeatureBlock,
     ProductGallery,
@@ -105,7 +106,7 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'slug': product.slug,
         'name': product.name,
         'description': product.description,
-        'category': product.category.slug if product.category else None,
+        'category': product.category.name if product.category else None,
         'available': product.available,
         'order': product.order,
     }
@@ -133,6 +134,22 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
         if first_image
         else None
     )
+    drone_slider_media: ProductDroneSliderMedia | None = getattr(
+        product, "drone_slider_media", None
+    )
+    if drone_slider_media is not None:
+        image_url = _absolute_media_url(request, drone_slider_media.image)
+        video_url = _absolute_media_url(request, drone_slider_media.video)
+        data["drone_slider"] = (
+            {
+                "image": image_url,
+                "video": video_url,
+            }
+            if image_url or video_url
+            else None
+        )
+    else:
+        data["drone_slider"] = None
     return data
 
 def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
@@ -270,7 +287,7 @@ def _serialize_civil_product_base(product: CivilProduct) -> Dict[str, Any]:
         'slug': product.slug,
         'name': product.name,
         'description': product.description,
-        'category': product.category.slug if product.category else None,
+        'category': product.category.name if product.category else None,
         'available': product.available,
         'order': product.order,
     }
@@ -421,7 +438,7 @@ def _serialize_civil_product_detail(request, product: CivilProduct) -> Dict[str,
 def item_list_api(request):
     products = (
         Product.objects.filter(available=True)
-        .select_related('category')
+        .select_related('category', 'drone_slider_media')
         .prefetch_related('features', 'sub_features', 'images__translations')
         .order_by('order', 'name')
     )
@@ -435,7 +452,7 @@ def item_detail_api(request, slug: str):
     try:
         product = (
             Product.objects
-            .select_related('category')
+            .select_related('category', 'drone_slider_media')
             .prefetch_related(
                 'features',
                 'sub_features',

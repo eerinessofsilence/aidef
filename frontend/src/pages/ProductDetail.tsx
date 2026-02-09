@@ -17,6 +17,19 @@ interface Product {
   category: string | null;
   available: boolean;
   order?: number;
+  icon?: ProductImagePreview | null;
+  first_image?: ProductImagePreview | null;
+  drone_slider?: ProductDroneSliderMedia | null;
+}
+
+interface ProductImagePreview {
+  url: string | null;
+  alt?: string | null;
+}
+
+interface ProductDroneSliderMedia {
+  image?: string | null;
+  video?: string | null;
 }
 
 interface ProductImage {
@@ -682,23 +695,31 @@ export default function ProductDetail() {
           <ScrollReveal delay={0.12}>
             <Carousel
               carouselTitle={t("productDetail.carousel.title")}
-              items={carouselItems.map((card, index) => {
-                const baseKey = `main.droneCarousel.items.${card.key}`;
-                return (
+              items={[...items]
+                .filter((product) => Boolean(product.slug))
+                .sort(
+                  (a, b) =>
+                    (a.order ?? Number.MAX_SAFE_INTEGER) -
+                      (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+                )
+                .map((product, index) => (
                   <Card
-                    key={card.key}
+                    key={product.id}
                     card={{
-                      category: t(`${baseKey}.category`),
-                      title: t(`${baseKey}.title`),
-                      description: t(`${baseKey}.description`),
-                      href: card.href,
-                      bg: card.bg,
-                      video: `/drone-carousel-video-${index + 1}.MP4`,
+                      category: product.category ?? "",
+                      title: product.name,
+                      description: product.description?.trim() ?? "",
+                      href: `/products/${product.slug}`,
+                      bg:
+                        product.drone_slider?.image ??
+                        product.first_image?.url ??
+                        product.icon?.url ??
+                        "/placeholder.svg",
+                      video: product.drone_slider?.video ?? undefined,
                     }}
                     index={index}
                   />
-                );
-              })}
+                ))}
             />
           </ScrollReveal>
           {status === "error" ? (
@@ -711,55 +732,3 @@ export default function ProductDetail() {
     </div>
   );
 }
-
-type CarouselItem = {
-  key: string;
-  categoryKey: string;
-  titleKey: string;
-  descriptionKey: string;
-  href: string;
-  bg: string;
-};
-
-const carouselItems: CarouselItem[] = [
-  {
-    key: "ax2ng",
-    categoryKey: "main.droneCarousel.items.ax2ng.category",
-    titleKey: "main.droneCarousel.items.ax2ng.title",
-    descriptionKey: "main.droneCarousel.items.ax2ng.description",
-    href: "products/ax2ng-krakatit",
-    bg: "/drone-carousel-bg-1.png",
-  },
-  {
-    key: "axq",
-    categoryKey: "main.droneCarousel.items.axq.category",
-    titleKey: "main.droneCarousel.items.axq.title",
-    descriptionKey: "main.droneCarousel.items.axq.description",
-    href: "products/axq-quadrocopter",
-    bg: "/drone-carousel-bg-2.png",
-  },
-  {
-    key: "gcs",
-    categoryKey: "main.droneCarousel.items.gcs.category",
-    titleKey: "main.droneCarousel.items.gcs.title",
-    descriptionKey: "main.droneCarousel.items.gcs.description",
-    href: "products/ground-control-station",
-    bg: "/drone-carousel-bg-3.png",
-  },
-  {
-    key: "ugv",
-    categoryKey: "main.droneCarousel.items.ugv.category",
-    titleKey: "main.droneCarousel.items.ugv.title",
-    descriptionKey: "main.droneCarousel.items.ugv.description",
-    href: "products/ugv-150-dup",
-    bg: "/drone-carousel-bg-4.png",
-  },
-  {
-    key: "av1",
-    categoryKey: "main.droneCarousel.items.av1.category",
-    titleKey: "main.droneCarousel.items.av1.title",
-    descriptionKey: "main.droneCarousel.items.av1.description",
-    href: "products/av-1-vtol",
-    bg: "/drone-carousel-bg-5.png",
-  },
-];

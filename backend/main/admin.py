@@ -17,6 +17,7 @@ from .models import (
     ContactRequest,
     Product,
     ProductCTABlock,
+    ProductDroneSliderMedia,
     ProductFeature,
     ProductFeatureBlock,
     ProductGallery,
@@ -74,6 +75,14 @@ class ProductImageInline(admin.StackedInline):
     ordering = ("order",)
     show_change_link = True
 
+
+class ProductDroneSliderMediaInline(admin.StackedInline):
+    model = ProductDroneSliderMedia
+    extra = 1
+    max_num = 1
+    fields = ("image", "video")
+
+
 # Stacked translation inlines keep translated fields readable without horizontal scrolling.
 class ProductFeatureInline(TranslationStackedInline):
     model = ProductFeature
@@ -129,7 +138,7 @@ class ProductAdmin(TabbedTranslationAdmin):
     search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('order', '-created_at')
-    inlines = [ProductImageInline, ProductFeatureInline, ProductSubFeatureInline, ProductGalleryInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline]
+    inlines = [ProductImageInline, ProductDroneSliderMediaInline, ProductFeatureInline, ProductSubFeatureInline, ProductGalleryInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline]
 
 
 class CivilProductImageInline(admin.StackedInline):

@@ -237,8 +237,12 @@ export const Card = ({
   const currentLanguage = resolveLanguage(lng);
   const productHref = buildProductHref(card);
   const localizedHref = buildLocalizedPath(currentLanguage, productHref);
+  const hasVideo = Boolean(card.video?.trim());
 
   const handleMouseEnter = () => {
+    if (!hasVideo) {
+      return;
+    }
     setIsHovered(true);
     const video = videoRef.current;
     if (video) {
@@ -251,6 +255,9 @@ export const Card = ({
   };
 
   const handleMouseLeave = () => {
+    if (!hasVideo) {
+      return;
+    }
     const video = videoRef.current;
     if (video) {
       video.pause();
@@ -264,9 +271,12 @@ export const Card = ({
       <motion.a
         href={localizedHref}
         layoutId={layout ? `card-${card.title}` : undefined}
-        className="relative z-10 flex h-full w-full cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300 hover:shadow-md hover:shadow-black/50"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        className={cn(
+          "relative z-10 flex h-full w-full cursor-pointer flex-col justify-end overflow-hidden rounded-[10px] bg-center p-6 text-right transition-all duration-300",
+          hasVideo ? "hover:shadow-md hover:shadow-black/50" : "",
+        )}
+        onMouseEnter={hasVideo ? handleMouseEnter : undefined}
+        onMouseLeave={hasVideo ? handleMouseLeave : undefined}
         data-card-index={index}
       >
         <div className="absolute inset-0">
