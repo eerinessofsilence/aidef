@@ -150,6 +150,9 @@ class ProductImageTranslation(models.Model):
         EN = "en", "English"
         DE = "de", "German"
         SK = "sk", "Slovak"
+        ES = "es", "Spanish"
+        FR = "fr", "French"
+        IT = "it", "Italian"
 
     image = models.ForeignKey(
         ProductImage, on_delete=models.CASCADE, related_name="translations"
@@ -418,6 +421,9 @@ class CivilProductImageTranslation(models.Model):
         EN = 'en', 'English'
         DE = 'de', 'German'
         SK = 'sk', 'Slovak'
+        ES = 'es', 'Spanish'
+        FR = 'fr', 'French'
+        IT = 'it', 'Italian'
 
     image = models.ForeignKey(
         CivilProductImage,

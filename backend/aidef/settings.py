@@ -92,9 +92,12 @@ LANGUAGES = [
     ('en', 'English'),
     ('de', 'German'),
     ('sk', 'Slovak'),
+    ('es', 'Spanish'),
+    ('fr', 'French'),
+    ('it', 'Italian'),
 ]
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
-MODELTRANSLATION_LANGUAGES = ('en', 'de', 'sk')
+MODELTRANSLATION_LANGUAGES = ('en', 'de', 'sk', 'es', 'fr', 'it')
 MODELTRANSLATION_FALLBACK_LANGUAGES = ('en',)
 TIME_ZONE = getenv('TIME_ZONE', 'Europe/Kyiv')
 USE_I18N = True

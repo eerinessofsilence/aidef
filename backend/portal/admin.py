@@ -27,6 +27,9 @@ LANGUAGE_CHOICES = (
     ("en", "English"),
     ("de", "Deutsch"),
     ("sk", "Slovak"),
+    ("es", "Spanish"),
+    ("fr", "French"),
+    ("it", "Italian"),
 )
 LANGUAGE_CODES = {code for code, _ in LANGUAGE_CHOICES}
 DEFAULT_LANGUAGE = "en"
