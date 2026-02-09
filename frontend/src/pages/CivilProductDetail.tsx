@@ -3,7 +3,6 @@ import axios from "axios";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import Gallery from "../../components/Gallery";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
@@ -124,11 +123,6 @@ export default function CivilProductDetail() {
   const { slug, lng } = useParams<{ slug?: string; lng?: string }>();
   const activeLanguage = resolveLanguage(lng);
   const { t } = useTranslation();
-  const [items, setItems] = useState<Product[]>([]);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
-    "idle",
-  );
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [productDetail, setProductDetail] = useState<ProductDetail | null>(
     null,
   );
@@ -138,31 +132,6 @@ export default function CivilProductDetail() {
   const [detailError, setDetailError] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const openContactModal = () => dispatchOpenContactModal();
-
-  useEffect(() => {
-    const controller = new AbortController();
-    setStatus("loading");
-    setErrorMessage(null);
-    axios
-      .get<Product[]>(`${import.meta.env.VITE_API_URL}/civil-items/`, {
-        signal: controller.signal,
-        params: { lang: activeLanguage },
-      })
-      .then((res) => {
-        setItems(res.data);
-        setStatus("ready");
-      })
-      .catch((err) => {
-        if (axios.isCancel(err)) {
-          return;
-        }
-        console.error("Unable to load products", err);
-        setErrorMessage(t("productDetail.errors.list"));
-        setStatus("error");
-      });
-
-    return () => controller.abort();
-  }, [activeLanguage, t]);
 
   useEffect(() => {
     if (!slug) {
@@ -199,8 +168,8 @@ export default function CivilProductDetail() {
   }, [activeLanguage, slug, t]);
 
   const heroProduct = useMemo(
-    () => productDetail ?? items[0] ?? null,
-    [productDetail, items],
+    () => productDetail ?? null,
+    [productDetail],
   );
 
   const productImages = useMemo(() => {
@@ -829,56 +798,7 @@ export default function CivilProductDetail() {
               </section>
             ))
           : null}
-        <section className="space-y-6 py-10 max-sm:py-8">
-          <ScrollReveal delay={0.12}>
-            <Carousel
-              carouselTitle={t("productDetail.carousel.title")}
-              items={carouselItems.map((card, index) => (
-                <Card
-                  key={card.key}
-                  card={{
-                    category: card.category,
-                    title: card.title,
-                    description: card.description,
-                    href: card.href,
-                    bg: card.bg,
-                    video:
-                      card.video ?? `/drone-carousel-video-${index + 1}.MP4`,
-                  }}
-                  index={index}
-                />
-              ))}
-            />
-          </ScrollReveal>
-          {status === "error" ? (
-            <div className="rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
-              {errorMessage ?? t("productDetail.errors.catalogFallback")}
-            </div>
-          ) : null}
-        </section>
       </div>
     </div>
   );
 }
-
-type CarouselItem = {
-  key: string;
-  category: string;
-  title: string;
-  description: string;
-  href: string;
-  bg: string;
-  video?: string;
-};
-
-const carouselItems: CarouselItem[] = [
-  {
-    key: "swift-x8",
-    category: "Civil High-Speed Drone",
-    title: "Swift X8",
-    description: "185 km/h high-speed platform for rapid civil operations.",
-    href: "civil-products/swift-x8",
-    bg: "/drone-carousel-bg-1.png",
-    video: "/drone-carousel-video-1.MP4",
-  },
-];
