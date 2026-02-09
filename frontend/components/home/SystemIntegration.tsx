@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { ScrollReveal } from "./ui/scroll-reveal";
+import { ScrollReveal } from "../ui/scroll-reveal";
 
-export default function SystemIntegrationSection() {
+export default function SystemIntegration() {
   const { t } = useTranslation();
   const cards = [
     {

@@ -118,9 +118,7 @@ const hasAnyText = (...values: Array<string | null | undefined>): boolean =>
   values.some((value) => hasText(value));
 
 const normalizeTextArray = (value?: Array<string> | null): string[] =>
-  (value ?? [])
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0);
+  (value ?? []).map((item) => item.trim()).filter((item) => item.length > 0);
 
 export default function CivilProductDetail() {
   const { slug, lng } = useParams<{ slug?: string; lng?: string }>();
@@ -177,10 +175,13 @@ export default function CivilProductDetail() {
     setProductDetail(null);
 
     axios
-      .get<ProductDetail>(`${import.meta.env.VITE_API_URL}/civil-items/${slug}/`, {
-        signal: controller.signal,
-        params: { lang: activeLanguage },
-      })
+      .get<ProductDetail>(
+        `${import.meta.env.VITE_API_URL}/civil-items/${slug}/`,
+        {
+          signal: controller.signal,
+          params: { lang: activeLanguage },
+        },
+      )
       .then((res) => {
         setProductDetail(res.data);
         setDetailStatus("ready");
@@ -229,7 +230,9 @@ export default function CivilProductDetail() {
   const productSubFeatures = useMemo(() => {
     const sub_features = productDetail?.sub_features ?? [];
     return [...sub_features]
-      .filter((subFeature) => hasAnyText(subFeature.name, subFeature.description))
+      .filter((subFeature) =>
+        hasAnyText(subFeature.name, subFeature.description),
+      )
       .sort(
         (a, b) =>
           (a.order ?? Number.MAX_SAFE_INTEGER) -
@@ -839,7 +842,8 @@ export default function CivilProductDetail() {
                     description: card.description,
                     href: card.href,
                     bg: card.bg,
-                    video: card.video ?? `/drone-carousel-video-${index + 1}.MP4`,
+                    video:
+                      card.video ?? `/drone-carousel-video-${index + 1}.MP4`,
                   }}
                   index={index}
                 />

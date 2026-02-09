@@ -15,7 +15,7 @@ type GallerySectionProps = {
   images: Array<GalleryImage>;
 };
 
-export default function GallerySection({ images }: GallerySectionProps) {
+export default function Gallery({ images }: GallerySectionProps) {
   const { t } = useTranslation();
   const galleryImages = useMemo(() => images, [images]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);

@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { ScrollReveal } from "./ui/scroll-reveal";
-import { dispatchOpenContactModal } from "../lib/contact-modal";
+import { ScrollReveal } from "../ui/scroll-reveal";
+import { dispatchOpenContactModal } from "../../lib/contact-modal";
 
-export default function SystemIntegrationSection() {
+export default function CustomerBenefits() {
   const openContactModal = () => dispatchOpenContactModal();
   const { t } = useTranslation();
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { Carousel, Card } from "./ui/apple-cards-carousel";
-import { ScrollReveal } from "./ui/scroll-reveal";
+import { Carousel, Card } from "../ui/apple-cards-carousel";
+import { ScrollReveal } from "../ui/scroll-reveal";
 
 export default function DroneCarouselSection() {
   const { t } = useTranslation();
