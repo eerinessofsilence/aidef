@@ -271,6 +271,17 @@ export default function ProductDetail() {
     );
   }, [productDetail]);
 
+  const carouselProducts = useMemo(() => {
+    const currentSlug = productDetail?.slug ?? slug;
+    return [...items]
+      .filter((product) => Boolean(product.slug) && product.slug !== currentSlug)
+      .sort(
+        (a, b) =>
+          (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+      );
+  }, [items, productDetail?.slug, slug]);
+
   useEffect(() => {
     setActiveSlide(0);
   }, [productImages.length, productDetail?.slug]);
@@ -695,14 +706,7 @@ export default function ProductDetail() {
           <ScrollReveal delay={0.12}>
             <Carousel
               carouselTitle={t("productDetail.carousel.title")}
-              items={[...items]
-                .filter((product) => Boolean(product.slug))
-                .sort(
-                  (a, b) =>
-                    (a.order ?? Number.MAX_SAFE_INTEGER) -
-                      (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-                )
-                .map((product, index) => (
+              items={carouselProducts.map((product, index) => (
                   <Card
                     key={product.id}
                     card={{
