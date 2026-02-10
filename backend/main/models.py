@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -622,7 +623,28 @@ class ContactRequest(models.Model):
         DEFAULT = "default", "Default"
         SUPPORT = "support", "Support"
 
+    class Status(models.TextChoices):
+        NEW = "new", "New"
+        IN_PROGRESS = "in_progress", "In progress"
+        DONE = "done", "Done"
+        SPAM = "spam", "Spam"
+
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.NEW,
+        db_index=True,
+    )
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_contact_requests",
+    )
+    internal_note = models.TextField(blank=True)
     variant = models.CharField(
         max_length=20, choices=Variant.choices, default=Variant.DEFAULT
     )

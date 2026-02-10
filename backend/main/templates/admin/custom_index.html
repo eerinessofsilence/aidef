@@ -1,0 +1,161 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .dashboard-card {
+    background: #151515;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .dashboard-card h2 {
+    margin: 0 0 10px;
+    font-size: 16px;
+  }
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .quick-link {
+    display: block;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #1f2937;
+    border-color: #404040;
+    background: #202020;
+  }
+  .quick-link:hover {
+    border-color: #606060;
+    background: #303030;
+  }
+  .quick-link strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .section-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .section-item {
+    border-top: 1px solid #ececec;
+    padding: 8px 0;
+    list-style-type: none
+  }
+  .section-item:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .section-item a {
+    text-decoration: none;
+  }
+  .hint-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 22px;
+    gap: 8px;
+    display: grid;
+  }
+  .hint-item {
+    font-size: 16px;
+  }
+  .category-list {
+    margin: 0;
+    margin-top: 6px;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+  <section class="dashboard-card">
+    <h2>Quick Access</h2>
+    <div class="quick-links">
+      {% if perms.main.view_product %}
+        <a class="quick-link" href="{% url 'admin:main_product_changelist' %}">
+          <strong>Products</strong>
+          <span>Military products, availability, and ordering.</span>
+        </a>
+      {% endif %}
+      {% if perms.portal.view_portalproduct %}
+        <a class="quick-link" href="{% url 'admin:portal_portalproduct_changelist' %}">
+          <strong>PortalProducts</strong>
+          <span>Portal catalog, blocks, and content.</span>
+        </a>
+      {% endif %}
+      {% if perms.main.view_contactrequest %}
+        <a class="quick-link" href="{% url 'admin:main_contactrequest_changelist' %}">
+          <strong>ContactRequests</strong>
+          <span>Lead inbox: status, assignee, and filters.</span>
+        </a>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="dashboard-card">
+    <h2>How to Work</h2>
+    <ol class="hint-list">
+      <li class="hint-item">Start with <strong>ContactRequests</strong> and assign owners.</li>
+      <li class="hint-item">Then update entries in <strong>Products</strong> or <strong>PortalProducts</strong>.</li>
+      <li class="hint-item">After edits, use bulk actions to maintain ordering and statuses.</li>
+    </ol>
+  </section>
+</div>
+
+<section class="dashboard-card">
+  <h2>Admin Sections</h2>
+  {% if app_list %}
+    <ul class="section-list">
+      {% for app in app_list %}
+        <li class="section-item">
+          <strong>
+            {% if app.app_label == "main" %}
+              Products and Leads
+            {% elif app.app_label == "portal" %}
+              Portal and Landing Pages
+            {% elif app.app_label == "users" %}
+              Users and Access
+            {% else %}
+              {{ app.name }}
+            {% endif %}
+          </strong>
+          <div class="category-list">
+            {% for model in app.models %}
+              {% if model.admin_url %}
+                <a href="{{ model.admin_url }}" class="quick-link">
+                  {% if app.app_label == "main" and model.object_name == "Product" %}
+                    Products
+                  {% elif app.app_label == "portal" and model.object_name == "PortalProduct" %}
+                    PortalProducts
+                  {% elif app.app_label == "main" and model.object_name == "ContactRequest" %}
+                    ContactRequests
+                  {% else %}
+                    {{ model.name }}
+                  {% endif %}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>{% translate "You don’t have permission to view or edit anything." %}</p>
+  {% endif %}
+</section>
+{% endblock %}
