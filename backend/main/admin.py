@@ -565,7 +565,7 @@ class ProductAdmin(HiddenModelTranslationTabsAdmin):
     date_hierarchy = "created_at"
     list_per_page = ADMIN_LIST_PER_PAGE
     actions = ("mark_available", "mark_unavailable", "renumber_order")
-    save_on_top = True
+    save_on_top = False
     fieldsets = (
         (
             "Main",
@@ -743,7 +743,7 @@ class CivilProductAdmin(HiddenModelTranslationTabsAdmin):
     date_hierarchy = "created_at"
     list_per_page = ADMIN_LIST_PER_PAGE
     actions = ("mark_available", "mark_unavailable", "renumber_order")
-    save_on_top = True
+    save_on_top = False
     fieldsets = (
         (
             "Main",

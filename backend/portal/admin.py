@@ -421,7 +421,7 @@ class PortalProductAdmin(HiddenModelTranslationTabsAdmin):
     date_hierarchy = "created_at"
     list_per_page = ADMIN_LIST_PER_PAGE
     actions = ("renumber_order",)
-    save_on_top = True
+    save_on_top = False
     fieldsets = (
         (
             "Main",
