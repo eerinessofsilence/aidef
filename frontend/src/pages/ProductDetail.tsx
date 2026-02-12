@@ -274,7 +274,9 @@ export default function ProductDetail() {
   const carouselProducts = useMemo(() => {
     const currentSlug = productDetail?.slug ?? slug;
     return [...items]
-      .filter((product) => Boolean(product.slug) && product.slug !== currentSlug)
+      .filter(
+        (product) => Boolean(product.slug) && product.slug !== currentSlug,
+      )
       .sort(
         (a, b) =>
           (a.order ?? Number.MAX_SAFE_INTEGER) -
@@ -346,11 +348,11 @@ export default function ProductDetail() {
                     </div>
                   </div>
                 ))}
-                <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col gap-y-5 text-center text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
+                <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col text-center drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
                   <p className="text-foreground/70 hidden text-xl tracking-widest uppercase lg:inline">
                     {productDetail?.category}
                   </p>
-                  <h1 className="text-6xl leading-18 font-bold max-lg:text-5xl max-md:text-4xl max-sm:text-3xl max-sm:text-nowrap">
+                  <h1 className="max-md:text-foreground/50 text-5xl leading-18 font-bold max-lg:text-4xl max-lg:leading-14 max-md:text-3xl max-md:leading-10 max-sm:text-2xl">
                     {productDetail?.name}
                   </h1>
                 </div>
@@ -707,23 +709,23 @@ export default function ProductDetail() {
             <Carousel
               carouselTitle={t("productDetail.carousel.title")}
               items={carouselProducts.map((product, index) => (
-                  <Card
-                    key={product.id}
-                    card={{
-                      category: product.category ?? "",
-                      title: product.name,
-                      description: product.description?.trim() ?? "",
-                      href: `/products/${product.slug}`,
-                      bg:
-                        product.drone_slider?.image ??
-                        product.first_image?.url ??
-                        product.icon?.url ??
-                        "/placeholder.svg",
-                      video: product.drone_slider?.video ?? undefined,
-                    }}
-                    index={index}
-                  />
-                ))}
+                <Card
+                  key={product.id}
+                  card={{
+                    category: product.category ?? "",
+                    title: product.name,
+                    description: product.description?.trim() ?? "",
+                    href: `/products/${product.slug}`,
+                    bg:
+                      product.drone_slider?.image ??
+                      product.first_image?.url ??
+                      product.icon?.url ??
+                      "/placeholder.svg",
+                    video: product.drone_slider?.video ?? undefined,
+                  }}
+                  index={index}
+                />
+              ))}
             />
           </ScrollReveal>
           {status === "error" ? (

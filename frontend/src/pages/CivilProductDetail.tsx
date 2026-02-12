@@ -167,10 +167,7 @@ export default function CivilProductDetail() {
     return () => controller.abort();
   }, [activeLanguage, slug, t]);
 
-  const heroProduct = useMemo(
-    () => productDetail ?? null,
-    [productDetail],
-  );
+  const heroProduct = useMemo(() => productDetail ?? null, [productDetail]);
 
   const productImages = useMemo(() => {
     const images = productDetail?.images ?? [];
@@ -382,11 +379,11 @@ export default function CivilProductDetail() {
                     </div>
                   </div>
                 ))}
-                <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col gap-y-5 text-center text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
+                <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col text-center drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
                   <p className="text-foreground/70 hidden text-xl tracking-widest uppercase lg:inline">
                     {productDetail?.category}
                   </p>
-                  <h1 className="text-6xl leading-18 font-bold max-lg:text-5xl max-md:text-4xl max-sm:text-3xl max-sm:text-nowrap">
+                  <h1 className="max-md:text-foreground/50 text-5xl leading-18 font-bold max-lg:text-4xl max-lg:leading-14 max-md:text-3xl max-md:leading-10 max-sm:text-2xl">
                     {productDetail?.name}
                   </h1>
                 </div>
@@ -445,9 +442,9 @@ export default function CivilProductDetail() {
           ) : null}
         </div>
       </ScrollReveal>
-      <div className="container">
+      <div className="container space-y-8 py-16">
         {productDetail && hasOverviewSection ? (
-          <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
+          <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
             <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
             <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
             <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
