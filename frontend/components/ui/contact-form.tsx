@@ -3,6 +3,8 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import { buildLocalizedPath, resolveLanguage } from "../../src/i18n";
 
 type ContactFormProps = {
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -102,8 +104,13 @@ export const ContactForm = ({
   variant = "default",
 }: ContactFormProps) => {
   const { t, i18n } = useTranslation();
+  const { lng } = useParams();
+  const currentLanguage = resolveLanguage(lng);
   const isSupportForm = variant === "support";
   const countryDatalistId = React.useId();
+  const solutionsLink = buildLocalizedPath(currentLanguage, "/solutions");
+  const technologyLink = buildLocalizedPath(currentLanguage, "/technology");
+  const supportLink = buildLocalizedPath(currentLanguage, "/support");
 
   const [countries, setCountries] = React.useState<CountryOption[]>(() =>
     buildCountryOptions(i18n.language),
@@ -687,22 +694,22 @@ export const ContactForm = ({
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <a
-                  href="#"
+                  href={solutionsLink}
                   className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:text-white"
                 >
-                  {t("contactForm.details.links.product")}
+                  {t("header.nav.solutions")}
                 </a>
                 <a
-                  href="#"
+                  href={technologyLink}
                   className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:text-white"
                 >
-                  {t("contactForm.details.links.services")}
+                  {t("header.nav.technology")}
                 </a>
                 <a
-                  href="#"
+                  href={supportLink}
                   className="rounded-full border border-neutral-200 px-3 py-1 text-xs font-semibold text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-neutral-500 dark:hover:text-white"
                 >
-                  {t("contactForm.details.links.support")}
+                  {t("header.nav.support")}
                 </a>
               </div>
             </div>
