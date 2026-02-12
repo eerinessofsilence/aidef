@@ -656,7 +656,6 @@
       "quickLinks": "Schnelllinks",
       "addresses": "Adressen",
       "managementTitle": "Management und Verwaltung",
-      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava Slovakia",
       "hqTitle": "Hauptsitz & Entwicklungszentrum",
       "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom",
       "links": {
@@ -731,9 +730,7 @@
     "addresses": {
       "title": "Adressen",
       "managementTitle": "Management und Verwaltung",
-      "managementAddress": "Vedecký park - Ilkovičova, 8841 02 Bratislava, Slowakei",
-      "hqTitle": "Hauptsitz & Entwicklungszentrum",
-      "hqAddress": "Staničná 267/21, 906 13 Brezová pod Bradlom"
+      "hqTitle": "Hauptsitz & Entwicklungszentrum"
     },
     "legal": {
       "notice": "© AI DEF A.S. 2026. Alle Rechte vorbehalten."

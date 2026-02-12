@@ -72,7 +72,7 @@ export default function Footer() {
                   {t("footer.addresses.managementTitle")}
                 </h1>
                 <p className="text-foreground/50 text-[15px]">
-                  {t("footer.addresses.managementAddress")}
+                  Vedecký park - Ilkovičova 6335/8, 841 04 Bratislava
                 </p>
               </div>
               <div className="max-w-90">
@@ -80,7 +80,7 @@ export default function Footer() {
                   {t("footer.addresses.hqTitle")}
                 </h1>
                 <p className="text-foreground/50 text-[15px]">
-                  {t("footer.addresses.hqAddress")}
+                  Staničná 267/21, 906 13 Brezová pod Bradlom
                 </p>
               </div>
               <div className="flex max-w-90 items-center gap-4.5">

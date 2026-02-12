@@ -66,7 +66,9 @@ const buildCountryOptions = (language = "en"): CountryOption[] => {
 
   if (canUseIntl) {
     try {
-      const displayNames = new Intl.DisplayNames([language], { type: "region" });
+      const displayNames = new Intl.DisplayNames([language], {
+        type: "region",
+      });
       return intl
         .supportedValuesOf("region")
         .filter((code) => /^[A-Z]{2}$/.test(code))
@@ -368,11 +370,13 @@ export const ContactForm = ({
       <div>
         <p className={kickerClass}>{formKicker}</p>
         <h3 className={titleClass}>{formTitle}</h3>
-        <p className={descriptionClass}>
-          {t("contactForm.description")}
-        </p>
+        <p className={descriptionClass}>{t("contactForm.description")}</p>
       </div>
-      <form className={formClass} onSubmit={handleSubmit} onChange={handleFormChange}>
+      <form
+        className={formClass}
+        onSubmit={handleSubmit}
+        onChange={handleFormChange}
+      >
         {isSupportForm ? (
           <>
             <div className="grid gap-4 md:grid-cols-2">
@@ -646,9 +650,7 @@ export const ContactForm = ({
           >
             {submitLabel}
           </button>
-          <p className={submitNoteClass}>
-            {t("contactForm.disclaimer")}
-          </p>
+          <p className={submitNoteClass}>{t("contactForm.disclaimer")}</p>
         </div>
         {submitStatus === "success" ? (
           <p className={successMessageClass} role="status" aria-live="polite">
@@ -709,21 +711,21 @@ export const ContactForm = ({
             <p className="text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
               {t("contactForm.details.addresses")}
             </p>
-            <div className="mt-4 grid gap-5 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-5">
               <div className="space-y-1">
                 <p className="text-[13px] font-semibold text-neutral-600 uppercase dark:text-neutral-300">
                   {t("contactForm.details.managementTitle")}
                 </p>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                  {t("contactForm.details.managementAddress")}
+                  Vedecký park - Ilkovičova 6335/8, 841 04 Bratislava{" "}
                 </p>
               </div>
-              <div className="space-y-1 sm:col-span-2">
+              <div className="space-y-1">
                 <p className="text-[13px] font-semibold text-neutral-600 uppercase dark:text-neutral-300">
                   {t("contactForm.details.hqTitle")}
                 </p>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                  {t("contactForm.details.hqAddress")}
+                  Staničná 267/21, 906 13 Brezová pod Bradlom
                 </p>
               </div>
             </div>
