@@ -94,7 +94,7 @@ interface ProductCTABlock {
   id: number;
   name: string;
   title: string;
-  background_image: string;
+  background_image: string | null;
   has_button: boolean;
   order?: number | null;
 }
@@ -675,7 +675,15 @@ export default function ProductDetail() {
           : null}
         {productCTABlocks.length > 0
           ? productCTABlocks.map((block) => (
-              <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-[url(/pdetail-bg-img-2.png)] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]">
+              <section
+                key={block.id}
+                className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 w-screen items-end bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                style={{
+                  backgroundImage: block.background_image
+                    ? `url(${block.background_image})`
+                    : undefined,
+                }}
+              >
                 <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
                   <ScrollReveal className="space-y-5 max-md:space-y-4 max-md:text-center">
                     <div>
