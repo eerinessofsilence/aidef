@@ -27,7 +27,7 @@ import i18n, {
   replaceLanguageInPath,
   resolveLanguage,
 } from "./i18n";
-import { gtmPageView } from "./analytics/gtm";
+import { ga4PageView } from "./analytics/ga4";
 
 function LanguageLayout() {
   const { lng } = useParams();
@@ -62,10 +62,10 @@ function LanguageLayout() {
     );
   }
 
-  // GTM
+  // GA4
   useEffect(() => {
     if (!isValidLanguage) return;
-    gtmPageView(location.pathname + location.search + location.hash);
+    ga4PageView(location.pathname + location.search + location.hash);
   }, [isValidLanguage, location.pathname, location.search, location.hash]);
   return (
     <>
