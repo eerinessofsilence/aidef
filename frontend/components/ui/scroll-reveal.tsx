@@ -20,6 +20,7 @@ type ScrollRevealProps = PropsWithChildren<{
   duration?: number;
   from?: Direction;
   amount?: number;
+  rootMargin?: string;
   distance?: number;
   ease?: Easing | Easing[];
 }>;
@@ -30,10 +31,14 @@ export function ScrollReveal({
   delay = 0,
   duration = 0.7,
   from = "up",
+  amount,
+  rootMargin,
   distance,
   ease = [0.22, 1, 0.36, 1],
 }: ScrollRevealProps) {
-  const { ref, inView } = useInViewOnce();
+  const threshold =
+    typeof amount === "number" ? Math.min(Math.max(amount, 0), 1) : undefined;
+  const { ref, inView } = useInViewOnce({ threshold, rootMargin });
 
   const baseOffset = directionOffsets[from];
   const appliedOffset = {
@@ -46,11 +51,13 @@ export function ScrollReveal({
         ? Math.sign(baseOffset.y) * distance
         : baseOffset.y,
   };
+  const blurDuration = Math.min(0.24, duration * 0.45);
 
   return (
     <motion.div
       ref={ref}
       className={cn("will-change-transform", className)}
+      style={{ willChange: "transform, opacity, filter" }}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={{
@@ -58,11 +65,16 @@ export function ScrollReveal({
           opacity: 0,
           x: appliedOffset.x,
           y: appliedOffset.y,
-          filter: "blur(10px)",
+          filter: "blur(6px)",
         },
         visible: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
       }}
-      transition={{ duration, delay, ease }}
+      transition={{
+        opacity: { duration, delay, ease },
+        x: { duration, delay, ease },
+        y: { duration, delay, ease },
+        filter: { duration: blurDuration, delay, ease },
+      }}
     >
       {children}
     </motion.div>
