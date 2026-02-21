@@ -21,6 +21,7 @@ from .models import (
     CivilProductSubFeature,
     CivilProductTechnology,
     ContactRequest,
+    LinkedInPost,
     Product,
     ProductCTABlock,
     ProductDroneSliderMedia,
@@ -432,6 +433,24 @@ def _serialize_civil_product_detail(request, product: CivilProduct) -> Dict[str,
     ]
 
     return data
+
+
+def _serialize_linkedin_post(post: LinkedInPost) -> Dict[str, Any]:
+    return {
+        "id": post.id,
+        "embed_url": post.embed_url,
+        "order": post.order,
+    }
+
+
+@require_GET
+def linkedin_post_list_api(request):
+    posts = (
+        LinkedInPost.objects.filter(is_active=True)
+        .order_by("order", "-created_at", "pk")
+    )
+    payload = [_serialize_linkedin_post(post) for post in posts]
+    return JsonResponse(payload, safe=False)
 
 
 @require_GET

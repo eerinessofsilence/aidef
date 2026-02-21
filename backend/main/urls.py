@@ -6,12 +6,14 @@ from .api import (
     contact_request_api,
     item_detail_api,
     item_list_api,
+    linkedin_post_list_api,
 )
 
 app_name = 'main'
 
 urlpatterns = [
     path('api/contact/', contact_request_api, name='contact-request'),
+    path('api/linkedin-posts/', linkedin_post_list_api, name='linkedin-post-list'),
     path('api/items/', item_list_api, name='item-list'),
     path('api/items/<slug:slug>/', item_detail_api, name='item-detail'),
     path('api/civil-items/', civil_item_list_api, name='civil-item-list'),

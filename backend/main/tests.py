@@ -9,6 +9,7 @@ from django.urls import reverse
 from .models import (
     Category,
     ContactRequest,
+    LinkedInPost,
     Product,
     ProductImage,
     ProductImageTranslation,
@@ -133,3 +134,49 @@ class MainAdminSmokeTests(TestCase):
         self.image_secondary.refresh_from_db()
         orders = sorted([self.image_primary.order, self.image_secondary.order])
         self.assertEqual(orders, [10, 20])
+
+
+class MainApiTests(TestCase):
+    def test_linkedin_posts_api_returns_active_items_sorted_by_order(self):
+        second = LinkedInPost.objects.create(
+            embed_url=(
+                "https://www.linkedin.com/embed/feed/update/"
+                "urn:li:share:7424218069163696128?collapsed=1"
+            ),
+            order=20,
+            is_active=True,
+        )
+        first = LinkedInPost.objects.create(
+            embed_url=(
+                "https://www.linkedin.com/embed/feed/update/"
+                "urn:li:share:7424766080130125824?collapsed=1"
+            ),
+            order=10,
+            is_active=True,
+        )
+        LinkedInPost.objects.create(
+            embed_url=(
+                "https://www.linkedin.com/embed/feed/update/"
+                "urn:li:ugcPost:7424765399566655488?collapsed=1"
+            ),
+            order=5,
+            is_active=False,
+        )
+
+        response = self.client.get(reverse("main:linkedin-post-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "id": first.id,
+                    "embed_url": first.embed_url,
+                    "order": first.order,
+                },
+                {
+                    "id": second.id,
+                    "embed_url": second.embed_url,
+                    "order": second.order,
+                },
+            ],
+        )

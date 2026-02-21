@@ -24,6 +24,7 @@ from .models import (
     CivilProductSubFeature,
     CivilProductTechnology,
     ContactRequest,
+    LinkedInPost,
     Product,
     ProductCTABlock,
     ProductDroneSliderMedia,
@@ -548,6 +549,17 @@ class CategoryAdmin(HiddenModelTranslationTabsAdmin):
     list_display = ('name', 'slug')
     search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
+    list_per_page = ADMIN_LIST_PER_PAGE
+
+
+@admin.register(LinkedInPost)
+class LinkedInPostAdmin(admin.ModelAdmin):
+    list_display = ("id", "embed_url", "is_active", "order", "created_at")
+    list_display_links = ("id", "embed_url")
+    list_editable = ("is_active", "order")
+    list_filter = ("is_active", "created_at")
+    search_fields = ("embed_url",)
+    ordering = ("order", "-created_at", "pk")
     list_per_page = ADMIN_LIST_PER_PAGE
 
 
