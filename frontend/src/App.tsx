@@ -21,6 +21,8 @@ import ScrollToTop from "../components/ui/scroll-to-top";
 import { CookieConsent } from "../components/ui/cookie-consent";
 import Auth from "./pages/Auth";
 import ClientPortal from "./pages/ClientPortal";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import i18n, {
   DEFAULT_LANGUAGE,
   isSupportedLanguage,
@@ -103,6 +105,8 @@ export default function App() {
         <Route path="products/:slug" element={<ProductDetail />} />
         <Route path="civil-products/:slug" element={<CivilProductDetail />} />
         <Route path="technology" element={<Technology />} />
+        <Route path="blog" element={<Blog />} />
+        <Route path="blog/:post" element={<BlogPost />} />
         <Route path="about-us" element={<AboutUs />} />
         <Route path="terms-of-condition" element={<TermsOfCondition />} />
         <Route path="support" element={<Support />} />

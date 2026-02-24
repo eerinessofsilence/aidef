@@ -3,7 +3,8 @@ import DroneCarousel from "../../components/home/DroneCarousel";
 import FocusAreas from "../../components/home/FocusAreas";
 import SystemIntegration from "../../components/home/SystemIntegration";
 import CustomerBenefits from "../../components/home/CustomerBenefits";
-import Blog from "../../components/home/Blog";
+import LinkedinPosts from "../../components/home/LinkedinPosts";
+import BlogPosts from "../../components/home/BlogPosts";
 
 export default function Home() {
   return (
@@ -12,7 +13,8 @@ export default function Home() {
       <DroneCarousel />
       <FocusAreas />
       <SystemIntegration />
-      <Blog />
+      <LinkedinPosts />
+      <BlogPosts />
       <CustomerBenefits />
     </main>
   );
