@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import (
+    BlogPost,
+    BlogPostSection,
     CivilProduct,
     CivilProductCTABlock,
     CivilProductFeature,
@@ -443,6 +445,69 @@ def _serialize_linkedin_post(post: LinkedInPost) -> Dict[str, Any]:
     }
 
 
+def _format_read_time_label(read_minutes: int | None) -> str:
+    minutes = max(int(read_minutes or 0), 1)
+    unit = "min" if minutes == 1 else "mins"
+    return f"{minutes} {unit} read"
+
+
+def _serialize_blog_post_list_item(request, post: BlogPost) -> Dict[str, Any]:
+    return {
+        "id": post.id,
+        "slug": post.slug,
+        "category": post.category.name if post.category else None,
+        "category_slug": post.category.slug if post.category else None,
+        "title": post.title,
+        "hero_image": _absolute_media_url(request, post.hero_image),
+        "subtitle": post.subtitle,
+        "author": post.author.name if post.author else "",
+        "author_role": post.author.role if post.author else "",
+        "published_at": post.published_at.isoformat() if post.published_at else None,
+        "read_minutes": post.read_minutes,
+        "read_time": _format_read_time_label(post.read_minutes),
+    }
+
+
+def _serialize_blog_post_detail(request, post: BlogPost) -> Dict[str, Any]:
+    sections: List[BlogPostSection] = list(post.sections.all())
+    return {
+        "id": post.id,
+        "slug": post.slug,
+        "category": post.category.name if post.category else None,
+        "category_slug": post.category.slug if post.category else None,
+        "title": post.title,
+        "hero_image": _absolute_media_url(request, post.hero_image),
+        "subtitle": post.subtitle,
+        "author": post.author.name if post.author else "",
+        "author_role": post.author.role if post.author else "",
+        "published_at": post.published_at.isoformat() if post.published_at else None,
+        "read_minutes": post.read_minutes,
+        "read_time": _format_read_time_label(post.read_minutes),
+        "sections": [
+            {
+                "id": section.anchor_id,
+                "title": section.title,
+                "paragraphs": section.paragraphs or [],
+                "bullets": section.bullets or [],
+                "order": section.order,
+            }
+            for section in sections
+        ],
+    }
+
+
+@require_GET
+def blog_post_list_api(request):
+    posts = (
+        BlogPost.objects
+        .filter(is_published=True)
+        .select_related("category", "author")
+        .order_by("order", "-published_at", "-created_at", "pk")
+    )
+    payload = [_serialize_blog_post_list_item(request, post) for post in posts]
+    return JsonResponse(payload, safe=False)
+
+
 @require_GET
 def linkedin_post_list_api(request):
     posts = (
@@ -451,6 +516,22 @@ def linkedin_post_list_api(request):
     )
     payload = [_serialize_linkedin_post(post) for post in posts]
     return JsonResponse(payload, safe=False)
+
+
+@require_GET
+def blog_post_detail_api(request, slug: str):
+    try:
+        post = (
+            BlogPost.objects
+            .select_related("category", "author")
+            .prefetch_related("sections")
+            .get(slug=slug, is_published=True)
+        )
+    except BlogPost.DoesNotExist as exc:
+        raise Http404("Blog post not found") from exc
+
+    payload = _serialize_blog_post_detail(request, post)
+    return JsonResponse(payload)
 
 
 @require_GET

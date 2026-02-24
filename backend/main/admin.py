@@ -12,6 +12,10 @@ from aidef.admin_mixins import (
     ProductImageLanguageTabsMixin,
 )
 from .models import (
+    BlogAuthor,
+    BlogCategory,
+    BlogPost,
+    BlogPostSection,
     Category,
     CivilCategory,
     CivilProduct,
@@ -440,6 +444,44 @@ class CivilProductInfoBlockInlineForm(forms.ModelForm):
         )
 
 
+class BlogPostSectionInlineForm(forms.ModelForm):
+    paragraphs = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+        help_text="One paragraph per line or JSON array.",
+    )
+    bullets = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 4}),
+        help_text="One bullet per line or JSON array.",
+    )
+
+    class Meta:
+        model = BlogPostSection
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.initial["paragraphs"] = _format_json_for_textarea(
+            self.instance.paragraphs
+        )
+        self.initial["bullets"] = _format_json_for_textarea(self.instance.bullets)
+
+    def clean_paragraphs(self):
+        return _parse_json_or_lines(
+            self.cleaned_data.get("paragraphs"),
+            split_commas=False,
+            field_label="Paragraphs",
+        )
+
+    def clean_bullets(self):
+        return _parse_json_or_lines(
+            self.cleaned_data.get("bullets"),
+            split_commas=False,
+            field_label="Bullets",
+        )
+
+
 class ProductImageInline(admin.StackedInline):
     # Stacked inline avoids wide tables and keeps image ordering obvious.
     model = ProductImage
@@ -477,6 +519,15 @@ class ProductImageInline(admin.StackedInline):
     @admin.display(description="Alt links")
     def alt_links_inline(self, obj):
         return _render_alt_links(obj)
+
+
+class BlogPostSectionInline(admin.StackedInline):
+    model = BlogPostSection
+    form = BlogPostSectionInlineForm
+    extra = 0
+    ordering = ("order",)
+    fields = ("title", "anchor_id", "paragraphs", "bullets", "order")
+    verbose_name_plural = "Sections"
 
 
 class ProductDroneSliderMediaInline(admin.StackedInline):
@@ -550,6 +601,118 @@ class CategoryAdmin(HiddenModelTranslationTabsAdmin):
     search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
     list_per_page = ADMIN_LIST_PER_PAGE
+
+
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "is_active", "order")
+    list_display_links = ("name", "slug")
+    list_editable = ("is_active", "order")
+    search_fields = ("name", "slug")
+    ordering = ("order", "name")
+    prepopulated_fields = {"slug": ("name",)}
+    list_per_page = ADMIN_LIST_PER_PAGE
+
+
+@admin.register(BlogAuthor)
+class BlogAuthorAdmin(admin.ModelAdmin):
+    list_display = ("name", "role", "is_active", "order")
+    list_display_links = ("name",)
+    list_editable = ("role", "is_active", "order")
+    search_fields = ("name", "role")
+    ordering = ("order", "name")
+    list_per_page = ADMIN_LIST_PER_PAGE
+
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "slug",
+        "category",
+        "author",
+        "is_published",
+        "published_at",
+        "order",
+    )
+    list_display_links = ("title", "slug")
+    list_editable = ("is_published", "published_at", "order")
+    list_filter = ("is_published", "category", "author", "published_at")
+    search_fields = ("title", "slug", "subtitle", "author__name", "category__name")
+    list_select_related = ("category", "author")
+    ordering = ("order", "-published_at", "-created_at", "pk")
+    prepopulated_fields = {"slug": ("title",)}
+    date_hierarchy = "published_at"
+    list_per_page = ADMIN_LIST_PER_PAGE
+    actions = ("mark_published", "mark_unpublished", "renumber_order")
+    fieldsets = (
+        (
+            "Main",
+            {
+                "fields": (
+                    "title",
+                    "slug",
+                    "category",
+                    "author",
+                    "is_published",
+                    "published_at",
+                    "read_minutes",
+                    "order",
+                ),
+            },
+        ),
+        (
+            "Content",
+            {
+                "fields": ("hero_image", "subtitle"),
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "classes": ("collapse",),
+                "fields": ("created_at", "updated_at"),
+            },
+        ),
+    )
+    readonly_fields = ("created_at", "updated_at")
+    inlines = [BlogPostSectionInline]
+
+    @admin.action(description="Mark selected posts as published")
+    def mark_published(self, request, queryset):
+        today = timezone.localdate()
+        updated = 0
+        for post in queryset:
+            changed_fields = []
+            if not post.is_published:
+                post.is_published = True
+                changed_fields.append("is_published")
+            if post.published_at is None:
+                post.published_at = today
+                changed_fields.append("published_at")
+            if changed_fields:
+                post.save(update_fields=changed_fields + ["updated_at"])
+                updated += 1
+        self.message_user(request, f"Published {updated} post(s).")
+
+    @admin.action(description="Mark selected posts as unpublished")
+    def mark_unpublished(self, request, queryset):
+        updated = queryset.update(is_published=False, updated_at=timezone.now())
+        self.message_user(request, f"Unpublished {updated} post(s).")
+
+    @admin.action(description="Renumber order for selected blog posts (step 10)")
+    def renumber_order(self, request, queryset):
+        updated = 0
+        for index, post in enumerate(
+            queryset.order_by("order", "-published_at", "-created_at", "pk"),
+            start=1,
+        ):
+            new_order = index * 10
+            if post.order != new_order:
+                post.order = new_order
+                post.save(update_fields=["order", "updated_at"])
+                updated += 1
+        self.message_user(request, f"Updated order for {updated} post(s).")
 
 
 @admin.register(LinkedInPost)

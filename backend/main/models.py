@@ -19,6 +19,16 @@ def validate_tags_max_three(value):
             raise ValidationError("Tag length must be 40 characters or less.")
 
 
+def validate_string_list(value):
+    if value is None:
+        return
+    if not isinstance(value, (list, tuple)):
+        raise ValidationError("Value must be a list of strings.")
+    for item in value:
+        if not isinstance(item, str):
+            raise ValidationError("Each item must be a string.")
+
+
 _ICON_EXTENSIONS = ["svg", "svgz", "png", "jpg", "jpeg", "webp", "gif"]
 _icon_extension_validator = FileExtensionValidator(
     allowed_extensions=_ICON_EXTENSIONS
@@ -616,6 +626,144 @@ class CivilProductCTABlock(models.Model):
 
     def __str__(self):
         return f"{self.product.name} — CTA block {self.pk}"
+
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=120, unique=True)
+    slug = models.SlugField(max_length=140, unique=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "name")
+        verbose_name = "Blog category"
+        verbose_name_plural = "Blog categories"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.name)[:130] or "category"
+            slug = base
+            counter = 1
+            while BlogCategory.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class BlogAuthor(models.Model):
+    name = models.CharField(max_length=160)
+    role = models.CharField(max_length=160, blank=True)
+    is_active = models.BooleanField(default=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "name", "pk")
+        verbose_name = "Blog author"
+        verbose_name_plural = "Blog authors"
+
+    def __str__(self):
+        if self.role:
+            return f"{self.name} ({self.role})"
+        return self.name
+
+
+class BlogPost(models.Model):
+    category = models.ForeignKey(
+        BlogCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="posts",
+    )
+    author = models.ForeignKey(
+        BlogAuthor,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="posts",
+    )
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    hero_image = models.ImageField(upload_to="blog/%Y/%m/", blank=True)
+    subtitle = models.TextField(blank=True)
+    is_published = models.BooleanField(default=False, db_index=True)
+    published_at = models.DateField(null=True, blank=True, db_index=True)
+    read_minutes = models.PositiveSmallIntegerField(default=3)
+    order = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("order", "-published_at", "-created_at", "pk")
+        verbose_name = "Blog post"
+        verbose_name_plural = "Blog posts"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title)[:230] or "post"
+            slug = base
+            counter = 1
+            while BlogPost.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+
+class BlogPostSection(models.Model):
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name="sections",
+    )
+    title = models.CharField(max_length=255)
+    anchor_id = models.SlugField(max_length=120, blank=True)
+    paragraphs = models.JSONField(
+        blank=True,
+        null=True,
+        validators=[validate_string_list],
+        help_text="JSON array of paragraph strings.",
+    )
+    bullets = models.JSONField(
+        blank=True,
+        null=True,
+        validators=[validate_string_list],
+        help_text="JSON array of bullet strings.",
+    )
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "pk")
+        verbose_name = "Blog post section"
+        verbose_name_plural = "Blog post sections"
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "anchor_id"),
+                name="main_blogpostsection_unique_anchor_per_post",
+            )
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.anchor_id:
+            base = slugify(self.title)[:110] or "section"
+            anchor = base
+            counter = 1
+            queryset = BlogPostSection.objects.filter(post=self.post).exclude(pk=self.pk)
+            while queryset.filter(anchor_id=anchor).exists():
+                anchor = f"{base}-{counter}"
+                counter += 1
+            self.anchor_id = anchor
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.post.title} — {self.title}"
 
 
 class LinkedInPost(models.Model):

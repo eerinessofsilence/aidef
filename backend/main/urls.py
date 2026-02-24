@@ -1,6 +1,8 @@
 from django.urls import path
 
 from .api import (
+    blog_post_list_api,
+    blog_post_detail_api,
     civil_item_detail_api,
     civil_item_list_api,
     contact_request_api,
@@ -13,6 +15,8 @@ app_name = 'main'
 
 urlpatterns = [
     path('api/contact/', contact_request_api, name='contact-request'),
+    path('api/blog/posts/', blog_post_list_api, name='blog-post-list'),
+    path('api/blog/posts/<slug:slug>/', blog_post_detail_api, name='blog-post-detail'),
     path('api/linkedin-posts/', linkedin_post_list_api, name='linkedin-post-list'),
     path('api/items/', item_list_api, name='item-list'),
     path('api/items/<slug:slug>/', item_detail_api, name='item-detail'),

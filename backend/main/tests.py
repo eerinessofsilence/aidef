@@ -1,3 +1,4 @@
+from datetime import date
 import shutil
 import tempfile
 
@@ -7,6 +8,10 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from .models import (
+    BlogAuthor,
+    BlogCategory,
+    BlogPost,
+    BlogPostSection,
     Category,
     ContactRequest,
     LinkedInPost,
@@ -135,6 +140,35 @@ class MainAdminSmokeTests(TestCase):
         orders = sorted([self.image_primary.order, self.image_secondary.order])
         self.assertEqual(orders, [10, 20])
 
+    def test_blog_post_admin_change_form_renders_sections_inline(self):
+        blog_category = BlogCategory.objects.create(name="Resume Tips")
+        blog_author = BlogAuthor.objects.create(
+            name="Andrew Scott",
+            role="Career Editor",
+        )
+        blog_post = BlogPost.objects.create(
+            title="How to write strong work experience in your resume",
+            slug="how-to-write-strong-work-experience",
+            category=blog_category,
+            author=blog_author,
+            is_published=True,
+            published_at=date(2026, 1, 27),
+            read_minutes=3,
+        )
+        BlogPostSection.objects.create(
+            post=blog_post,
+            title="Why work experience matters",
+            anchor_id="why-work-experience-matters",
+            paragraphs=["Paragraph 1", "Paragraph 2"],
+            order=10,
+        )
+
+        change_url = reverse("admin:main_blogpost_change", args=[blog_post.pk])
+        response = self.client.get(change_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Why work experience matters")
+        self.assertContains(response, "Sections")
+
 
 class MainApiTests(TestCase):
     def test_linkedin_posts_api_returns_active_items_sorted_by_order(self):
@@ -180,3 +214,152 @@ class MainApiTests(TestCase):
                 },
             ],
         )
+
+    def test_blog_post_detail_api_returns_published_post_with_sections(self):
+        category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
+        author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")
+        post = BlogPost.objects.create(
+            title="How to write strong work experience in your resume",
+            slug="how-to-write-strong-work-experience",
+            subtitle="A clean structure for describing impact and growth.",
+            category=category,
+            author=author,
+            is_published=True,
+            published_at=date(2026, 1, 27),
+            read_minutes=3,
+        )
+        BlogPostSection.objects.create(
+            post=post,
+            title="Why work experience matters",
+            anchor_id="why-work-experience-matters",
+            paragraphs=["First paragraph", "Second paragraph"],
+            order=10,
+        )
+        BlogPostSection.objects.create(
+            post=post,
+            title="Tips to strengthen",
+            anchor_id="tips-to-strengthen",
+            bullets=["Focus on achievements", "Quantify results"],
+            order=20,
+        )
+
+        response = self.client.get(
+            reverse("main:blog-post-detail", args=[post.slug])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "id": post.id,
+                "slug": post.slug,
+                "category": "Resume Tips",
+                "category_slug": "resume-tips",
+                "title": post.title,
+                "hero_image": None,
+                "subtitle": post.subtitle,
+                "author": "Andrew Scott",
+                "author_role": "Career Editor",
+                "published_at": "2026-01-27",
+                "read_minutes": 3,
+                "read_time": "3 mins read",
+                "sections": [
+                    {
+                        "id": "why-work-experience-matters",
+                        "title": "Why work experience matters",
+                        "paragraphs": ["First paragraph", "Second paragraph"],
+                        "bullets": [],
+                        "order": 10,
+                    },
+                    {
+                        "id": "tips-to-strengthen",
+                        "title": "Tips to strengthen",
+                        "paragraphs": [],
+                        "bullets": [
+                            "Focus on achievements",
+                            "Quantify results",
+                        ],
+                        "order": 20,
+                    },
+                ],
+            },
+        )
+
+    def test_blog_post_list_api_returns_published_posts_sorted(self):
+        category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
+        author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")
+        first = BlogPost.objects.create(
+            title="Published first",
+            slug="published-first",
+            subtitle="First subtitle",
+            category=category,
+            author=author,
+            is_published=True,
+            published_at=date(2026, 1, 27),
+            read_minutes=3,
+            order=10,
+        )
+        second = BlogPost.objects.create(
+            title="Published second",
+            slug="published-second",
+            subtitle="Second subtitle",
+            category=category,
+            author=author,
+            is_published=True,
+            published_at=date(2026, 1, 20),
+            read_minutes=5,
+            order=20,
+        )
+        BlogPost.objects.create(
+            title="Draft",
+            slug="draft",
+            is_published=False,
+            order=5,
+        )
+
+        response = self.client.get(reverse("main:blog-post-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "id": first.id,
+                    "slug": "published-first",
+                    "category": "Resume Tips",
+                    "category_slug": "resume-tips",
+                    "title": "Published first",
+                    "hero_image": None,
+                    "subtitle": "First subtitle",
+                    "author": "Andrew Scott",
+                    "author_role": "Career Editor",
+                    "published_at": "2026-01-27",
+                    "read_minutes": 3,
+                    "read_time": "3 mins read",
+                },
+                {
+                    "id": second.id,
+                    "slug": "published-second",
+                    "category": "Resume Tips",
+                    "category_slug": "resume-tips",
+                    "title": "Published second",
+                    "hero_image": None,
+                    "subtitle": "Second subtitle",
+                    "author": "Andrew Scott",
+                    "author_role": "Career Editor",
+                    "published_at": "2026-01-20",
+                    "read_minutes": 5,
+                    "read_time": "5 mins read",
+                },
+            ],
+        )
+
+    def test_blog_post_detail_api_returns_404_for_unpublished_post(self):
+        post = BlogPost.objects.create(
+            title="Draft post",
+            slug="draft-post",
+            is_published=False,
+        )
+
+        response = self.client.get(
+            reverse("main:blog-post-detail", args=[post.slug])
+        )
+        self.assertEqual(response.status_code, 404)
