@@ -94,7 +94,7 @@ export default function Blog() {
         <ScrollReveal
           delay={0.15}
           className={`flex w-full flex-nowrap items-start gap-6 overflow-x-auto ${
-            visibleLinkedInPosts.length < 0 ? "justify-center" : ""
+            visibleLinkedInPosts.length === 0 ? "justify-center" : ""
           }`}
         >
           {visibleLinkedInPosts.length > 0 ? (
@@ -110,12 +110,10 @@ export default function Blog() {
               />
             ))
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="text-foreground/70 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
-                {status === "loading"
-                  ? "Loading LinkedIn posts..."
-                  : "No LinkedIn posts added yet."}
-              </div>
+            <div className="text-foreground/70 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
+              {status === "loading"
+                ? "Loading LinkedIn posts..."
+                : "No LinkedIn posts added yet."}
             </div>
           )}
         </ScrollReveal>
