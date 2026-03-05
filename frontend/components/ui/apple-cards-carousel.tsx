@@ -88,9 +88,7 @@ export const Carousel = ({
       const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
       const maxScrollLeft = Math.max(scrollWidth - clientWidth, 0);
       setCanScrollLeft(scrollLeft > SCROLL_EDGE_TOLERANCE);
-      setCanScrollRight(
-        scrollLeft < maxScrollLeft - SCROLL_EDGE_TOLERANCE,
-      );
+      setCanScrollRight(scrollLeft < maxScrollLeft - SCROLL_EDGE_TOLERANCE);
     }
   }, []);
 
@@ -303,14 +301,8 @@ export const Card = ({
         <div className="pointer-events-none absolute inset-0 z-30 bg-linear-to-b from-black/50 via-black/25 to-transparent" />
         <div className="relative z-40">
           <motion.p
-            layoutId={layout ? `category-${card.category}` : undefined}
-            className="text-left font-sans text-base font-medium text-white"
-          >
-            {card.category}
-          </motion.p>
-          <motion.p
             layoutId={layout ? `title-${card.title}` : undefined}
-            className="mt-2 max-w-xs text-left font-sans text-xl font-semibold text-balance text-white md:text-3xl"
+            className="text-left font-sans text-xl font-semibold text-balance text-white md:text-2xl"
           >
             {card.title}
           </motion.p>
