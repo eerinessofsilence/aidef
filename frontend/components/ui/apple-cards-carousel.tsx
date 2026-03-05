@@ -140,79 +140,60 @@ export const Carousel = ({
       value={{ onCardClose: handleCardClose, currentIndex }}
     >
       <div className="relative w-full">
-        <div className="flex justify-between gap-3 max-[360px]:flex-col">
-          <div className="space-y-2">
-            {carouselTitle ? (
-              <div>
-                <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                  {carouselTitle}
-                </h2>
-              </div>
-            ) : null}
-            {paragraph ? (
-              <div className="text-foreground/70 lg:max-w-[90%]">
-                <p>{paragraph}</p>
-              </div>
-            ) : null}
-          </div>
-          <div className="hidden justify-end gap-2 lg:flex">
-            <button
-              className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
-              onClick={scrollLeft}
-              disabled={!canScrollLeft}
-              aria-label={t("carousel.previous")}
-            >
-              <IconArrowNarrowLeft className="h-7 w-7 text-[#515151]" />
-            </button>
-            <button
-              className="relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
-              onClick={scrollRight}
-              disabled={!canScrollRight}
-              aria-label={t("carousel.next")}
-            >
-              <IconArrowNarrowRight className="h-7 w-7 text-[#515151]" />
-            </button>
-          </div>
+        <div className="space-y-2">
+          {carouselTitle ? (
+            <div>
+              <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                {carouselTitle}
+              </h2>
+            </div>
+          ) : null}
+          {paragraph ? (
+            <div className="text-foreground/70 lg:max-w-[90%]">
+              <p>{paragraph}</p>
+            </div>
+          ) : null}
         </div>
-        <div
-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]"
-          ref={carouselRef}
-          onScroll={checkScrollability}
-        >
-          <div
-            className={cn(
-              "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-linear-to-l",
-            )}
-          ></div>
-
-          <div className="inline-flex flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
-            {items.map((item, index) => (
-              <div
-                key={"card" + index}
-                className="aspect-5/7 w-81 shrink-0 max-lg:w-72 max-md:w-63"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="flex justify-between lg:hidden">
+        <div className="relative">
           <button
-            className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
+            className="absolute top-1/2 left-2 z-1100 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 shadow-sm shadow-black/20 backdrop-blur-sm disabled:opacity-50 max-md:h-10 max-md:w-10"
             onClick={scrollLeft}
             disabled={!canScrollLeft}
             aria-label={t("carousel.previous")}
           >
-            <IconArrowNarrowLeft className="h-6 w-6 text-gray-500" />
+            <IconArrowNarrowLeft className="h-8 w-8 text-[#333333] max-md:h-7 max-md:w-7" />
           </button>
           <button
-            className="z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gray-100 disabled:opacity-50"
+            className="absolute top-1/2 right-2 z-1100 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100/95 shadow-sm shadow-black/20 backdrop-blur-sm disabled:opacity-50 max-md:h-10 max-md:w-10"
             onClick={scrollRight}
             disabled={!canScrollRight}
             aria-label={t("carousel.next")}
           >
-            <IconArrowNarrowRight className="h-6 w-6 text-gray-500" />
+            <IconArrowNarrowRight className="h-8 w-8 text-[#515151] max-md:h-7 max-md:w-7" />
           </button>
+
+          <div
+            className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]"
+            ref={carouselRef}
+            onScroll={checkScrollability}
+          >
+            <div
+              className={cn(
+                "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-linear-to-l",
+              )}
+            ></div>
+
+            <div className="inline-flex flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
+              {items.map((item, index) => (
+                <div
+                  key={"card" + index}
+                  className="aspect-5/7 w-81 shrink-0 max-lg:w-72 max-md:w-63"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </CarouselContext.Provider>
