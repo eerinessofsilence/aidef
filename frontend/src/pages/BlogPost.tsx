@@ -283,7 +283,7 @@ function BrowserHeroIllustration({
 
   return (
     <div
-      className="relative h-[220px] w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-[260px] lg:h-[290px]"
+      className="relative h-[320px] w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-[360px] lg:h-[400px]"
       style={hasHeroImage ? undefined : { backgroundImage: seededGradient }}
     >
       {hasHeroImage ? (
@@ -305,7 +305,7 @@ function BrowserHeroIllustration({
             {category}
           </span>
         </div>
-        <div className="max-w-[48%] space-y-3 pb-2 max-md:max-w-[58%]">
+        <div className="max-w-[60%] space-y-3 pb-2 max-md:max-w-[80%]">
           <h1 className="text-2xl leading-tight font-semibold text-white drop-shadow-[0_1px_0_rgba(0,0,0,0.08)] sm:text-3xl">
             {title}
           </h1>
