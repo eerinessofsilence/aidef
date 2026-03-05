@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils import timezone
-from modeltranslation.admin import TranslationStackedInline
+from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline
 
 from aidef.admin_mixins import (
     HiddenModelTranslationTabsAdmin,
@@ -444,15 +444,18 @@ class CivilProductInfoBlockInlineForm(forms.ModelForm):
 
 
 class BlogPostSectionInlineForm(forms.ModelForm):
+    PARAGRAPHS_HELP_TEXT = "One paragraph per line or JSON array."
+    BULLETS_HELP_TEXT = "One bullet per line or JSON array."
+
     paragraphs = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
-        help_text="One paragraph per line or JSON array.",
+        help_text=PARAGRAPHS_HELP_TEXT,
     )
     bullets = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
-        help_text="One bullet per line or JSON array.",
+        help_text=BULLETS_HELP_TEXT,
     )
 
     class Meta:
@@ -465,6 +468,33 @@ class BlogPostSectionInlineForm(forms.ModelForm):
             self.instance.paragraphs
         )
         self.initial["bullets"] = _format_json_for_textarea(self.instance.bullets)
+        self._configure_translated_list_field(
+            "paragraphs",
+            rows=5,
+            help_text=self.PARAGRAPHS_HELP_TEXT,
+        )
+        self._configure_translated_list_field(
+            "bullets",
+            rows=4,
+            help_text=self.BULLETS_HELP_TEXT,
+        )
+
+    def _configure_translated_list_field(self, field_name, *, rows, help_text):
+        for language_code, _ in LANGUAGE_CHOICES:
+            translated_field_name = f"{field_name}_{language_code}"
+            existing = self.fields.get(translated_field_name)
+            if existing is None:
+                continue
+
+            self.fields[translated_field_name] = forms.CharField(
+                required=False,
+                label=existing.label,
+                widget=forms.Textarea(attrs={"rows": rows}),
+                help_text=help_text,
+            )
+            self.initial[translated_field_name] = _format_json_for_textarea(
+                getattr(self.instance, translated_field_name, None)
+            )
 
     def clean_paragraphs(self):
         return _parse_json_or_lines(
@@ -479,6 +509,28 @@ class BlogPostSectionInlineForm(forms.ModelForm):
             split_commas=False,
             field_label="Bullets",
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        for language_code, _ in LANGUAGE_CHOICES:
+            paragraphs_field = f"paragraphs_{language_code}"
+            if paragraphs_field in self.fields:
+                cleaned_data[paragraphs_field] = _parse_json_or_lines(
+                    cleaned_data.get(paragraphs_field),
+                    split_commas=False,
+                    field_label=f"Paragraphs ({language_code.upper()})",
+                )
+
+            bullets_field = f"bullets_{language_code}"
+            if bullets_field in self.fields:
+                cleaned_data[bullets_field] = _parse_json_or_lines(
+                    cleaned_data.get(bullets_field),
+                    split_commas=False,
+                    field_label=f"Bullets ({language_code.upper()})",
+                )
+
+        return cleaned_data
 
 
 class ProductImageInline(admin.StackedInline):
@@ -520,7 +572,7 @@ class ProductImageInline(admin.StackedInline):
         return _render_alt_links(obj)
 
 
-class BlogPostSectionInline(admin.StackedInline):
+class BlogPostSectionInline(TranslationStackedInline):
     model = BlogPostSection
     form = BlogPostSectionInlineForm
     extra = 0
@@ -603,7 +655,7 @@ class CategoryAdmin(HiddenModelTranslationTabsAdmin):
 
 
 @admin.register(BlogCategory)
-class BlogCategoryAdmin(admin.ModelAdmin):
+class BlogCategoryAdmin(HiddenModelTranslationTabsAdmin):
     list_display = ("name", "slug", "is_active", "order")
     list_display_links = ("name", "slug")
     list_editable = ("is_active", "order")
@@ -614,7 +666,7 @@ class BlogCategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(BlogAuthor)
-class BlogAuthorAdmin(admin.ModelAdmin):
+class BlogAuthorAdmin(HiddenModelTranslationTabsAdmin):
     list_display = ("name", "role", "is_active", "order")
     list_display_links = ("name",)
     list_editable = ("role", "is_active", "order")
@@ -624,7 +676,7 @@ class BlogAuthorAdmin(admin.ModelAdmin):
 
 
 @admin.register(BlogPost)
-class BlogPostAdmin(admin.ModelAdmin):
+class BlogPostAdmin(HiddenModelTranslationTabsAdmin):
     list_display = (
         "title",
         "slug",

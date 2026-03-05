@@ -1,6 +1,10 @@
 from modeltranslation.translator import TranslationOptions, register
 
 from .models import (
+    BlogAuthor,
+    BlogCategory,
+    BlogPost,
+    BlogPostSection,
     Category,
     CivilCategory,
     CivilProduct,
@@ -25,6 +29,26 @@ from .models import (
 @register(Category)
 class CategoryTranslationOptions(TranslationOptions):
     fields = ("name",)
+
+
+@register(BlogCategory)
+class BlogCategoryTranslationOptions(TranslationOptions):
+    fields = ("name",)
+
+
+@register(BlogAuthor)
+class BlogAuthorTranslationOptions(TranslationOptions):
+    fields = ("name", "role")
+
+
+@register(BlogPost)
+class BlogPostTranslationOptions(TranslationOptions):
+    fields = ("title", "subtitle")
+
+
+@register(BlogPostSection)
+class BlogPostSectionTranslationOptions(TranslationOptions):
+    fields = ("title", "paragraphs", "bullets")
 
 
 @register(Product)
