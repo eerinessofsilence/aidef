@@ -118,12 +118,21 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     language = _get_request_language(request)
     first_image = next((image for image in product.images.all() if image.image), None)
     icon_url = _absolute_media_url(request, product.icon)
+    dropdown_image_url = _absolute_media_url(request, product.dropdown_image)
     data["icon"] = (
         {
             "url": icon_url,
             "alt": (product.name or "").strip(),
         }
         if icon_url
+        else None
+    )
+    data["dropdown_image"] = (
+        {
+            "url": dropdown_image_url,
+            "alt": (product.name or "").strip(),
+        }
+        if dropdown_image_url
         else None
     )
     data["first_image"] = (

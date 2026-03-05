@@ -139,6 +139,24 @@ class MainAdminSmokeTests(TestCase):
         orders = sorted([self.image_primary.order, self.image_secondary.order])
         self.assertEqual(orders, [10, 20])
 
+    def test_item_list_api_includes_dropdown_image(self):
+        self.product.dropdown_image = SimpleUploadedFile(
+            "menu-card.jpg",
+            b"menu-card-image",
+            content_type="image/jpeg",
+        )
+        self.product.save()
+
+        response = self.client.get(reverse("main:item-list"))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        item = next(entry for entry in payload if entry["id"] == self.product.id)
+
+        self.assertIn("dropdown_image", item)
+        self.assertIsNotNone(item["dropdown_image"])
+        self.assertIn("menu-card.jpg", item["dropdown_image"]["url"])
+        self.assertEqual(item["dropdown_image"]["alt"], self.product.name)
+
     def test_blog_post_admin_change_form_renders_sections_inline(self):
         blog_category = BlogCategory.objects.create(name="Resume Tips")
         blog_author = BlogAuthor.objects.create(

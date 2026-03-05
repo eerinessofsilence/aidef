@@ -89,6 +89,12 @@ class Product(models.Model):
         null=True,
         validators=[validate_svg_file],
     )
+    dropdown_image = models.ImageField(
+        upload_to='product_dropdown_images/%Y/%m/',
+        blank=True,
+        null=True,
+        help_text='Image shown on Product cards in the header dropdown.',
+    )
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

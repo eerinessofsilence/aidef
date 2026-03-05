@@ -791,7 +791,7 @@ class ProductAdmin(HiddenModelTranslationTabsAdmin):
         (
             "Content",
             {
-                "fields": ("description", "icon"),
+                "fields": ("description", "icon", "dropdown_image"),
             },
         ),
         (

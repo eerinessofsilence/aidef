@@ -105,6 +105,7 @@ type ProductListApiItem = {
   slug: string;
   name: string;
   order?: number | null;
+  dropdown_image?: ProductImagePreview | null;
   icon?: ProductImagePreview | null;
   first_image?: ProductImagePreview | null;
 };
@@ -261,10 +262,12 @@ export default function Header() {
             name: product.name,
             href: `/products/${product.slug}`,
             imageUrl:
+              product.dropdown_image?.url ??
               product.first_image?.url ??
               product.icon?.url ??
               "/placeholder.svg",
             imageAlt:
+              product.dropdown_image?.alt?.trim() ||
               product.first_image?.alt?.trim() ||
               product.icon?.alt?.trim() ||
               product.name,
