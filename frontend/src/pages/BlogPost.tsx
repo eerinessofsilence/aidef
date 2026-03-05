@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Copy, Link as Link2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { buildLocalizedPath, resolveLanguage } from "../i18n";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
 import { cn } from "../../lib/utils";
@@ -59,62 +60,11 @@ const API_BASE = (() => {
   return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
 })();
 
-const templatePost: BlogPostTemplate = {
-  slug: "how-to-write-strong-work-experience",
-  category: "Resume Tips",
-  title: "How to write strong work experience in your resume",
-  heroImage: null,
-  subtitle:
-    "A clean structure for describing impact, responsibility, and growth so recruiters can scan and understand your value quickly.",
-  author: "Andrew Scott",
-  authorRole: "Career Editor",
-  publishedAt: "2026-01-27",
-  readTime: "3 mins read",
-  sections: [
-    {
-      id: "why-work-experience-matters",
-      title: "Why work experience matters",
-      paragraphs: [
-        "When recruiters scan resumes, their eyes often land on the work experience section first. It is your chance to prove how past roles prepared you for the next opportunity.",
-        "A strong experience section does not just list duties. It tells a short story of impact: what problem you worked on, what actions you took, and what changed because of your work.",
-      ],
-    },
-    {
-      id: "tips-to-strengthen",
-      title: "Tips to strengthen your work experience",
-      bullets: [
-        "Focus on achievements, not tasks.",
-        "Start bullets with action verbs (built, improved, launched, reduced, automated).",
-        "Quantify results whenever possible.",
-        "Keep examples relevant to the target role.",
-        "Show growth over time (scope, ownership, leadership).",
-      ],
-      paragraphs: [
-        "Instead of writing a generic responsibility, describe what changed because of your contribution. Numbers, time savings, conversion impact, or process improvements help reviewers evaluate your experience faster.",
-      ],
-    },
-    {
-      id: "example-rewrite",
-      title: "Example rewrite",
-      paragraphs: [
-        'Weak: "Responsible for managing a sales team."',
-        'Stronger: "Led a team of 6 sales reps, introduced a weekly pipeline review, and increased close rate by 18% over two quarters."',
-        "The second version gives scope, action, and outcome. That combination is what makes resume bullets memorable.",
-      ],
-    },
-    {
-      id: "final-takeaway",
-      title: "Final takeaway",
-      paragraphs: [
-        "Your work experience section should help a recruiter answer one question quickly: can this person create results in a similar environment here?",
-        "Write for clarity first, then tighten wording. Short, concrete bullets outperform long generic descriptions almost every time.",
-      ],
-    },
-  ],
-};
+const TEMPLATE_POST_SLUG = "how-to-write-strong-work-experience";
+const TEMPLATE_POST_PUBLISHED_AT = "2026-01-27";
 
-function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat("en-US", {
+function formatDate(dateString: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -155,14 +105,69 @@ function getSeededHeroGradient(seed: string) {
   return `linear-gradient(135deg, hsl(${hueA} ${satA}% ${lightA}%) 0%, hsl(${hueB} ${satB}% ${lightB}%) 48%, hsl(${hueC} ${satC}% ${lightC}%) 100%)`;
 }
 
-function getPostBySlug(slug?: string): BlogPostTemplate {
+type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
+
+function createTemplatePost(t: TranslateFn): BlogPostTemplate {
+  return {
+    slug: TEMPLATE_POST_SLUG,
+    category: t("blog.static.post.category"),
+    title: t("blog.static.post.title"),
+    heroImage: null,
+    subtitle: t("blog.static.post.subtitle"),
+    author: t("blog.static.post.author"),
+    authorRole: t("blog.static.post.authorRole"),
+    publishedAt: TEMPLATE_POST_PUBLISHED_AT,
+    readTime: t("blog.common.minRead", { count: 3 }),
+    sections: [
+      {
+        id: "why-work-experience-matters",
+        title: t("blog.static.post.sections.why.title"),
+        paragraphs: [
+          t("blog.static.post.sections.why.paragraph1"),
+          t("blog.static.post.sections.why.paragraph2"),
+        ],
+      },
+      {
+        id: "tips-to-strengthen",
+        title: t("blog.static.post.sections.strengthen.title"),
+        bullets: [
+          t("blog.static.post.sections.strengthen.bullet1"),
+          t("blog.static.post.sections.strengthen.bullet2"),
+          t("blog.static.post.sections.strengthen.bullet3"),
+          t("blog.static.post.sections.strengthen.bullet4"),
+          t("blog.static.post.sections.strengthen.bullet5"),
+        ],
+        paragraphs: [t("blog.static.post.sections.strengthen.paragraph1")],
+      },
+      {
+        id: "example-rewrite",
+        title: t("blog.static.post.sections.rewrite.title"),
+        paragraphs: [
+          t("blog.static.post.sections.rewrite.paragraph1"),
+          t("blog.static.post.sections.rewrite.paragraph2"),
+          t("blog.static.post.sections.rewrite.paragraph3"),
+        ],
+      },
+      {
+        id: "final-takeaway",
+        title: t("blog.static.post.sections.takeaway.title"),
+        paragraphs: [
+          t("blog.static.post.sections.takeaway.paragraph1"),
+          t("blog.static.post.sections.takeaway.paragraph2"),
+        ],
+      },
+    ],
+  };
+}
+
+function getPostBySlug(slug: string | undefined, t: TranslateFn): BlogPostTemplate {
+  const templatePost = createTemplatePost(t);
   if (!slug || slug === templatePost.slug) return templatePost;
   return {
     ...templatePost,
     slug,
     title: humanizeSlug(slug),
-    subtitle:
-      "Template article page for blog content. Replace this mock payload with CMS data by slug and keep the layout structure.",
+    subtitle: t("blog.post.fallbackSubtitle"),
   };
 }
 
@@ -188,6 +193,7 @@ function toSectionId(value: string) {
 function mapBlogPostFromApi(
   payload: BlogPostApiResponse,
   fallback: BlogPostTemplate,
+  formatReadTime: (minutes: number) => string,
 ): BlogPostTemplate {
   const rawSections = Array.isArray(payload.sections) ? payload.sections : [];
   const mappedSections = rawSections
@@ -221,7 +227,7 @@ function mapBlogPostFromApi(
       ? payload.read_time
       : typeof payload.read_minutes === "number" &&
           Number.isFinite(payload.read_minutes)
-        ? `${payload.read_minutes} ${payload.read_minutes === 1 ? "min" : "mins"} read`
+        ? formatReadTime(payload.read_minutes)
         : fallback.readTime;
   const heroImage =
     [
@@ -350,20 +356,21 @@ function TocLink({
 }
 
 export default function BlogPost() {
+  const { t } = useTranslation();
   const { lng, post } = useParams();
   const currentLanguage = resolveLanguage(lng);
   const [article, setArticle] = useState<BlogPostTemplate>(() =>
-    getPostBySlug(post),
+    getPostBySlug(post, t),
   );
   const [activeSectionId, setActiveSectionId] = useState(
-    getPostBySlug(post).sections[0]?.id ?? "",
+    getPostBySlug(post, t).sections[0]?.id ?? "",
   );
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">(
     "idle",
   );
 
   useEffect(() => {
-    const fallbackArticle = getPostBySlug(post);
+    const fallbackArticle = getPostBySlug(post, t);
     setArticle(fallbackArticle);
 
     if (!post) return;
@@ -384,7 +391,11 @@ export default function BlogPost() {
         }
 
         const payload = (await response.json()) as BlogPostApiResponse;
-        setArticle(mapBlogPostFromApi(payload, fallbackArticle));
+        setArticle(
+          mapBlogPostFromApi(payload, fallbackArticle, (minutes) =>
+            t("blog.common.minRead", { count: minutes }),
+          ),
+        );
       } catch (error) {
         if ((error as Error).name === "AbortError") {
           return;
@@ -397,7 +408,7 @@ export default function BlogPost() {
     void loadArticle();
 
     return () => controller.abort();
-  }, [currentLanguage, post]);
+  }, [currentLanguage, post, t]);
 
   const articlePath = buildLocalizedPath(
     currentLanguage,
@@ -407,6 +418,8 @@ export default function BlogPost() {
     typeof window !== "undefined"
       ? `${window.location.origin}${articlePath}`
       : `https://www.aidef.com${articlePath}`;
+  const weakExamplePrefix = t("blog.static.post.prefix.weak");
+  const strongerExamplePrefix = t("blog.static.post.prefix.stronger");
 
   useEffect(() => {
     const sectionIds = article.sections.map((section) => section.id);
@@ -503,7 +516,9 @@ export default function BlogPost() {
 
             <div className="grid gap-6 lg:grid-cols-[240px_1fr] lg:items-start">
               <div className="space-y-4 lg:sticky lg:top-32 xl:top-34">
-                <p className="text-sm text-[#9CA3AF]">Table of Content</p>
+                <p className="text-sm text-[#9CA3AF]">
+                  {t("blog.post.tableOfContent")}
+                </p>
                 <div className="flex flex-col max-lg:rounded-xl max-lg:border max-lg:border-gray-300/75 max-lg:bg-gray-300/25 max-lg:p-2.5">
                   {article.sections.map((section, index) => (
                     <TocLink
@@ -523,7 +538,7 @@ export default function BlogPost() {
                   </div>
 
                   <p className="text-sm font-medium tracking-tight text-[#9da3b2]">
-                    Share this article
+                    {t("blog.post.share")}
                   </p>
 
                   <div className="flex items-center gap-2">
@@ -540,15 +555,15 @@ export default function BlogPost() {
                       )}
                       aria-label={
                         copyState === "copied"
-                          ? "Article URL copied"
-                          : "Copy article URL"
+                          ? t("blog.post.copy.aria.copied")
+                          : t("blog.post.copy.aria.copy")
                       }
                       title={
                         copyState === "copied"
-                          ? "Copied"
+                          ? t("blog.post.copy.title.copied")
                           : copyState === "error"
-                            ? "Copy failed"
-                            : "Copy link"
+                            ? t("blog.post.copy.title.error")
+                            : t("blog.post.copy.title.default")
                       }
                     >
                       <Copy className="h-5 w-5" />
@@ -574,7 +589,7 @@ export default function BlogPost() {
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-[#6B7280]">
                     <span className="inline-flex items-center gap-1.5 font-medium text-[#555]">
-                      {formatDate(article.publishedAt)}
+                      {formatDate(article.publishedAt, currentLanguage)}
                     </span>
                     <span className="hidden h-1 w-1 rounded-full bg-[#666]/75 md:block" />
                     <span className="inline-flex items-center gap-1.5 text-[#666]/75">
@@ -602,8 +617,8 @@ export default function BlogPost() {
                           className={cn(
                             "text-base leading-6 text-[#6B7280]",
                             index > 0 && "mt-4",
-                            paragraph.startsWith("Weak:") ||
-                              paragraph.startsWith("Stronger:")
+                            paragraph.startsWith(weakExamplePrefix) ||
+                              paragraph.startsWith(strongerExamplePrefix)
                               ? "rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-4 py-3 font-medium text-[#475569]"
                               : "",
                           )}
@@ -644,12 +659,10 @@ export default function BlogPost() {
               <div className="flex items-center justify-between gap-6 max-md:flex-col max-md:items-start">
                 <div className="max-w-[780px] space-y-2">
                   <h2 className="text-3xl font-semibold tracking-tight max-lg:text-2xl">
-                    Need A Customized Unmanned System Solution?
+                    {t("blog.post.cta.title")}
                   </h2>
                   <p className="max-w-[760px] text-base leading-7 text-white/85 max-lg:text-[15px] max-lg:leading-6">
-                    Get In Touch With Our Engineers And Specialists To Discuss
-                    Integration Options, Technical Specifications And Deployment
-                    Scenarios.
+                    {t("blog.post.cta.description")}
                   </p>
                 </div>
 
@@ -658,7 +671,7 @@ export default function BlogPost() {
                   onClick={dispatchOpenContactModal}
                   className="group relative inline-flex h-14 w-48 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-42 max-md:text-base"
                 >
-                  Contact us
+                  {t("blog.post.cta.button")}
                 </button>
               </div>
             </section>

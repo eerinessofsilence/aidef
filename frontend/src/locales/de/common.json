@@ -763,5 +763,227 @@
     "previous": "Vorherige",
     "next": "Nächste",
     "cardPreviewAlt": "{{title}} Vorschau"
+  },
+  "blog": {
+    "common": {
+      "defaultCategory": "Allgemein",
+      "untitledPost": "Unbenannter Beitrag",
+      "openArticleFallback": "Artikel öffnen",
+      "noSummary": "Zusammenfassung wird bald hinzugefügt.",
+      "defaultAuthor": "AI DEF Redaktion",
+      "minRead": "{{count}} Min. Lesezeit"
+    },
+    "home": {
+      "kicker": "Blog",
+      "title": "Neueste Beiträge",
+      "description": "Einblicke, Updates und praktische Leitfäden unseres Teams.",
+      "empty": "Noch keine Beiträge veröffentlicht.",
+      "viewAll": "Alle Beiträge ansehen",
+      "loading": "Beiträge werden geladen...",
+      "error": "Beiträge können derzeit nicht geladen werden."
+    },
+    "page": {
+      "hero": {
+        "showSlideAria": "Folie {{index}} anzeigen"
+      },
+      "latestNews": {
+        "kicker": "Neueste Nachrichten",
+        "title": "Was ist neu",
+        "description": "Ausgewählte Artikel und Updates aus unseren Teams.",
+        "viewAll": "Alle Artikel",
+        "openArticleAria": "Artikel \"{{title}}\" öffnen"
+      },
+      "archive": {
+        "kicker": "Archiv",
+        "title": "Alle Beiträge",
+        "description": "Suchen, filtern und sortieren Sie Beiträge nach den wichtigsten Kriterien."
+      },
+      "categories": {
+        "all": "Alle Kategorien",
+        "moreAria": "Weitere Kategorien anzeigen"
+      },
+      "filters": {
+        "searchPlaceholder": "Beiträge suchen...",
+        "sortLabel": "Beiträge sortieren",
+        "sort": {
+          "newest": "Neueste zuerst",
+          "popular": "Beliebteste",
+          "quick": "Kurz zu lesen"
+        }
+      },
+      "empty": {
+        "search": "Keine Beiträge entsprechen Ihrer Suche.",
+        "category": "In dieser Kategorie wurden keine Beiträge gefunden."
+      }
+    },
+    "post": {
+      "fallbackSubtitle": "Dieser Artikel wird vorbereitet. Schauen Sie bald wieder vorbei.",
+      "tableOfContent": "Inhaltsverzeichnis",
+      "share": "Artikel teilen",
+      "copy": {
+        "aria": {
+          "copied": "Artikellink kopiert",
+          "copy": "Artikellink kopieren"
+        },
+        "title": {
+          "copied": "Link kopiert",
+          "error": "Kopieren fehlgeschlagen",
+          "default": "Artikellink kopieren"
+        }
+      },
+      "cta": {
+        "title": "Benötigen Sie eine maßgeschneiderte unbemannte Systemlösung?",
+        "description": "Kontaktieren Sie unsere Ingenieure und Spezialisten, um Integrationsoptionen, technische Spezifikationen und Einsatzszenarien zu besprechen.",
+        "button": "Kontaktieren Sie uns"
+      }
+    },
+    "static": {
+      "heroSlides": {
+        "slide1": {
+          "category": "Destination",
+          "title": "Exploring the Wonders of Hiking",
+          "description": "An iconic landscape, practical route planning, and what to pack for a safe multi-day trip in remote terrain.",
+          "author": "Theodore Reginald"
+        },
+        "slide2": {
+          "category": "Lifestyle",
+          "title": "Quiet Mornings, Smarter Travel Routines",
+          "description": "A minimalist pre-flight routine that helps you travel lighter and arrive with more energy for the first day.",
+          "author": "Maria Olsen"
+        },
+        "slide3": {
+          "category": "Tips & Hacks",
+          "title": "Build a Carry-On Setup That Actually Works",
+          "description": "Small packing decisions compound. Here's a checklist-driven setup for faster transfers and fewer surprises.",
+          "author": "Daniel Beck"
+        }
+      },
+      "latestNews": {
+        "card1": {
+          "category": "Finance Adviser",
+          "title": "Barely half of banks' teams would recommend their international payment services to customers",
+          "excerpt": "Survey results indicate a widening gap between internal confidence and customer expectations in cross-border payments.",
+          "author": "Olivia Rhye"
+        },
+        "card2": {
+          "category": "Finance Adviser",
+          "title": "How mobile-first onboarding is changing conversion rates in fintech",
+          "excerpt": "Design changes in the first 90 seconds of signup impact completion and fraud checks more than expected.",
+          "author": "Olivia Rhye"
+        },
+        "card3": {
+          "category": "Finance Adviser",
+          "title": "Card infrastructure teams are prioritizing reliability over feature velocity",
+          "excerpt": "New platform roadmaps show a stronger focus on settlement resilience, observability, and rollback readiness.",
+          "author": "Nina Ford"
+        },
+        "card4": {
+          "category": "Finance Adviser",
+          "title": "What treasury teams expect from modern dashboard reporting",
+          "excerpt": "The shift from static reports to real-time liquidity snapshots is redefining how operators manage risk windows.",
+          "author": "Alex Kim"
+        },
+        "card5": {
+          "category": "Finance Adviser",
+          "title": "A practical checklist for international payout launch readiness",
+          "excerpt": "From sanctions screening to support escalation paths, these are the operational checks teams miss most often.",
+          "author": "Olivia Rhye"
+        }
+      },
+      "articleGrid": {
+        "card1": {
+          "category": "Destination",
+          "title": "Cliffside Viewpoints You Can Reach Before Sunrise",
+          "excerpt": "A route-first guide to planning short hikes with dramatic views and reliable parking access.",
+          "author": "Theodore Reginald"
+        },
+        "card2": {
+          "category": "Lifestyle",
+          "title": "Capsule Packing for 5-Day Trips",
+          "excerpt": "A simple framework for packing lighter without sacrificing comfort, layering, or weather coverage.",
+          "author": "Maria Olsen"
+        },
+        "card3": {
+          "category": "Tips & Hacks",
+          "title": "Why Your Watch Strap Choice Matters on Long Travel Days",
+          "excerpt": "Comfort, durability, and quick drying time become more important than style when the day gets long.",
+          "author": "Daniel Beck"
+        },
+        "card4": {
+          "category": "Finance Adviser",
+          "title": "Reserve account structure for teams scaling into new regions",
+          "excerpt": "How finance and ops leaders segment balances for liquidity, payouts, and unexpected chargeback spikes.",
+          "author": "Olivia Rhye"
+        },
+        "card5": {
+          "category": "Technology",
+          "title": "Operational observability for payment infrastructure",
+          "excerpt": "Instrumenting the right traces and alerts reduces incident time and improves on-call confidence.",
+          "author": "Alex Kim"
+        },
+        "card6": {
+          "category": "Destination",
+          "title": "Weekend Desert Itinerary With Minimal Driving",
+          "excerpt": "A balanced plan for viewpoints, short walks, and timing your stops around light and temperature.",
+          "author": "Theodore Reginald"
+        },
+        "card7": {
+          "category": "Lifestyle",
+          "title": "Small Rituals That Make Hotel Stays Feel Better",
+          "excerpt": "A repeatable evening setup that improves sleep quality and helps you reset faster after flights.",
+          "author": "Maria Olsen"
+        },
+        "card8": {
+          "category": "Technology",
+          "title": "Designing a clean admin UI for high-stakes operations",
+          "excerpt": "Where to use density, where to create breathing room, and how to stage risky actions clearly.",
+          "author": "Nina Ford"
+        },
+        "card9": {
+          "category": "Tips & Hacks",
+          "title": "A better carry-on pouch system for cables and adapters",
+          "excerpt": "Keep essentials visible, charge faster at layovers, and avoid the bag explosion at security.",
+          "author": "Daniel Beck"
+        }
+      },
+      "post": {
+        "category": "Resume Tips",
+        "title": "How to write strong work experience in your resume",
+        "subtitle": "A clean structure for describing impact, responsibility, and growth so recruiters can scan and understand your value quickly.",
+        "author": "Andrew Scott",
+        "authorRole": "Career Editor",
+        "prefix": {
+          "weak": "Weak:",
+          "stronger": "Stronger:"
+        },
+        "sections": {
+          "why": {
+            "title": "Why work experience matters",
+            "paragraph1": "When recruiters scan resumes, their eyes often land on the work experience section first. It is your chance to prove how past roles prepared you for the next opportunity.",
+            "paragraph2": "A strong experience section does not just list duties. It tells a short story of impact: what problem you worked on, what actions you took, and what changed because of your work."
+          },
+          "strengthen": {
+            "title": "Tips to strengthen your work experience",
+            "paragraph1": "Instead of writing a generic responsibility, describe what changed because of your contribution. Numbers, time savings, conversion impact, or process improvements help reviewers evaluate your experience faster.",
+            "bullet1": "Focus on achievements, not tasks.",
+            "bullet2": "Start bullets with action verbs (built, improved, launched, reduced, automated).",
+            "bullet3": "Quantify results whenever possible.",
+            "bullet4": "Keep examples relevant to the target role.",
+            "bullet5": "Show growth over time (scope, ownership, leadership)."
+          },
+          "rewrite": {
+            "title": "Example rewrite",
+            "paragraph1": "Weak: \"Responsible for managing a sales team.\"",
+            "paragraph2": "Stronger: \"Led a team of 6 sales reps, introduced a weekly pipeline review, and increased close rate by 18% over two quarters.\"",
+            "paragraph3": "The second version gives scope, action, and outcome. That combination is what makes resume bullets memorable."
+          },
+          "takeaway": {
+            "title": "Final takeaway",
+            "paragraph1": "Your work experience section should help a recruiter answer one question quickly: can this person create results in a similar environment here?",
+            "paragraph2": "Write for clarity first, then tighten wording. Short, concrete bullets outperform long generic descriptions almost every time."
+          }
+        }
+      }
+    }
   }
 }

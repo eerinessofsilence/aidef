@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
   Search,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import { cn } from "../../lib/utils";
 import { buildLocalizedPath, resolveLanguage } from "../i18n";
@@ -19,7 +20,7 @@ type HeroSlide = {
   description: string;
   author: string;
   publishedAt: string;
-  readTime: string;
+  readMinutes: number;
   image: string;
 };
 
@@ -37,6 +38,7 @@ type BlogArticle = {
 };
 
 type SortKey = "newest" | "popular" | "quick";
+const ALL_CATEGORY_VALUE = "__all__";
 
 type BlogPostListApiItem = {
   id?: number;
@@ -51,6 +53,13 @@ type BlogPostListApiItem = {
   published_at?: string | null;
   read_minutes?: number;
   read_time?: string;
+};
+
+type BlogFallbackCopy = {
+  untitledPost: string;
+  defaultCategory: string;
+  noSummary: string;
+  defaultAuthor: string;
 };
 
 const API_BASE = (() => {
@@ -139,6 +148,7 @@ function getBlogArticleSlug(article: BlogArticle) {
 
 function mapApiPostToBlogArticle(
   item: BlogPostListApiItem,
+  fallbackCopy: BlogFallbackCopy,
 ): BlogArticle | null {
   if (typeof item.id !== "number" || !Number.isFinite(item.id)) return null;
 
@@ -149,19 +159,19 @@ function mapApiPostToBlogArticle(
   const title =
     typeof item.title === "string" && item.title.trim()
       ? item.title.trim()
-      : "Untitled post";
+      : fallbackCopy.untitledPost;
   const category =
     typeof item.category === "string" && item.category.trim()
       ? item.category.trim()
-      : "General";
+      : fallbackCopy.defaultCategory;
   const excerpt =
     typeof item.subtitle === "string" && item.subtitle.trim()
       ? item.subtitle.trim()
-      : "No summary available yet.";
+      : fallbackCopy.noSummary;
   const author =
     typeof item.author === "string" && item.author.trim()
       ? item.author.trim()
-      : "AIDEF Team";
+      : fallbackCopy.defaultAuthor;
   const publishedAt = getSafePublishedDate(item.published_at);
   const readMinutes = parseReadMinutes(item.read_minutes, item.read_time);
   const image =
@@ -183,221 +193,8 @@ function mapApiPostToBlogArticle(
   };
 }
 
-const heroSlides: HeroSlide[] = [
-  {
-    id: 1,
-    category: "Destination",
-    title: "Exploring the Wonders of Hiking",
-    description:
-      "An iconic landscape, practical route planning, and what to pack for a safe multi-day trip in remote terrain.",
-    author: "Theodore Reginald",
-    publishedAt: "2026-01-24",
-    readTime: "10 mins read",
-    image: "/support-1.png",
-  },
-  {
-    id: 2,
-    category: "Lifestyle",
-    title: "Quiet Mornings, Smarter Travel Routines",
-    description:
-      "A minimalist pre-flight routine that helps you travel lighter and arrive with more energy for the first day.",
-    author: "Maria Olsen",
-    publishedAt: "2026-01-16",
-    readTime: "8 mins read",
-    image: "/support-2.png",
-  },
-  {
-    id: 3,
-    category: "Tips & Hacks",
-    title: "Build a Carry-On Setup That Actually Works",
-    description:
-      "Small packing decisions compound. Here's a checklist-driven setup for faster transfers and fewer surprises.",
-    author: "Daniel Beck",
-    publishedAt: "2026-01-09",
-    readTime: "7 mins read",
-    image: "/support-3.png",
-  },
-];
-
-const latestNewsCards: BlogArticle[] = [
-  {
-    id: 101,
-    category: "Finance Adviser",
-    title:
-      "Barely half of banks' teams would recommend their international payment services to customers",
-    excerpt:
-      "Survey results indicate a widening gap between internal confidence and customer expectations in cross-border payments.",
-    author: "Olivia Rhye",
-    publishedAt: "2026-01-25",
-    readMinutes: 6,
-    image: "/hero-bg-1.jpg",
-    popularity: 92,
-  },
-  {
-    id: 102,
-    category: "Finance Adviser",
-    title:
-      "How mobile-first onboarding is changing conversion rates in fintech",
-    excerpt:
-      "Design changes in the first 90 seconds of signup impact completion and fraud checks more than expected.",
-    author: "Olivia Rhye",
-    publishedAt: "2026-01-23",
-    readMinutes: 4,
-    image: "/technology-bg-2.png",
-    popularity: 87,
-  },
-  {
-    id: 103,
-    category: "Finance Adviser",
-    title:
-      "Card infrastructure teams are prioritizing reliability over feature velocity",
-    excerpt:
-      "New platform roadmaps show a stronger focus on settlement resilience, observability, and rollback readiness.",
-    author: "Nina Ford",
-    publishedAt: "2026-01-21",
-    readMinutes: 5,
-    image: "/technology-bg-4.png",
-    popularity: 85,
-  },
-  {
-    id: 104,
-    category: "Finance Adviser",
-    title: "What treasury teams expect from modern dashboard reporting",
-    excerpt:
-      "The shift from static reports to real-time liquidity snapshots is redefining how operators manage risk windows.",
-    author: "Alex Kim",
-    publishedAt: "2026-01-19",
-    readMinutes: 5,
-    image: "/hero-bg-2.jpg",
-    popularity: 80,
-  },
-  {
-    id: 105,
-    category: "Finance Adviser",
-    title: "A practical checklist for international payout launch readiness",
-    excerpt:
-      "From sanctions screening to support escalation paths, these are the operational checks teams miss most often.",
-    author: "Olivia Rhye",
-    publishedAt: "2026-01-18",
-    readMinutes: 7,
-    image: "/hero-bg-3.jpg",
-    popularity: 76,
-  },
-];
-
-const articleGrid: BlogArticle[] = [
-  {
-    id: 201,
-    category: "Destination",
-    title: "Cliffside Viewpoints You Can Reach Before Sunrise",
-    excerpt:
-      "A route-first guide to planning short hikes with dramatic views and reliable parking access.",
-    author: "Theodore Reginald",
-    publishedAt: "2026-01-22",
-    readMinutes: 9,
-    image: "/support-1.png",
-    popularity: 95,
-  },
-  {
-    id: 202,
-    category: "Lifestyle",
-    title: "Capsule Packing for 5-Day Trips",
-    excerpt:
-      "A simple framework for packing lighter without sacrificing comfort, layering, or weather coverage.",
-    author: "Maria Olsen",
-    publishedAt: "2026-01-18",
-    readMinutes: 6,
-    image: "/hero-bg-4.jpg",
-    popularity: 86,
-  },
-  {
-    id: 203,
-    category: "Tips & Hacks",
-    title: "Why Your Watch Strap Choice Matters on Long Travel Days",
-    excerpt:
-      "Comfort, durability, and quick drying time become more important than style when the day gets long.",
-    author: "Daniel Beck",
-    publishedAt: "2026-01-14",
-    readMinutes: 4,
-    image: "/hero-bg-5.jpg",
-    popularity: 78,
-  },
-  {
-    id: 204,
-    category: "Finance Adviser",
-    title: "Reserve account structure for teams scaling into new regions",
-    excerpt:
-      "How finance and ops leaders segment balances for liquidity, payouts, and unexpected chargeback spikes.",
-    author: "Olivia Rhye",
-    publishedAt: "2026-01-26",
-    readMinutes: 8,
-    image: "/technology-bg-1.jpg",
-    popularity: 90,
-  },
-  {
-    id: 205,
-    category: "Technology",
-    title: "Operational observability for payment infrastructure",
-    excerpt:
-      "Instrumenting the right traces and alerts reduces incident time and improves on-call confidence.",
-    author: "Alex Kim",
-    publishedAt: "2026-01-20",
-    readMinutes: 7,
-    image: "/technology-bg-3.jpg",
-    popularity: 88,
-  },
-  {
-    id: 206,
-    category: "Destination",
-    title: "Weekend Desert Itinerary With Minimal Driving",
-    excerpt:
-      "A balanced plan for viewpoints, short walks, and timing your stops around light and temperature.",
-    author: "Theodore Reginald",
-    publishedAt: "2026-01-11",
-    readMinutes: 5,
-    image: "/support-2.png",
-    popularity: 77,
-  },
-  {
-    id: 207,
-    category: "Lifestyle",
-    title: "Small Rituals That Make Hotel Stays Feel Better",
-    excerpt:
-      "A repeatable evening setup that improves sleep quality and helps you reset faster after flights.",
-    author: "Maria Olsen",
-    publishedAt: "2026-01-07",
-    readMinutes: 5,
-    image: "/support-3.png",
-    popularity: 70,
-  },
-  {
-    id: 208,
-    category: "Technology",
-    title: "Designing a clean admin UI for high-stakes operations",
-    excerpt:
-      "Where to use density, where to create breathing room, and how to stage risky actions clearly.",
-    author: "Nina Ford",
-    publishedAt: "2026-01-17",
-    readMinutes: 9,
-    image: "/solutions-page-1.png",
-    popularity: 82,
-  },
-  {
-    id: 209,
-    category: "Tips & Hacks",
-    title: "A better carry-on pouch system for cables and adapters",
-    excerpt:
-      "Keep essentials visible, charge faster at layovers, and avoid the bag explosion at security.",
-    author: "Daniel Beck",
-    publishedAt: "2026-01-12",
-    readMinutes: 3,
-    image: "/solutions-page-2.png",
-    popularity: 75,
-  },
-];
-
-function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatDate(dateString: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -415,6 +212,7 @@ function ArticleMeta({
   readMinutes?: number;
   light?: boolean;
 }) {
+  const { t, i18n } = useTranslation();
   const tone = light ? "text-white/80" : "text-[#6B7280]";
   const iconTone = light ? "text-white/70" : "text-[#9CA3AF]";
 
@@ -429,14 +227,17 @@ function ArticleMeta({
       <span className="hidden h-1 w-1 rounded-full bg-current/60 sm:block" />
       <span className="inline-flex items-center gap-1.5">
         <Calendar className={cn("h-3.5 w-3.5", iconTone)} />
-        {formatDate(publishedAt)}
+        {formatDate(
+          publishedAt,
+          i18n.resolvedLanguage || i18n.language || "en",
+        )}
       </span>
       {typeof readMinutes === "number" ? (
         <>
           <span className="hidden h-1 w-1 rounded-full bg-current/60 sm:block" />
           <span className="inline-flex items-center gap-1.5">
             <Clock3 className={cn("h-3.5 w-3.5", iconTone)} />
-            {readMinutes} mins read
+            {t("blog.common.minRead", { count: readMinutes })}
           </span>
         </>
       ) : null}
@@ -551,15 +352,224 @@ function BlogGridCard({
 }
 
 export default function Blog() {
+  const { t } = useTranslation();
   const { lng } = useParams();
   const currentLanguage = resolveLanguage(lng);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY_VALUE);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
   const [sortBy, setSortBy] = useState<SortKey>("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [apiArticles, setApiArticles] = useState<BlogArticle[] | null>(null);
   const deferredSearchQuery = useDeferredValue(searchQuery);
+  const fallbackCopy = useMemo<BlogFallbackCopy>(
+    () => ({
+      untitledPost: t("blog.common.untitledPost"),
+      defaultCategory: t("blog.common.defaultCategory"),
+      noSummary: t("blog.common.noSummary"),
+      defaultAuthor: t("blog.common.defaultAuthor"),
+    }),
+    [t, currentLanguage],
+  );
+  const staticData = useMemo<{
+    heroSlides: HeroSlide[];
+    latestNewsCards: BlogArticle[];
+    articleGrid: BlogArticle[];
+  }>(
+    () => ({
+      heroSlides: [
+        {
+          id: 1,
+          category: t("blog.static.heroSlides.slide1.category"),
+          title: t("blog.static.heroSlides.slide1.title"),
+          description: t("blog.static.heroSlides.slide1.description"),
+          author: t("blog.static.heroSlides.slide1.author"),
+          publishedAt: "2026-01-24",
+          readMinutes: 10,
+          image: "/support-1.png",
+        },
+        {
+          id: 2,
+          category: t("blog.static.heroSlides.slide2.category"),
+          title: t("blog.static.heroSlides.slide2.title"),
+          description: t("blog.static.heroSlides.slide2.description"),
+          author: t("blog.static.heroSlides.slide2.author"),
+          publishedAt: "2026-01-16",
+          readMinutes: 8,
+          image: "/support-2.png",
+        },
+        {
+          id: 3,
+          category: t("blog.static.heroSlides.slide3.category"),
+          title: t("blog.static.heroSlides.slide3.title"),
+          description: t("blog.static.heroSlides.slide3.description"),
+          author: t("blog.static.heroSlides.slide3.author"),
+          publishedAt: "2026-01-09",
+          readMinutes: 7,
+          image: "/support-3.png",
+        },
+      ],
+      latestNewsCards: [
+        {
+          id: 101,
+          category: t("blog.static.latestNews.card1.category"),
+          title: t("blog.static.latestNews.card1.title"),
+          excerpt: t("blog.static.latestNews.card1.excerpt"),
+          author: t("blog.static.latestNews.card1.author"),
+          publishedAt: "2026-01-25",
+          readMinutes: 6,
+          image: "/hero-bg-1.jpg",
+          popularity: 92,
+        },
+        {
+          id: 102,
+          category: t("blog.static.latestNews.card2.category"),
+          title: t("blog.static.latestNews.card2.title"),
+          excerpt: t("blog.static.latestNews.card2.excerpt"),
+          author: t("blog.static.latestNews.card2.author"),
+          publishedAt: "2026-01-23",
+          readMinutes: 4,
+          image: "/technology-bg-2.png",
+          popularity: 87,
+        },
+        {
+          id: 103,
+          category: t("blog.static.latestNews.card3.category"),
+          title: t("blog.static.latestNews.card3.title"),
+          excerpt: t("blog.static.latestNews.card3.excerpt"),
+          author: t("blog.static.latestNews.card3.author"),
+          publishedAt: "2026-01-21",
+          readMinutes: 5,
+          image: "/technology-bg-4.png",
+          popularity: 85,
+        },
+        {
+          id: 104,
+          category: t("blog.static.latestNews.card4.category"),
+          title: t("blog.static.latestNews.card4.title"),
+          excerpt: t("blog.static.latestNews.card4.excerpt"),
+          author: t("blog.static.latestNews.card4.author"),
+          publishedAt: "2026-01-19",
+          readMinutes: 5,
+          image: "/hero-bg-2.jpg",
+          popularity: 80,
+        },
+        {
+          id: 105,
+          category: t("blog.static.latestNews.card5.category"),
+          title: t("blog.static.latestNews.card5.title"),
+          excerpt: t("blog.static.latestNews.card5.excerpt"),
+          author: t("blog.static.latestNews.card5.author"),
+          publishedAt: "2026-01-18",
+          readMinutes: 7,
+          image: "/hero-bg-3.jpg",
+          popularity: 76,
+        },
+      ],
+      articleGrid: [
+        {
+          id: 201,
+          category: t("blog.static.articleGrid.card1.category"),
+          title: t("blog.static.articleGrid.card1.title"),
+          excerpt: t("blog.static.articleGrid.card1.excerpt"),
+          author: t("blog.static.articleGrid.card1.author"),
+          publishedAt: "2026-01-22",
+          readMinutes: 9,
+          image: "/support-1.png",
+          popularity: 95,
+        },
+        {
+          id: 202,
+          category: t("blog.static.articleGrid.card2.category"),
+          title: t("blog.static.articleGrid.card2.title"),
+          excerpt: t("blog.static.articleGrid.card2.excerpt"),
+          author: t("blog.static.articleGrid.card2.author"),
+          publishedAt: "2026-01-18",
+          readMinutes: 6,
+          image: "/hero-bg-4.jpg",
+          popularity: 86,
+        },
+        {
+          id: 203,
+          category: t("blog.static.articleGrid.card3.category"),
+          title: t("blog.static.articleGrid.card3.title"),
+          excerpt: t("blog.static.articleGrid.card3.excerpt"),
+          author: t("blog.static.articleGrid.card3.author"),
+          publishedAt: "2026-01-14",
+          readMinutes: 4,
+          image: "/hero-bg-5.jpg",
+          popularity: 78,
+        },
+        {
+          id: 204,
+          category: t("blog.static.articleGrid.card4.category"),
+          title: t("blog.static.articleGrid.card4.title"),
+          excerpt: t("blog.static.articleGrid.card4.excerpt"),
+          author: t("blog.static.articleGrid.card4.author"),
+          publishedAt: "2026-01-26",
+          readMinutes: 8,
+          image: "/technology-bg-1.jpg",
+          popularity: 90,
+        },
+        {
+          id: 205,
+          category: t("blog.static.articleGrid.card5.category"),
+          title: t("blog.static.articleGrid.card5.title"),
+          excerpt: t("blog.static.articleGrid.card5.excerpt"),
+          author: t("blog.static.articleGrid.card5.author"),
+          publishedAt: "2026-01-20",
+          readMinutes: 7,
+          image: "/technology-bg-3.jpg",
+          popularity: 88,
+        },
+        {
+          id: 206,
+          category: t("blog.static.articleGrid.card6.category"),
+          title: t("blog.static.articleGrid.card6.title"),
+          excerpt: t("blog.static.articleGrid.card6.excerpt"),
+          author: t("blog.static.articleGrid.card6.author"),
+          publishedAt: "2026-01-11",
+          readMinutes: 5,
+          image: "/support-2.png",
+          popularity: 77,
+        },
+        {
+          id: 207,
+          category: t("blog.static.articleGrid.card7.category"),
+          title: t("blog.static.articleGrid.card7.title"),
+          excerpt: t("blog.static.articleGrid.card7.excerpt"),
+          author: t("blog.static.articleGrid.card7.author"),
+          publishedAt: "2026-01-07",
+          readMinutes: 5,
+          image: "/support-3.png",
+          popularity: 70,
+        },
+        {
+          id: 208,
+          category: t("blog.static.articleGrid.card8.category"),
+          title: t("blog.static.articleGrid.card8.title"),
+          excerpt: t("blog.static.articleGrid.card8.excerpt"),
+          author: t("blog.static.articleGrid.card8.author"),
+          publishedAt: "2026-01-17",
+          readMinutes: 9,
+          image: "/solutions-page-1.png",
+          popularity: 82,
+        },
+        {
+          id: 209,
+          category: t("blog.static.articleGrid.card9.category"),
+          title: t("blog.static.articleGrid.card9.title"),
+          excerpt: t("blog.static.articleGrid.card9.excerpt"),
+          author: t("blog.static.articleGrid.card9.author"),
+          publishedAt: "2026-01-12",
+          readMinutes: 3,
+          image: "/solutions-page-2.png",
+          popularity: 75,
+        },
+      ],
+    }),
+    [t, currentLanguage],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -580,7 +590,7 @@ export default function Blog() {
         const payload = (await response.json()) as BlogPostListApiItem[];
         const mapped = Array.isArray(payload)
           ? payload
-              .map((item) => mapApiPostToBlogArticle(item))
+              .map((item) => mapApiPostToBlogArticle(item, fallbackCopy))
               .filter((item): item is BlogArticle => item !== null)
           : [];
 
@@ -597,10 +607,10 @@ export default function Blog() {
     void loadBlogPosts();
 
     return () => controller.abort();
-  }, [currentLanguage]);
+  }, [currentLanguage, fallbackCopy]);
 
   const sourceArticles =
-    apiArticles && apiArticles.length > 0 ? apiArticles : articleGrid;
+    apiArticles && apiArticles.length > 0 ? apiArticles : staticData.articleGrid;
   const newestArticles = sourceArticles
     .slice()
     .sort(
@@ -608,7 +618,9 @@ export default function Blog() {
         new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
     );
   const latestNewsData =
-    newestArticles.length > 0 ? newestArticles.slice(0, 5) : latestNewsCards;
+    newestArticles.length > 0
+      ? newestArticles.slice(0, 5)
+      : staticData.latestNewsCards;
   const mappedHeroSlides: HeroSlide[] = newestArticles
     .slice(0, 3)
     .map((item) => ({
@@ -618,11 +630,11 @@ export default function Blog() {
       description: item.excerpt,
       author: item.author,
       publishedAt: item.publishedAt,
-      readTime: `${item.readMinutes} ${item.readMinutes === 1 ? "min" : "mins"} read`,
+      readMinutes: item.readMinutes,
       image: item.image,
     }));
   const displayHeroSlides =
-    mappedHeroSlides.length > 0 ? mappedHeroSlides : heroSlides;
+    mappedHeroSlides.length > 0 ? mappedHeroSlides : staticData.heroSlides;
 
   useEffect(() => {
     if (displayHeroSlides.length <= 1) return;
@@ -639,9 +651,11 @@ export default function Blog() {
   }, [displayHeroSlides.length]);
 
   const currentHero =
-    displayHeroSlides[activeHeroSlide] ?? displayHeroSlides[0] ?? heroSlides[0];
+    displayHeroSlides[activeHeroSlide] ??
+    displayHeroSlides[0] ??
+    staticData.heroSlides[0];
   const categoryOptions = [
-    "All",
+    ALL_CATEGORY_VALUE,
     ...Array.from(new Set(sourceArticles.map((article) => article.category))),
   ];
   const visibleCategoryOptions = categoryOptions.slice(0, 3);
@@ -664,7 +678,9 @@ export default function Blog() {
         .includes(normalizedSearchQuery);
     })
     .filter((article) =>
-      activeCategory === "All" ? true : article.category === activeCategory,
+      activeCategory === ALL_CATEGORY_VALUE
+        ? true
+        : article.category === activeCategory,
     )
     .slice()
     .sort((a, b) => {
@@ -675,7 +691,7 @@ export default function Blog() {
       );
     });
 
-  const featuredStory = latestNewsData[0] ?? latestNewsCards[0];
+  const featuredStory = latestNewsData[0] ?? staticData.latestNewsCards[0];
   const headlineStrip = latestNewsData.slice(1);
   const featuredStoryHref = buildLocalizedPath(
     currentLanguage,
@@ -744,8 +760,10 @@ export default function Blog() {
                           {currentHero.author}
                         </p>
                         <p className="mt-1 text-xs text-white/70">
-                          {formatDate(currentHero.publishedAt)} •{" "}
-                          {currentHero.readTime}
+                          {formatDate(currentHero.publishedAt, currentLanguage)} •{" "}
+                          {t("blog.common.minRead", {
+                            count: currentHero.readMinutes,
+                          })}
                         </p>
                       </div>
                     </div>
@@ -764,7 +782,9 @@ export default function Blog() {
                           ? "w-8 bg-white"
                           : "w-2.5 bg-white/50 hover:bg-white/80",
                       )}
-                      aria-label={`Show slide ${index + 1}`}
+                      aria-label={t("blog.page.hero.showSlideAria", {
+                        index: index + 1,
+                      })}
                       aria-pressed={index === activeHeroSlide}
                     />
                   ))}
@@ -782,22 +802,20 @@ export default function Blog() {
               >
                 <div>
                   <p className="text-sm font-semibold tracking-[0.16em] text-[#6B7280] uppercase">
-                    Editorial picks
+                    {t("blog.page.latestNews.kicker")}
                   </p>
                   <h2 className="mt-2 text-4xl leading-tight font-semibold text-[#111827] max-md:text-3xl">
-                    Latest News
+                    {t("blog.page.latestNews.title")}
                   </h2>
                   <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6B7280]">
-                    A template block inspired by your references: big lead
-                    story, compact news strip, and a category-driven article
-                    grid below.
+                    {t("blog.page.latestNews.description")}
                   </p>
                 </div>
                 <a
                   href="#articles"
                   className="inline-flex items-center gap-2 rounded-full border border-[#D1D5DB] bg-white px-4 py-2 text-sm font-medium text-[#111827] shadow-[0_10px_20px_-16px_rgba(0,0,0,0.35)] transition hover:border-[#9CA3AF]"
                 >
-                  View all news
+                  {t("blog.page.latestNews.viewAll")}
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </ScrollReveal>
@@ -810,7 +828,9 @@ export default function Blog() {
                   <Link
                     to={featuredStoryHref}
                     className="contents"
-                    aria-label={`Open article: ${featuredStory.title}`}
+                    aria-label={t("blog.page.latestNews.openArticleAria", {
+                      title: featuredStory.title,
+                    })}
                   >
                     <div className="relative min-h-[280px]">
                       <img
@@ -866,14 +886,13 @@ export default function Blog() {
             >
               <ScrollReveal className="mx-auto max-w-4xl text-center" from="up">
                 <p className="text-sm font-semibold tracking-[0.16em] text-[#6B7280] uppercase">
-                  Blog archive
+                  {t("blog.page.archive.kicker")}
                 </p>
                 <h2 className="mt-3 text-4xl leading-tight font-semibold text-[#111827] max-md:text-3xl">
-                  Operating, Reserve, and Vault accounts
+                  {t("blog.page.archive.title")}
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-[#6B7280]">
-                  Reusable content template for an internal blog page. Swap in
-                  CMS data later and keep the same layout structure.
+                  {t("blog.page.archive.description")}
                 </p>
               </ScrollReveal>
 
@@ -882,7 +901,11 @@ export default function Blog() {
                   {visibleCategoryOptions.map((category) => (
                     <NewsChip
                       key={category}
-                      label={category}
+                      label={
+                        category === ALL_CATEGORY_VALUE
+                          ? t("blog.page.categories.all")
+                          : category
+                      }
                       active={activeCategory === category}
                       onClick={() => {
                         setActiveCategory(category);
@@ -902,7 +925,7 @@ export default function Blog() {
                             ? "border-white/50 bg-black/75 text-white shadow-[0_10px_18px_-14px_rgba(17,24,39,0.6)]"
                             : "border-[#D1D5DB] hover:border-[#9CA3AF] hover:bg-[#F9FAFB]",
                         )}
-                        aria-label="More categories"
+                        aria-label={t("blog.page.categories.moreAria")}
                         aria-expanded={isCategoryMenuOpen}
                         aria-haspopup="menu"
                       >
@@ -949,14 +972,14 @@ export default function Blog() {
                       type="search"
                       value={searchQuery}
                       onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Search articles..."
+                      placeholder={t("blog.page.filters.searchPlaceholder")}
                       className="bg-transparent outline-none placeholder:text-[#9CA3AF]"
                     />
                   </label>
 
                   <div className="relative">
                     <label className="sr-only" htmlFor="blog-sort">
-                      Sort articles
+                      {t("blog.page.filters.sortLabel")}
                     </label>
                     <select
                       id="blog-sort"
@@ -966,9 +989,15 @@ export default function Blog() {
                       }
                       className="appearance-none rounded-xl border border-[#E5E7EB] bg-white py-2 pr-10 pl-3 text-sm font-medium text-[#111827] transition outline-none focus:border-[#9CA3AF]"
                     >
-                      <option value="newest">Newest</option>
-                      <option value="popular">Most popular</option>
-                      <option value="quick">Quick reads</option>
+                      <option value="newest">
+                        {t("blog.page.filters.sort.newest")}
+                      </option>
+                      <option value="popular">
+                        {t("blog.page.filters.sort.popular")}
+                      </option>
+                      <option value="quick">
+                        {t("blog.page.filters.sort.quick")}
+                      </option>
                     </select>
                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[#6B7280]" />
                   </div>
@@ -1000,8 +1029,8 @@ export default function Blog() {
               {visibleArticles.length === 0 ? (
                 <div className="mt-8 rounded-2xl border border-dashed border-[#D1D5DB] bg-[#F9FAFB] p-8 text-center text-sm text-[#6B7280]">
                   {normalizedSearchQuery
-                    ? "No articles match your search."
-                    : "No articles found for this category yet."}
+                    ? t("blog.page.empty.search")
+                    : t("blog.page.empty.category")}
                 </div>
               ) : null}
             </section>

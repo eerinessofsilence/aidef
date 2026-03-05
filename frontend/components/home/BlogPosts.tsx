@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight, Calendar, Clock3 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ScrollReveal } from "../ui/scroll-reveal";
 import { buildLocalizedPath, resolveLanguage } from "../../src/i18n";
 
@@ -39,8 +40,8 @@ const API_BASE = (() => {
   return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
 })();
 
-function formatDate(dateString: string) {
-  return new Intl.DateTimeFormat("en-GB", {
+function formatDate(dateString: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -86,7 +87,17 @@ function getReadMinutes(
   return 3;
 }
 
-function mapApiPost(item: BlogPostListApiItem): HomeBlogPostCard | null {
+type BlogFallbackCopy = {
+  defaultCategory: string;
+  untitledPost: string;
+  openArticleFallback: string;
+  defaultAuthor: string;
+};
+
+function mapApiPost(
+  item: BlogPostListApiItem,
+  fallbackCopy: BlogFallbackCopy,
+): HomeBlogPostCard | null {
   if (typeof item.id !== "number" || !Number.isFinite(item.id)) return null;
   if (typeof item.slug !== "string" || !item.slug.trim()) return null;
 
@@ -96,15 +107,15 @@ function mapApiPost(item: BlogPostListApiItem): HomeBlogPostCard | null {
     category:
       typeof item.category === "string" && item.category.trim()
         ? item.category.trim()
-        : "Blog",
+        : fallbackCopy.defaultCategory,
     title:
       typeof item.title === "string" && item.title.trim()
         ? item.title.trim()
-        : "Untitled post",
+        : fallbackCopy.untitledPost,
     excerpt:
       typeof item.subtitle === "string" && item.subtitle.trim()
         ? item.subtitle.trim()
-        : "Open the article to read more.",
+        : fallbackCopy.openArticleFallback,
     image:
       typeof item.hero_image === "string" && item.hero_image.trim()
         ? item.hero_image.trim()
@@ -114,16 +125,27 @@ function mapApiPost(item: BlogPostListApiItem): HomeBlogPostCard | null {
     author:
       typeof item.author === "string" && item.author.trim()
         ? item.author.trim()
-        : "AI-DEF Team",
+        : fallbackCopy.defaultAuthor,
   };
 }
 
 export default function LatestBlogPosts() {
+  const { t } = useTranslation();
   const { lng } = useParams<{ lng?: string }>();
   const currentLanguage = resolveLanguage(lng);
   const [posts, setPosts] = useState<HomeBlogPostCard[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
+  );
+
+  const fallbackCopy = useMemo<BlogFallbackCopy>(
+    () => ({
+      defaultCategory: t("blog.common.defaultCategory"),
+      untitledPost: t("blog.common.untitledPost"),
+      openArticleFallback: t("blog.common.openArticleFallback"),
+      defaultAuthor: t("blog.common.defaultAuthor"),
+    }),
+    [t, currentLanguage],
   );
 
   useEffect(() => {
@@ -146,7 +168,7 @@ export default function LatestBlogPosts() {
         const payload = (await response.json()) as BlogPostListApiItem[];
         const mapped = Array.isArray(payload)
           ? payload
-              .map((item) => mapApiPost(item))
+              .map((item) => mapApiPost(item, fallbackCopy))
               .filter((item): item is HomeBlogPostCard => item !== null)
               .slice(0, 3)
           : [];
@@ -164,7 +186,7 @@ export default function LatestBlogPosts() {
     void loadPosts();
 
     return () => controller.abort();
-  }, [currentLanguage]);
+  }, [currentLanguage, fallbackCopy]);
 
   const viewAllHref = buildLocalizedPath(currentLanguage, "/blog");
 
@@ -173,21 +195,20 @@ export default function LatestBlogPosts() {
       <div className="flex justify-center">
         <div className="text-center">
           <p className="text-foreground/60 text-sm tracking-[0.18em] uppercase">
-            From our blog
+            {t("blog.home.kicker")}
           </p>
           <h2 className="mt-2 text-5xl font-bold max-md:text-4xl">
-            Latest blog posts
+            {t("blog.home.title")}
           </h2>
           <p className="text-foreground/70 mt-2 max-w-2xl text-base max-md:text-sm">
-            Practical updates, product notes, and short articles from the AI-DEF
-            team.
+            {t("blog.home.description")}
           </p>
         </div>
       </div>
       {status === "ready" && posts.length === 0 ? (
         <div className="flex justify-center">
           <div className="w-fit rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
-            No blog posts published yet.
+            {t("blog.home.empty")}
           </div>
         </div>
       ) : (
@@ -246,12 +267,13 @@ export default function LatestBlogPosts() {
                         <span className="text-white/80">{post.author}</span>
                         <span className="inline-flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
-                          {formatDate(post.publishedAt)}
+                          {formatDate(post.publishedAt, currentLanguage)}
                         </span>
                         <span className="inline-flex items-center gap-1">
                           <Clock3 className="h-3.5 w-3.5" />
-                          {post.readMinutes}{" "}
-                          {post.readMinutes === 1 ? "min" : "mins"} read
+                          {t("blog.common.minRead", {
+                            count: post.readMinutes,
+                          })}
                         </span>
                       </div>
                     </div>
@@ -265,19 +287,19 @@ export default function LatestBlogPosts() {
               to={viewAllHref}
               className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-4 py-2 text-sm font-medium text-white transition hover:border-white/35 hover:bg-white/12"
             >
-              View all
+              {t("blog.home.viewAll")}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           {status === "loading" && posts.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
-              Loading latest blog posts...
+              {t("blog.home.loading")}
             </div>
           ) : null}
 
           {status === "error" ? (
             <div className="mt-6 rounded-2xl border border-rose-400/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-              Unable to load blog posts right now.
+              {t("blog.home.error")}
             </div>
           ) : null}
         </div>
