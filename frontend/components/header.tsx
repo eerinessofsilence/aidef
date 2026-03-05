@@ -127,8 +127,8 @@ const COMPANY_MENU_ITEMS: CompanyMenuItem[] = [
     icon: "/company-1.svg",
   },
   {
-    titleKey: "header.menus.company.careers",
-    href: "#",
+    titleKey: "header.menus.company.blog",
+    href: "/blog",
     icon: "/company-2.svg",
   },
 ];
