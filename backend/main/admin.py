@@ -28,7 +28,6 @@ from .models import (
     CivilProductSubFeature,
     CivilProductTechnology,
     ContactRequest,
-    LinkedInPost,
     Product,
     ProductCTABlock,
     ProductDroneSliderMedia,
@@ -713,17 +712,6 @@ class BlogPostAdmin(admin.ModelAdmin):
                 post.save(update_fields=["order", "updated_at"])
                 updated += 1
         self.message_user(request, f"Updated order for {updated} post(s).")
-
-
-@admin.register(LinkedInPost)
-class LinkedInPostAdmin(admin.ModelAdmin):
-    list_display = ("id", "embed_url", "is_active", "order", "created_at")
-    list_display_links = ("id", "embed_url")
-    list_editable = ("is_active", "order")
-    list_filter = ("is_active", "created_at")
-    search_fields = ("embed_url",)
-    ordering = ("order", "-created_at", "pk")
-    list_per_page = ADMIN_LIST_PER_PAGE
 
 
 @admin.register(Product)

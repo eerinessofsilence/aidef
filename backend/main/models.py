@@ -766,27 +766,6 @@ class BlogPostSection(models.Model):
         return f"{self.post.title} — {self.title}"
 
 
-class LinkedInPost(models.Model):
-    embed_url = models.URLField(
-        max_length=600,
-        help_text=(
-            "LinkedIn embed URL, for example: "
-            "https://www.linkedin.com/embed/feed/update/urn:li:share:..."
-        ),
-    )
-    is_active = models.BooleanField(default=True)
-    order = models.PositiveSmallIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ("order", "-created_at", "pk")
-        verbose_name = "LinkedIn post"
-        verbose_name_plural = "LinkedIn posts"
-
-    def __str__(self):
-        return f"LinkedIn post #{self.pk}"
-
-
 class ContactRequest(models.Model):
     class Variant(models.TextChoices):
         DEFAULT = "default", "Default"
