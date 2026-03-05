@@ -128,7 +128,7 @@ export default function Gallery({ images }: GallerySectionProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 max-lg:grid-cols-2 max-md:grid-cols-1">
+          <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-2 max-md:grid-cols-1 lg:gap-3">
             {galleryImages.map((image, index) => (
               <button
                 key={`${image.src}-${index}`}
