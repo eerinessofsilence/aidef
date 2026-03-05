@@ -1,0 +1,14 @@
+/* Keep long-form fields readable on desktop and mobile in admin forms. */
+body.change-form .aligned textarea,
+body.change-form .module textarea,
+body.change-form textarea.vLargeTextField {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Stacked inline rows use flex; textareas must grow to fill the row. */
+body.change-form .aligned .form-row .flex-container textarea {
+  flex: 1 1 auto;
+  min-width: 0;
+}
