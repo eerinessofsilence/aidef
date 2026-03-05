@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Copy, Link as Link2 } from "lucide-react";
 import { buildLocalizedPath, resolveLanguage } from "../i18n";
+import { dispatchOpenContactModal } from "../../lib/contact-modal";
 import { cn } from "../../lib/utils";
 
 type ArticleSection = {
@@ -629,6 +630,38 @@ export default function BlogPost() {
                 </div>
               </article>
             </div>
+
+            <section
+              className="relative overflow-hidden rounded-[20px] border border-[#28466D] px-6 py-7 text-white shadow-[0_24px_50px_-36px_rgba(0,0,0,0.65)] max-md:px-5 max-md:py-6"
+              style={{
+                backgroundColor: "#172B4A",
+                backgroundImage: "url('/blog-footer-cta.svg')",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+              }}
+            >
+              <div className="flex items-center justify-between gap-6 max-md:flex-col max-md:items-start">
+                <div className="max-w-[780px] space-y-2">
+                  <h2 className="text-3xl font-semibold tracking-tight max-lg:text-2xl">
+                    Need A Customized Unmanned System Solution?
+                  </h2>
+                  <p className="max-w-[760px] text-base leading-7 text-white/85 max-lg:text-[15px] max-lg:leading-6">
+                    Get In Touch With Our Engineers And Specialists To Discuss
+                    Integration Options, Technical Specifications And Deployment
+                    Scenarios.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={dispatchOpenContactModal}
+                  className="group relative inline-flex h-14 w-48 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-42 max-md:text-base"
+                >
+                  Contact us
+                </button>
+              </div>
+            </section>
           </div>
         </div>
       </div>
