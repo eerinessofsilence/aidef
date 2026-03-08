@@ -94,7 +94,9 @@ Create `.env` from `.env.example`. Example keys:
 # Backend
 DJANGO_SECRET=supersecretdjangokey
 DJANGO_DEBUG=True
-DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+DJANGO_ALLOWED_HOSTS=ai-def.com,www.ai-def.com,127.0.0.1,localhost
+DJANGO_CORS_ALLOWED_ORIGINS=https://ai-def.com,https://www.ai-def.com,http://ai-def.com,http://www.ai-def.com,http://127.0.0.1:5173,http://localhost:5173
+DJANGO_CSRF_TRUSTED_ORIGINS=https://ai-def.com,https://www.ai-def.com,http://ai-def.com,http://www.ai-def.com
 POSTGRES_DB_NAME=aidef
 POSTGRES_USER=aidef
 POSTGRES_PASSWORD=aidef
