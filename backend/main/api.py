@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any, Dict, List
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -34,6 +36,8 @@ from .models import (
     ProductSubFeature,
     ProductTechnology,
 )
+
+logger = logging.getLogger(__name__)
 
 def _absolute_media_url(request, image_field) -> str | None:
     if not image_field:
@@ -629,6 +633,56 @@ def _get_client_ip(request) -> str | None:
     return request.META.get("REMOTE_ADDR")
 
 
+def _contact_notification_recipients() -> List[str]:
+    raw_recipients = getattr(settings, "CONTACT_REQUEST_NOTIFICATION_EMAILS", [])
+    if isinstance(raw_recipients, str):
+        candidates = raw_recipients.split(",")
+    elif isinstance(raw_recipients, (list, tuple, set)):
+        candidates = list(raw_recipients)
+    else:
+        candidates = []
+
+    recipients: List[str] = []
+    for candidate in candidates:
+        email = str(candidate).strip()
+        if not email:
+            continue
+        try:
+            validate_email(email)
+        except ValidationError:
+            logger.warning("Skipping invalid contact notification email: %s", email)
+            continue
+        recipients.append(email)
+    return recipients
+
+
+def _build_contact_notification_message(contact_request: ContactRequest) -> str:
+    lines = [
+        "New contact request submitted",
+        "",
+        f"ID: {contact_request.id}",
+        f"Created at: {contact_request.created_at.isoformat()}",
+        f"Variant: {contact_request.variant}",
+        f"Name: {contact_request.first_name} {contact_request.last_name}",
+        f"Email: {contact_request.email}",
+        f"Phone: {contact_request.phone or '-'}",
+        f"Product: {contact_request.product or '-'}",
+        f"Country: {contact_request.country_code or '-'} ({contact_request.country_name or '-'})",
+        f"Address line 1: {contact_request.address_line1 or '-'}",
+        f"Address line 2: {contact_request.address_line2 or '-'}",
+        f"Address line 3: {contact_request.address_line3 or '-'}",
+        f"Website: {contact_request.website or '-'}",
+        f"Language: {contact_request.language or '-'}",
+        f"Source: {contact_request.source or '-'}",
+        f"IP: {contact_request.ip_address or '-'}",
+        f"User agent: {contact_request.user_agent or '-'}",
+        "",
+        "Message:",
+        contact_request.message,
+    ]
+    return "\n".join(lines)
+
+
 @csrf_exempt
 @require_POST
 def contact_request_api(request):
@@ -722,6 +776,28 @@ def contact_request_api(request):
             request.META.get("HTTP_USER_AGENT")
         ),
     )
+
+    recipients = _contact_notification_recipients()
+    if recipients:
+        subject = (
+            f"[AI DEF] Contact request #{contact_request.id} "
+            f"({contact_request.variant})"
+        )
+        message = _build_contact_notification_message(contact_request)
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", ""),
+                recipient_list=recipients,
+                fail_silently=False,
+                reply_to=[contact_request.email] if contact_request.email else None,
+            )
+        except Exception:
+            logger.exception(
+                "Failed to send contact request email notification for request %s",
+                contact_request.id,
+            )
 
     return JsonResponse(
         {"status": "ok", "id": contact_request.id}, status=201

@@ -122,3 +122,17 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+EMAIL_BACKEND = getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend',
+)
+EMAIL_HOST = getenv('EMAIL_HOST', '')
+EMAIL_PORT = int(getenv('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = getenv('EMAIL_USE_TLS', True)
+EMAIL_USE_SSL = getenv('EMAIL_USE_SSL', False)
+DEFAULT_FROM_EMAIL = getenv('DEFAULT_FROM_EMAIL', 'no-reply@ai-def.com')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+CONTACT_REQUEST_NOTIFICATION_EMAILS = getenv('CONTACT_REQUEST_NOTIFICATION_EMAILS', '').split(',')

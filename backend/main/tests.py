@@ -1,8 +1,10 @@
+import json
 from datetime import date
 import shutil
 import tempfile
 
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -336,3 +338,43 @@ class MainApiTests(TestCase):
             reverse("main:blog-post-detail", args=[post.slug])
         )
         self.assertEqual(response.status_code, 404)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="noreply@ai-def.test",
+        CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],
+    )
+    def test_contact_request_api_sends_email_notification(self):
+        payload = {
+            "firstName": "Alex",
+            "lastName": "Stone",
+            "email": "alex@example.com",
+            "phone": "+421900000000",
+            "product": "ax2ng-krakatit",
+            "country": "SK",
+            "countryName": "Slovakia",
+            "city": "Bratislava",
+            "addressLine1": "Ilkovicova 8",
+            "addressLine2": "Office 401",
+            "website": "https://example.com",
+            "message": "Need a quote.",
+            "variant": "default",
+            "language": "en",
+            "source": "/en/support",
+        }
+
+        response = self.client.post(
+            reverse("main:contact-request"),
+            data=json.dumps(payload),
+            content_type="application/json",
+            HTTP_USER_AGENT="pytest-agent",
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ContactRequest.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+
+        message = mail.outbox[0]
+        self.assertEqual(message.to, ["sales@ai-def.test"])
+        self.assertEqual(message.reply_to, ["alex@example.com"])
+        self.assertIn("New contact request submitted", message.body)
+        self.assertIn("Need a quote.", message.body)
