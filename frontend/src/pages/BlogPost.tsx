@@ -160,7 +160,10 @@ function createTemplatePost(t: TranslateFn): BlogPostTemplate {
   };
 }
 
-function getPostBySlug(slug: string | undefined, t: TranslateFn): BlogPostTemplate {
+function getPostBySlug(
+  slug: string | undefined,
+  t: TranslateFn,
+): BlogPostTemplate {
   const templatePost = createTemplatePost(t);
   if (!slug || slug === templatePost.slug) return templatePost;
   return {
@@ -290,7 +293,7 @@ function BrowserHeroIllustration({
 
   return (
     <div
-      className="relative h-[320px] w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-[360px] lg:h-[400px]"
+      className="relative h-80 w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-90 lg:h-10"
       style={hasHeroImage ? undefined : { backgroundImage: seededGradient }}
     >
       {hasHeroImage ? (

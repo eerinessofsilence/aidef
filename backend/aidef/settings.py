@@ -4,11 +4,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("DJANGO_SECRET")
-DEBUG = True
-ALLOWED_HOSTS = ["*", "backend", "localhost", "127.0.0.1", "173.242.51.20"]
+DEBUG = getenv("DJANGO_DEBUG", True)
+ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 INSTALLED_APPS = [
     'modeltranslation',
@@ -60,11 +59,11 @@ WSGI_APPLICATION = 'aidef.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': getenv('DB_HOST', getenv('POSTGRES_HOST', 'db')),
-        'PORT': getenv('DB_PORT', getenv('POSTGRES_PORT', '5432')),
-        'USER': getenv('DB_USER', getenv('POSTGRES_USER', 'aidef')),
-        'PASSWORD': getenv('DB_PASS', getenv('POSTGRES_PASSWORD', 'aidef_password')),
-        'NAME': getenv('DB_NAME', getenv('POSTGRES_DB', 'aidef')),
+        'HOST': getenv('POSTGRES_HOST', "localhost"),
+        'PORT': getenv('POSTGRES_PORT', "5432"),
+        'USER': getenv('POSTGRES_USER', "aidef"),
+        'PASSWORD': getenv('POSTGRES_PASSWORD', "aidef"),
+        'NAME': getenv('POSTGRES_DB_NAME', "aidef"),
         'ATOMIC_REQUESTS': True,
     }
 }
@@ -112,14 +111,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:5173',
-    'http://localhost:5173',
-    'http://127.0.0.1:4173',
-    'http://localhost:4173',
-    'http://173.242.51.20',
-]
-CSRF_TRUSTED_ORIGINS = ['http://173.242.51.20']
+CORS_ALLOWED_ORIGINS = getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
