@@ -2,10 +2,17 @@ services:
   db:
     image: postgres:16-alpine
     container_name: aidef-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB_NAME:-aidef}
       POSTGRES_USER: ${POSTGRES_USER:-aidef}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aidef}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aidef} -d ${POSTGRES_DB_NAME:-aidef}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -14,12 +21,24 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: aidef-backend
+    restart: unless-stopped
     env_file:
       - .env
     environment:
       POSTGRES_HOST: ${DOCKER_POSTGRES_HOST:-db}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import socket; s = socket.socket(); s.settimeout(2); s.connect(('127.0.0.1', 8000)); s.close()\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     volumes:
       - static_volume:/app/static
       - ./backend/media:/app/media
@@ -29,10 +48,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: aidef-web
+    restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     volumes:
       - static_volume:/static
     
