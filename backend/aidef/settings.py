@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def getenv_first(*names, default=None):
     for name in names:
         value = getenv(name)
@@ -120,7 +119,7 @@ LANGUAGES = [
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 MODELTRANSLATION_LANGUAGES = ('en', 'de', 'sk', 'es', 'fr', 'it')
 MODELTRANSLATION_FALLBACK_LANGUAGES = ('en',)
-TIME_ZONE = getenv('TIME_ZONE', 'Europe/Kyiv')
+TIME_ZONE = getenv('DJANGO_TIME_ZONE', 'Europe/Kyiv')
 USE_I18N = True
 USE_TZ = True
 
