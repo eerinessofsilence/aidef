@@ -3,9 +3,9 @@ services:
     image: postgres:16-alpine
     container_name: aidef-db
     environment:
-      POSTGRES_DB: aidef
-      POSTGRES_USER: aidef
-      POSTGRES_PASSWORD: aidef_password
+      POSTGRES_DB: ${POSTGRES_DB_NAME:-aidef}
+      POSTGRES_USER: ${POSTGRES_USER:-aidef}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aidef}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -14,16 +14,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: aidef-backend
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: aidef
-      POSTGRES_USER: aidef
-      POSTGRES_PASSWORD: aidef_password
-      POSTGRES_HOST: db
-      POSTGRES_PORT: "5432"
-
-      DJANGO_SECRET: "django-insecure-=#z3fc*6goc8=yu0(#r*q%vovcg@v3-u2+wvbyyz4s$64o!tvz"
-      DJANGO_DEBUG: "True"
-      DJANGO_ALLOWED_HOSTS: "173.242.51.20,localhost,127.0.0.1"
+      POSTGRES_HOST: ${DOCKER_POSTGRES_HOST:-db}
     depends_on:
       - db
     volumes:

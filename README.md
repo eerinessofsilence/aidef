@@ -93,12 +93,17 @@ Create `.env` from `.env.example`. Example keys:
 ```env
 # Backend
 DJANGO_SECRET=supersecretdjangokey
-DB_NAME=db_name
-DB_USER=db_user
-DB_PASS=db_pass
-DB_HOST=localhost
-DB_PORT=5432
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+POSTGRES_DB_NAME=aidef
+POSTGRES_USER=aidef
+POSTGRES_PASSWORD=aidef
+POSTGRES_HOST=localhost
+DOCKER_POSTGRES_HOST=db
+POSTGRES_PORT=5432
 ```
+
+`docker compose` reads the root `.env` automatically. The backend service also loads it via `env_file`, while `DOCKER_POSTGRES_HOST` lets the container use `db` without breaking local runs that still use `localhost`.
 
 **Do not commit secrets.** Use environment management for production (Vault, cloud secret manager).
 

@@ -4,10 +4,32 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def getenv_first(*names, default=None):
+    for name in names:
+        value = getenv(name)
+        if value is not None:
+            return value
+    return default
+
+
+def getenv_bool(*names, default=False):
+    value = getenv_first(*names)
+    if value is None:
+        return default
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def getenv_list(*names, default=""):
+    value = getenv_first(*names, default=default)
+    if not value:
+        return []
+    return [item.strip() for item in value.split(",") if item.strip()]
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("DJANGO_SECRET")
-DEBUG = getenv("DJANGO_DEBUG", True)
-ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+DEBUG = getenv_bool("DJANGO_DEBUG", "DEBUG", default=True)
+ALLOWED_HOSTS = getenv_list("DJANGO_ALLOWED_HOSTS", "ALLOWED_HOST")
 
 INSTALLED_APPS = [
     'modeltranslation',
@@ -59,11 +81,11 @@ WSGI_APPLICATION = 'aidef.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': getenv('POSTGRES_HOST', "localhost"),
-        'PORT': getenv('POSTGRES_PORT', "5432"),
-        'USER': getenv('POSTGRES_USER', "aidef"),
-        'PASSWORD': getenv('POSTGRES_PASSWORD', "aidef"),
-        'NAME': getenv('POSTGRES_DB_NAME', "aidef"),
+        'HOST': getenv_first('POSTGRES_HOST', 'DB_HOST', default="localhost"),
+        'PORT': getenv_first('POSTGRES_PORT', 'DB_PORT', default="5432"),
+        'USER': getenv_first('POSTGRES_USER', 'DB_USER', default="aidef"),
+        'PASSWORD': getenv_first('POSTGRES_PASSWORD', 'DB_PASS', default="aidef"),
+        'NAME': getenv_first('POSTGRES_DB_NAME', 'POSTGRES_DB', 'DB_NAME', default="aidef"),
         'ATOMIC_REQUESTS': True,
     }
 }
@@ -111,8 +133,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",")
-CSRF_TRUSTED_ORIGINS = getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = getenv_list("DJANGO_CORS_ALLOWED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = getenv_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -131,8 +153,8 @@ EMAIL_HOST = getenv('EMAIL_HOST', '')
 EMAIL_PORT = int(getenv('EMAIL_PORT', '587'))
 EMAIL_HOST_USER = getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD', '')
-EMAIL_USE_TLS = getenv('EMAIL_USE_TLS', True)
-EMAIL_USE_SSL = getenv('EMAIL_USE_SSL', False)
+EMAIL_USE_TLS = getenv_bool('EMAIL_USE_TLS', default=True)
+EMAIL_USE_SSL = getenv_bool('EMAIL_USE_SSL', default=False)
 DEFAULT_FROM_EMAIL = getenv('DEFAULT_FROM_EMAIL', 'no-reply@ai-def.com')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
-CONTACT_REQUEST_NOTIFICATION_EMAILS = getenv('CONTACT_REQUEST_NOTIFICATION_EMAILS', '').split(',')
+CONTACT_REQUEST_NOTIFICATION_EMAILS = getenv_list('CONTACT_REQUEST_NOTIFICATION_EMAILS')
