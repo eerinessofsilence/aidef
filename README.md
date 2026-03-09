@@ -109,6 +109,17 @@ POSTGRES_PORT=5432
 
 **Do not commit secrets.** Use environment management for production (Vault, cloud secret manager).
 
+## HTTPS
+
+For manual TLS in Docker, place these files on the server:
+
+```text
+./certs/fullchain.pem
+./certs/privkey.pem
+```
+
+They are mounted into the `web` container at `/etc/nginx/certs/`. The Nginx config serves `https://ai-def.com` and redirects `https://www.ai-def.com` to the apex domain.
+
 ---
 
 ## Translations (modeltranslation)

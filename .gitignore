@@ -7,3 +7,4 @@ __pychache__/
 media/
 .DS_Store
 .vscode/
+certs/
