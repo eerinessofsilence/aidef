@@ -1,7 +1,10 @@
+import re
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.utils.html import strip_tags
 from django.utils.text import slugify
 
 
@@ -60,6 +63,14 @@ def validate_svg_file(value):
         snippet = str(chunk).lower()
     if "<svg" not in snippet:
         raise ValidationError("Загрузи валидный SVG файл.")
+
+
+def _content_snippet_from_html(value):
+    if not value:
+        return ""
+    normalized = re.sub(r"</(p|li|div|h[1-6]|blockquote|br)\s*>", " ", value, flags=re.I)
+    text = strip_tags(normalized)
+    return " ".join(text.split())
 
 class Category(models.Model):
     name = models.CharField(max_length=120, unique=True)
@@ -721,6 +732,87 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class BlogPostBlock(models.Model):
+    class Kind(models.TextChoices):
+        TEXT = "text", "Text"
+        BULLETS = "bullets", "Bullets"
+        QUOTE = "quote", "Quote"
+        IMAGE = "image", "Image"
+        DIVIDER = "divider", "Divider"
+
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name="blocks",
+    )
+    kind = models.CharField(
+        max_length=20,
+        choices=Kind.choices,
+        default=Kind.TEXT,
+    )
+    title = models.CharField(max_length=255, blank=True)
+    anchor_id = models.SlugField(max_length=120, blank=True)
+    html = models.TextField(blank=True)
+    paragraphs = models.JSONField(
+        blank=True,
+        null=True,
+        validators=[validate_string_list],
+        help_text="JSON array of paragraph strings.",
+    )
+    items = models.JSONField(
+        blank=True,
+        null=True,
+        validators=[validate_string_list],
+        help_text="JSON array of list item strings.",
+    )
+    image = models.ImageField(upload_to="blog/%Y/%m/", blank=True)
+    image_alt = models.CharField(max_length=255, blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "pk")
+        verbose_name = "Blog post block"
+        verbose_name_plural = "Blog post blocks"
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "anchor_id"),
+                condition=~models.Q(anchor_id=""),
+                name="main_blogpostblock_unique_anchor_per_post",
+            )
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.anchor_id:
+            base_source = (self.title or "").strip()
+            if not base_source and self.kind in {
+                self.Kind.TEXT,
+                self.Kind.BULLETS,
+                self.Kind.QUOTE,
+            }:
+                html_source = _content_snippet_from_html(self.html)
+                if html_source:
+                    base_source = html_source
+                elif self.paragraphs:
+                    base_source = str(self.paragraphs[0]).strip()
+                elif self.items:
+                    base_source = str(self.items[0]).strip()
+
+            base = slugify(base_source)[:110]
+            if base:
+                anchor = base
+                counter = 1
+                queryset = BlogPostBlock.objects.filter(post=self.post).exclude(pk=self.pk)
+                while queryset.filter(anchor_id=anchor).exists():
+                    anchor = f"{base}-{counter}"
+                    counter += 1
+                self.anchor_id = anchor
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.post.title} — {self.kind} {self.pk}"
 
 
 class BlogPostSection(models.Model):

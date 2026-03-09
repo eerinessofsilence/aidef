@@ -13,6 +13,7 @@ from .models import (
     BlogAuthor,
     BlogCategory,
     BlogPost,
+    BlogPostBlock,
     BlogPostSection,
     Category,
     ContactRequest,
@@ -159,7 +160,7 @@ class MainAdminSmokeTests(TestCase):
         self.assertIn("menu-card.jpg", item["dropdown_image"]["url"])
         self.assertEqual(item["dropdown_image"]["alt"], self.product.name)
 
-    def test_blog_post_admin_change_form_renders_sections_inline(self):
+    def test_blog_post_admin_change_form_renders_blocks_inline(self):
         blog_category = BlogCategory.objects.create(name="Resume Tips")
         blog_author = BlogAuthor.objects.create(
             name="Andrew Scott",
@@ -174,10 +175,12 @@ class MainAdminSmokeTests(TestCase):
             published_at=date(2026, 1, 27),
             read_minutes=3,
         )
-        BlogPostSection.objects.create(
+        BlogPostBlock.objects.create(
             post=blog_post,
+            kind=BlogPostBlock.Kind.TEXT,
             title="Why work experience matters",
             anchor_id="why-work-experience-matters",
+            html="<p>Paragraph 1</p><p>Paragraph 2</p>",
             paragraphs=["Paragraph 1", "Paragraph 2"],
             order=10,
         )
@@ -186,11 +189,25 @@ class MainAdminSmokeTests(TestCase):
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Why work experience matters")
-        self.assertContains(response, "Sections")
+        self.assertContains(response, "Blocks")
+
+        english_response = self.client.get(f"{change_url}?lang=en")
+        self.assertEqual(english_response.status_code, 200)
+        self.assertNotContains(english_response, "title_de")
+        self.assertContains(english_response, "WYSIWYG")
+        self.assertNotContains(english_response, "Kind")
+        self.assertNotContains(english_response, "Paragraphs")
+        self.assertNotContains(english_response, "Items")
+        self.assertNotContains(english_response, "Html [en]")
+        self.assertNotContains(english_response, "Items [en]")
+        self.assertContains(
+            english_response,
+            "&quot;name&quot;: &quot;anchor_id&quot;, &quot;dependency_ids&quot;: [&quot;#id_blocks-__prefix__-title_en&quot;]",
+        )
 
 
 class MainApiTests(TestCase):
-    def test_blog_post_detail_api_returns_published_post_with_sections(self):
+    def test_blog_post_detail_api_returns_published_post_with_blocks(self):
         category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
         author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")
         post = BlogPost.objects.create(
@@ -203,18 +220,21 @@ class MainApiTests(TestCase):
             published_at=date(2026, 1, 27),
             read_minutes=3,
         )
-        BlogPostSection.objects.create(
+        BlogPostBlock.objects.create(
             post=post,
+            kind=BlogPostBlock.Kind.TEXT,
             title="Why work experience matters",
             anchor_id="why-work-experience-matters",
+            html="<p>First paragraph</p><p>Second paragraph</p>",
             paragraphs=["First paragraph", "Second paragraph"],
             order=10,
         )
-        BlogPostSection.objects.create(
+        BlogPostBlock.objects.create(
             post=post,
+            kind=BlogPostBlock.Kind.BULLETS,
             title="Tips to strengthen",
             anchor_id="tips-to-strengthen",
-            bullets=["Focus on achievements", "Quantify results"],
+            items=["Focus on achievements", "Quantify results"],
             order=20,
         )
 
@@ -237,6 +257,33 @@ class MainApiTests(TestCase):
                 "published_at": "2026-01-27",
                 "read_minutes": 3,
                 "read_time": "3 mins read",
+                "blocks": [
+                    {
+                        "id": "why-work-experience-matters",
+                        "type": "text",
+                        "title": "Why work experience matters",
+                        "html": "<p>First paragraph</p><p>Second paragraph</p>",
+                        "paragraphs": ["First paragraph", "Second paragraph"],
+                        "items": [],
+                        "image": None,
+                        "image_alt": "",
+                        "order": 10,
+                    },
+                    {
+                        "id": "tips-to-strengthen",
+                        "type": "bullets",
+                        "title": "Tips to strengthen",
+                        "html": "",
+                        "paragraphs": [],
+                        "items": [
+                            "Focus on achievements",
+                            "Quantify results",
+                        ],
+                        "image": None,
+                        "image_alt": "",
+                        "order": 20,
+                    },
+                ],
                 "sections": [
                     {
                         "id": "why-work-experience-matters",
@@ -257,6 +304,61 @@ class MainApiTests(TestCase):
                     },
                 ],
             },
+        )
+
+    def test_blog_post_detail_api_falls_back_to_legacy_sections_when_blocks_missing(self):
+        category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
+        author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")
+        post = BlogPost.objects.create(
+            title="Legacy structure",
+            slug="legacy-structure",
+            subtitle="Legacy subtitle",
+            category=category,
+            author=author,
+            is_published=True,
+            published_at=date(2026, 2, 1),
+            read_minutes=4,
+        )
+        BlogPostSection.objects.create(
+            post=post,
+            title="Legacy section",
+            anchor_id="legacy-section",
+            paragraphs=["Legacy paragraph"],
+            order=10,
+        )
+
+        response = self.client.get(
+            reverse("main:blog-post-detail", args=[post.slug])
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(
+            payload["blocks"],
+            [
+                {
+                    "id": "legacy-section",
+                    "type": "text",
+                    "title": "Legacy section",
+                    "html": "",
+                    "paragraphs": ["Legacy paragraph"],
+                    "items": [],
+                    "image": None,
+                    "image_alt": "",
+                    "order": 10,
+                }
+            ],
+        )
+        self.assertEqual(
+            payload["sections"],
+            [
+                {
+                    "id": "legacy-section",
+                    "title": "Legacy section",
+                    "paragraphs": ["Legacy paragraph"],
+                    "bullets": [],
+                    "order": 10,
+                }
+            ],
         )
 
     def test_blog_post_list_api_returns_published_posts_sorted(self):

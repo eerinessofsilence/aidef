@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils import timezone
 from modeltranslation.admin import TabbedTranslationAdmin, TranslationStackedInline
+from tinymce.widgets import TinyMCE
 
 from aidef.admin_mixins import (
     HiddenModelTranslationTabsAdmin,
@@ -15,6 +16,7 @@ from .models import (
     BlogAuthor,
     BlogCategory,
     BlogPost,
+    BlogPostBlock,
     BlogPostSection,
     Category,
     CivilCategory,
@@ -54,6 +56,31 @@ DEFAULT_LANGUAGE = "en"
 ADMIN_LIST_PER_PAGE = 50
 LANGUAGE_LABELS = dict(LANGUAGE_CHOICES)
 LANGUAGE_TOTAL = len(LANGUAGE_CHOICES)
+
+
+def _get_language_from_request(request):
+    raw = request.GET.get("lang", "")
+    if raw:
+        base = raw.split("-")[0].strip().lower()
+        if base in LANGUAGE_CODES:
+            return base
+    fallback = getattr(request, "LANGUAGE_CODE", "")
+    if fallback:
+        base = fallback.split("-")[0].strip().lower()
+        if base in LANGUAGE_CODES:
+            return base
+    return DEFAULT_LANGUAGE
+
+
+def _strip_translation_label_suffix(label):
+    if label in (None, ""):
+        return label
+    label = str(label)
+    for code in LANGUAGE_CODES:
+        suffix = f" [{code}]"
+        if label.endswith(suffix):
+            return label[: -len(suffix)]
+    return label
 
 
 def _format_json_for_textarea(value):
@@ -240,6 +267,100 @@ def _render_alt_links(obj):
             links,
         ),
     )
+
+
+class SingleLanguageTranslatedInlineMixin:
+    translated_base_fields = ()
+
+    def get_formset(self, request, obj=None, **kwargs):
+        base_formset = super().get_formset(request, obj, **kwargs)
+        language = _get_language_from_request(request)
+        base_form = base_formset.form
+
+        class LanguageBoundForm(base_form):
+            pass
+
+        LanguageBoundForm.language = language
+        LanguageBoundForm.base_fields = base_form.base_fields.copy()
+
+        for base_name in self.translated_base_fields:
+            current_field_name = f"{base_name}_{language}"
+            if current_field_name in LanguageBoundForm.base_fields:
+                LanguageBoundForm.base_fields.pop(base_name, None)
+
+            for code in LANGUAGE_CODES:
+                if code == language:
+                    continue
+                LanguageBoundForm.base_fields.pop(f"{base_name}_{code}", None)
+
+        for field_name, field in LanguageBoundForm.base_fields.items():
+            if field_name.endswith(f"_{language}"):
+                field.label = _strip_translation_label_suffix(field.label)
+
+        base_formset.form = LanguageBoundForm
+        return base_formset
+
+    def _filter_translated_fields_for_language(self, fields, language):
+        filtered_fields = []
+        for field in fields:
+            if isinstance(field, (tuple, list)):
+                nested = self._filter_translated_fields_for_language(field, language)
+                if nested:
+                    filtered_fields.append(tuple(nested))
+                continue
+
+            if field in self.translated_base_fields:
+                filtered_fields.append(f"{field}_{language}")
+                continue
+
+            matched_base = None
+            for base_name in self.translated_base_fields:
+                prefix = f"{base_name}_"
+                if isinstance(field, str) and field.startswith(prefix):
+                    matched_base = base_name
+                    break
+
+            if matched_base is None:
+                filtered_fields.append(field)
+                continue
+
+            if field == f"{matched_base}_{language}":
+                filtered_fields.append(field)
+
+        return filtered_fields
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj)
+        language = _get_language_from_request(request)
+        filtered_fieldsets = []
+
+        for name, options in fieldsets:
+            next_options = options.copy()
+            fields = next_options.get("fields")
+            if fields:
+                next_options["fields"] = self._filter_translated_fields_for_language(
+                    fields,
+                    language,
+                )
+            filtered_fieldsets.append((name, next_options))
+
+        return filtered_fieldsets
+
+    def get_prepopulated_fields(self, request, obj=None):
+        base_fields = dict(super().get_prepopulated_fields(request, obj))
+        if not base_fields:
+            return base_fields
+
+        language = _get_language_from_request(request)
+        resolved = {}
+        for target, sources in base_fields.items():
+            resolved[target] = tuple(
+                f"{source}_{language}"
+                if source in self.translated_base_fields
+                else source
+                for source in sources
+            )
+        return resolved
 
 
 class ProductImageAdminForm(forms.ModelForm):
@@ -480,21 +601,21 @@ class BlogPostSectionInlineForm(forms.ModelForm):
         )
 
     def _configure_translated_list_field(self, field_name, *, rows, help_text):
-        for language_code, _ in LANGUAGE_CHOICES:
-            translated_field_name = f"{field_name}_{language_code}"
-            existing = self.fields.get(translated_field_name)
-            if existing is None:
-                continue
+        language_code = getattr(self, "language", DEFAULT_LANGUAGE)
+        translated_field_name = f"{field_name}_{language_code}"
+        existing = self.fields.get(translated_field_name)
+        if existing is None:
+            return
 
-            self.fields[translated_field_name] = forms.CharField(
-                required=False,
-                label=existing.label,
-                widget=forms.Textarea(attrs={"rows": rows}),
-                help_text=help_text,
-            )
-            self.initial[translated_field_name] = _format_json_for_textarea(
-                getattr(self.instance, translated_field_name, None)
-            )
+        self.fields[translated_field_name] = forms.CharField(
+            required=False,
+            label=existing.label,
+            widget=forms.Textarea(attrs={"rows": rows}),
+            help_text=help_text,
+        )
+        self.initial[translated_field_name] = _format_json_for_textarea(
+            getattr(self.instance, translated_field_name, None)
+        )
 
     def clean_paragraphs(self):
         return _parse_json_or_lines(
@@ -531,6 +652,51 @@ class BlogPostSectionInlineForm(forms.ModelForm):
                 )
 
         return cleaned_data
+
+
+class BlogPostBlockInlineForm(forms.ModelForm):
+    HTML_HELP_TEXT = (
+        "Rich text content for text, lists, quotes, and dividers."
+    )
+
+    class Meta:
+        model = BlogPostBlock
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in (
+            "paragraphs",
+            "items",
+            *(f"paragraphs_{code}" for code, _ in LANGUAGE_CHOICES),
+            *(f"items_{code}" for code, _ in LANGUAGE_CHOICES),
+        ):
+            self.fields.pop(field_name, None)
+        self._configure_translated_html_field("html")
+
+    def _configure_translated_html_field(self, field_name):
+        language_code = getattr(self, "language", DEFAULT_LANGUAGE)
+        translated_field_name = f"{field_name}_{language_code}"
+        existing = self.fields.get(translated_field_name)
+        if existing is None:
+            return
+
+        self.fields[translated_field_name] = forms.CharField(
+            required=False,
+            label="WYSIWYG",
+            widget=TinyMCE(
+                attrs={"cols": 100, "rows": 18},
+                mce_attrs={
+                    "toolbar_mode": "sliding",
+                },
+            ),
+            help_text=self.HTML_HELP_TEXT,
+        )
+        self.initial[translated_field_name] = getattr(
+            self.instance,
+            translated_field_name,
+            "",
+        )
 
 
 class ProductImageInline(admin.StackedInline):
@@ -572,13 +738,39 @@ class ProductImageInline(admin.StackedInline):
         return _render_alt_links(obj)
 
 
-class BlogPostSectionInline(TranslationStackedInline):
+class BlogPostSectionInline(
+    SingleLanguageTranslatedInlineMixin,
+    TranslationStackedInline,
+):
     model = BlogPostSection
     form = BlogPostSectionInlineForm
     extra = 0
     ordering = ("order",)
     fields = ("title", "anchor_id", "paragraphs", "bullets", "order")
+    prepopulated_fields = {"anchor_id": ("title",)}
     verbose_name_plural = "Sections"
+    translated_base_fields = ("title", "paragraphs", "bullets")
+
+
+class BlogPostBlockInline(
+    SingleLanguageTranslatedInlineMixin,
+    TranslationStackedInline,
+):
+    model = BlogPostBlock
+    form = BlogPostBlockInlineForm
+    extra = 0
+    ordering = ("order",)
+    fields = (
+        "title",
+        "anchor_id",
+        "html",
+        "image",
+        "image_alt",
+        "order",
+    )
+    prepopulated_fields = {"anchor_id": ("title",)}
+    verbose_name_plural = "Blocks"
+    translated_base_fields = ("title", "html", "image_alt")
 
 
 class ProductDroneSliderMediaInline(admin.StackedInline):
@@ -727,7 +919,7 @@ class BlogPostAdmin(HiddenModelTranslationTabsAdmin):
         ),
     )
     readonly_fields = ("created_at", "updated_at")
-    inlines = [BlogPostSectionInline]
+    inlines = [BlogPostBlockInline]
 
     @admin.action(description="Mark selected posts as published")
     def mark_published(self, request, queryset):

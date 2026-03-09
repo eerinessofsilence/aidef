@@ -3,6 +3,7 @@ from modeltranslation.translator import TranslationOptions, register
 from .models import (
     BlogAuthor,
     BlogCategory,
+    BlogPostBlock,
     BlogPost,
     BlogPostSection,
     Category,
@@ -44,6 +45,11 @@ class BlogAuthorTranslationOptions(TranslationOptions):
 @register(BlogPost)
 class BlogPostTranslationOptions(TranslationOptions):
     fields = ("title", "subtitle")
+
+
+@register(BlogPostBlock)
+class BlogPostBlockTranslationOptions(TranslationOptions):
+    fields = ("title", "html", "paragraphs", "items", "image_alt")
 
 
 @register(BlogPostSection)

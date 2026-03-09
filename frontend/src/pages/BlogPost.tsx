@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { useParams } from "react-router-dom";
-import { Copy, Link as Link2 } from "lucide-react";
+import { Copy, Link as Link2, Quote } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { buildLocalizedPath, resolveLanguage } from "../i18n";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
@@ -13,6 +14,25 @@ type ArticleSection = {
   bullets?: string[];
 };
 
+type ArticleBlockType = "text" | "bullets" | "quote" | "image" | "divider";
+
+type ArticleBlock = {
+  id: string;
+  type: ArticleBlockType;
+  title: string;
+  html: string;
+  paragraphs?: string[];
+  items?: string[];
+  image: string | null;
+  imageAlt: string;
+  order: number;
+};
+
+type TocEntry = {
+  id: string;
+  title: string;
+};
+
 type BlogPostTemplate = {
   slug: string;
   category: string;
@@ -23,7 +43,7 @@ type BlogPostTemplate = {
   authorRole: string;
   publishedAt: string;
   readTime: string;
-  sections: ArticleSection[];
+  blocks: ArticleBlock[];
 };
 
 type BlogPostApiSection = {
@@ -31,6 +51,19 @@ type BlogPostApiSection = {
   title?: string;
   paragraphs?: unknown;
   bullets?: unknown;
+  order?: number;
+};
+
+type BlogPostApiBlock = {
+  id?: string;
+  type?: string;
+  title?: string;
+  html?: string;
+  paragraphs?: unknown;
+  items?: unknown;
+  image?: string | null;
+  image_url?: string | null;
+  image_alt?: string;
   order?: number;
 };
 
@@ -49,6 +82,7 @@ type BlogPostApiResponse = {
   published_at?: string | null;
   read_minutes?: number;
   read_time?: string;
+  blocks?: BlogPostApiBlock[];
   sections?: BlogPostApiSection[];
 };
 
@@ -62,6 +96,20 @@ const API_BASE = (() => {
 
 const TEMPLATE_POST_SLUG = "how-to-write-strong-work-experience";
 const TEMPLATE_POST_PUBLISHED_AT = "2026-01-27";
+const RICH_TEXT_QUOTE_ICON = renderToStaticMarkup(
+  <Quote
+    aria-hidden="true"
+    style={{
+      position: "absolute",
+      top: "20px",
+      left: "20px",
+      width: "24px",
+      height: "24px",
+      color: "#666666",
+    }}
+    fill="#555555"
+  />,
+);
 
 function formatDate(dateString: string, locale: string) {
   return new Intl.DateTimeFormat(locale, {
@@ -105,75 +153,6 @@ function getSeededHeroGradient(seed: string) {
   return `linear-gradient(135deg, hsl(${hueA} ${satA}% ${lightA}%) 0%, hsl(${hueB} ${satB}% ${lightB}%) 48%, hsl(${hueC} ${satC}% ${lightC}%) 100%)`;
 }
 
-type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
-
-function createTemplatePost(t: TranslateFn): BlogPostTemplate {
-  return {
-    slug: TEMPLATE_POST_SLUG,
-    category: t("blog.static.post.category"),
-    title: t("blog.static.post.title"),
-    heroImage: null,
-    subtitle: t("blog.static.post.subtitle"),
-    author: t("blog.static.post.author"),
-    authorRole: t("blog.static.post.authorRole"),
-    publishedAt: TEMPLATE_POST_PUBLISHED_AT,
-    readTime: t("blog.common.minRead", { count: 3 }),
-    sections: [
-      {
-        id: "why-work-experience-matters",
-        title: t("blog.static.post.sections.why.title"),
-        paragraphs: [
-          t("blog.static.post.sections.why.paragraph1"),
-          t("blog.static.post.sections.why.paragraph2"),
-        ],
-      },
-      {
-        id: "tips-to-strengthen",
-        title: t("blog.static.post.sections.strengthen.title"),
-        bullets: [
-          t("blog.static.post.sections.strengthen.bullet1"),
-          t("blog.static.post.sections.strengthen.bullet2"),
-          t("blog.static.post.sections.strengthen.bullet3"),
-          t("blog.static.post.sections.strengthen.bullet4"),
-          t("blog.static.post.sections.strengthen.bullet5"),
-        ],
-        paragraphs: [t("blog.static.post.sections.strengthen.paragraph1")],
-      },
-      {
-        id: "example-rewrite",
-        title: t("blog.static.post.sections.rewrite.title"),
-        paragraphs: [
-          t("blog.static.post.sections.rewrite.paragraph1"),
-          t("blog.static.post.sections.rewrite.paragraph2"),
-          t("blog.static.post.sections.rewrite.paragraph3"),
-        ],
-      },
-      {
-        id: "final-takeaway",
-        title: t("blog.static.post.sections.takeaway.title"),
-        paragraphs: [
-          t("blog.static.post.sections.takeaway.paragraph1"),
-          t("blog.static.post.sections.takeaway.paragraph2"),
-        ],
-      },
-    ],
-  };
-}
-
-function getPostBySlug(
-  slug: string | undefined,
-  t: TranslateFn,
-): BlogPostTemplate {
-  const templatePost = createTemplatePost(t);
-  if (!slug || slug === templatePost.slug) return templatePost;
-  return {
-    ...templatePost,
-    slug,
-    title: humanizeSlug(slug),
-    subtitle: t("blog.post.fallbackSubtitle"),
-  };
-}
-
 function toStringArray(value: unknown): string[] | undefined {
   if (!Array.isArray(value)) return undefined;
   const items = value
@@ -193,33 +172,283 @@ function toSectionId(value: string) {
   );
 }
 
+function normalizeAnchorId(value: string) {
+  const trimmed = value.trim();
+  return /^[a-z0-9-]+$/.test(trimmed) ? trimmed : toSectionId(trimmed);
+}
+
+function normalizeBlockType(
+  value: string | undefined,
+  {
+    hasItems,
+    hasImage,
+  }: {
+    hasItems: boolean;
+    hasImage: boolean;
+  },
+): ArticleBlockType {
+  if (value === "text") return "text";
+  if (value === "bullets") return "bullets";
+  if (value === "quote") return "quote";
+  if (value === "image") return "image";
+  if (value === "divider") return "divider";
+  if (hasImage) return "image";
+  if (hasItems) return "bullets";
+  return "text";
+}
+
+function isRenderableArticleBlock(block: ArticleBlock) {
+  if (block.type === "image") {
+    return typeof block.image === "string" && block.image.trim().length > 0;
+  }
+  return true;
+}
+
+function decorateRichTextHtml(html: string) {
+  if (!html.includes("<blockquote")) return html;
+  return html.replace(
+    /<blockquote(\b[^>]*)>/gi,
+    `<blockquote$1>${RICH_TEXT_QUOTE_ICON}`,
+  );
+}
+
+function convertLegacySectionsToBlocks(
+  sections: ArticleSection[],
+  quotePrefixes: string[],
+): ArticleBlock[] {
+  const [weakExamplePrefix, strongerExamplePrefix] = quotePrefixes;
+
+  return sections.flatMap((section, index) => {
+    const paragraphs = section.paragraphs ?? [];
+    const quoteParagraphs = paragraphs.filter(
+      (paragraph) =>
+        paragraph.startsWith(weakExamplePrefix) ||
+        paragraph.startsWith(strongerExamplePrefix),
+    );
+    const regularParagraphs = paragraphs.filter(
+      (paragraph) =>
+        !paragraph.startsWith(weakExamplePrefix) &&
+        !paragraph.startsWith(strongerExamplePrefix),
+    );
+    const blocks: ArticleBlock[] = [];
+
+    if ((section.bullets ?? []).length > 0) {
+      blocks.push({
+        id: section.id,
+        type: "bullets",
+        title: section.title,
+        html: "",
+        paragraphs: regularParagraphs,
+        items: section.bullets,
+        image: null,
+        imageAlt: "",
+        order: index * 10,
+      });
+    } else if (regularParagraphs.length > 0) {
+      blocks.push({
+        id: section.id,
+        type: "text",
+        title: section.title,
+        html: "",
+        paragraphs: regularParagraphs,
+        items: undefined,
+        image: null,
+        imageAlt: "",
+        order: index * 10,
+      });
+    }
+
+    if (quoteParagraphs.length > 0) {
+      blocks.push({
+        id: `${section.id}-quote`,
+        type: "quote",
+        title: "",
+        html: "",
+        paragraphs: quoteParagraphs,
+        items: undefined,
+        image: null,
+        imageAlt: "",
+        order: index * 10 + 5,
+      });
+    }
+
+    return blocks;
+  });
+}
+
+function buildTocEntries(blocks: ArticleBlock[]): TocEntry[] {
+  return blocks
+    .filter(
+      (block) => block.title.trim().length > 0 && block.type !== "divider",
+    )
+    .map((block) => ({
+      id: block.id,
+      title: block.title,
+    }));
+}
+
+type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
+
+function createTemplatePost(t: TranslateFn): BlogPostTemplate {
+  const sections: ArticleSection[] = [
+    {
+      id: "why-work-experience-matters",
+      title: t("blog.static.post.sections.why.title"),
+      paragraphs: [
+        t("blog.static.post.sections.why.paragraph1"),
+        t("blog.static.post.sections.why.paragraph2"),
+      ],
+    },
+    {
+      id: "tips-to-strengthen",
+      title: t("blog.static.post.sections.strengthen.title"),
+      bullets: [
+        t("blog.static.post.sections.strengthen.bullet1"),
+        t("blog.static.post.sections.strengthen.bullet2"),
+        t("blog.static.post.sections.strengthen.bullet3"),
+        t("blog.static.post.sections.strengthen.bullet4"),
+        t("blog.static.post.sections.strengthen.bullet5"),
+      ],
+      paragraphs: [t("blog.static.post.sections.strengthen.paragraph1")],
+    },
+    {
+      id: "example-rewrite",
+      title: t("blog.static.post.sections.rewrite.title"),
+      paragraphs: [
+        t("blog.static.post.sections.rewrite.paragraph1"),
+        t("blog.static.post.sections.rewrite.paragraph2"),
+        t("blog.static.post.sections.rewrite.paragraph3"),
+      ],
+    },
+    {
+      id: "final-takeaway",
+      title: t("blog.static.post.sections.takeaway.title"),
+      paragraphs: [
+        t("blog.static.post.sections.takeaway.paragraph1"),
+        t("blog.static.post.sections.takeaway.paragraph2"),
+      ],
+    },
+  ];
+
+  return {
+    slug: TEMPLATE_POST_SLUG,
+    category: t("blog.static.post.category"),
+    title: t("blog.static.post.title"),
+    heroImage: null,
+    subtitle: t("blog.static.post.subtitle"),
+    author: t("blog.static.post.author"),
+    authorRole: t("blog.static.post.authorRole"),
+    publishedAt: TEMPLATE_POST_PUBLISHED_AT,
+    readTime: t("blog.common.minRead", { count: 3 }),
+    blocks: convertLegacySectionsToBlocks(sections, [
+      t("blog.static.post.prefix.weak"),
+      t("blog.static.post.prefix.stronger"),
+    ]),
+  };
+}
+
+function getPostBySlug(
+  slug: string | undefined,
+  t: TranslateFn,
+): BlogPostTemplate {
+  const templatePost = createTemplatePost(t);
+  if (!slug || slug === templatePost.slug) return templatePost;
+  return {
+    ...templatePost,
+    slug,
+    title: humanizeSlug(slug),
+    subtitle: t("blog.post.fallbackSubtitle"),
+  };
+}
+
 function mapBlogPostFromApi(
   payload: BlogPostApiResponse,
   fallback: BlogPostTemplate,
   formatReadTime: (minutes: number) => string,
+  quotePrefixes: string[],
 ): BlogPostTemplate {
-  const rawSections = Array.isArray(payload.sections) ? payload.sections : [];
-  const mappedSections = rawSections
-    .map((section): ArticleSection | null => {
-      const title =
-        typeof section.title === "string" ? section.title.trim() : "";
-      const id =
-        typeof section.id === "string" && section.id.trim()
-          ? section.id.trim()
-          : title
-            ? toSectionId(title)
-            : "";
-
-      if (!title || !id) return null;
+  const rawBlocks = Array.isArray(payload.blocks)
+    ? [...payload.blocks].sort((left, right) => {
+        const leftOrder =
+          typeof left.order === "number" && Number.isFinite(left.order)
+            ? left.order
+            : 0;
+        const rightOrder =
+          typeof right.order === "number" && Number.isFinite(right.order)
+            ? right.order
+            : 0;
+        return leftOrder - rightOrder;
+      })
+    : [];
+  const mappedBlocks = rawBlocks
+    .map((block, index): ArticleBlock | null => {
+      const title = typeof block.title === "string" ? block.title.trim() : "";
+      const paragraphs = toStringArray(block.paragraphs);
+      const items = toStringArray(block.items);
+      const image =
+        [block.image, block.image_url].find(
+          (value): value is string =>
+            typeof value === "string" && value.trim().length > 0,
+        ) ?? null;
+      const type = normalizeBlockType(
+        typeof block.type === "string"
+          ? block.type.trim().toLowerCase()
+          : undefined,
+        {
+          hasItems: Boolean(items?.length),
+          hasImage: Boolean(image),
+        },
+      );
+      const rawId =
+        typeof block.id === "string" && block.id.trim()
+          ? block.id.trim()
+          : title || `${type}-${index + 1}`;
+      const id = normalizeAnchorId(rawId);
 
       return {
         id,
+        type,
+        title,
+        html: typeof block.html === "string" ? block.html.trim() : "",
+        paragraphs,
+        items,
+        image,
+        imageAlt:
+          typeof block.image_alt === "string" ? block.image_alt.trim() : "",
+        order:
+          typeof block.order === "number" && Number.isFinite(block.order)
+            ? block.order
+            : index * 10,
+      };
+    })
+    .filter((block): block is ArticleBlock => block !== null);
+
+  const rawSections = Array.isArray(payload.sections) ? payload.sections : [];
+  const legacySections = rawSections
+    .map((section): ArticleSection | null => {
+      const title =
+        typeof section.title === "string" ? section.title.trim() : "";
+      const rawId =
+        typeof section.id === "string" && section.id.trim()
+          ? section.id.trim()
+          : title || `section-${section.order ?? 0}`;
+      if (!title && !rawId) return null;
+
+      return {
+        id: normalizeAnchorId(rawId),
         title,
         paragraphs: toStringArray(section.paragraphs),
         bullets: toStringArray(section.bullets),
       };
     })
     .filter((section): section is ArticleSection => section !== null);
+
+  const blocks =
+    mappedBlocks.length > 0
+      ? mappedBlocks
+      : legacySections.length > 0
+        ? convertLegacySectionsToBlocks(legacySections, quotePrefixes)
+        : fallback.blocks;
 
   const publishedAt =
     typeof payload.published_at === "string" && payload.published_at.trim()
@@ -272,7 +501,7 @@ function mapBlogPostFromApi(
         : fallback.authorRole,
     publishedAt,
     readTime,
-    sections: mappedSections.length > 0 ? mappedSections : fallback.sections,
+    blocks,
   };
 }
 
@@ -293,7 +522,7 @@ function BrowserHeroIllustration({
 
   return (
     <div
-      className="relative h-80 w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-90 lg:h-10"
+      className="relative h-80 w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-90 lg:h-104"
       style={hasHeroImage ? undefined : { backgroundImage: seededGradient }}
     >
       {hasHeroImage ? (
@@ -311,7 +540,7 @@ function BrowserHeroIllustration({
       )}
       <div className="relative z-10 flex h-full flex-col justify-between">
         <div>
-          <span className="inline-flex rounded-full border border-white/40 bg-white/45 px-3 py-1 text-xs font-medium text-[#6B7280] backdrop-blur">
+          <span className="inline-flex rounded-full border border-black/25 bg-white/50 px-3 py-1 text-sm font-medium text-[#222222] shadow-inner shadow-black/25 backdrop-blur">
             {category}
           </span>
         </div>
@@ -322,6 +551,44 @@ function BrowserHeroIllustration({
         </div>
       </div>
     </div>
+  );
+}
+
+function ArticleMedia({ image }: { image: string | null }) {
+  const hasImage = typeof image === "string" && image.trim().length > 0;
+  if (!hasImage) return null;
+
+  return (
+    <div className="relative aspect-video w-full overflow-hidden rounded-[20px] bg-[#d9d9d9]">
+      <img
+        src={image}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+    </div>
+  );
+}
+
+function RichTextContent({
+  html,
+  variant = "text",
+}: {
+  html: string;
+  variant?: "text" | "quote";
+}) {
+  const decoratedHtml = decorateRichTextHtml(html);
+
+  return (
+    <div
+      className={cn(
+        "[&_a]:underline [&_blockquote]:relative [&_blockquote]:mt-3 [&_blockquote]:rounded-2xl [&_blockquote]:bg-[#d9d9d9] [&_blockquote]:px-6 [&_blockquote]:py-5 [&_blockquote]:pl-16 [&_blockquote]:text-xl [&_blockquote]:leading-8 [&_blockquote]:text-[#111111] [&_blockquote]:shadow-[inset_0_2px_10px_rgba(0,0,0,0.25)] [&_blockquote]:sm:text-2xl [&_blockquote_p+p]:mt-3 [&_em]:italic [&_h2]:text-2xl [&_h2]:font-medium [&_h2]:text-[#111111] [&_h2]:sm:text-3xl [&_h3]:text-xl [&_h3]:font-medium [&_h3]:text-[#111111] [&_h3]:sm:text-2xl [&_hr]:my-10 [&_hr]:h-px [&_hr]:border-0 [&_hr]:bg-black/12 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_li]:list-disc [&_li]:marker:text-[#111111] [&_ol]:space-y-3 [&_ol]:pl-8 [&_ol]:text-lg [&_ol]:leading-8 [&_ol]:text-[#2f2f2f] [&_ol]:sm:text-xl [&_p+p]:mt-4 [&_strong]:font-semibold [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-black/10 [&_td]:p-2 [&_th]:border [&_th]:border-black/10 [&_th]:p-2 [&_th]:text-left [&_ul]:space-y-3 [&_ul]:pl-8 [&_ul]:text-lg [&_ul]:leading-8 [&_ul]:text-[#2f2f2f] [&_ul]:sm:text-xl",
+        variant === "quote"
+          ? "[&_p]:text-xl [&_p]:leading-8 [&_p]:text-[#111111] [&_p]:sm:text-2xl"
+          : "[&_p]:text-lg [&_p]:leading-8 [&_p]:text-[#2f2f2f] [&_p]:sm:text-xl",
+      )}
+      dangerouslySetInnerHTML={{ __html: decoratedHtml }}
+    />
   );
 }
 
@@ -366,11 +633,14 @@ export default function BlogPost() {
     getPostBySlug(post, t),
   );
   const [activeSectionId, setActiveSectionId] = useState(
-    getPostBySlug(post, t).sections[0]?.id ?? "",
+    buildTocEntries(getPostBySlug(post, t).blocks)[0]?.id ?? "",
   );
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">(
     "idle",
   );
+
+  const weakExamplePrefix = t("blog.static.post.prefix.weak");
+  const strongerExamplePrefix = t("blog.static.post.prefix.stronger");
 
   useEffect(() => {
     const fallbackArticle = getPostBySlug(post, t);
@@ -395,8 +665,11 @@ export default function BlogPost() {
 
         const payload = (await response.json()) as BlogPostApiResponse;
         setArticle(
-          mapBlogPostFromApi(payload, fallbackArticle, (minutes) =>
-            t("blog.common.minRead", { count: minutes }),
+          mapBlogPostFromApi(
+            payload,
+            fallbackArticle,
+            (minutes) => t("blog.common.minRead", { count: minutes }),
+            [weakExamplePrefix, strongerExamplePrefix],
           ),
         );
       } catch (error) {
@@ -411,7 +684,7 @@ export default function BlogPost() {
     void loadArticle();
 
     return () => controller.abort();
-  }, [currentLanguage, post, t]);
+  }, [currentLanguage, post, strongerExamplePrefix, t, weakExamplePrefix]);
 
   const articlePath = buildLocalizedPath(
     currentLanguage,
@@ -421,11 +694,11 @@ export default function BlogPost() {
     typeof window !== "undefined"
       ? `${window.location.origin}${articlePath}`
       : `https://www.aidef.com${articlePath}`;
-  const weakExamplePrefix = t("blog.static.post.prefix.weak");
-  const strongerExamplePrefix = t("blog.static.post.prefix.stronger");
+  const renderableBlocks = article.blocks.filter(isRenderableArticleBlock);
+  const tocEntries = buildTocEntries(renderableBlocks);
 
   useEffect(() => {
-    const sectionIds = article.sections.map((section) => section.id);
+    const sectionIds = tocEntries.map((section) => section.id);
     const hashId = window.location.hash.replace("#", "");
 
     if (hashId && sectionIds.includes(hashId)) {
@@ -475,7 +748,7 @@ export default function BlogPost() {
       observer.disconnect();
       window.removeEventListener("hashchange", handleHashChange);
     };
-  }, [article.slug, article.sections]);
+  }, [article.blocks]);
 
   const handleCopyArticleUrl = async () => {
     try {
@@ -523,7 +796,7 @@ export default function BlogPost() {
                   {t("blog.post.tableOfContent")}
                 </p>
                 <div className="flex flex-col max-lg:rounded-xl max-lg:border max-lg:border-gray-300/75 max-lg:bg-gray-300/25 max-lg:p-2.5">
-                  {article.sections.map((section, index) => (
+                  {tocEntries.map((section, index) => (
                     <TocLink
                       key={section.id}
                       id={section.id}
@@ -602,49 +875,172 @@ export default function BlogPost() {
                 </div>
 
                 <div className="space-y-9">
-                  {article.sections.map((section) => (
-                    <section
-                      key={section.id}
-                      id={section.id}
-                      className="scroll-mt-32"
-                    >
-                      <div className="mb-3 flex items-center gap-2">
-                        <h2 className="text-2xl font-semibold text-[#111827]">
-                          {section.title}
-                        </h2>
-                      </div>
+                  <section className="space-y-5">
+                    <h1 className="text-4xl leading-tight font-semibold text-[#111111] sm:text-5xl">
+                      {article.title}
+                    </h1>
+                    <p className="text-2xl leading-tight text-[#111111] sm:text-3xl">
+                      {article.subtitle}
+                    </p>
+                  </section>
 
-                      {section.paragraphs?.map((paragraph, index) => (
-                        <p
-                          key={`${section.id}-p-${index}`}
-                          className={cn(
-                            "text-base leading-6 text-[#6B7280]",
-                            index > 0 && "mt-4",
-                            paragraph.startsWith(weakExamplePrefix) ||
-                              paragraph.startsWith(strongerExamplePrefix)
-                              ? "rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-4 py-3 font-medium text-[#475569]"
-                              : "",
-                          )}
+                  {renderableBlocks.map((block, index) => {
+                    const hasContentBlockBelow = renderableBlocks
+                      .slice(index + 1)
+                      .some((candidate) => candidate.type !== "divider");
+
+                    if (block.type === "bullets") {
+                      const hasRichText = block.html.trim().length > 0;
+
+                      return (
+                        <section
+                          key={block.id}
+                          id={block.id}
+                          className="scroll-mt-32 space-y-6"
                         >
-                          {paragraph}
-                        </p>
-                      ))}
+                          {!hasRichText && (block.items ?? []).length > 0 ? (
+                            <ul className="space-y-4 pl-8 text-xl leading-8 text-[#111111] marker:text-[#111111] sm:text-2xl sm:leading-9">
+                              {(block.items ?? []).map((item) => (
+                                <li key={item} className="list-disc">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
 
-                      {section.bullets ? (
-                        <ul className="mt-4 space-y-3">
-                          {section.bullets.map((bullet) => (
-                            <li
-                              key={bullet}
-                              className="flex items-center gap-3 text-base leading-7 text-[#4B5563]"
+                          {block.title ||
+                          hasRichText ||
+                          (block.paragraphs ?? []).length > 0 ? (
+                            <div className="space-y-4">
+                              {block.title ? (
+                                <h2 className="text-2xl leading-tight font-medium text-[#111111] sm:text-3xl">
+                                  {block.title}
+                                </h2>
+                              ) : null}
+
+                              {block.html ? (
+                                <RichTextContent html={block.html} />
+                              ) : (
+                                (block.paragraphs ?? []).map(
+                                  (paragraph, index) => (
+                                    <p
+                                      key={`${block.id}-p-${index}`}
+                                      className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
+                                    >
+                                      {paragraph}
+                                    </p>
+                                  ),
+                                )
+                              )}
+                            </div>
+                          ) : null}
+                        </section>
+                      );
+                    }
+
+                    if (block.type === "quote") {
+                      return (
+                        <section
+                          key={block.id}
+                          id={block.id}
+                          className="scroll-mt-32 space-y-4"
+                        >
+                          {block.title ? (
+                            <h2 className="text-2xl leading-tight font-medium text-[#111111] sm:text-3xl">
+                              {block.title}
+                            </h2>
+                          ) : null}
+                          <blockquote className="relative rounded-2xl bg-[#d9d9d9] px-6 py-5 pl-16 text-xl leading-8 text-[#111111] shadow-[inset_0_2px_10px_rgba(0,0,0,0.25)] sm:text-2xl">
+                            <Quote
+                              className="absolute top-5 left-5 h-6 w-6 text-[#666666]"
+                              aria-hidden="true"
+                            />
+                            {block.html ? (
+                              <RichTextContent
+                                html={block.html}
+                                variant="quote"
+                              />
+                            ) : (
+                              (block.paragraphs ?? []).map(
+                                (paragraph, index) => (
+                                  <p
+                                    key={`${block.id}-quote-${index}`}
+                                    className={cn(index > 0 && "mt-3")}
+                                  >
+                                    {paragraph}
+                                  </p>
+                                ),
+                              )
+                            )}
+                          </blockquote>
+                        </section>
+                      );
+                    }
+
+                    if (block.type === "image") {
+                      return (
+                        <section
+                          key={block.id}
+                          id={block.id}
+                          className="scroll-mt-32 space-y-4"
+                        >
+                          {block.title ? (
+                            <h2 className="text-2xl leading-tight font-medium text-[#111111] sm:text-3xl">
+                              {block.title}
+                            </h2>
+                          ) : null}
+                          <ArticleMedia image={block.image} />
+                          {(block.paragraphs ?? []).map((paragraph, index) => (
+                            <p
+                              key={`${block.id}-caption-${index}`}
+                              className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
                             >
-                              <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#93C5FD]" />
-                              <span>{bullet}</span>
-                            </li>
+                              {paragraph}
+                            </p>
                           ))}
-                        </ul>
-                      ) : null}
-                    </section>
-                  ))}
+                        </section>
+                      );
+                    }
+
+                    if (block.type === "divider") {
+                      if (!hasContentBlockBelow) return null;
+
+                      return (
+                        <div
+                          key={block.id}
+                          id={block.id}
+                          className="h-px w-full bg-black/12"
+                        />
+                      );
+                    }
+
+                    return (
+                      <section
+                        key={block.id}
+                        id={block.id}
+                        className="scroll-mt-32 space-y-4"
+                      >
+                        {block.title ? (
+                          <h2 className="text-2xl leading-tight font-medium text-[#111111] sm:text-3xl">
+                            {block.title}
+                          </h2>
+                        ) : null}
+
+                        {block.html ? (
+                          <RichTextContent html={block.html} />
+                        ) : (
+                          (block.paragraphs ?? []).map((paragraph, index) => (
+                            <p
+                              key={`${block.id}-p-${index}`}
+                              className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
+                            >
+                              {paragraph}
+                            </p>
+                          ))
+                        )}
+                      </section>
+                    );
+                  })}
                 </div>
               </article>
             </div>

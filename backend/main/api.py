@@ -14,6 +14,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from .models import (
     BlogPost,
+    BlogPostBlock,
     BlogPostSection,
     CivilProduct,
     CivilProductCTABlock,
@@ -472,8 +473,108 @@ def _serialize_blog_post_list_item(request, post: BlogPost) -> Dict[str, Any]:
     }
 
 
+def _serialize_blog_post_block(
+    request,
+    block: BlogPostBlock,
+    *,
+    fallback_id: str | None = None,
+) -> Dict[str, Any]:
+    image_url = _absolute_media_url(request, block.image)
+    block_type = (
+        BlogPostBlock.Kind.IMAGE
+        if image_url
+        else block.kind
+        if block.kind in {
+            BlogPostBlock.Kind.BULLETS,
+            BlogPostBlock.Kind.QUOTE,
+            BlogPostBlock.Kind.DIVIDER,
+        }
+        else BlogPostBlock.Kind.TEXT
+    )
+    return {
+        "id": block.anchor_id or fallback_id or f"block-{block.pk}",
+        "type": block_type,
+        "title": block.title,
+        "html": block.html,
+        "paragraphs": block.paragraphs or [],
+        "items": block.items or [],
+        "image": image_url,
+        "image_alt": block.image_alt,
+        "order": block.order,
+    }
+
+
+def _serialize_legacy_section(section: BlogPostSection) -> Dict[str, Any]:
+    return {
+        "id": section.anchor_id,
+        "title": section.title,
+        "paragraphs": section.paragraphs or [],
+        "bullets": section.bullets or [],
+        "order": section.order,
+    }
+
+
+def _serialize_legacy_section_from_block(
+    block: Dict[str, Any],
+) -> Dict[str, Any] | None:
+    block_type = block.get("type")
+    if block_type not in {
+        BlogPostBlock.Kind.TEXT,
+        BlogPostBlock.Kind.BULLETS,
+        BlogPostBlock.Kind.QUOTE,
+    }:
+        return None
+
+    return {
+        "id": block["id"],
+        "title": block.get("title", ""),
+        "paragraphs": block.get("paragraphs", []),
+        "bullets": block.get("items", []) if block_type == BlogPostBlock.Kind.BULLETS else [],
+        "order": block.get("order", 0),
+    }
+
+
 def _serialize_blog_post_detail(request, post: BlogPost) -> Dict[str, Any]:
+    blocks: List[BlogPostBlock] = list(post.blocks.all())
     sections: List[BlogPostSection] = list(post.sections.all())
+
+    if blocks:
+        serialized_blocks = [
+            _serialize_blog_post_block(request, block) for block in blocks
+        ]
+    else:
+        serialized_blocks = []
+        for section in sections:
+            block = BlogPostBlock(
+                post=post,
+                kind=(
+                    BlogPostBlock.Kind.BULLETS
+                    if section.bullets
+                    else BlogPostBlock.Kind.TEXT
+                ),
+                title=section.title,
+                anchor_id=section.anchor_id,
+                html="",
+                paragraphs=section.paragraphs,
+                items=section.bullets,
+                order=section.order,
+            )
+            serialized_blocks.append(
+                _serialize_blog_post_block(
+                    request,
+                    block,
+                    fallback_id=section.anchor_id or f"section-{section.pk}",
+                )
+            )
+
+    serialized_sections = [_serialize_legacy_section(section) for section in sections]
+    if not serialized_sections:
+        serialized_sections = [
+            serialized
+            for block in serialized_blocks
+            if (serialized := _serialize_legacy_section_from_block(block)) is not None
+        ]
+
     return {
         "id": post.id,
         "slug": post.slug,
@@ -487,16 +588,8 @@ def _serialize_blog_post_detail(request, post: BlogPost) -> Dict[str, Any]:
         "published_at": post.published_at.isoformat() if post.published_at else None,
         "read_minutes": post.read_minutes,
         "read_time": _format_read_time_label(post.read_minutes),
-        "sections": [
-            {
-                "id": section.anchor_id,
-                "title": section.title,
-                "paragraphs": section.paragraphs or [],
-                "bullets": section.bullets or [],
-                "order": section.order,
-            }
-            for section in sections
-        ],
+        "blocks": serialized_blocks,
+        "sections": serialized_sections,
     }
 
 
@@ -518,7 +611,7 @@ def blog_post_detail_api(request, slug: str):
         post = (
             BlogPost.objects
             .select_related("category", "author")
-            .prefetch_related("sections")
+            .prefetch_related("blocks", "sections")
             .get(slug=slug, is_published=True)
         )
     except BlogPost.DoesNotExist as exc:

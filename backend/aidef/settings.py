@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'tinymce',
     'users.apps.UsersConfig',
     'main.apps.MainConfig',
     'portal.apps.PortalConfig',
@@ -144,6 +145,21 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 360,
+    "menubar": False,
+    "statusbar": False,
+    "plugins": "lists link image table code help wordcount",
+    "toolbar": (
+        "undo redo | blocks | bold italic underline | "
+        "bullist numlist blockquote | link image table | removeformat code"
+    ),
+    "block_formats": "Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4",
+    "content_style": (
+        "body { font-family: Inter, Arial, sans-serif; font-size: 16px; }"
+    ),
 }
 
 EMAIL_BACKEND = getenv(
