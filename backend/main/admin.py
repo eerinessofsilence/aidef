@@ -33,6 +33,7 @@ from .models import (
     Product,
     ProductCTABlock,
     ProductDroneSliderMedia,
+    ProductFinalCTABlock,
     ProductFeature,
     ProductFeatureBlock,
     ProductGallery,
@@ -838,6 +839,15 @@ class ProductCTABlockInline(TranslationStackedInline):
     classes = ("collapse",)
     verbose_name_plural = "CTA blocks"
 
+
+class ProductFinalCTABlockInline(TranslationStackedInline):
+    model = ProductFinalCTABlock
+    extra = 1
+    max_num = 1
+    fields = ("title", "paragraph", "has_button")
+    classes = ("collapse",)
+    verbose_name_plural = "Final CTA block"
+
 @admin.register(Category)
 class CategoryAdmin(HiddenModelTranslationTabsAdmin):
     list_display = ('name', 'slug')
@@ -994,7 +1004,7 @@ class ProductAdmin(HiddenModelTranslationTabsAdmin):
             },
         ),
     )
-    inlines = [ProductImageInline, ProductDroneSliderMediaInline, ProductFeatureInline, ProductSubFeatureInline, ProductGalleryInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline]
+    inlines = [ProductImageInline, ProductDroneSliderMediaInline, ProductFeatureInline, ProductSubFeatureInline, ProductGalleryInline, ProductTechnologyInline, ProductFeatureBlockInline, ProductInfoBlockInline, ProductCTABlockInline, ProductFinalCTABlockInline]
 
     @admin.action(description="Mark selected products as available")
     def mark_available(self, request, queryset):

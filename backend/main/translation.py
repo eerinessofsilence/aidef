@@ -18,6 +18,7 @@ from .models import (
     CivilProductTechnology,
     Product,
     ProductCTABlock,
+    ProductFinalCTABlock,
     ProductFeature,
     ProductFeatureBlock,
     ProductGallery,
@@ -95,6 +96,11 @@ class ProductInfoBlockTranslationOptions(TranslationOptions):
 @register(ProductCTABlock)
 class ProductCTABlockTranslationOptions(TranslationOptions):
     fields = ("name", "title")
+
+
+@register(ProductFinalCTABlock)
+class ProductFinalCTABlockTranslationOptions(TranslationOptions):
+    fields = ("title", "paragraph")
 
 
 @register(CivilCategory)

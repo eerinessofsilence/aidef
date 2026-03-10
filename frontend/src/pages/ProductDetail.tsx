@@ -99,6 +99,13 @@ interface ProductCTABlock {
   order?: number | null;
 }
 
+interface ProductFinalCTABlock {
+  id: number;
+  title: string;
+  paragraph?: string | null;
+  has_button: boolean;
+}
+
 interface ProductDetail extends Product {
   specs?: string | null;
   created_at?: string;
@@ -111,6 +118,7 @@ interface ProductDetail extends Product {
   feature_blocks?: ProductFeatureBlock[];
   info_blocks?: ProductInfoBlock[];
   cta_blocks?: ProductCTABlock[];
+  final_cta_block?: ProductFinalCTABlock | null;
 }
 
 export default function ProductDetail() {
@@ -269,6 +277,21 @@ export default function ProductDetail() {
         (a.order ?? Number.MAX_SAFE_INTEGER) -
           (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
     );
+  }, [productDetail]);
+
+  const productFinalCTABlock = useMemo(() => {
+    const block = productDetail?.final_cta_block;
+    if (!block) {
+      return null;
+    }
+    if (
+      !block.title?.trim() &&
+      !block.paragraph?.trim() &&
+      !block.has_button
+    ) {
+      return null;
+    }
+    return block;
   }, [productDetail]);
 
   const carouselProducts = useMemo(() => {
@@ -742,6 +765,37 @@ export default function ProductDetail() {
             </div>
           ) : null}
         </section>
+        {productFinalCTABlock ? (
+          <section className="container mx-auto flex flex-col items-center justify-center space-y-25 px-5 py-25 max-lg:space-y-15 max-lg:py-12.5">
+            <ScrollReveal
+              className="flex w-full max-w-4xl flex-col items-center gap-y-8 text-center max-md:gap-y-4"
+              from="down"
+              duration={0.5}
+              distance={0}
+            >
+              {productFinalCTABlock.title ? (
+                <h1 className="text-center text-5xl font-bold max-lg:text-4xl">
+                  {productFinalCTABlock.title}
+                </h1>
+              ) : null}
+              {productFinalCTABlock.paragraph ? (
+                <p className="max-w-3xl text-center text-lg max-md:text-base max-md:text-balance">
+                  {productFinalCTABlock.paragraph}
+                </p>
+              ) : null}
+              {productFinalCTABlock.has_button ? (
+                <div>
+                  <a
+                    onClick={openContactModal}
+                    className="group relative inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-42 max-md:text-base"
+                  >
+                    {t("productDetail.actions.contact")}
+                  </a>
+                </div>
+              ) : null}
+            </ScrollReveal>
+          </section>
+        ) : null}
       </div>
     </div>
   );

@@ -367,6 +367,24 @@ class ProductCTABlock(models.Model):
         return f"{self.product.name} — CTA block {self.pk}"
 
 
+class ProductFinalCTABlock(models.Model):
+    product = models.OneToOneField(
+        Product,
+        related_name="final_cta_block",
+        on_delete=models.CASCADE,
+    )
+    title = models.CharField(max_length=128)
+    paragraph = models.TextField(blank=True)
+    has_button = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Product final CTA block"
+        verbose_name_plural = "Product final CTA blocks"
+
+    def __str__(self):
+        return f"{self.product.name} — Final CTA"
+
+
 class CivilCategory(models.Model):
     name = models.CharField(max_length=120, unique=True)
     slug = models.SlugField(max_length=140, unique=True, blank=True)

@@ -19,6 +19,7 @@ from .models import (
     Category,
     ContactRequest,
     Product,
+    ProductFinalCTABlock,
     ProductImage,
     ProductImageTranslation,
 )
@@ -208,6 +209,36 @@ class MainAdminSmokeTests(TestCase):
 
 
 class MainApiTests(TestCase):
+    def test_item_detail_api_includes_final_cta_block(self):
+        category = Category.objects.create(name="Military", slug="military")
+        product = Product.objects.create(
+            name="Falcon X",
+            slug="falcon-x",
+            category=category,
+            description="Long-range platform",
+            available=True,
+        )
+        ProductFinalCTABlock.objects.create(
+            product=product,
+            title="Talk to our team about mission fit",
+            paragraph="We can help you evaluate integration, deployment, and mission fit.",
+            has_button=True,
+        )
+
+        response = self.client.get(reverse("main:item-detail", args=[product.slug]))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(
+            payload["final_cta_block"],
+            {
+                "id": product.final_cta_block.id,
+                "title": "Talk to our team about mission fit",
+                "paragraph": "We can help you evaluate integration, deployment, and mission fit.",
+                "has_button": True,
+            },
+        )
+
     def test_blog_post_detail_api_returns_published_post_with_blocks(self):
         category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
         author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")

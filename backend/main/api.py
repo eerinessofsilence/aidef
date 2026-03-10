@@ -32,6 +32,7 @@ from .models import (
     Product,
     ProductCTABlock,
     ProductDroneSliderMedia,
+    ProductFinalCTABlock,
     ProductFeature,
     ProductFeatureBlock,
     ProductGallery,
@@ -302,6 +303,22 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
         }
         for block in cta_blocks
     ]
+
+    try:
+        final_cta_block: ProductFinalCTABlock | None = product.final_cta_block
+    except ProductFinalCTABlock.DoesNotExist:
+        final_cta_block = None
+
+    data["final_cta_block"] = (
+        {
+            "id": final_cta_block.id,
+            "title": final_cta_block.title,
+            "paragraph": final_cta_block.paragraph,
+            "has_button": final_cta_block.has_button,
+        }
+        if final_cta_block is not None
+        else None
+    )
 
     return data
 
@@ -662,7 +679,7 @@ def item_detail_api(request, slug: str):
     try:
         product = (
             Product.objects
-            .select_related('category', 'drone_slider_media')
+            .select_related('category', 'drone_slider_media', 'final_cta_block')
             .prefetch_related(
                 'features',
                 'sub_features',
