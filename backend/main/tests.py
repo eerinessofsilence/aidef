@@ -2,6 +2,7 @@ import json
 from datetime import date
 import shutil
 import tempfile
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -480,3 +481,88 @@ class MainApiTests(TestCase):
         self.assertEqual(message.reply_to, ["alex@example.com"])
         self.assertIn("New contact request submitted", message.body)
         self.assertIn("Need a quote.", message.body)
+        self.assertNotIn("Address line 3:", message.body)
+
+    @override_settings(
+        DEBUG=True,
+        DEFAULT_FROM_EMAIL="noreply@ai-def.test",
+        CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],
+    )
+    @patch("main.api.EmailMessage.send", side_effect=RuntimeError("SMTP unavailable"))
+    def test_contact_request_api_returns_502_when_email_notification_fails(
+        self, mocked_send_mail
+    ):
+        payload = {
+            "firstName": "Alex",
+            "lastName": "Stone",
+            "email": "alex@example.com",
+            "phone": "+421900000000",
+            "product": "ax2ng-krakatit",
+            "country": "SK",
+            "countryName": "Slovakia",
+            "city": "Bratislava",
+            "addressLine1": "Ilkovicova 8",
+            "addressLine2": "Office 401",
+            "website": "https://example.com",
+            "message": "Need a quote.",
+            "variant": "default",
+            "language": "en",
+            "source": "/en/support",
+        }
+
+        response = self.client.post(
+            reverse("main:contact-request"),
+            data=json.dumps(payload),
+            content_type="application/json",
+            HTTP_USER_AGENT="pytest-agent",
+        )
+
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(
+            response.json()["detail"],
+            "Unable to send contact request email notification. Email error: SMTP unavailable",
+        )
+        self.assertEqual(ContactRequest.objects.count(), 0)
+        mocked_send_mail.assert_called_once()
+
+    @override_settings(
+        DEBUG=False,
+        DEFAULT_FROM_EMAIL="noreply@ai-def.test",
+        CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],
+    )
+    @patch("main.api.EmailMessage.send", side_effect=RuntimeError("SMTP unavailable"))
+    def test_contact_request_api_hides_email_notification_error_outside_debug(
+        self, mocked_send_mail
+    ):
+        payload = {
+            "firstName": "Alex",
+            "lastName": "Stone",
+            "email": "alex@example.com",
+            "phone": "+421900000000",
+            "product": "ax2ng-krakatit",
+            "country": "SK",
+            "countryName": "Slovakia",
+            "city": "Bratislava",
+            "addressLine1": "Ilkovicova 8",
+            "addressLine2": "Office 401",
+            "website": "https://example.com",
+            "message": "Need a quote.",
+            "variant": "default",
+            "language": "en",
+            "source": "/en/support",
+        }
+
+        response = self.client.post(
+            reverse("main:contact-request"),
+            data=json.dumps(payload),
+            content_type="application/json",
+            HTTP_USER_AGENT="pytest-agent",
+        )
+
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(
+            response.json()["detail"],
+            "Unable to send contact request email notification.",
+        )
+        self.assertEqual(ContactRequest.objects.count(), 0)
+        mocked_send_mail.assert_called_once()

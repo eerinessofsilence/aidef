@@ -634,7 +634,8 @@
       "website": "Añade la URL de tu sitio web"
     },
     "status": {
-      "updatingCountries": "Actualizando países..."
+      "updatingCountries": "Actualizando países...",
+      "submitting": "Enviando..."
     },
     "products": {
       "all": "Todos los productos",

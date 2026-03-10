@@ -6,8 +6,9 @@ from typing import Any, Dict, List
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.core.validators import validate_email
+from django.db import transaction
 from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
@@ -39,6 +40,26 @@ from .models import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class ContactNotificationError(Exception):
+    """Raised when the contact form email notification cannot be delivered."""
+
+
+def _contact_notification_error_detail(exc: ContactNotificationError) -> str:
+    detail = "Unable to send contact request email notification."
+    if not settings.DEBUG:
+        return detail
+
+    cause = exc.__cause__
+    if cause is None:
+        return detail
+
+    cause_message = str(cause).strip()
+    if not cause_message:
+        return detail
+    return f"{detail} Email error: {cause_message}"
+
 
 def _absolute_media_url(request, image_field) -> str | None:
     if not image_field:
@@ -763,7 +784,6 @@ def _build_contact_notification_message(contact_request: ContactRequest) -> str:
         f"Country: {contact_request.country_code or '-'} ({contact_request.country_name or '-'})",
         f"Address line 1: {contact_request.address_line1 or '-'}",
         f"Address line 2: {contact_request.address_line2 or '-'}",
-        f"Address line 3: {contact_request.address_line3 or '-'}",
         f"Website: {contact_request.website or '-'}",
         f"Language: {contact_request.language or '-'}",
         f"Source: {contact_request.source or '-'}",
@@ -809,9 +829,6 @@ def contact_request_api(request):
     address_line2 = _clean_payload_value(
         payload.get("addressLine1") or payload.get("addressLine2")
     )
-    address_line3 = _clean_payload_value(
-        payload.get("addressLine2") or payload.get("addressLine3")
-    )
     website = _clean_payload_value(payload.get("website"))
     message = _clean_payload_value(payload.get("message"))
     source = _clean_payload_value(payload.get("source"))
@@ -848,49 +865,58 @@ def contact_request_api(request):
             {"detail": "Validation failed.", "errors": errors}, status=400
         )
 
-    contact_request = ContactRequest.objects.create(
-        variant=variant,
-        first_name=first_name,
-        last_name=last_name,
-        email=email,
-        phone=phone,
-        product=product,
-        country_code=country_code,
-        country_name=country_name,
-        address_line1=address_line1,
-        address_line2=address_line2,
-        address_line3=address_line3,
-        website=website,
-        message=message,
-        source=source,
-        language=language or _get_request_language(request),
-        ip_address=_get_client_ip(request),
-        user_agent=_clean_payload_value(
-            request.META.get("HTTP_USER_AGENT")
-        ),
-    )
-
-    recipients = _contact_notification_recipients()
-    if recipients:
-        subject = (
-            f"[AI DEF] Contact request #{contact_request.id} "
-            f"({contact_request.variant})"
-        )
-        message = _build_contact_notification_message(contact_request)
-        try:
-            send_mail(
-                subject=subject,
+    try:
+        with transaction.atomic():
+            contact_request = ContactRequest.objects.create(
+                variant=variant,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone=phone,
+                product=product,
+                country_code=country_code,
+                country_name=country_name,
+                address_line1=address_line1,
+                address_line2=address_line2,
+                website=website,
                 message=message,
-                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", ""),
-                recipient_list=recipients,
-                fail_silently=False,
-                reply_to=[contact_request.email] if contact_request.email else None,
+                source=source,
+                language=language or _get_request_language(request),
+                ip_address=_get_client_ip(request),
+                user_agent=_clean_payload_value(
+                    request.META.get("HTTP_USER_AGENT")
+                ),
             )
-        except Exception:
-            logger.exception(
-                "Failed to send contact request email notification for request %s",
-                contact_request.id,
-            )
+
+            recipients = _contact_notification_recipients()
+            if recipients:
+                subject = (
+                    f"[AI DEF] Contact request #{contact_request.id} "
+                    f"({contact_request.variant})"
+                )
+                notification_message = _build_contact_notification_message(
+                    contact_request
+                )
+                try:
+                    email_message = EmailMessage(
+                        subject=subject,
+                        body=notification_message,
+                        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", ""),
+                        to=recipients,
+                        reply_to=[contact_request.email] if contact_request.email else None,
+                    )
+                    email_message.send(fail_silently=False)
+                except Exception as exc:
+                    logger.exception(
+                        "Failed to send contact request email notification for request %s",
+                        contact_request.id,
+                    )
+                    raise ContactNotificationError from exc
+    except ContactNotificationError as exc:
+        return JsonResponse(
+            {"detail": _contact_notification_error_detail(exc)},
+            status=502,
+        )
 
     return JsonResponse(
         {"status": "ok", "id": contact_request.id}, status=201

@@ -327,8 +327,20 @@ export const ContactForm = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      let responseDetail: string | null = null;
+      const responseType = response.headers.get("content-type") ?? "";
+      if (responseType.includes("application/json")) {
+        try {
+          const body = (await response.json()) as { detail?: unknown };
+          if (typeof body.detail === "string" && body.detail.trim()) {
+            responseDetail = body.detail.trim();
+          }
+        } catch {
+          responseDetail = null;
+        }
+      }
       if (!response.ok) {
-        setSubmitError(t("contactForm.errors.submitFailed"));
+        setSubmitError(responseDetail ?? t("contactForm.errors.submitFailed"));
         setSubmitStatus("error");
         return;
       }
@@ -599,8 +611,7 @@ export const ContactForm = ({
                 </label>
                 <label className={`md:col-span-2 ${labelClass}`}>
                   <span className={labelSpanClass}>
-                    {t("contactForm.fields.addressLine2")}{" "}
-                    <span className="text-red-500">*</span>
+                    {t("contactForm.fields.addressLine2")}
                   </span>
                   <input
                     className={inputClass}
@@ -608,18 +619,6 @@ export const ContactForm = ({
                     type="text"
                     autoComplete="address-line1"
                     placeholder={t("contactForm.placeholders.addressLine2")}
-                    required={Boolean(selectedCountry)}
-                    disabled={!selectedCountry}
-                  />
-                </label>
-                <label className={`md:col-span-2 ${labelClass}`}>
-                  {t("contactForm.fields.addressLine3Optional")}
-                  <input
-                    className={inputClass}
-                    name="addressLine2"
-                    type="text"
-                    autoComplete="address-line2"
-                    placeholder={t("contactForm.placeholders.addressLine3")}
                     disabled={!selectedCountry}
                   />
                 </label>

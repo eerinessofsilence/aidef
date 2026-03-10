@@ -903,7 +903,6 @@ class ContactRequest(models.Model):
     country_name = models.CharField(max_length=120, blank=True)
     address_line1 = models.CharField(max_length=255, blank=True)
     address_line2 = models.CharField(max_length=255, blank=True)
-    address_line3 = models.CharField(max_length=255, blank=True)
     website = models.CharField(max_length=255, blank=True)
     message = models.TextField()
     source = models.CharField(max_length=255, blank=True)
