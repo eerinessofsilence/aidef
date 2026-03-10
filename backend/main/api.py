@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+from html import escape
 import json
 import logging
 from typing import Any, Dict, List
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.core.validators import validate_email
 from django.db import transaction
 from django.http import Http404, JsonResponse
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
@@ -770,30 +772,153 @@ def _contact_notification_recipients() -> List[str]:
     return recipients
 
 
-def _build_contact_notification_message(contact_request: ContactRequest) -> str:
+def _contact_display_name(contact_request: ContactRequest) -> str:
+    full_name = (
+        f"{contact_request.first_name} {contact_request.last_name}".strip()
+    )
+    return full_name or contact_request.email or f"Contact #{contact_request.id}"
+
+
+def _contact_display_country(contact_request: ContactRequest) -> str:
+    if contact_request.country_name and contact_request.country_code:
+        return (
+            f"{contact_request.country_name} "
+            f"({contact_request.country_code})"
+        )
+    return (
+        contact_request.country_name
+        or contact_request.country_code
+        or "-"
+    )
+
+
+def _contact_admin_url(
+    contact_request: ContactRequest, request=None
+) -> str:
+    admin_path = reverse(
+        "admin:main_contactrequest_change",
+        args=[contact_request.id],
+    )
+    if request is None:
+        return admin_path
+    return request.build_absolute_uri(admin_path)
+
+
+def _build_contact_notification_subject(
+    contact_request: ContactRequest,
+) -> str:
+    display_name = _contact_display_name(contact_request)
+    product = (contact_request.product or "").strip()
+    if product:
+        return f"New contact — {display_name} ({product})"
+    return f"New contact — {display_name}"
+
+
+def _build_contact_notification_message(
+    contact_request: ContactRequest, request=None
+) -> str:
+    display_name = _contact_display_name(contact_request)
+    country = _contact_display_country(contact_request)
+    admin_url = _contact_admin_url(contact_request, request)
     lines = [
-        "New contact request submitted",
+        "New contact form submission",
         "",
-        f"ID: {contact_request.id}",
-        f"Created at: {contact_request.created_at.isoformat()}",
-        f"Variant: {contact_request.variant}",
-        f"Name: {contact_request.first_name} {contact_request.last_name}",
+        "-----",
+        "Main contact information",
+        f"Name: {display_name}",
         f"Email: {contact_request.email}",
         f"Phone: {contact_request.phone or '-'}",
+        "",
+        "-----",
+        "Request details",
         f"Product: {contact_request.product or '-'}",
-        f"Country: {contact_request.country_code or '-'} ({contact_request.country_name or '-'})",
+        f"Country: {country}",
+        f"Language: {contact_request.language or '-'}",
+        f"Variant: {contact_request.variant}",
+        "",
+        "-----",
+        "Message",
+        contact_request.message or "-",
+        "",
+        "-----",
+        "Additional information",
+        f"Website: {contact_request.website or '-'}",
         f"Address line 1: {contact_request.address_line1 or '-'}",
         f"Address line 2: {contact_request.address_line2 or '-'}",
-        f"Website: {contact_request.website or '-'}",
-        f"Language: {contact_request.language or '-'}",
-        f"Source: {contact_request.source or '-'}",
-        f"IP: {contact_request.ip_address or '-'}",
-        f"User agent: {contact_request.user_agent or '-'}",
         "",
-        "Message:",
-        contact_request.message,
+        "-----",
+        "Technical information",
+        f"ID: {contact_request.id}",
+        f"Created timestamp: {contact_request.created_at.isoformat()}",
+        f"Source page: {contact_request.source or '-'}",
+        f"IP address: {contact_request.ip_address or '-'}",
+        f"User agent: {contact_request.user_agent or '-'}",
+        f"View in admin: {admin_url}",
     ]
     return "\n".join(lines)
+
+
+def _build_contact_notification_html(
+    contact_request: ContactRequest, request=None
+) -> str:
+    display_name = escape(_contact_display_name(contact_request))
+    email_address = escape(contact_request.email or "-")
+    phone = escape(contact_request.phone or "-")
+    product = escape(contact_request.product or "-")
+    country = escape(_contact_display_country(contact_request))
+    language = escape(contact_request.language or "-")
+    variant = escape(contact_request.variant or "-")
+    website = escape(contact_request.website or "-")
+    address_line1 = escape(contact_request.address_line1 or "-")
+    address_line2 = escape(contact_request.address_line2 or "-")
+    created_timestamp = escape(contact_request.created_at.isoformat())
+    source_page = escape(contact_request.source or "-")
+    ip_address = escape(contact_request.ip_address or "-")
+    user_agent = escape(contact_request.user_agent or "-")
+    admin_url = escape(_contact_admin_url(contact_request, request))
+    message = escape(contact_request.message or "-").replace("\n", "<br>")
+
+    return f"""
+<html>
+  <body style="margin:0;padding:24px;background:#f5f5f5;font-family:Arial,sans-serif;color:#111827;">
+    <div style="max-width:720px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:32px;">
+      <h1 style="margin:0 0 8px;font-size:24px;line-height:1.2;">New contact form submission</h1>
+      <p style="margin:0 0 24px;color:#6b7280;">Reference ID: {contact_request.id}</p>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+      <h2 style="margin:0 0 16px;font-size:18px;">Main contact information</h2>
+      <p style="margin:0 0 8px;"><strong>Name:</strong> {display_name}</p>
+      <p style="margin:0 0 8px;"><strong>Email:</strong> <a href="mailto:{email_address}">{email_address}</a></p>
+      <p style="margin:0;"><strong>Phone:</strong> {phone}</p>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+      <h2 style="margin:0 0 16px;font-size:18px;">Request details</h2>
+      <p style="margin:0 0 8px;"><strong>Product:</strong> {product}</p>
+      <p style="margin:0 0 8px;"><strong>Country:</strong> {country}</p>
+      <p style="margin:0 0 8px;"><strong>Language:</strong> {language}</p>
+      <p style="margin:0;"><strong>Variant:</strong> {variant}</p>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+      <h2 style="margin:0 0 16px;font-size:18px;">Message</h2>
+      <div style="padding:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;line-height:1.6;">{message}</div>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+      <h2 style="margin:0 0 16px;font-size:18px;">Additional information</h2>
+      <p style="margin:0 0 8px;"><strong>Website:</strong> {website}</p>
+      <p style="margin:0 0 8px;"><strong>Address line 1:</strong> {address_line1}</p>
+      <p style="margin:0;"><strong>Address line 2:</strong> {address_line2}</p>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
+      <h2 style="margin:0 0 16px;font-size:18px;">Technical information</h2>
+      <p style="margin:0 0 8px;"><strong>Created timestamp:</strong> {created_timestamp}</p>
+      <p style="margin:0 0 8px;"><strong>Source page:</strong> {source_page}</p>
+      <p style="margin:0 0 8px;"><strong>IP address:</strong> {ip_address}</p>
+      <p style="margin:0 0 8px;"><strong>User agent:</strong> {user_agent}</p>
+      <p style="margin:0;"><strong>View in admin:</strong> <a href="{admin_url}">{admin_url}</a></p>
+    </div>
+  </body>
+</html>
+""".strip()
 
 
 @csrf_exempt
@@ -890,20 +1015,24 @@ def contact_request_api(request):
 
             recipients = _contact_notification_recipients()
             if recipients:
-                subject = (
-                    f"[AI DEF] Contact request #{contact_request.id} "
-                    f"({contact_request.variant})"
-                )
+                subject = _build_contact_notification_subject(contact_request)
                 notification_message = _build_contact_notification_message(
-                    contact_request
+                    contact_request, request=request
+                )
+                notification_html = _build_contact_notification_html(
+                    contact_request, request=request
                 )
                 try:
-                    email_message = EmailMessage(
+                    email_message = EmailMultiAlternatives(
                         subject=subject,
                         body=notification_message,
                         from_email=getattr(settings, "DEFAULT_FROM_EMAIL", ""),
                         to=recipients,
                         reply_to=[contact_request.email] if contact_request.email else None,
+                    )
+                    email_message.attach_alternative(
+                        notification_html,
+                        "text/html",
                     )
                     email_message.send(fail_silently=False)
                 except Exception as exc:

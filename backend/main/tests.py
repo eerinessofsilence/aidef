@@ -477,18 +477,36 @@ class MainApiTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         message = mail.outbox[0]
+        self.assertEqual(
+            message.subject,
+            "New contact — Alex Stone (ax2ng-krakatit)",
+        )
         self.assertEqual(message.to, ["sales@ai-def.test"])
         self.assertEqual(message.reply_to, ["alex@example.com"])
-        self.assertIn("New contact request submitted", message.body)
+        self.assertIn("Main contact information", message.body)
+        self.assertIn("Request details", message.body)
         self.assertIn("Need a quote.", message.body)
         self.assertNotIn("Address line 3:", message.body)
+        self.assertIn(
+            "View in admin: http://testserver/admin/main/contactrequest/1/change/",
+            message.body,
+        )
+        self.assertEqual(len(message.alternatives), 1)
+        self.assertEqual(message.alternatives[0].mimetype, "text/html")
+        self.assertIn(
+            'href="mailto:alex@example.com"',
+            message.alternatives[0].content,
+        )
 
     @override_settings(
         DEBUG=True,
         DEFAULT_FROM_EMAIL="noreply@ai-def.test",
         CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],
     )
-    @patch("main.api.EmailMessage.send", side_effect=RuntimeError("SMTP unavailable"))
+    @patch(
+        "main.api.EmailMultiAlternatives.send",
+        side_effect=RuntimeError("SMTP unavailable"),
+    )
     def test_contact_request_api_returns_502_when_email_notification_fails(
         self, mocked_send_mail
     ):
@@ -530,7 +548,10 @@ class MainApiTests(TestCase):
         DEFAULT_FROM_EMAIL="noreply@ai-def.test",
         CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],
     )
-    @patch("main.api.EmailMessage.send", side_effect=RuntimeError("SMTP unavailable"))
+    @patch(
+        "main.api.EmailMultiAlternatives.send",
+        side_effect=RuntimeError("SMTP unavailable"),
+    )
     def test_contact_request_api_hides_email_notification_error_outside_debug(
         self, mocked_send_mail
     ):
