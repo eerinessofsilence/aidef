@@ -49,7 +49,6 @@ type BlogPostArticle = {
 type BlogPostFallbackCopy = {
   untitledPost: string;
   defaultCategory: string;
-  defaultAuthor: string;
   fallbackSubtitle: string;
 };
 
@@ -281,7 +280,7 @@ function createFallbackArticle(
         : fallbackCopy.untitledPost,
     heroImage: null,
     subtitle: fallbackCopy.fallbackSubtitle,
-    author: fallbackCopy.defaultAuthor,
+    author: "",
     authorRole: "",
     publishedAt: null,
     readTime: null,
@@ -421,11 +420,11 @@ function mapBlogPostFromApi(
     author:
       typeof payload.author === "string" && payload.author.trim()
         ? payload.author
-        : fallback.author,
+        : "",
     authorRole:
       typeof payload.author_role === "string" && payload.author_role.trim()
         ? payload.author_role
-        : fallback.authorRole,
+        : "",
     publishedAt,
     readTime,
     blocks,
@@ -449,7 +448,7 @@ function BrowserHeroIllustration({
 
   return (
     <div
-      className="relative h-80 w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] sm:h-90 lg:h-104"
+      className="relative h-80 w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] md:h-100 lg:h-120"
       style={hasHeroImage ? undefined : { backgroundImage: seededGradient }}
     >
       {hasHeroImage ? (
@@ -536,7 +535,7 @@ function TocLink({
       href={`#${id}`}
       onClick={() => onActivate(id)}
       className={cn(
-        "group flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm transition hover:bg-[#9c8d76]/10",
+        "group flex items-center gap-2 rounded-xl px-2 py-1.5 transition hover:bg-[#9c8d76]/10",
         active ? "font-medium text-[#222]" : "text-[#666]",
       )}
       aria-current={active ? "location" : undefined}
@@ -560,7 +559,6 @@ export default function BlogPost() {
     () => ({
       untitledPost: t("blog.common.untitledPost"),
       defaultCategory: t("blog.common.defaultCategory"),
-      defaultAuthor: t("blog.common.defaultAuthor"),
       fallbackSubtitle: t("blog.post.fallbackSubtitle"),
     }),
     [currentLanguage, t],
@@ -600,10 +598,8 @@ export default function BlogPost() {
 
         const payload = (await response.json()) as BlogPostApiResponse;
         setArticle(
-          mapBlogPostFromApi(
-            payload,
-            fallbackArticle,
-            (minutes) => t("blog.common.minRead", { count: minutes }),
+          mapBlogPostFromApi(payload, fallbackArticle, (minutes) =>
+            t("blog.common.minRead", { count: minutes }),
           ),
         );
         setStatus("ready");
@@ -730,7 +726,7 @@ export default function BlogPost() {
               <div className="space-y-4 lg:sticky lg:top-32 xl:top-34">
                 {tocEntries.length > 0 ? (
                   <>
-                    <p className="text-sm text-[#9CA3AF]">
+                    <p className="text-[#666666]">
                       {t("blog.post.tableOfContent")}
                     </p>
                     <div className="flex flex-col max-lg:rounded-xl max-lg:border max-lg:border-gray-300/75 max-lg:bg-gray-300/25 max-lg:p-2.5">
@@ -748,7 +744,7 @@ export default function BlogPost() {
                   </>
                 ) : null}
 
-                <div className="flex max-w-75 items-center justify-between gap-3 rounded-2xl border border-black/10 bg-[#999]/7 px-4 py-3">
+                <div className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-[#999]/7 px-4 py-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white shadow-md ring-1 shadow-black/15 ring-[#EEF2F7]">
                     <Link2 className="h-4.5 w-4.5 text-[#76B8FF]" />
                   </div>
@@ -789,24 +785,26 @@ export default function BlogPost() {
               </div>
 
               <article
-                className="space-y-10 rounded-2xl border border-white/70 bg-white/78 p-5 pt-0 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.24)]"
+                className="space-y-6 rounded-2xl border border-white/70 bg-white/78 p-5 pt-0 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.24)]"
                 aria-busy={status === "loading"}
               >
                 <div className="flex justify-between md:grid-cols-[220px_1fr_auto] md:items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="grid h-8 w-8 place-items-center rounded-full border border-[#D1D5DB] bg-white text-sm font-semibold text-[#374151]">
-                      {article.author
-                        .split(" ")
-                        .map((part) => part.charAt(0))
-                        .join("")}
+                  {article.author.trim().length > 0 ? (
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-8 w-8 place-items-center rounded-full border border-[#D1D5DB] bg-white text-sm font-semibold text-[#374151]">
+                        {article.author
+                          .split(" ")
+                          .map((part) => part.charAt(0))
+                          .join("")}
+                      </div>
+                      <div>
+                        <p className="text-lg font-medium text-[#222]">
+                          {article.author}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-lg font-medium text-[#222]">
-                        {article.author}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-[#6B7280]">
+                  ) : null}
+                  <div className="flex flex-wrap items-center gap-3 text-[#6B7280]">
                     {article.publishedAt ? (
                       <span className="inline-flex items-center gap-1.5 font-medium text-[#555]">
                         {formatDate(article.publishedAt, currentLanguage)}
@@ -824,11 +822,11 @@ export default function BlogPost() {
                 </div>
 
                 <div className="space-y-9">
-                  <section className="space-y-5">
-                    <h1 className="text-4xl leading-tight font-semibold text-[#111111] sm:text-5xl">
+                  <section className="space-y-3">
+                    <h1 className="text-3xl leading-tight font-semibold text-[#222222] md:text-4xl">
                       {article.title}
                     </h1>
-                    <p className="text-2xl leading-tight text-[#111111] sm:text-3xl">
+                    <p className="text-text-alt text-xl leading-tight md:text-2xl">
                       {article.subtitle}
                     </p>
                   </section>

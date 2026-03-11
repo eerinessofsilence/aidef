@@ -59,7 +59,6 @@ type BlogFallbackCopy = {
   untitledPost: string;
   defaultCategory: string;
   noSummary: string;
-  defaultAuthor: string;
 };
 
 const API_BASE = (() => {
@@ -171,7 +170,7 @@ function mapApiPostToBlogArticle(
   const author =
     typeof item.author === "string" && item.author.trim()
       ? item.author.trim()
-      : fallbackCopy.defaultAuthor;
+      : "";
   const publishedAt = getSafePublishedDate(item.published_at);
   const readMinutes = parseReadMinutes(item.read_minutes, item.read_time);
   const image =
@@ -207,7 +206,7 @@ function ArticleMeta({
   readMinutes,
   light = false,
 }: {
-  author: string;
+  author?: string;
   publishedAt: string;
   readMinutes?: number;
   light?: boolean;
@@ -215,6 +214,9 @@ function ArticleMeta({
   const { t, i18n } = useTranslation();
   const tone = light ? "text-white/80" : "text-[#6B7280]";
   const iconTone = light ? "text-white/70" : "text-[#9CA3AF]";
+  const hasAuthor = typeof author === "string" && author.trim().length > 0;
+  const hasPublishedAt =
+    typeof publishedAt === "string" && publishedAt.trim().length > 0;
 
   return (
     <div
@@ -223,18 +225,24 @@ function ArticleMeta({
         tone,
       )}
     >
-      <span>{author}</span>
-      <span className="hidden h-1 w-1 rounded-full bg-current/60 sm:block" />
-      <span className="inline-flex items-center gap-1.5">
-        <Calendar className={cn("h-3.5 w-3.5", iconTone)} />
-        {formatDate(
-          publishedAt,
-          i18n.resolvedLanguage || i18n.language || "en",
-        )}
-      </span>
+      {hasAuthor ? <span>{author}</span> : null}
+      {hasAuthor && hasPublishedAt ? (
+        <span className="hidden h-1 w-1 rounded-full bg-current/60 sm:block" />
+      ) : null}
+      {hasPublishedAt ? (
+        <span className="inline-flex items-center gap-1.5">
+          <Calendar className={cn("h-3.5 w-3.5", iconTone)} />
+          {formatDate(
+            publishedAt,
+            i18n.resolvedLanguage || i18n.language || "en",
+          )}
+        </span>
+      ) : null}
       {typeof readMinutes === "number" ? (
         <>
-          <span className="hidden h-1 w-1 rounded-full bg-current/60 sm:block" />
+          {hasAuthor || hasPublishedAt ? (
+            <span className="hidden h-1 w-1 rounded-full bg-current/60 sm:block" />
+          ) : null}
           <span className="inline-flex items-center gap-1.5">
             <Clock3 className={cn("h-3.5 w-3.5", iconTone)} />
             {t("blog.common.minRead", { count: readMinutes })}
@@ -367,7 +375,6 @@ export default function Blog() {
       untitledPost: t("blog.common.untitledPost"),
       defaultCategory: t("blog.common.defaultCategory"),
       noSummary: t("blog.common.noSummary"),
-      defaultAuthor: t("blog.common.defaultAuthor"),
     }),
     [t, currentLanguage],
   );

@@ -404,6 +404,27 @@ class MainApiTests(TestCase):
             ],
         )
 
+    def test_blog_post_detail_api_allows_missing_author(self):
+        category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
+        post = BlogPost.objects.create(
+            title="Anonymous post",
+            slug="anonymous-post",
+            subtitle="No author assigned.",
+            category=category,
+            author=None,
+            is_published=True,
+            published_at=date(2026, 2, 3),
+            read_minutes=4,
+        )
+
+        response = self.client.get(
+            reverse("main:blog-post-detail", args=[post.slug])
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["author"], "")
+        self.assertEqual(payload["author_role"], "")
+
     def test_blog_post_list_api_returns_published_posts_sorted(self):
         category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
         author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")
