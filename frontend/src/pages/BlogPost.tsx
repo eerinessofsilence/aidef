@@ -49,7 +49,6 @@ type BlogPostArticle = {
 type BlogPostFallbackCopy = {
   untitledPost: string;
   defaultCategory: string;
-  fallbackSubtitle: string;
 };
 
 type BlogPostApiSection = {
@@ -279,7 +278,7 @@ function createFallbackArticle(
         ? humanizeSlug(normalizedSlug)
         : fallbackCopy.untitledPost,
     heroImage: null,
-    subtitle: fallbackCopy.fallbackSubtitle,
+    subtitle: "",
     author: "",
     authorRole: "",
     publishedAt: null,
@@ -416,7 +415,7 @@ function mapBlogPostFromApi(
     subtitle:
       typeof payload.subtitle === "string" && payload.subtitle.trim()
         ? payload.subtitle
-        : fallback.subtitle,
+        : "",
     author:
       typeof payload.author === "string" && payload.author.trim()
         ? payload.author
@@ -559,7 +558,6 @@ export default function BlogPost() {
     () => ({
       untitledPost: t("blog.common.untitledPost"),
       defaultCategory: t("blog.common.defaultCategory"),
-      fallbackSubtitle: t("blog.post.fallbackSubtitle"),
     }),
     [currentLanguage, t],
   );
@@ -822,14 +820,16 @@ export default function BlogPost() {
                 </div>
 
                 <div className="space-y-9">
-                  <section className="space-y-3">
-                    <h1 className="text-3xl leading-tight font-semibold text-[#222222] md:text-4xl">
-                      {article.title}
-                    </h1>
-                    <p className="text-text-alt text-xl leading-tight md:text-2xl">
-                      {article.subtitle}
-                    </p>
-                  </section>
+                  {article.subtitle.trim().length > 0 ? (
+                    <section className="space-y-3">
+                      <h1 className="text-3xl leading-tight font-semibold text-[#222222] md:text-4xl">
+                        {article.title}
+                      </h1>
+                      <p className="text-text-alt text-xl leading-tight md:text-2xl">
+                        {article.subtitle}
+                      </p>
+                    </section>
+                  ) : null}
 
                   {renderableBlocks.map((block, index) => {
                     const hasContentBlockBelow = renderableBlocks
