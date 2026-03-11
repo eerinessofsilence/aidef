@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useParams } from "react-router-dom";
 import { Copy, Link as Link2, Quote } from "lucide-react";
@@ -33,7 +33,7 @@ type TocEntry = {
   title: string;
 };
 
-type BlogPostTemplate = {
+type BlogPostArticle = {
   slug: string;
   category: string;
   title: string;
@@ -41,9 +41,16 @@ type BlogPostTemplate = {
   subtitle: string;
   author: string;
   authorRole: string;
-  publishedAt: string;
-  readTime: string;
+  publishedAt: string | null;
+  readTime: string | null;
   blocks: ArticleBlock[];
+};
+
+type BlogPostFallbackCopy = {
+  untitledPost: string;
+  defaultCategory: string;
+  defaultAuthor: string;
+  fallbackSubtitle: string;
 };
 
 type BlogPostApiSection = {
@@ -94,8 +101,6 @@ const API_BASE = (() => {
   return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
 })();
 
-const TEMPLATE_POST_SLUG = "how-to-write-strong-work-experience";
-const TEMPLATE_POST_PUBLISHED_AT = "2026-01-27";
 const RICH_TEXT_QUOTE_ICON = renderToStaticMarkup(
   <Quote
     aria-hidden="true"
@@ -214,22 +219,9 @@ function decorateRichTextHtml(html: string) {
 
 function convertLegacySectionsToBlocks(
   sections: ArticleSection[],
-  quotePrefixes: string[],
 ): ArticleBlock[] {
-  const [weakExamplePrefix, strongerExamplePrefix] = quotePrefixes;
-
   return sections.flatMap((section, index) => {
     const paragraphs = section.paragraphs ?? [];
-    const quoteParagraphs = paragraphs.filter(
-      (paragraph) =>
-        paragraph.startsWith(weakExamplePrefix) ||
-        paragraph.startsWith(strongerExamplePrefix),
-    );
-    const regularParagraphs = paragraphs.filter(
-      (paragraph) =>
-        !paragraph.startsWith(weakExamplePrefix) &&
-        !paragraph.startsWith(strongerExamplePrefix),
-    );
     const blocks: ArticleBlock[] = [];
 
     if ((section.bullets ?? []).length > 0) {
@@ -238,37 +230,23 @@ function convertLegacySectionsToBlocks(
         type: "bullets",
         title: section.title,
         html: "",
-        paragraphs: regularParagraphs,
+        paragraphs,
         items: section.bullets,
         image: null,
         imageAlt: "",
         order: index * 10,
       });
-    } else if (regularParagraphs.length > 0) {
+    } else if (paragraphs.length > 0 || section.title.trim().length > 0) {
       blocks.push({
         id: section.id,
         type: "text",
         title: section.title,
         html: "",
-        paragraphs: regularParagraphs,
+        paragraphs,
         items: undefined,
         image: null,
         imageAlt: "",
         order: index * 10,
-      });
-    }
-
-    if (quoteParagraphs.length > 0) {
-      blocks.push({
-        id: `${section.id}-quote`,
-        type: "quote",
-        title: "",
-        html: "",
-        paragraphs: quoteParagraphs,
-        items: undefined,
-        image: null,
-        imageAlt: "",
-        order: index * 10 + 5,
       });
     }
 
@@ -287,86 +265,35 @@ function buildTocEntries(blocks: ArticleBlock[]): TocEntry[] {
     }));
 }
 
-type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
-
-function createTemplatePost(t: TranslateFn): BlogPostTemplate {
-  const sections: ArticleSection[] = [
-    {
-      id: "why-work-experience-matters",
-      title: t("blog.static.post.sections.why.title"),
-      paragraphs: [
-        t("blog.static.post.sections.why.paragraph1"),
-        t("blog.static.post.sections.why.paragraph2"),
-      ],
-    },
-    {
-      id: "tips-to-strengthen",
-      title: t("blog.static.post.sections.strengthen.title"),
-      bullets: [
-        t("blog.static.post.sections.strengthen.bullet1"),
-        t("blog.static.post.sections.strengthen.bullet2"),
-        t("blog.static.post.sections.strengthen.bullet3"),
-        t("blog.static.post.sections.strengthen.bullet4"),
-        t("blog.static.post.sections.strengthen.bullet5"),
-      ],
-      paragraphs: [t("blog.static.post.sections.strengthen.paragraph1")],
-    },
-    {
-      id: "example-rewrite",
-      title: t("blog.static.post.sections.rewrite.title"),
-      paragraphs: [
-        t("blog.static.post.sections.rewrite.paragraph1"),
-        t("blog.static.post.sections.rewrite.paragraph2"),
-        t("blog.static.post.sections.rewrite.paragraph3"),
-      ],
-    },
-    {
-      id: "final-takeaway",
-      title: t("blog.static.post.sections.takeaway.title"),
-      paragraphs: [
-        t("blog.static.post.sections.takeaway.paragraph1"),
-        t("blog.static.post.sections.takeaway.paragraph2"),
-      ],
-    },
-  ];
-
-  return {
-    slug: TEMPLATE_POST_SLUG,
-    category: t("blog.static.post.category"),
-    title: t("blog.static.post.title"),
-    heroImage: null,
-    subtitle: t("blog.static.post.subtitle"),
-    author: t("blog.static.post.author"),
-    authorRole: t("blog.static.post.authorRole"),
-    publishedAt: TEMPLATE_POST_PUBLISHED_AT,
-    readTime: t("blog.common.minRead", { count: 3 }),
-    blocks: convertLegacySectionsToBlocks(sections, [
-      t("blog.static.post.prefix.weak"),
-      t("blog.static.post.prefix.stronger"),
-    ]),
-  };
-}
-
-function getPostBySlug(
+function createFallbackArticle(
   slug: string | undefined,
-  t: TranslateFn,
-): BlogPostTemplate {
-  const templatePost = createTemplatePost(t);
-  if (!slug || slug === templatePost.slug) return templatePost;
+  fallbackCopy: BlogPostFallbackCopy,
+): BlogPostArticle {
+  const normalizedSlug =
+    typeof slug === "string" && slug.trim() ? slug.trim() : "post";
+
   return {
-    ...templatePost,
-    slug,
-    title: humanizeSlug(slug),
-    subtitle: t("blog.post.fallbackSubtitle"),
+    slug: normalizedSlug,
+    category: fallbackCopy.defaultCategory,
+    title:
+      typeof slug === "string" && slug.trim()
+        ? humanizeSlug(normalizedSlug)
+        : fallbackCopy.untitledPost,
+    heroImage: null,
+    subtitle: fallbackCopy.fallbackSubtitle,
+    author: fallbackCopy.defaultAuthor,
+    authorRole: "",
+    publishedAt: null,
+    readTime: null,
+    blocks: [],
   };
 }
 
 function mapBlogPostFromApi(
   payload: BlogPostApiResponse,
-  fallback: BlogPostTemplate,
+  fallback: BlogPostArticle,
   formatReadTime: (minutes: number) => string,
-  quotePrefixes: string[],
-): BlogPostTemplate {
+): BlogPostArticle {
   const rawBlocks = Array.isArray(payload.blocks)
     ? [...payload.blocks].sort((left, right) => {
         const leftOrder =
@@ -447,7 +374,7 @@ function mapBlogPostFromApi(
     mappedBlocks.length > 0
       ? mappedBlocks
       : legacySections.length > 0
-        ? convertLegacySectionsToBlocks(legacySections, quotePrefixes)
+        ? convertLegacySectionsToBlocks(legacySections)
         : fallback.blocks;
 
   const publishedAt =
@@ -629,22 +556,30 @@ export default function BlogPost() {
   const { t } = useTranslation();
   const { lng, post } = useParams();
   const currentLanguage = resolveLanguage(lng);
-  const [article, setArticle] = useState<BlogPostTemplate>(() =>
-    getPostBySlug(post, t),
+  const fallbackCopy = useMemo<BlogPostFallbackCopy>(
+    () => ({
+      untitledPost: t("blog.common.untitledPost"),
+      defaultCategory: t("blog.common.defaultCategory"),
+      defaultAuthor: t("blog.common.defaultAuthor"),
+      fallbackSubtitle: t("blog.post.fallbackSubtitle"),
+    }),
+    [currentLanguage, t],
   );
-  const [activeSectionId, setActiveSectionId] = useState(
-    buildTocEntries(getPostBySlug(post, t).blocks)[0]?.id ?? "",
+  const [article, setArticle] = useState<BlogPostArticle>(() =>
+    createFallbackArticle(post, fallbackCopy),
   );
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
+    "idle",
+  );
+  const [activeSectionId, setActiveSectionId] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">(
     "idle",
   );
 
-  const weakExamplePrefix = t("blog.static.post.prefix.weak");
-  const strongerExamplePrefix = t("blog.static.post.prefix.stronger");
-
   useEffect(() => {
-    const fallbackArticle = getPostBySlug(post, t);
+    const fallbackArticle = createFallbackArticle(post, fallbackCopy);
     setArticle(fallbackArticle);
+    setStatus(post ? "loading" : "error");
 
     if (!post) return;
 
@@ -669,22 +604,23 @@ export default function BlogPost() {
             payload,
             fallbackArticle,
             (minutes) => t("blog.common.minRead", { count: minutes }),
-            [weakExamplePrefix, strongerExamplePrefix],
           ),
         );
+        setStatus("ready");
       } catch (error) {
         if ((error as Error).name === "AbortError") {
           return;
         }
         console.error("Failed to load blog post detail", error);
         setArticle(fallbackArticle);
+        setStatus("error");
       }
     };
 
     void loadArticle();
 
     return () => controller.abort();
-  }, [currentLanguage, post, strongerExamplePrefix, t, weakExamplePrefix]);
+  }, [currentLanguage, fallbackCopy, post, t]);
 
   const articlePath = buildLocalizedPath(
     currentLanguage,
@@ -748,7 +684,7 @@ export default function BlogPost() {
       observer.disconnect();
       window.removeEventListener("hashchange", handleHashChange);
     };
-  }, [article.blocks]);
+  }, [tocEntries]);
 
   const handleCopyArticleUrl = async () => {
     try {
@@ -792,21 +728,25 @@ export default function BlogPost() {
 
             <div className="grid gap-6 lg:grid-cols-[240px_1fr] lg:items-start">
               <div className="space-y-4 lg:sticky lg:top-32 xl:top-34">
-                <p className="text-sm text-[#9CA3AF]">
-                  {t("blog.post.tableOfContent")}
-                </p>
-                <div className="flex flex-col max-lg:rounded-xl max-lg:border max-lg:border-gray-300/75 max-lg:bg-gray-300/25 max-lg:p-2.5">
-                  {tocEntries.map((section, index) => (
-                    <TocLink
-                      key={section.id}
-                      id={section.id}
-                      title={section.title}
-                      index={index}
-                      active={activeSectionId === section.id}
-                      onActivate={setActiveSectionId}
-                    />
-                  ))}
-                </div>
+                {tocEntries.length > 0 ? (
+                  <>
+                    <p className="text-sm text-[#9CA3AF]">
+                      {t("blog.post.tableOfContent")}
+                    </p>
+                    <div className="flex flex-col max-lg:rounded-xl max-lg:border max-lg:border-gray-300/75 max-lg:bg-gray-300/25 max-lg:p-2.5">
+                      {tocEntries.map((section, index) => (
+                        <TocLink
+                          key={section.id}
+                          id={section.id}
+                          title={section.title}
+                          index={index}
+                          active={activeSectionId === section.id}
+                          onActivate={setActiveSectionId}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : null}
 
                 <div className="flex max-w-75 items-center justify-between gap-3 rounded-2xl border border-black/10 bg-[#999]/7 px-4 py-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white shadow-md ring-1 shadow-black/15 ring-[#EEF2F7]">
@@ -848,7 +788,10 @@ export default function BlogPost() {
                 </div>
               </div>
 
-              <article className="space-y-10 rounded-2xl border border-white/70 bg-white/78 p-5 pt-0 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.24)]">
+              <article
+                className="space-y-10 rounded-2xl border border-white/70 bg-white/78 p-5 pt-0 shadow-[0_20px_40px_-30px_rgba(0,0,0,0.24)]"
+                aria-busy={status === "loading"}
+              >
                 <div className="flex justify-between md:grid-cols-[220px_1fr_auto] md:items-center">
                   <div className="flex items-center gap-3">
                     <div className="grid h-8 w-8 place-items-center rounded-full border border-[#D1D5DB] bg-white text-sm font-semibold text-[#374151]">
@@ -864,13 +807,19 @@ export default function BlogPost() {
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-[#6B7280]">
-                    <span className="inline-flex items-center gap-1.5 font-medium text-[#555]">
-                      {formatDate(article.publishedAt, currentLanguage)}
-                    </span>
-                    <span className="hidden h-1 w-1 rounded-full bg-[#666]/75 md:block" />
-                    <span className="inline-flex items-center gap-1.5 text-[#666]/75">
-                      {article.readTime}
-                    </span>
+                    {article.publishedAt ? (
+                      <span className="inline-flex items-center gap-1.5 font-medium text-[#555]">
+                        {formatDate(article.publishedAt, currentLanguage)}
+                      </span>
+                    ) : null}
+                    {article.publishedAt && article.readTime ? (
+                      <span className="hidden h-1 w-1 rounded-full bg-[#666]/75 md:block" />
+                    ) : null}
+                    {article.readTime ? (
+                      <span className="inline-flex items-center gap-1.5 text-[#666]/75">
+                        {article.readTime}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
 
