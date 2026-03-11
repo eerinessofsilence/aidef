@@ -63,7 +63,8 @@ class PortalAdminSmokeTests(TestCase):
         )
         response = self.client.get(f"{change_url}?lang=fr")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Jump to:")
+        self.assertContains(response, 'class="submit-row__language-select"', html=False)
+        self.assertNotContains(response, "Jump To Language")
 
         response = self.client.post(
             f"{change_url}?lang=fr",
@@ -76,6 +77,16 @@ class PortalAdminSmokeTests(TestCase):
             lang="fr",
         )
         self.assertEqual(translation.alt, "Texte alternatif")
+
+    def test_portal_product_change_form_renders_language_switcher(self):
+        change_url = reverse(
+            "admin:portal_portalproduct_change",
+            args=[self.product.pk],
+        )
+        response = self.client.get(f"{change_url}?lang=it")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="submit-row__language-select"', html=False)
+        self.assertContains(response, '<option value="?lang=it" selected>IT</option>', html=True)
 
     def test_mark_as_preview_action_sets_single_preview_per_product(self):
         changelist_url = reverse("admin:portal_productimage_changelist")

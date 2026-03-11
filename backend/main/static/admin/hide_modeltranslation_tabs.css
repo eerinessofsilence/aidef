@@ -4,7 +4,7 @@
 
 /* Keep the change-form action row visible at the bottom while scrolling. */
 body.change-form #content {
-  padding-bottom: 92px;
+  padding-bottom: 132px;
 }
 
 body.change-form .submit-row {
@@ -25,6 +25,10 @@ body.change-form #main.shifted .submit-row {
 }
 
 @media (max-width: 767px) {
+  body.change-form #content {
+    padding-bottom: 188px;
+  }
+
   body.change-form .submit-row {
     left: 0;
     padding: 10px 12px;

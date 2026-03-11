@@ -485,10 +485,10 @@ class ProductImageAdmin(ProductImageLanguageTabsMixin, admin.ModelAdmin):
     list_per_page = ADMIN_LIST_PER_PAGE
     actions = ("mark_as_preview", "clear_preview", "renumber_order")
     form = ProductImageAdminForm
-    # Custom template injects an explicit language switcher.
+    # Custom template keeps coverage hints; language switcher comes from shared submit row.
     change_form_template = "admin/productimage_change_form.html"
-    readonly_fields = ("image_preview", "translation_coverage", "alt_links")
-    fields = ("image_preview", "translation_coverage", "alt_links", "alt_text")
+    readonly_fields = ("image_preview", "translation_coverage")
+    fields = ("image_preview", "translation_coverage", "alt_text")
 
     def has_add_permission(self, request):
         # Images are created in the Product inline to avoid technical fields here.

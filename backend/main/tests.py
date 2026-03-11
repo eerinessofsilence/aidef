@@ -91,7 +91,8 @@ class MainAdminSmokeTests(TestCase):
         )
         response = self.client.get(f"{change_url}?lang=de")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Jump to:")
+        self.assertContains(response, 'class="submit-row__language-select"', html=False)
+        self.assertNotContains(response, "Jump To Language")
 
         response = self.client.post(
             f"{change_url}?lang=de",
@@ -104,6 +105,16 @@ class MainAdminSmokeTests(TestCase):
             lang="de",
         )
         self.assertEqual(translation.alt, "Deutsch Alt Text")
+
+    def test_category_change_form_renders_language_switcher(self):
+        change_url = reverse(
+            "admin:main_category_change",
+            args=[self.category.pk],
+        )
+        response = self.client.get(f"{change_url}?lang=sk")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="submit-row__language-select"', html=False)
+        self.assertContains(response, '<option value="?lang=sk" selected>SK</option>', html=True)
 
     def test_contact_request_assign_to_me_action_sets_assignee(self):
         changelist_url = reverse("admin:main_contactrequest_changelist")

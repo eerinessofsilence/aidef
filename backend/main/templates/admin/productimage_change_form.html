@@ -3,56 +3,52 @@
 {% block extrahead %}
   {{ block.super }}
   <style>
-    .lang-switcher {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      margin: 8px 0 12px;
+    body.change-form #content {
+      padding-bottom: 132px;
     }
-    .lang-switcher__label {
-      font-weight: 600;
+    body.change-form .submit-row {
+      position: fixed;
+      left: 23px;
+      right: 0;
+      bottom: 0;
+      margin: 0;
+      padding: 12px 24px;
+      border-top: 1px solid #d6d6d6;
+      background: #222;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+      z-index: 1000;
+    }
+    body.change-form #main.shifted .submit-row {
+      left: 299px;
     }
     .lang-switcher__summary {
       margin: 4px 0 8px;
-    }
-    .lang-switcher__tab--missing {
-      border-color: #ba2121 !important;
-      color: #ba2121 !important;
-      background: #fff4f4 !important;
-    }
-    .lang-switcher__tab--missing.default {
-      color: #fff !important;
-      background: #ba2121 !important;
     }
     .lang-switcher__missing-list {
       margin: 4px 0 12px;
       color: #ba2121;
       font-weight: 600;
     }
+    @media (max-width: 767px) {
+      body.change-form #content {
+        padding-bottom: 188px;
+      }
+      body.change-form .submit-row {
+        left: 0;
+        padding: 10px 12px;
+      }
+    }
   </style>
 {% endblock %}
 
 {% block content %}
-  {% if language_tabs %}
-    {% if coverage_summary %}
-      <p class="help lang-switcher__summary">{{ coverage_summary }}</p>
-    {% endif %}
-    {% if missing_language_labels %}
-      <p class="help lang-switcher__missing-list">
-        Missing alt text: {{ missing_language_labels|join:", " }}
-      </p>
-    {% endif %}
-    <div class="lang-switcher">
-      <span class="lang-switcher__label">Alt text language:</span>
-      {% for tab in language_tabs %}
-        <a
-          href="{{ tab.url }}"
-          class="button{% if tab.active %} default{% endif %}{% if not tab.has_alt %} lang-switcher__tab--missing{% endif %}"
-          aria-current="{% if tab.active %}true{% else %}false{% endif %}"
-        >{{ tab.label }}</a>
-      {% endfor %}
-    </div>
+  {% if coverage_summary %}
+    <p class="help lang-switcher__summary">{{ coverage_summary }}</p>
+  {% endif %}
+  {% if missing_language_labels %}
+    <p class="help lang-switcher__missing-list">
+      Missing alt text: {{ missing_language_labels|join:", " }}
+    </p>
   {% endif %}
   {{ block.super }}
 {% endblock %}

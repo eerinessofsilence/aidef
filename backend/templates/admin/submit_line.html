@@ -9,6 +9,16 @@
     {% url opts|admin_urlname:'changelist' as changelist_url %}
     <a href="{% add_preserved_filters changelist_url %}" class="closelink">{% translate 'Close' %}</a>
 {% endif %}
+{% if render_language_switcher_in_submit_row and language_tabs %}
+<div class="submit-row__language-control">
+    <span class="submit-row__language-label">{% translate 'Language' %}</span>
+    <select class="submit-row__language-select" aria-label="{% translate 'Language' %}" onchange="if (this.value) { window.location.href = this.value; }">
+    {% for tab in language_tabs %}
+        <option value="{{ tab.url }}"{% if tab.active %} selected{% endif %}>{{ tab.code|upper }}</option>
+    {% endfor %}
+    </select>
+</div>
+{% endif %}
 {% if show_delete_link and original %}
     {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
     <a href="{% add_preserved_filters delete_url %}" class="deletelink">Delete this page</a>
