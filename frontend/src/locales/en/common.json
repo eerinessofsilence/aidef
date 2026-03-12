@@ -986,5 +986,20 @@
         }
       }
     }
+  },
+  "notFound": {
+    "eyebrow": "You look a little lost...",
+    "title": "Ooops! Page not found",
+    "description": "The page you're trying to reach may have drifted out of orbit, been moved, or never existed in the first place.",
+    "cards": {
+      "home": {
+        "title": "Home Page",
+        "subtitle": "There's no place like home..."
+      },
+      "blog": {
+        "title": "Blog",
+        "subtitle": "Where we talk the talk"
+      }
+    }
   }
 }

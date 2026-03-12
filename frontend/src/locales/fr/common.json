@@ -986,5 +986,20 @@
         }
       }
     }
+  },
+  "notFound": {
+    "eyebrow": "Tu as l'air un peu perdu...",
+    "title": "Ooops ! Page introuvable",
+    "description": "La page que vous cherchez est introuvable. Elle a peut-etre ete deplacee, renommee ou n'a jamais existe.",
+    "cards": {
+      "home": {
+        "title": "Accueil",
+        "subtitle": "Rien ne vaut la maison..."
+      },
+      "blog": {
+        "title": "Blog",
+        "subtitle": "La ou nous parlons franchement"
+      }
+    }
   }
 }

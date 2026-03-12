@@ -986,5 +986,20 @@
         }
       }
     }
+  },
+  "notFound": {
+    "eyebrow": "Parece que andas un poco perdido...",
+    "title": "Ooops! Pagina no encontrada",
+    "description": "La pagina que buscas no se pudo encontrar. Puede que se haya movido, renombrado o que nunca haya existido.",
+    "cards": {
+      "home": {
+        "title": "Inicio",
+        "subtitle": "No hay lugar como casa..."
+      },
+      "blog": {
+        "title": "Blog",
+        "subtitle": "Donde hablamos claro"
+      }
+    }
   }
 }

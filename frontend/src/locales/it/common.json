@@ -986,5 +986,20 @@
         }
       }
     }
+  },
+  "notFound": {
+    "eyebrow": "Sembri un po' smarrito...",
+    "title": "Ooops! Pagina non trovata",
+    "description": "La pagina che stai cercando non puo essere trovata. Potrebbe essere stata spostata, rinominata o non essere mai esistita.",
+    "cards": {
+      "home": {
+        "title": "Home Page",
+        "subtitle": "Non c'e posto migliore di casa..."
+      },
+      "blog": {
+        "title": "Blog",
+        "subtitle": "Dove le parole contano"
+      }
+    }
   }
 }

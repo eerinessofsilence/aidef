@@ -986,5 +986,20 @@
         }
       }
     }
+  },
+  "notFound": {
+    "eyebrow": "Du wirkst ein wenig verloren...",
+    "title": "Ooops! Seite nicht gefunden",
+    "description": "Die gesuchte Seite konnte nicht gefunden werden. Vielleicht wurde sie verschoben, umbenannt oder hat nie existiert.",
+    "cards": {
+      "home": {
+        "title": "Startseite",
+        "subtitle": "Zu Hause ist es immer am besten..."
+      },
+      "blog": {
+        "title": "Blog",
+        "subtitle": "Wo wir Klartext reden"
+      }
+    }
   }
 }

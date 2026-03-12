@@ -985,5 +985,20 @@
         }
       }
     }
+  },
+  "notFound": {
+    "eyebrow": "Vyzeras trosku stratene...",
+    "title": "Ooops! Stranka sa nenasla",
+    "description": "Stranku, ktoru hladate, sa nepodarilo najst. Mozno bola presunuta, premenovana alebo nikdy neexistovala.",
+    "cards": {
+      "home": {
+        "title": "Domov",
+        "subtitle": "Nikde nie je tak dobre ako doma..."
+      },
+      "blog": {
+        "title": "Blog",
+        "subtitle": "Kde hovorime otvorene"
+      }
+    }
   }
 }

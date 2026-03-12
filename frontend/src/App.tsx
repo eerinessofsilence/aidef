@@ -23,6 +23,7 @@ import Auth from "./pages/Auth";
 import ClientPortal from "./pages/ClientPortal";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import NotFound from "./pages/NotFound";
 import i18n, {
   DEFAULT_LANGUAGE,
   isSupportedLanguage,
@@ -48,14 +49,14 @@ function LanguageLayout() {
   }, [activeLanguage]);
 
   if (!isValidLanguage) {
-    const targetPath = replaceLanguageInPath(
-      location.pathname,
-      DEFAULT_LANGUAGE,
-    );
+    const segments = location.pathname.split("/").filter(Boolean);
+    const targetPath = replaceLanguageInPath(location.pathname, DEFAULT_LANGUAGE);
+    const fallbackPath =
+      segments.length > 1 ? targetPath : `/${DEFAULT_LANGUAGE}/404`;
     return (
       <Navigate
         to={{
-          pathname: targetPath,
+          pathname: fallbackPath,
           search: location.search,
           hash: location.hash,
         }}
@@ -112,6 +113,7 @@ export default function App() {
         <Route path="support" element={<Support />} />
         <Route path="auth" element={<Auth />} />
         <Route path="client-portal" element={<ClientPortal />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
