@@ -116,6 +116,22 @@ class MainAdminSmokeTests(TestCase):
         self.assertContains(response, 'class="submit-row__language-select"', html=False)
         self.assertContains(response, '<option value="?lang=sk" selected>SK</option>', html=True)
 
+    def test_admin_language_switcher_does_not_change_admin_locale(self):
+        change_url = reverse(
+            "admin:main_category_change",
+            args=[self.category.pk],
+        )
+        response = self.client.get(f"{change_url}?lang=de")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.wsgi_request.LANGUAGE_CODE, "en")
+        self.assertContains(
+            response,
+            'value="Save and continue editing"',
+            html=False,
+        )
+        self.assertContains(response, 'aria-label="Language"', html=False)
+
     def test_contact_request_assign_to_me_action_sets_assignee(self):
         changelist_url = reverse("admin:main_contactrequest_changelist")
         response = self.client.post(
