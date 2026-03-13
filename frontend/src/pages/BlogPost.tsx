@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useParams } from "react-router-dom";
-import { Copy, Link as Link2, Quote } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Link as Link2,
+  Quote,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { buildLocalizedPath, resolveLanguage } from "../i18n";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
@@ -33,11 +39,18 @@ type TocEntry = {
   title: string;
 };
 
+type HeroMediaSlide = {
+  key: string;
+  image: string;
+  imageAlt: string;
+};
+
 type BlogPostArticle = {
   slug: string;
   category: string;
   title: string;
   heroImage: string | null;
+  heroImages: HeroMediaSlide[];
   subtitle: string;
   author: string;
   authorRole: string;
@@ -72,6 +85,13 @@ type BlogPostApiBlock = {
   order?: number;
 };
 
+type BlogPostApiHeroImage = {
+  id?: number;
+  image?: string | null;
+  alt?: string;
+  order?: number;
+};
+
 type BlogPostApiResponse = {
   slug?: string;
   category?: string | null;
@@ -87,6 +107,7 @@ type BlogPostApiResponse = {
   published_at?: string | null;
   read_minutes?: number;
   read_time?: string;
+  hero_images?: BlogPostApiHeroImage[];
   blocks?: BlogPostApiBlock[];
   sections?: BlogPostApiSection[];
 };
@@ -263,6 +284,41 @@ function buildTocEntries(blocks: ArticleBlock[]): TocEntry[] {
     }));
 }
 
+function buildHeroMediaSlides(article: BlogPostArticle): HeroMediaSlide[] {
+  const slides: HeroMediaSlide[] = [];
+  const seenImages = new Set<string>();
+
+  const pushSlide = (
+    image: string | null | undefined,
+    imageAlt: string,
+    key: string,
+  ) => {
+    if (typeof image !== "string") return;
+
+    const normalizedImage = image.trim();
+    if (!normalizedImage || seenImages.has(normalizedImage)) return;
+
+    seenImages.add(normalizedImage);
+    slides.push({
+      key,
+      image: normalizedImage,
+      imageAlt: imageAlt.trim() || article.title,
+    });
+  };
+
+  pushSlide(article.heroImage, article.title, "hero");
+
+  article.heroImages.forEach((slide, index) => {
+    pushSlide(
+      slide.image,
+      slide.imageAlt || article.title,
+      slide.key || `hero-image-${index}`,
+    );
+  });
+
+  return slides;
+}
+
 function createFallbackArticle(
   slug: string | undefined,
   fallbackCopy: BlogPostFallbackCopy,
@@ -278,6 +334,7 @@ function createFallbackArticle(
         ? humanizeSlug(normalizedSlug)
         : fallbackCopy.untitledPost,
     heroImage: null,
+    heroImages: [],
     subtitle: "",
     author: "",
     authorRole: "",
@@ -397,6 +454,29 @@ function mapBlogPostFromApi(
       (value): value is string =>
         typeof value === "string" && value.trim().length > 0,
     ) ?? fallback.heroImage;
+  const heroImages = Array.isArray(payload.hero_images)
+    ? payload.hero_images.flatMap((item, index) => {
+        const image =
+          typeof item.image === "string" && item.image.trim()
+            ? item.image.trim()
+            : "";
+        if (!image) return [];
+
+        return [
+          {
+            key:
+              typeof item.id === "number" && Number.isFinite(item.id)
+                ? `hero-image-${item.id}`
+                : `hero-image-${index + 1}`,
+            image,
+            imageAlt:
+              typeof item.alt === "string" && item.alt.trim()
+                ? item.alt.trim()
+                : "",
+          },
+        ];
+      })
+    : fallback.heroImages;
 
   return {
     slug:
@@ -412,6 +492,7 @@ function mapBlogPostFromApi(
         ? payload.title
         : fallback.title,
     heroImage,
+    heroImages,
     subtitle:
       typeof payload.subtitle === "string" && payload.subtitle.trim()
         ? payload.subtitle
@@ -434,45 +515,100 @@ function BrowserHeroIllustration({
   slug,
   category,
   title,
-  heroImage,
+  heroSlides,
 }: {
   slug: string;
   category: string;
   title: string;
-  heroImage: string | null;
+  heroSlides: HeroMediaSlide[];
 }) {
-  const hasHeroImage =
-    typeof heroImage === "string" && heroImage.trim().length > 0;
+  const [activeSlide, setActiveSlide] = useState(0);
   const seededGradient = getSeededHeroGradient(`${slug}:${category}:${title}`);
+  const hasHeroSlides = heroSlides.length > 0;
+  const hasMultipleHeroSlides = heroSlides.length > 1;
+  const heroSlideSignature = heroSlides.map((slide) => slide.image).join("|");
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    setActiveSlide(0);
+  }, [slug, heroSlideSignature]);
+
+  const showPreviousSlide = () => {
+    if (!hasMultipleHeroSlides) return;
+    setActiveSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
+  };
+
+  const showNextSlide = () => {
+    if (!hasMultipleHeroSlides) return;
+    setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+  };
 
   return (
     <div
       className="relative h-80 w-full overflow-hidden rounded-[22px] border border-white/35 bg-[#cfe0f1] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] md:h-100 lg:h-120"
-      style={hasHeroImage ? undefined : { backgroundImage: seededGradient }}
+      style={hasHeroSlides ? undefined : { backgroundImage: seededGradient }}
     >
-      {hasHeroImage ? (
-        <>
-          <img
-            src={heroImage}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/18" />
-        </>
+      {hasHeroSlides ? (
+        heroSlides.map((slide, index) => (
+          <div
+            key={slide.key}
+            className={cn(
+              "absolute inset-0 transition-opacity duration-500",
+              index === activeSlide ? "opacity-100" : "opacity-0",
+            )}
+            aria-hidden={index !== activeSlide}
+          >
+            <img
+              src={slide.image}
+              alt={slide.imageAlt}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(5,10,20,0.82)_0%,rgba(5,10,20,0.5)_30%,rgba(5,10,20,0.22)_58%,rgba(5,10,20,0.12)_100%)]" />
+          </div>
+        ))
       ) : (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_24%,rgba(255,255,255,0.65),transparent_44%),radial-gradient(circle_at_72%_70%,rgba(255,255,255,0.35),transparent_48%)]" />
       )}
+
+      {hasMultipleHeroSlides ? (
+        <div className="pointer-events-none absolute inset-x-4 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between max-md:inset-x-3">
+          <button
+            type="button"
+            onClick={showPreviousSlide}
+            className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+            aria-label={t("blog.post.hero.previousSlideAria")}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={showNextSlide}
+            className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+            aria-label={t("blog.post.hero.nextSlideAria")}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+      ) : null}
+
       <div className="relative z-10 flex h-full flex-col justify-between">
         <div>
           <span className="inline-flex rounded-full border border-black/25 bg-white/50 px-3 py-1 text-sm font-medium text-[#222222] shadow-inner shadow-black/25 backdrop-blur">
             {category}
           </span>
         </div>
-        <div className="max-w-[60%] space-y-3 pb-2 max-md:max-w-[80%]">
-          <h1 className="text-2xl leading-tight font-semibold text-white drop-shadow-[0_1px_0_rgba(0,0,0,0.08)] sm:text-3xl">
-            {title}
-          </h1>
+        <div className="flex items-end justify-between gap-4 max-md:flex-col max-md:items-start">
+          <div className="max-w-[70%] max-md:max-w-full">
+            <h1 className="text-3xl leading-tight font-semibold text-white drop-shadow-[0_1px_0_rgba(0,0,0,0.08)] md:text-4xl">
+              {title}
+            </h1>
+          </div>
+          {hasMultipleHeroSlides ? (
+            <div className="rounded-full border border-white/15 bg-black/25 px-3 py-1 text-xs font-medium tracking-[0.18em] text-white/80 backdrop-blur-md">
+              {String(activeSlide + 1).padStart(2, "0")} /{" "}
+              {String(heroSlides.length).padStart(2, "0")}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -507,10 +643,10 @@ function RichTextContent({
   return (
     <div
       className={cn(
-        "[&_a]:underline [&_blockquote]:relative [&_blockquote]:mt-3 [&_blockquote]:rounded-2xl [&_blockquote]:bg-[#d9d9d9] [&_blockquote]:px-6 [&_blockquote]:py-5 [&_blockquote]:pl-16 [&_blockquote]:text-xl [&_blockquote]:leading-8 [&_blockquote]:text-[#111111] [&_blockquote]:shadow-[inset_0_2px_10px_rgba(0,0,0,0.25)] [&_blockquote]:sm:text-2xl [&_blockquote_p+p]:mt-3 [&_em]:italic [&_h2]:text-2xl [&_h2]:font-medium [&_h2]:text-[#111111] [&_h2]:sm:text-3xl [&_h3]:text-xl [&_h3]:font-medium [&_h3]:text-[#111111] [&_h3]:sm:text-2xl [&_hr]:my-10 [&_hr]:h-px [&_hr]:border-0 [&_hr]:bg-black/12 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_li]:list-disc [&_li]:marker:text-[#111111] [&_ol]:space-y-3 [&_ol]:pl-8 [&_ol]:text-lg [&_ol]:leading-8 [&_ol]:text-[#2f2f2f] [&_ol]:sm:text-xl [&_p+p]:mt-4 [&_strong]:font-semibold [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-black/10 [&_td]:p-2 [&_th]:border [&_th]:border-black/10 [&_th]:p-2 [&_th]:text-left [&_ul]:space-y-3 [&_ul]:pl-8 [&_ul]:text-lg [&_ul]:leading-8 [&_ul]:text-[#2f2f2f] [&_ul]:sm:text-xl",
+        "[&_a]:underline [&_blockquote]:relative [&_blockquote]:mt-3 [&_blockquote]:rounded-2xl [&_blockquote]:bg-[#d9d9d9] [&_blockquote]:px-6 [&_blockquote]:py-5 [&_blockquote]:pl-16 [&_blockquote]:text-xl [&_blockquote]:leading-8 [&_blockquote]:text-[#111111] [&_blockquote]:shadow-[inset_0_2px_10px_rgba(0,0,0,0.25)] [&_blockquote]:sm:text-2xl [&_blockquote_p+p]:mt-3 [&_em]:italic [&_h1]:text-5xl [&_h1]:leading-none [&_h1]:font-semibold [&_h1]:text-[#111111] [&_h2]:text-4xl [&_h2]:leading-tight [&_h2]:font-semibold [&_h2]:text-[#111111] [&_h3]:text-3xl [&_h3]:leading-tight [&_h3]:font-semibold [&_h3]:text-[#111111] [&_h4]:text-2xl [&_h4]:leading-tight [&_h4]:font-semibold [&_h4]:text-[#111111] [&_h5]:text-xl [&_h5]:leading-snug [&_h5]:font-semibold [&_h5]:text-[#111111] [&_h6]:text-lg [&_h6]:leading-snug [&_h6]:font-semibold [&_h6]:text-[#111111] [&_hr]:my-10 [&_hr]:h-px [&_hr]:border-0 [&_hr]:bg-black/12 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_li]:list-disc [&_li]:marker:text-[#111111] [&_ol]:space-y-3 [&_ol]:pl-8 [&_ol]:text-lg [&_ol]:leading-8 [&_ol]:text-[#2f2f2f] [&_ol]:sm:text-xl [&_p+p]:mt-4 [&_strong]:font-semibold [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-black/10 [&_td]:p-2 [&_th]:border [&_th]:border-black/10 [&_th]:p-2 [&_th]:text-left [&_ul]:space-y-3 [&_ul]:pl-8 [&_ul]:text-lg [&_ul]:leading-8 [&_ul]:text-[#2f2f2f] [&_ul]:sm:text-xl",
         variant === "quote"
           ? "[&_p]:text-xl [&_p]:leading-8 [&_p]:text-[#111111] [&_p]:sm:text-2xl"
-          : "[&_p]:text-lg [&_p]:leading-8 [&_p]:text-[#2f2f2f] [&_p]:sm:text-xl",
+          : "[&_p]:text-[16px] [&_p]:leading-6 [&_p]:text-[#2f2f2f]",
       )}
       dangerouslySetInnerHTML={{ __html: decoratedHtml }}
     />
@@ -625,6 +761,7 @@ export default function BlogPost() {
       ? `${window.location.origin}${articlePath}`
       : `https://www.aidef.com${articlePath}`;
   const renderableBlocks = article.blocks.filter(isRenderableArticleBlock);
+  const heroSlides = useMemo(() => buildHeroMediaSlides(article), [article]);
   const tocEntries = buildTocEntries(renderableBlocks);
 
   useEffect(() => {
@@ -716,7 +853,7 @@ export default function BlogPost() {
                 slug={article.slug}
                 category={article.category}
                 title={article.title}
-                heroImage={article.heroImage}
+                heroSlides={heroSlides}
               />
             </div>
 
@@ -821,10 +958,7 @@ export default function BlogPost() {
 
                 <div className="space-y-9">
                   {article.subtitle.trim().length > 0 ? (
-                    <section className="space-y-3">
-                      <h1 className="text-3xl leading-tight font-semibold text-[#222222] md:text-4xl">
-                        {article.title}
-                      </h1>
+                    <section>
                       <p className="text-text-alt text-xl leading-tight md:text-2xl">
                         {article.subtitle}
                       </p>

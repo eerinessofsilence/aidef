@@ -785,7 +785,10 @@
     },
     "page": {
       "hero": {
-        "showSlideAria": "Mostrar diapositiva {{index}}"
+        "showSlideAria": "Mostrar diapositiva {{index}}",
+        "viewPost": "Ver publicación",
+        "previousSlideAria": "Mostrar diapositiva anterior",
+        "nextSlideAria": "Mostrar diapositiva siguiente"
       },
       "latestNews": {
         "kicker": "Últimas noticias",
@@ -819,6 +822,10 @@
     },
     "post": {
       "fallbackSubtitle": "Este artículo se está preparando. Vuelve pronto para ver la versión completa.",
+      "hero": {
+        "previousSlideAria": "Mostrar imagen anterior",
+        "nextSlideAria": "Mostrar imagen siguiente"
+      },
       "tableOfContent": "Tabla de contenido",
       "share": "Compartir este artículo",
       "copy": {

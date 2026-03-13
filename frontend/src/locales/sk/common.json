@@ -784,7 +784,10 @@
     },
     "page": {
       "hero": {
-        "showSlideAria": "Zobraziť snímku {{index}}"
+        "showSlideAria": "Zobraziť snímku {{index}}",
+        "viewPost": "Zobraziť príspevok",
+        "previousSlideAria": "Zobraziť predchádzajúcu snímku",
+        "nextSlideAria": "Zobraziť nasledujúcu snímku"
       },
       "latestNews": {
         "kicker": "Najnovšie novinky",
@@ -818,6 +821,10 @@
     },
     "post": {
       "fallbackSubtitle": "Tento článok sa pripravuje. Čoskoro sa vráťte na plnú verziu.",
+      "hero": {
+        "previousSlideAria": "Zobraziť predchádzajúci obrázok",
+        "nextSlideAria": "Zobraziť nasledujúci obrázok"
+      },
       "tableOfContent": "Obsah",
       "share": "Zdieľať tento článok",
       "copy": {

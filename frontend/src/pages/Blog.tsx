@@ -4,6 +4,8 @@ import {
   ArrowRight,
   Calendar,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   MoreHorizontal,
   Search,
@@ -15,6 +17,7 @@ import { buildLocalizedPath, resolveLanguage } from "../i18n";
 
 type HeroSlide = {
   id: number;
+  slug?: string;
   category: string;
   title: string;
   description: string;
@@ -39,6 +42,7 @@ type BlogArticle = {
 
 type SortKey = "newest" | "popular" | "quick";
 const ALL_CATEGORY_VALUE = "__all__";
+const HERO_SLIDE_INTERVAL_MS = 12000;
 
 type BlogPostListApiItem = {
   id?: number;
@@ -136,6 +140,41 @@ function slugifyText(value: string) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") || "post"
   );
+}
+
+const WORD_CHARACTER_RE = /[\p{L}\p{N}]/u;
+
+function isWordCharacter(value: string | undefined) {
+  return typeof value === "string" && WORD_CHARACTER_RE.test(value);
+}
+
+function truncateText(value: string, maxLength: number) {
+  const characters = Array.from(value);
+  if (characters.length <= maxLength) return value;
+
+  const truncatedCharacters = characters.slice(0, maxLength);
+  const endsInsideWord =
+    isWordCharacter(truncatedCharacters.at(-1)) &&
+    isWordCharacter(characters[maxLength]);
+
+  if (endsInsideWord) {
+    while (truncatedCharacters.length > 0) {
+      const lastCharacter = truncatedCharacters.at(-1);
+      if (!isWordCharacter(lastCharacter)) break;
+      truncatedCharacters.pop();
+    }
+  }
+
+  while (truncatedCharacters.length > 0) {
+    const lastCharacter = truncatedCharacters.at(-1);
+    if (isWordCharacter(lastCharacter)) break;
+    truncatedCharacters.pop();
+  }
+
+  const truncatedText = truncatedCharacters.join("").trimEnd();
+  if (truncatedText) return `${truncatedText}...`;
+
+  return `${characters.slice(0, maxLength).join("").trimEnd()}...`;
 }
 
 function getBlogArticleSlug(article: BlogArticle) {
@@ -617,7 +656,9 @@ export default function Blog() {
   }, [currentLanguage, fallbackCopy]);
 
   const sourceArticles =
-    apiArticles && apiArticles.length > 0 ? apiArticles : staticData.articleGrid;
+    apiArticles && apiArticles.length > 0
+      ? apiArticles
+      : staticData.articleGrid;
   const newestArticles = sourceArticles
     .slice()
     .sort(
@@ -632,6 +673,7 @@ export default function Blog() {
     .slice(0, 3)
     .map((item) => ({
       id: item.id,
+      slug: item.slug,
       category: item.category,
       title: item.title,
       description: item.excerpt,
@@ -648,7 +690,7 @@ export default function Blog() {
 
     const intervalId = window.setInterval(() => {
       setActiveHeroSlide((prev) => (prev + 1) % displayHeroSlides.length);
-    }, 6000);
+    }, HERO_SLIDE_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
   }, [displayHeroSlides.length]);
@@ -704,14 +746,26 @@ export default function Blog() {
     currentLanguage,
     `/blog/${getBlogArticleSlug(featuredStory)}`,
   );
+  const currentHeroHref = buildLocalizedPath(
+    currentLanguage,
+    `/blog/${currentHero.slug?.trim() || slugifyText(currentHero.title)}`,
+  );
+  const showHeroControls = displayHeroSlides.length > 1;
+  const goToPreviousHeroSlide = () => {
+    if (!showHeroControls) return;
+    setActiveHeroSlide((prev) =>
+      prev === 0 ? displayHeroSlides.length - 1 : prev - 1,
+    );
+  };
+  const goToNextHeroSlide = () => {
+    if (!showHeroControls) return;
+    setActiveHeroSlide((prev) => (prev + 1) % displayHeroSlides.length);
+  };
 
   return (
     <main className="relative overflow-hidden pt-34 pb-24 max-lg:pt-32 max-md:pb-16">
       <div className="container mx-auto">
         <div className="relative rounded-[28px] bg-white p-3 shadow-inner shadow-black/50 backdrop-blur-md max-lg:rounded-3xl">
-          <div className="pointer-events-none absolute top-8 left-8 hidden h-12 w-12 rounded-sm border border-black/4 bg-black/2 md:block" />
-          <div className="pointer-events-none absolute right-10 bottom-28 hidden h-10 w-10 rounded-sm border border-black/4 bg-black/2 xl:block" />
-
           <div className="overflow-hidden rounded-[22px] bg-white">
             <section className="relative min-h-[520px] overflow-hidden rounded-t-[22px] max-md:min-h-[460px]">
               {displayHeroSlides.map((slide, index) => (
@@ -728,9 +782,30 @@ export default function Blog() {
                     alt={slide.title}
                     className="h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,7,18,0.42)_0%,rgba(3,7,18,0.18)_28%,rgba(3,7,18,0.22)_58%,rgba(3,7,18,0.68)_100%)]" />
+                  <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(3,7,18,0.84)_0%,rgba(3,7,18,0.62)_26%,rgba(3,7,18,0.34)_52%,rgba(3,7,18,0.16)_74%,rgba(3,7,18,0.08)_100%)]" />
                 </div>
               ))}
+
+              {showHeroControls ? (
+                <div className="pointer-events-none absolute inset-x-4 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between max-md:inset-x-3">
+                  <button
+                    type="button"
+                    onClick={goToPreviousHeroSlide}
+                    className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+                    aria-label={t("blog.page.hero.previousSlideAria")}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNextHeroSlide}
+                    className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+                    aria-label={t("blog.page.hero.nextSlideAria")}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              ) : null}
 
               <div className="relative z-10 flex min-h-[520px] flex-col p-6 max-md:min-h-[460px] max-md:p-4">
                 <div className="mt-auto grid items-end gap-8 pt-16 lg:grid-cols-[1.1fr_auto]">
@@ -749,32 +824,20 @@ export default function Blog() {
                         {currentHero.title}
                       </h1>
                       <p className="max-w-xl text-base leading-7 text-white/85 max-md:text-sm max-md:leading-6">
-                        {currentHero.description}
+                        {truncateText(currentHero.description, 200)}
                       </p>
                     </div>
                   </ScrollReveal>
 
-                  <div className="justify-self-end rounded-2xl border border-white/20 bg-black/25 p-4 text-white/90 shadow-[0_18px_44px_-30px_rgba(0,0,0,0.8)] backdrop-blur-md max-lg:justify-self-start">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src="/favicon/icon-64x.png"
-                        alt=""
-                        aria-hidden
-                        className="h-11 w-11 rounded-full border border-white/20 bg-white/10 object-cover"
-                      />
-                      <div>
-                        <p className="text-lg leading-none font-semibold">
-                          {currentHero.author}
-                        </p>
-                        <p className="mt-1 text-xs text-white/70">
-                          {formatDate(currentHero.publishedAt, currentLanguage)} •{" "}
-                          {t("blog.common.minRead", {
-                            count: currentHero.readMinutes,
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <Link
+                    to={currentHeroHref}
+                    className="group relative inline-flex h-14 w-48 shrink-0 items-center justify-center justify-self-end overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:justify-self-start max-md:h-12 max-md:w-42 max-md:text-base"
+                    aria-label={t("blog.page.latestNews.openArticleAria", {
+                      title: currentHero.title,
+                    })}
+                  >
+                    <span>{t("blog.page.hero.viewPost")}</span>
+                  </Link>
                 </div>
 
                 <div className="mt-5 flex items-center gap-2">
@@ -801,7 +864,7 @@ export default function Blog() {
 
             <section
               id="latest-news"
-              className="relative rounded-b-[22px] bg-black/2 px-6 py-10 max-md:px-4"
+              className="relative rounded-b-[22px] bg-black/5 px-6 py-10 max-md:px-4"
             >
               <ScrollReveal
                 className="flex flex-wrap items-end justify-between gap-4"

@@ -785,7 +785,10 @@
     },
     "page": {
       "hero": {
-        "showSlideAria": "Mostra slide {{index}}"
+        "showSlideAria": "Mostra slide {{index}}",
+        "viewPost": "Vedi articolo",
+        "previousSlideAria": "Mostra slide precedente",
+        "nextSlideAria": "Mostra slide successiva"
       },
       "latestNews": {
         "kicker": "Ultime notizie",
@@ -819,6 +822,10 @@
     },
     "post": {
       "fallbackSubtitle": "Questo articolo è in preparazione. Torna presto per la versione completa.",
+      "hero": {
+        "previousSlideAria": "Mostra immagine precedente",
+        "nextSlideAria": "Mostra immagine successiva"
+      },
       "tableOfContent": "Indice dei contenuti",
       "share": "Condividi questo articolo",
       "copy": {

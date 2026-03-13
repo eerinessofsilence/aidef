@@ -785,7 +785,10 @@
     },
     "page": {
       "hero": {
-        "showSlideAria": "Folie {{index}} anzeigen"
+        "showSlideAria": "Folie {{index}} anzeigen",
+        "viewPost": "Beitrag ansehen",
+        "previousSlideAria": "Vorherige Folie anzeigen",
+        "nextSlideAria": "Nächste Folie anzeigen"
       },
       "latestNews": {
         "kicker": "Neueste Nachrichten",
@@ -819,6 +822,10 @@
     },
     "post": {
       "fallbackSubtitle": "Dieser Artikel wird vorbereitet. Schauen Sie bald wieder vorbei.",
+      "hero": {
+        "previousSlideAria": "Vorheriges Bild anzeigen",
+        "nextSlideAria": "Nächstes Bild anzeigen"
+      },
       "tableOfContent": "Inhaltsverzeichnis",
       "share": "Artikel teilen",
       "copy": {
