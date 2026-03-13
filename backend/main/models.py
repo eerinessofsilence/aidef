@@ -752,6 +752,25 @@ class BlogPost(models.Model):
         return self.title
 
 
+class BlogPostHeroImage(models.Model):
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name="hero_images",
+    )
+    image = models.ImageField(upload_to="blog/%Y/%m/")
+    alt = models.CharField(max_length=255, blank=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "pk")
+        verbose_name = "Blog post hero image"
+        verbose_name_plural = "Blog post hero images"
+
+    def __str__(self):
+        return f"{self.post.title} — hero image {self.pk}"
+
+
 class BlogPostBlock(models.Model):
     class Kind(models.TextChoices):
         TEXT = "text", "Text"

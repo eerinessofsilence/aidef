@@ -18,6 +18,7 @@ from django.views.decorators.http import require_GET, require_POST
 from .models import (
     BlogPost,
     BlogPostBlock,
+    BlogPostHeroImage,
     BlogPostSection,
     CivilProduct,
     CivilProductCTABlock,
@@ -544,6 +545,18 @@ def _serialize_blog_post_block(
     }
 
 
+def _serialize_blog_post_hero_image(
+    request,
+    hero_image: BlogPostHeroImage,
+) -> Dict[str, Any]:
+    return {
+        "id": hero_image.id,
+        "image": _absolute_media_url(request, hero_image.image),
+        "alt": hero_image.alt,
+        "order": hero_image.order,
+    }
+
+
 def _serialize_legacy_section(section: BlogPostSection) -> Dict[str, Any]:
     return {
         "id": section.anchor_id,
@@ -576,6 +589,7 @@ def _serialize_legacy_section_from_block(
 
 def _serialize_blog_post_detail(request, post: BlogPost) -> Dict[str, Any]:
     blocks: List[BlogPostBlock] = list(post.blocks.all())
+    hero_images: List[BlogPostHeroImage] = list(post.hero_images.all())
     sections: List[BlogPostSection] = list(post.sections.all())
 
     if blocks:
@@ -622,6 +636,11 @@ def _serialize_blog_post_detail(request, post: BlogPost) -> Dict[str, Any]:
         "category_slug": post.category.slug if post.category else None,
         "title": post.title,
         "hero_image": _absolute_media_url(request, post.hero_image),
+        "hero_images": [
+            _serialize_blog_post_hero_image(request, hero_image)
+            for hero_image in hero_images
+            if hero_image.image
+        ],
         "subtitle": post.subtitle,
         "author": post.author.name if post.author else "",
         "author_role": post.author.role if post.author else "",
@@ -651,7 +670,7 @@ def blog_post_detail_api(request, slug: str):
         post = (
             BlogPost.objects
             .select_related("category", "author")
-            .prefetch_related("blocks", "sections")
+            .prefetch_related("blocks", "hero_images", "sections")
             .get(slug=slug, is_published=True)
         )
     except BlogPost.DoesNotExist as exc:

@@ -17,6 +17,7 @@ from .models import (
     BlogCategory,
     BlogPost,
     BlogPostBlock,
+    BlogPostHeroImage,
     BlogPostSection,
     Category,
     CivilCategory,
@@ -790,6 +791,14 @@ class BlogPostBlockInline(
     translated_base_fields = ("title", "html", "image_alt")
 
 
+class BlogPostHeroImageInline(admin.StackedInline):
+    model = BlogPostHeroImage
+    extra = 0
+    ordering = ("order", "pk")
+    fields = ("image", "alt", "order")
+    verbose_name_plural = "Hero slider images"
+
+
 class ProductDroneSliderMediaInline(admin.StackedInline):
     model = ProductDroneSliderMedia
     extra = 0
@@ -945,7 +954,7 @@ class BlogPostAdmin(HiddenModelTranslationTabsAdmin):
         ),
     )
     readonly_fields = ("created_at", "updated_at")
-    inlines = [BlogPostBlockInline]
+    inlines = [BlogPostHeroImageInline, BlogPostBlockInline]
 
     @admin.action(description="Mark selected posts as published")
     def mark_published(self, request, queryset):

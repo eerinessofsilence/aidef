@@ -156,9 +156,20 @@ TINYMCE_DEFAULT_CONFIG = {
         "undo redo | blocks | bold italic underline | "
         "bullist numlist blockquote | link image table | removeformat code"
     ),
-    "block_formats": "Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4",
+    "block_formats": (
+        "Paragraph=p; "
+        "Heading 1=h1; Heading 2=h2; Heading 3=h3; "
+        "Heading 4=h4; Heading 5=h5; Heading 6=h6"
+    ),
     "content_style": (
-        "body { font-family: Inter, Arial, sans-serif; font-size: 16px; }"
+        "body { font-family: Inter, Arial, sans-serif; font-size: 16px; line-height: 1.5; } "
+        "p { font-size: 16px; line-height: 1.5; margin: 0; } "
+        "h1 { font-size: 48px; line-height: 1; font-weight: 600; margin: 0; } "
+        "h2 { font-size: 36px; line-height: 1.1; font-weight: 600; margin: 0; } "
+        "h3 { font-size: 30px; line-height: 1.2; font-weight: 600; margin: 0; } "
+        "h4 { font-size: 24px; line-height: 1.25; font-weight: 600; margin: 0; } "
+        "h5 { font-size: 20px; line-height: 1.3; font-weight: 600; margin: 0; } "
+        "h6 { font-size: 18px; line-height: 1.35; font-weight: 600; margin: 0; }"
     ),
 }
 

@@ -15,6 +15,7 @@ from .models import (
     BlogCategory,
     BlogPost,
     BlogPostBlock,
+    BlogPostHeroImage,
     BlogPostSection,
     Category,
     ContactRequest,
@@ -281,11 +282,36 @@ class MainApiTests(TestCase):
             title="How to write strong work experience in your resume",
             slug="how-to-write-strong-work-experience",
             subtitle="A clean structure for describing impact and growth.",
+            hero_image=SimpleUploadedFile(
+                "blog-hero.jpg",
+                b"blog-hero-image",
+                content_type="image/jpeg",
+            ),
             category=category,
             author=author,
             is_published=True,
             published_at=date(2026, 1, 27),
             read_minutes=3,
+        )
+        first_hero_image = BlogPostHeroImage.objects.create(
+            post=post,
+            image=SimpleUploadedFile(
+                "blog-gallery-1.jpg",
+                b"blog-gallery-image-1",
+                content_type="image/jpeg",
+            ),
+            alt="Resume notes on a desk",
+            order=20,
+        )
+        second_hero_image = BlogPostHeroImage.objects.create(
+            post=post,
+            image=SimpleUploadedFile(
+                "blog-gallery-2.jpg",
+                b"blog-gallery-image-2",
+                content_type="image/jpeg",
+            ),
+            alt="Candidate reviewing edits",
+            order=5,
         )
         BlogPostBlock.objects.create(
             post=post,
@@ -309,6 +335,9 @@ class MainApiTests(TestCase):
             reverse("main:blog-post-detail", args=[post.slug])
         )
         self.assertEqual(response.status_code, 200)
+        hero_image_url = f"http://testserver{post.hero_image.url}"
+        first_gallery_url = f"http://testserver{first_hero_image.image.url}"
+        second_gallery_url = f"http://testserver{second_hero_image.image.url}"
         self.assertEqual(
             response.json(),
             {
@@ -317,7 +346,21 @@ class MainApiTests(TestCase):
                 "category": "Resume Tips",
                 "category_slug": "resume-tips",
                 "title": post.title,
-                "hero_image": None,
+                "hero_image": hero_image_url,
+                "hero_images": [
+                    {
+                        "id": second_hero_image.id,
+                        "image": second_gallery_url,
+                        "alt": "Candidate reviewing edits",
+                        "order": 5,
+                    },
+                    {
+                        "id": first_hero_image.id,
+                        "image": first_gallery_url,
+                        "alt": "Resume notes on a desk",
+                        "order": 20,
+                    },
+                ],
                 "subtitle": post.subtitle,
                 "author": "Andrew Scott",
                 "author_role": "Career Editor",
@@ -399,6 +442,7 @@ class MainApiTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         payload = response.json()
+        self.assertEqual(payload["hero_images"], [])
         self.assertEqual(
             payload["blocks"],
             [
