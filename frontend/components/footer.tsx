@@ -13,10 +13,10 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="border-t-4 border-[#0A1A34] bg-[#16243B] pt-38.5 pb-10 max-lg:pt-20"
+      className="border-t-4 border-[#0A1A34] bg-[#16243B] py-16"
     >
       <div className="container-big">
-        <div className="mb-5 flex gap-6 max-lg:flex-col lg:mb-30 lg:justify-between">
+        <div className="mb-5 flex gap-6 max-lg:flex-col lg:justify-between">
           <div className="space-y-6.5">
             <div>
               <Link to={withLanguage("/")}>

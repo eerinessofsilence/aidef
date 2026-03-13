@@ -234,6 +234,14 @@ class MainAdminSmokeTests(TestCase):
             "&quot;name&quot;: &quot;anchor_id&quot;, &quot;dependency_ids&quot;: [&quot;#id_blocks-__prefix__-title_en&quot;]",
         )
 
+        german_response = self.client.get(f"{change_url}?lang=de")
+        self.assertEqual(german_response.status_code, 200)
+        self.assertNotContains(german_response, "title_en")
+        self.assertContains(
+            german_response,
+            "&quot;name&quot;: &quot;anchor_id&quot;, &quot;dependency_ids&quot;: [&quot;#id_blocks-__prefix__-title_de&quot;]",
+        )
+
 
 class MainApiTests(TestCase):
     def test_item_detail_api_includes_final_cta_block(self):

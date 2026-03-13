@@ -273,6 +273,20 @@ def _render_alt_links(obj):
 class SingleLanguageTranslatedInlineMixin:
     translated_base_fields = ()
 
+    def _resolve_translated_field_for_language(self, field_name, language):
+        if not isinstance(field_name, str):
+            return field_name
+
+        if field_name in self.translated_base_fields:
+            return f"{field_name}_{language}"
+
+        for base_name in self.translated_base_fields:
+            prefix = f"{base_name}_"
+            if field_name.startswith(prefix):
+                return f"{base_name}_{language}"
+
+        return field_name
+
     def get_formset(self, request, obj=None, **kwargs):
         base_formset = super().get_formset(request, obj, **kwargs)
         language = _get_language_from_request(request)
@@ -355,10 +369,12 @@ class SingleLanguageTranslatedInlineMixin:
         language = _get_language_from_request(request)
         resolved = {}
         for target, sources in base_fields.items():
-            resolved[target] = tuple(
-                f"{source}_{language}"
-                if source in self.translated_base_fields
-                else source
+            resolved_target = self._resolve_translated_field_for_language(
+                target,
+                language,
+            )
+            resolved[resolved_target] = tuple(
+                self._resolve_translated_field_for_language(source, language)
                 for source in sources
             )
         return resolved
