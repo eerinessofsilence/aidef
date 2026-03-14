@@ -51,7 +51,6 @@ type BlogPostArticle = {
   title: string;
   heroImage: string | null;
   heroImages: HeroMediaSlide[];
-  subtitle: string;
   author: string;
   authorRole: string;
   publishedAt: string | null;
@@ -205,10 +204,8 @@ function normalizeBlockType(
   value: string | undefined,
   {
     hasItems,
-    hasImage,
   }: {
     hasItems: boolean;
-    hasImage: boolean;
   },
 ): ArticleBlockType {
   if (value === "text") return "text";
@@ -216,14 +213,18 @@ function normalizeBlockType(
   if (value === "quote") return "quote";
   if (value === "image") return "image";
   if (value === "divider") return "divider";
-  if (hasImage) return "image";
   if (hasItems) return "bullets";
   return "text";
 }
 
 function isRenderableArticleBlock(block: ArticleBlock) {
   if (block.type === "image") {
-    return typeof block.image === "string" && block.image.trim().length > 0;
+    return (
+      (typeof block.image === "string" && block.image.trim().length > 0) ||
+      block.html.trim().length > 0 ||
+      (block.paragraphs ?? []).length > 0 ||
+      (block.items ?? []).length > 0
+    );
   }
   return true;
 }
@@ -335,7 +336,6 @@ function createFallbackArticle(
         : fallbackCopy.untitledPost,
     heroImage: null,
     heroImages: [],
-    subtitle: "",
     author: "",
     authorRole: "",
     publishedAt: null,
@@ -378,7 +378,6 @@ function mapBlogPostFromApi(
           : undefined,
         {
           hasItems: Boolean(items?.length),
-          hasImage: Boolean(image),
         },
       );
       const rawId =
@@ -493,10 +492,6 @@ function mapBlogPostFromApi(
         : fallback.title,
     heroImage,
     heroImages,
-    subtitle:
-      typeof payload.subtitle === "string" && payload.subtitle.trim()
-        ? payload.subtitle
-        : "",
     author:
       typeof payload.author === "string" && payload.author.trim()
         ? payload.author
@@ -615,16 +610,24 @@ function BrowserHeroIllustration({
   );
 }
 
-function ArticleMedia({ image }: { image: string | null }) {
+function ArticleMedia({
+  image,
+  imageAlt,
+}: {
+  image: string | null;
+  imageAlt?: string;
+}) {
   const hasImage = typeof image === "string" && image.trim().length > 0;
   if (!hasImage) return null;
+  const normalizedAlt =
+    typeof imageAlt === "string" ? imageAlt.trim() : "";
 
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-[20px] bg-[#d9d9d9]">
       <img
         src={image}
-        alt=""
-        aria-hidden="true"
+        alt={normalizedAlt}
+        aria-hidden={normalizedAlt ? undefined : true}
         className="absolute inset-0 h-full w-full object-cover"
       />
     </div>
@@ -957,14 +960,6 @@ export default function BlogPost() {
                 </div>
 
                 <div className="space-y-9">
-                  {article.subtitle.trim().length > 0 ? (
-                    <section>
-                      <p className="text-text-alt text-xl leading-tight md:text-2xl">
-                        {article.subtitle}
-                      </p>
-                    </section>
-                  ) : null}
-
                   {renderableBlocks.map((block, index) => {
                     const hasContentBlockBelow = renderableBlocks
                       .slice(index + 1)
@@ -972,6 +967,8 @@ export default function BlogPost() {
 
                     if (block.type === "bullets") {
                       const hasRichText = block.html.trim().length > 0;
+                      const paragraphs = block.paragraphs ?? [];
+                      const items = block.items ?? [];
 
                       return (
                         <section
@@ -979,9 +976,15 @@ export default function BlogPost() {
                           id={block.id}
                           className="scroll-mt-32 space-y-6"
                         >
-                          {!hasRichText && (block.items ?? []).length > 0 ? (
+                          {block.title ? (
+                            <h2 className="text-2xl leading-tight font-medium text-[#111111] sm:text-3xl">
+                              {block.title}
+                            </h2>
+                          ) : null}
+
+                          {!hasRichText && items.length > 0 ? (
                             <ul className="space-y-4 pl-8 text-xl leading-8 text-[#111111] marker:text-[#111111] sm:text-2xl sm:leading-9">
-                              {(block.items ?? []).map((item) => (
+                              {items.map((item) => (
                                 <li key={item} className="list-disc">
                                   {item}
                                 </li>
@@ -989,32 +992,27 @@ export default function BlogPost() {
                             </ul>
                           ) : null}
 
-                          {block.title ||
-                          hasRichText ||
-                          (block.paragraphs ?? []).length > 0 ? (
+                          {hasRichText || paragraphs.length > 0 ? (
                             <div className="space-y-4">
-                              {block.title ? (
-                                <h2 className="text-2xl leading-tight font-medium text-[#111111] sm:text-3xl">
-                                  {block.title}
-                                </h2>
-                              ) : null}
-
                               {block.html ? (
                                 <RichTextContent html={block.html} />
                               ) : (
-                                (block.paragraphs ?? []).map(
-                                  (paragraph, index) => (
-                                    <p
-                                      key={`${block.id}-p-${index}`}
-                                      className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
-                                    >
-                                      {paragraph}
-                                    </p>
-                                  ),
-                                )
+                                paragraphs.map((paragraph, index) => (
+                                  <p
+                                    key={`${block.id}-p-${index}`}
+                                    className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
+                                  >
+                                    {paragraph}
+                                  </p>
+                                ))
                               )}
                             </div>
                           ) : null}
+
+                          <ArticleMedia
+                            image={block.image}
+                            imageAlt={block.imageAlt}
+                          />
                         </section>
                       );
                     }
@@ -1054,11 +1052,17 @@ export default function BlogPost() {
                               )
                             )}
                           </blockquote>
+                          <ArticleMedia
+                            image={block.image}
+                            imageAlt={block.imageAlt}
+                          />
                         </section>
                       );
                     }
 
                     if (block.type === "image") {
+                      const paragraphs = block.paragraphs ?? [];
+
                       return (
                         <section
                           key={block.id}
@@ -1070,15 +1074,22 @@ export default function BlogPost() {
                               {block.title}
                             </h2>
                           ) : null}
-                          <ArticleMedia image={block.image} />
-                          {(block.paragraphs ?? []).map((paragraph, index) => (
-                            <p
-                              key={`${block.id}-caption-${index}`}
-                              className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
-                            >
-                              {paragraph}
-                            </p>
-                          ))}
+                          {block.html ? (
+                            <RichTextContent html={block.html} />
+                          ) : (
+                            paragraphs.map((paragraph, index) => (
+                              <p
+                                key={`${block.id}-caption-${index}`}
+                                className="text-lg leading-8 text-[#2f2f2f] sm:text-xl"
+                              >
+                                {paragraph}
+                              </p>
+                            ))
+                          )}
+                          <ArticleMedia
+                            image={block.image}
+                            imageAlt={block.imageAlt}
+                          />
                         </section>
                       );
                     }
@@ -1119,6 +1130,11 @@ export default function BlogPost() {
                             </p>
                           ))
                         )}
+
+                        <ArticleMedia
+                          image={block.image}
+                          imageAlt={block.imageAlt}
+                        />
                       </section>
                     );
                   })}

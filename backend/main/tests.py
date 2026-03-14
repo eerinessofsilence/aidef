@@ -416,6 +416,56 @@ class MainApiTests(TestCase):
             },
         )
 
+    def test_blog_post_detail_api_keeps_text_block_type_when_block_has_image(self):
+        category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
+        author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")
+        post = BlogPost.objects.create(
+            title="Illustrated article",
+            slug="illustrated-article",
+            subtitle="Illustrated subtitle",
+            category=category,
+            author=author,
+            is_published=True,
+            published_at=date(2026, 2, 2),
+            read_minutes=4,
+        )
+        block = BlogPostBlock.objects.create(
+            post=post,
+            kind=BlogPostBlock.Kind.TEXT,
+            title="Illustrated section",
+            anchor_id="illustrated-section",
+            html="<p>Illustrated copy</p>",
+            image=SimpleUploadedFile(
+                "blog-block.jpg",
+                b"blog-block-image",
+                content_type="image/jpeg",
+            ),
+            image_alt="Illustration of the article section",
+            order=10,
+        )
+
+        response = self.client.get(
+            reverse("main:blog-post-detail", args=[post.slug])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(len(payload["blocks"]), 1)
+        self.assertEqual(
+            payload["blocks"][0],
+            {
+                "id": "illustrated-section",
+                "type": "text",
+                "title": "Illustrated section",
+                "html": "<p>Illustrated copy</p>",
+                "paragraphs": [],
+                "items": [],
+                "image": f"http://testserver{block.image.url}",
+                "image_alt": "Illustration of the article section",
+                "order": 10,
+            },
+        )
+
     def test_blog_post_detail_api_falls_back_to_legacy_sections_when_blocks_missing(self):
         category = BlogCategory.objects.create(name="Resume Tips", slug="resume-tips")
         author = BlogAuthor.objects.create(name="Andrew Scott", role="Career Editor")

@@ -586,7 +586,7 @@ export default function Header() {
                     onMouseLeave={handleMouseLeave}
                   >
                     {link.hasDropdown ? (
-                      <button className="group text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-1 text-[17px] font-medium transition-colors">
+                      <button className="group text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-1 font-medium transition-colors">
                         {label}
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-300 ${
@@ -598,7 +598,7 @@ export default function Header() {
                       <button
                         type="button"
                         onClick={() => openContactModal()}
-                        className="text-foreground hover:text-foreground/75 cursor-pointer text-[17px] font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 cursor-pointer font-medium transition-colors"
                       >
                         {label}
                       </button>
@@ -606,7 +606,7 @@ export default function Header() {
                       <Link
                         reloadDocument
                         to={withLanguage(link.href)}
-                        className="text-foreground hover:text-foreground/75 cursor-pointer text-[17px] font-medium transition-colors"
+                        className="text-foreground hover:text-foreground/75 cursor-pointer font-medium transition-colors"
                       >
                         {label}
                       </Link>

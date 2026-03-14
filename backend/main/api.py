@@ -522,14 +522,8 @@ def _serialize_blog_post_block(
 ) -> Dict[str, Any]:
     image_url = _absolute_media_url(request, block.image)
     block_type = (
-        BlogPostBlock.Kind.IMAGE
-        if image_url
-        else block.kind
-        if block.kind in {
-            BlogPostBlock.Kind.BULLETS,
-            BlogPostBlock.Kind.QUOTE,
-            BlogPostBlock.Kind.DIVIDER,
-        }
+        block.kind
+        if block.kind in {choice for choice, _label in BlogPostBlock.Kind.choices}
         else BlogPostBlock.Kind.TEXT
     )
     return {

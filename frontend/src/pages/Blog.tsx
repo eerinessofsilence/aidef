@@ -1,5 +1,5 @@
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   ArrowRight,
   Calendar,
@@ -326,8 +326,8 @@ function FeaturedMiniCard({
   href: string;
 }) {
   return (
-    <Link
-      to={href}
+    <a
+      href={href}
       className="group block min-w-[260px] rounded-2xl border border-black/5 bg-white p-3 shadow-[0_14px_24px_-20px_rgba(0,0,0,0.22)] transition-shadow hover:shadow-[0_18px_30px_-18px_rgba(0,0,0,0.28)]"
     >
       <div className="grid grid-cols-[92px_1fr] gap-3">
@@ -344,6 +344,9 @@ function FeaturedMiniCard({
           <h4 className="mt-1 line-clamp-2 text-sm leading-5 font-semibold text-[#111827]">
             {article.title}
           </h4>
+          <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#6B7280]">
+            {article.excerpt}
+          </p>
           <div className="mt-2">
             <ArticleMeta
               author={article.author}
@@ -353,7 +356,7 @@ function FeaturedMiniCard({
           </div>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }
 
@@ -365,8 +368,8 @@ function BlogGridCard({
   href: string;
 }) {
   return (
-    <Link
-      to={href}
+    <a
+      href={href}
       className="group block overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_20px_40px_-28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-1 hover:shadow-[0_24px_44px_-24px_rgba(0,0,0,0.35)]"
     >
       <div className="relative aspect-16/10 overflow-hidden">
@@ -394,7 +397,7 @@ function BlogGridCard({
           readMinutes={article.readMinutes}
         />
       </div>
-    </Link>
+    </a>
   );
 }
 
@@ -787,22 +790,22 @@ export default function Blog() {
               ))}
 
               {showHeroControls ? (
-                <div className="pointer-events-none absolute inset-x-4 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between max-md:inset-x-3">
+                <div className="absolute inset-x-4 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between max-md:inset-x-3">
                   <button
                     type="button"
                     onClick={goToPreviousHeroSlide}
-                    className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+                    className="inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
                     aria-label={t("blog.page.hero.previousSlideAria")}
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="mr-1 h-6 w-6" />
                   </button>
                   <button
                     type="button"
                     onClick={goToNextHeroSlide}
-                    className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+                    className="inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
                     aria-label={t("blog.page.hero.nextSlideAria")}
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className="ml-1 h-6 w-6" />
                   </button>
                 </div>
               ) : null}
@@ -829,15 +832,15 @@ export default function Blog() {
                     </div>
                   </ScrollReveal>
 
-                  <Link
-                    to={currentHeroHref}
+                  <a
+                    href={currentHeroHref}
                     className="group relative inline-flex h-14 w-48 shrink-0 items-center justify-center justify-self-end overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:justify-self-start max-md:h-12 max-md:w-42 max-md:text-base"
                     aria-label={t("blog.page.latestNews.openArticleAria", {
                       title: currentHero.title,
                     })}
                   >
                     <span>{t("blog.page.hero.viewPost")}</span>
-                  </Link>
+                  </a>
                 </div>
 
                 <div className="mt-5 flex items-center gap-2">
@@ -895,8 +898,8 @@ export default function Blog() {
                   delay={0.08}
                   className="grid gap-0 overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_25px_50px_-38px_rgba(0,0,0,0.35)] lg:grid-cols-[1.05fr_1fr]"
                 >
-                  <Link
-                    to={featuredStoryHref}
+                  <a
+                    href={featuredStoryHref}
                     className="contents"
                     aria-label={t("blog.page.latestNews.openArticleAria", {
                       title: featuredStory.title,
@@ -928,7 +931,7 @@ export default function Blog() {
                         />
                       </div>
                     </div>
-                  </Link>
+                  </a>
                 </ScrollReveal>
 
                 <ScrollReveal
