@@ -680,6 +680,45 @@ class MainApiTests(TestCase):
         )
 
     @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="noreply@ai-def.test",
+        CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],
+        STRATEGIC_PARTNERSHIP_EMAIL="partners@ai-def.test",
+    )
+    def test_contact_request_api_routes_strategic_partnership_to_dedicated_email(
+        self,
+    ):
+        payload = {
+            "firstName": "Alex",
+            "lastName": "Stone",
+            "email": "alex@example.com",
+            "phone": "+421900000000",
+            "product": "strategic partnership",
+            "country": "SK",
+            "countryName": "Slovakia",
+            "city": "Bratislava",
+            "addressLine1": "Ilkovicova 8",
+            "addressLine2": "Office 401",
+            "website": "https://example.com",
+            "message": "Need a strategic cooperation call.",
+            "variant": "default",
+            "language": "en",
+            "source": "/en/support",
+        }
+
+        response = self.client.post(
+            reverse("main:contact-request"),
+            data=json.dumps(payload),
+            content_type="application/json",
+            HTTP_USER_AGENT="pytest-agent",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ContactRequest.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["partners@ai-def.test"])
+
+    @override_settings(
         DEBUG=True,
         DEFAULT_FROM_EMAIL="noreply@ai-def.test",
         CONTACT_REQUEST_NOTIFICATION_EMAILS=["sales@ai-def.test"],

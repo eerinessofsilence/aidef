@@ -77,6 +77,7 @@ def _absolute_media_url(request, image_field) -> str | None:
 
 SUPPORTED_LANGUAGES = {code.lower() for code, _ in settings.LANGUAGES}
 DEFAULT_LANGUAGE = "en"
+STRATEGIC_PARTNERSHIP_PRODUCT = "strategic-partnership"
 
 
 def _parse_accept_language(raw: str) -> List[str]:
@@ -779,8 +780,12 @@ def _get_client_ip(request) -> str | None:
     return request.META.get("REMOTE_ADDR")
 
 
-def _contact_notification_recipients() -> List[str]:
-    raw_recipients = getattr(settings, "CONTACT_REQUEST_NOTIFICATION_EMAILS", [])
+def _normalized_contact_product(value: str | None) -> str:
+    product = (value or "").strip().lower().replace("_", "-")
+    return "-".join(product.split())
+
+
+def _validated_contact_notification_recipients(raw_recipients) -> List[str]:
     if isinstance(raw_recipients, str):
         candidates = raw_recipients.split(",")
     elif isinstance(raw_recipients, (list, tuple, set)):
@@ -800,6 +805,31 @@ def _contact_notification_recipients() -> List[str]:
             continue
         recipients.append(email)
     return recipients
+
+
+def _contact_notification_recipients(
+    contact_request: ContactRequest | None = None,
+) -> List[str]:
+    if (
+        contact_request is not None
+        and _normalized_contact_product(contact_request.product)
+        == STRATEGIC_PARTNERSHIP_PRODUCT
+    ):
+        strategic_recipients = _validated_contact_notification_recipients(
+            getattr(settings, "STRATEGIC_PARTNERSHIP_EMAIL", "")
+        )
+        if strategic_recipients:
+            return strategic_recipients
+        logger.warning(
+            "Strategic partnership contact request %s has no valid "
+            "STRATEGIC_PARTNERSHIP_EMAIL configured; falling back to "
+            "CONTACT_REQUEST_NOTIFICATION_EMAILS",
+            contact_request.id,
+        )
+
+    return _validated_contact_notification_recipients(
+        getattr(settings, "CONTACT_REQUEST_NOTIFICATION_EMAILS", [])
+    )
 
 
 def _contact_display_name(contact_request: ContactRequest) -> str:
@@ -1043,7 +1073,7 @@ def contact_request_api(request):
                 ),
             )
 
-            recipients = _contact_notification_recipients()
+            recipients = _contact_notification_recipients(contact_request)
             if recipients:
                 subject = _build_contact_notification_subject(contact_request)
                 notification_message = _build_contact_notification_message(
