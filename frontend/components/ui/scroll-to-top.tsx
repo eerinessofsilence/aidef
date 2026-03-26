@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function ScrollToTop() {
@@ -17,21 +17,12 @@ export default function ScrollToTop() {
     };
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined" || hash) {
       return;
     }
 
-    const resetScroll = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-
-    // Second pass prevents browser history restoration from snapping back.
-    resetScroll();
-    const frame = window.requestAnimationFrame(resetScroll);
-    return () => window.cancelAnimationFrame(frame);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [pathname, search, hash]);
 
   return null;
