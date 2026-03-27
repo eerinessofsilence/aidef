@@ -343,9 +343,7 @@ export default function Header() {
           name: product.name,
           href: `/civil-products/${product.slug}`,
           imageUrl:
-            product.first_image?.url ??
-            product.icon?.url ??
-            "/placeholder.svg",
+            product.first_image?.url ?? product.icon?.url ?? "/placeholder.svg",
           imageAlt:
             product.first_image?.alt?.trim() ||
             product.icon?.alt?.trim() ||
