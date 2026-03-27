@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import {
   Navigate,
   Outlet,
@@ -7,23 +7,10 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import Home from "./pages/Home";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import ProductDetail from "./pages/ProductDetail";
-import CivilProductDetail from "./pages/CivilProductDetail";
-import Technology from "./pages/Technology";
-import TermsOfCondition from "./pages/TermsOfCondition";
-import Support from "./pages/Support";
-import AboutUs from "./pages/AboutUs";
-import Solutions from "./pages/Solutions";
 import ScrollToTop from "../components/ui/scroll-to-top";
 import { CookieConsent } from "../components/ui/cookie-consent";
-import Auth from "./pages/Auth";
-import ClientPortal from "./pages/ClientPortal";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import NotFound from "./pages/NotFound";
 import i18n, {
   DEFAULT_LANGUAGE,
   isSupportedLanguage,
@@ -31,6 +18,28 @@ import i18n, {
   resolveLanguage,
 } from "./i18n";
 import { ga4PageView } from "./analytics/ga4";
+
+const Home = lazy(() => import("./pages/Home"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const CivilProductDetail = lazy(() => import("./pages/CivilProductDetail"));
+const Technology = lazy(() => import("./pages/Technology"));
+const TermsOfCondition = lazy(() => import("./pages/TermsOfCondition"));
+const Support = lazy(() => import("./pages/Support"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const Solutions = lazy(() => import("./pages/Solutions"));
+const Auth = lazy(() => import("./pages/Auth"));
+const ClientPortal = lazy(() => import("./pages/ClientPortal"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+function RouteFallback() {
+  return (
+    <div className="container py-24 max-md:py-16">
+      <div className="min-h-[40vh] rounded-[28px] border border-white/12 bg-white/6 backdrop-blur-sm" />
+    </div>
+  );
+}
 
 function LanguageLayout() {
   const { lng } = useParams();
@@ -84,7 +93,9 @@ function LanguageLayout() {
             fetchPriority="high"
           />
         </div>
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+        </Suspense>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-1">
           <img
             src="/site-bg-bottom.png"
