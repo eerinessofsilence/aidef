@@ -63,7 +63,10 @@ export default function Support() {
         </div>
       </section>
 
-      <section className="container mx-auto space-y-7.5 px-5 pb-24 max-lg:flex max-lg:flex-col max-lg:items-center max-md:pb-16">
+      <section
+        id="contact"
+        className="container mx-auto scroll-mt-32 space-y-7.5 px-5 pb-24 max-lg:flex max-lg:flex-col max-lg:items-center max-md:pb-16"
+      >
         <div className="flex flex-col justify-between gap-10 lg:flex-row">
           <div className="space-y-7.5">
             <div className="space-y-7.5">

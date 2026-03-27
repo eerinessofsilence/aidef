@@ -35,7 +35,6 @@ const NAV_LINKS: Array<{
   key: NavKey;
   href: string;
   hasDropdown?: boolean;
-  isContact?: boolean;
 }> = [
   { key: "solutions", href: "/solutions" },
   { key: "products", href: "#", hasDropdown: true },
@@ -43,7 +42,7 @@ const NAV_LINKS: Array<{
   { key: "technology", href: "/technology" },
   { key: "company", href: "#", hasDropdown: true },
   { key: "support", href: "/support" },
-  { key: "contact", href: "#", isContact: true },
+  { key: "contact", href: "/support#contact" },
 ];
 
 const LANGUAGES: Array<{
@@ -661,14 +660,6 @@ export default function Header() {
                           }`}
                         />
                       </button>
-                    ) : link.isContact ? (
-                      <button
-                        type="button"
-                        onClick={() => openContactModal()}
-                        className="text-foreground hover:text-foreground/75 cursor-pointer font-medium transition-colors"
-                      >
-                        {label}
-                      </button>
                     ) : (
                       <Link
                         reloadDocument
@@ -1101,27 +1092,14 @@ export default function Header() {
 
                 return (
                   <div key={link.key} className="relative">
-                    {link.isContact ? (
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          openContactModal(true);
-                        }}
-                        className="text-foreground hover:text-foreground/75 block w-full cursor-pointer text-left text-lg font-medium transition-colors"
-                      >
-                        {label}
-                      </button>
-                    ) : (
-                      <Link
-                        reloadDocument
-                        to={withLanguage(link.href)}
-                        onClick={handleMobileMenuLinkClick}
-                        className="text-foreground hover:text-foreground/75 block cursor-pointer text-lg font-medium transition-colors"
-                      >
-                        {label}
-                      </Link>
-                    )}
+                    <Link
+                      reloadDocument
+                      to={withLanguage(link.href)}
+                      onClick={handleMobileMenuLinkClick}
+                      className="text-foreground hover:text-foreground/75 block cursor-pointer text-lg font-medium transition-colors"
+                    >
+                      {label}
+                    </Link>
                   </div>
                 );
               })}

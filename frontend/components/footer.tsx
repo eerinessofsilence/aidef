@@ -1,6 +1,5 @@
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { dispatchOpenContactModal } from "../lib/contact-modal";
 import { buildLocalizedPath, resolveLanguage } from "../src/i18n";
 
 export default function Footer() {
@@ -9,7 +8,6 @@ export default function Footer() {
   const currentLanguage = resolveLanguage(lng);
   const withLanguage = (path: string) =>
     buildLocalizedPath(currentLanguage, path);
-  const openContactModal = () => dispatchOpenContactModal();
   return (
     <footer
       id="footer"
@@ -40,13 +38,9 @@ export default function Footer() {
             <Link to={withLanguage("/support")}>
               {t("footer.quickLinks.support")}
             </Link>
-            <button
-              type="button"
-              onClick={openContactModal}
-              className="cursor-pointer text-left"
-            >
+            <Link to={withLanguage("/support#contact")} className="text-left">
               {t("footer.quickLinks.contact")}
-            </button>
+            </Link>
             <Link
               to={withLanguage("/terms-of-condition")}
               className="text-nowrap"
