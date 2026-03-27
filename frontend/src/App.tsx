@@ -77,7 +77,12 @@ function LanguageLayout() {
       <Header />
       <div className="relative min-h-screen">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-1">
-          <img src="/site-bg-top.png" className="w-full select-none" alt="" />
+          <img
+            src="/site-bg-top.png"
+            className="w-full select-none"
+            alt=""
+            fetchPriority="high"
+          />
         </div>
         <Outlet />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-1">
