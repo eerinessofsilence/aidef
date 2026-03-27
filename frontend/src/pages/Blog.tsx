@@ -849,17 +849,22 @@ export default function Blog() {
                       key={slide.id}
                       type="button"
                       onClick={() => setActiveHeroSlide(index)}
-                      className={cn(
-                        "h-2.5 rounded-full transition-all",
-                        index === activeHeroSlide
-                          ? "w-8 bg-white"
-                          : "w-2.5 bg-white/50 hover:bg-white/80",
-                      )}
+                      className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
                       aria-label={t("blog.page.hero.showSlideAria", {
                         index: index + 1,
                       })}
                       aria-pressed={index === activeHeroSlide}
-                    />
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "h-2.5 rounded-full transition-all",
+                          index === activeHeroSlide
+                            ? "w-8 bg-white"
+                            : "w-2.5 bg-white/50 hover:bg-white/80",
+                        )}
+                      />
+                    </button>
                   ))}
                 </div>
               </div>

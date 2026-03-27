@@ -20,7 +20,7 @@ export default function Footer() {
           <div className="space-y-6.5">
             <div>
               <Link to={withLanguage("/")}>
-                <img src="/logo-for-footer.svg" className="w-42.5" alt="" />
+                <img src="/logo-for-footer.svg" className="w-42.5" alt="AI DEF" />
               </Link>
             </div>
             <div>
@@ -40,9 +40,13 @@ export default function Footer() {
             <Link to={withLanguage("/support")}>
               {t("footer.quickLinks.support")}
             </Link>
-            <a className="cursor-pointer" onClick={openContactModal}>
+            <button
+              type="button"
+              onClick={openContactModal}
+              className="cursor-pointer text-left"
+            >
               {t("footer.quickLinks.contact")}
-            </a>
+            </button>
             <Link
               to={withLanguage("/terms-of-condition")}
               className="text-nowrap"
@@ -84,18 +88,23 @@ export default function Footer() {
                 </p>
               </div>
               <div className="flex max-w-90 items-center gap-4.5">
-                <a href="https://www.linkedin.com/company/aidef/">
-                  <img src="/linkedin-logo.svg" alt="" />
+                <a
+                  href="https://www.linkedin.com/company/aidef/"
+                  aria-label="LinkedIn"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="/linkedin-logo.svg" alt="" aria-hidden="true" />
                 </a>
-                <a href="">
+                <span aria-hidden="true">
                   <img src="/instagram-logo.svg" alt="" />
-                </a>
-                <a href="">
+                </span>
+                <span aria-hidden="true">
                   <img src="/facebook-logo.svg" alt="" />
-                </a>
-                <a href="">
+                </span>
+                <span aria-hidden="true">
                   <img src="/twitter-logo.svg" alt="" />
-                </a>
+                </span>
               </div>
             </div>
           </div>

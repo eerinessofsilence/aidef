@@ -635,7 +635,7 @@ export default function Header() {
               to={withLanguage("/")}
               className="flex items-center space-x-2"
             >
-              <img src="/logo-ai-def.svg" className="w-35" alt="" />
+              <img src="/logo-ai-def.svg" className="w-35" alt="AI DEF" />
             </Link>
 
             <div className="flex items-center gap-4 max-xl:hidden">
@@ -778,13 +778,18 @@ export default function Header() {
                 onClick={handleMobileMenuToggle}
                 aria-expanded={mobileMenuIsOpen}
                 aria-controls={mobileMenuId}
+                aria-label={
+                  mobileMenuIsOpen
+                    ? t("header.mobileMenu.close")
+                    : t("header.mobileMenu.open")
+                }
                 ref={mobileToggleRef}
                 className="border-border/25 active:translate-y-2px flex h-10 w-10 items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/10 to-black/0 backdrop-blur-lg transition-all duration-300 will-change-transform hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.25)] active:scale-[0.93] xl:hidden"
               >
                 {mobileMenuIsOpen ? (
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5" aria-hidden="true" />
                 ) : (
-                  <Menu className="h-5 w-5" />
+                  <Menu className="h-5 w-5" aria-hidden="true" />
                 )}
               </button>
             </div>
@@ -1285,9 +1290,10 @@ export default function Header() {
             <button
               type="button"
               onClick={closeContactModal}
+              aria-label={t("header.contactModal.close")}
               className="absolute top-4 right-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black text-white transition hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none dark:bg-white dark:text-black dark:hover:bg-neutral-200"
             >
-              <X className="h-5 w-5" />
+              <X className="h-5 w-5" aria-hidden="true" />
             </button>
             <ContactForm />
           </div>

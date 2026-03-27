@@ -67,12 +67,19 @@ export default function Hero() {
         {backgroundImages.map((_, index) => (
           <button
             key={index}
+            type="button"
             onClick={() => setCurrentSlide(index)}
-            className={`h-2 rounded-full transition-all ${
-              index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
-            }`}
+            className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
             aria-label={t("main.hero.slideAria", { index: index + 1 })}
-          />
+            aria-pressed={index === currentSlide}
+          >
+            <span
+              aria-hidden="true"
+              className={`h-2 rounded-full transition-all ${
+                index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </section>

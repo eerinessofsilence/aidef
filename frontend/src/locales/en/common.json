@@ -709,8 +709,13 @@
     "actions": {
       "clientPortal": "Client portal"
     },
+    "mobileMenu": {
+      "open": "Open mobile menu",
+      "close": "Close mobile menu"
+    },
     "contactModal": {
-      "ariaLabel": "Contact form"
+      "ariaLabel": "Contact form",
+      "close": "Close contact form"
     }
   },
   "footer": {

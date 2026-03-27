@@ -709,8 +709,13 @@
     "actions": {
       "clientPortal": "Portale clienti"
     },
+    "mobileMenu": {
+      "open": "Apri menu mobile",
+      "close": "Chiudi menu mobile"
+    },
     "contactModal": {
-      "ariaLabel": "Modulo di contatto"
+      "ariaLabel": "Modulo di contatto",
+      "close": "Chiudi il modulo di contatto"
     }
   },
   "footer": {

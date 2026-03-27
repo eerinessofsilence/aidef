@@ -708,8 +708,13 @@
     "actions": {
       "clientPortal": "Klientsky portál"
     },
+    "mobileMenu": {
+      "open": "Otvoriť mobilné menu",
+      "close": "Zavrieť mobilné menu"
+    },
     "contactModal": {
-      "ariaLabel": "Kontaktný formulár"
+      "ariaLabel": "Kontaktný formulár",
+      "close": "Zavrieť kontaktný formulár"
     }
   },
   "footer": {
