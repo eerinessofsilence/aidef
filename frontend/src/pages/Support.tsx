@@ -42,25 +42,6 @@ export default function Support() {
             {t("support.hero.title")}
           </h1>
         </div>
-        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 max-md:bottom-6">
-          {backgroundImages.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => setCurrentSlide(index)}
-              className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
-              aria-label={t("support.hero.slideAria", { index: index + 1 })}
-              aria-pressed={index === currentSlide}
-            >
-              <span
-                aria-hidden="true"
-                className={`h-2 rounded-full transition-all ${
-                  index === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
-                }`}
-              />
-            </button>
-          ))}
-        </div>
       </section>
 
       <section
