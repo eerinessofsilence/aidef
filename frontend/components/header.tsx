@@ -165,6 +165,12 @@ export default function Header() {
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileAccountMenuRef = useRef<HTMLDivElement | null>(null);
   const originalBodyOverflow = useRef<string | null>(null);
+  const productMenuAbortRef = useRef<AbortController | null>(null);
+  const civilProductMenuAbortRef = useRef<AbortController | null>(null);
+  const productMenuLoadedLanguageRef = useRef<string | null>(null);
+  const civilProductMenuLoadedLanguageRef = useRef<string | null>(null);
+  const productMenuLoadingRef = useRef(false);
+  const civilProductMenuLoadingRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { lng } = useParams();
@@ -242,107 +248,162 @@ export default function Header() {
     setLanguageDropdownTimeout(timeout);
   };
 
-  useEffect(() => {
+  const loadProductMenuItems = useCallback(async () => {
+    if (
+      productMenuLoadingRef.current ||
+      productMenuLoadedLanguageRef.current === currentLanguage
+    ) {
+      return;
+    }
+
+    productMenuLoadingRef.current = true;
+    productMenuAbortRef.current?.abort();
     const controller = new AbortController();
-    axios
-      .get<ProductListApiItem[]>(`${API_BASE}/items/`, {
+    productMenuAbortRef.current = controller;
+
+    try {
+      const res = await axios.get<ProductListApiItem[]>(`${API_BASE}/items/`, {
         signal: controller.signal,
         params: { lang: currentLanguage },
-      })
-      .then((res) => {
-        const items = [...res.data]
-          .filter((product) => Boolean(product.slug))
-          .sort(
-            (a, b) =>
-              (a.order ?? Number.MAX_SAFE_INTEGER) -
-                (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-          )
-          .map((product) => ({
-            id: product.id,
-            name: product.name,
-            href: `/products/${product.slug}`,
-            imageUrl:
-              product.dropdown_image?.url ??
-              product.first_image?.url ??
-              product.icon?.url ??
-              "/placeholder.svg",
-            imageAlt:
-              product.dropdown_image?.alt?.trim() ||
-              product.first_image?.alt?.trim() ||
-              product.icon?.alt?.trim() ||
-              product.name,
-            iconUrl:
-              product.icon?.url ??
-              product.first_image?.url ??
-              "/placeholder.svg",
-            iconAlt:
-              product.icon?.alt?.trim() ||
-              product.first_image?.alt?.trim() ||
-              product.name,
-            order: product.order,
-          }));
-        setProductMenuItems(items);
-      })
-      .catch((error) => {
-        if (axios.isCancel(error)) {
-          return;
-        }
-        console.error("Unable to load header products", error);
-        setProductMenuItems([]);
       });
+      const items = [...res.data]
+        .filter((product) => Boolean(product.slug))
+        .sort(
+          (a, b) =>
+            (a.order ?? Number.MAX_SAFE_INTEGER) -
+              (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+        )
+        .map((product) => ({
+          id: product.id,
+          name: product.name,
+          href: `/products/${product.slug}`,
+          imageUrl:
+            product.dropdown_image?.url ??
+            product.first_image?.url ??
+            product.icon?.url ??
+            "/placeholder.svg",
+          imageAlt:
+            product.dropdown_image?.alt?.trim() ||
+            product.first_image?.alt?.trim() ||
+            product.icon?.alt?.trim() ||
+            product.name,
+          iconUrl:
+            product.icon?.url ?? product.first_image?.url ?? "/placeholder.svg",
+          iconAlt:
+            product.icon?.alt?.trim() ||
+            product.first_image?.alt?.trim() ||
+            product.name,
+          order: product.order,
+        }));
+      setProductMenuItems(items);
+      productMenuLoadedLanguageRef.current = currentLanguage;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        return;
+      }
+      console.error("Unable to load header products", error);
+      setProductMenuItems([]);
+    } finally {
+      productMenuLoadingRef.current = false;
+      if (productMenuAbortRef.current === controller) {
+        productMenuAbortRef.current = null;
+      }
+    }
+  }, [API_BASE, currentLanguage]);
 
-    return () => controller.abort();
+  const loadCivilProductMenuItems = useCallback(async () => {
+    if (
+      civilProductMenuLoadingRef.current ||
+      civilProductMenuLoadedLanguageRef.current === currentLanguage
+    ) {
+      return;
+    }
+
+    civilProductMenuLoadingRef.current = true;
+    civilProductMenuAbortRef.current?.abort();
+    const controller = new AbortController();
+    civilProductMenuAbortRef.current = controller;
+
+    try {
+      const res = await axios.get<ProductListApiItem[]>(
+        `${API_BASE}/civil-items/`,
+        {
+          signal: controller.signal,
+          params: { lang: currentLanguage },
+        },
+      );
+      const items = [...res.data]
+        .filter((product) => Boolean(product.slug))
+        .sort(
+          (a, b) =>
+            (a.order ?? Number.MAX_SAFE_INTEGER) -
+              (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+        )
+        .map((product) => ({
+          id: product.id,
+          name: product.name,
+          href: `/civil-products/${product.slug}`,
+          imageUrl:
+            product.first_image?.url ??
+            product.icon?.url ??
+            "/placeholder.svg",
+          imageAlt:
+            product.first_image?.alt?.trim() ||
+            product.icon?.alt?.trim() ||
+            product.name,
+          iconUrl:
+            product.icon?.url ?? product.first_image?.url ?? "/placeholder.svg",
+          iconAlt:
+            product.icon?.alt?.trim() ||
+            product.first_image?.alt?.trim() ||
+            product.name,
+          order: product.order,
+        }));
+      setCivilProductMenuItems(items);
+      civilProductMenuLoadedLanguageRef.current = currentLanguage;
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        return;
+      }
+      console.error("Unable to load header civil products", error);
+      setCivilProductMenuItems([]);
+    } finally {
+      civilProductMenuLoadingRef.current = false;
+      if (civilProductMenuAbortRef.current === controller) {
+        civilProductMenuAbortRef.current = null;
+      }
+    }
   }, [API_BASE, currentLanguage]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    axios
-      .get<ProductListApiItem[]>(`${API_BASE}/civil-items/`, {
-        signal: controller.signal,
-        params: { lang: currentLanguage },
-      })
-      .then((res) => {
-        const items = [...res.data]
-          .filter((product) => Boolean(product.slug))
-          .sort(
-            (a, b) =>
-              (a.order ?? Number.MAX_SAFE_INTEGER) -
-                (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
-          )
-          .map((product) => ({
-            id: product.id,
-            name: product.name,
-            href: `/civil-products/${product.slug}`,
-            imageUrl:
-              product.first_image?.url ??
-              product.icon?.url ??
-              "/placeholder.svg",
-            imageAlt:
-              product.first_image?.alt?.trim() ||
-              product.icon?.alt?.trim() ||
-              product.name,
-            iconUrl:
-              product.icon?.url ??
-              product.first_image?.url ??
-              "/placeholder.svg",
-            iconAlt:
-              product.icon?.alt?.trim() ||
-              product.first_image?.alt?.trim() ||
-              product.name,
-            order: product.order,
-          }));
-        setCivilProductMenuItems(items);
-      })
-      .catch((error) => {
-        if (axios.isCancel(error)) {
-          return;
-        }
-        console.error("Unable to load header civil products", error);
-        setCivilProductMenuItems([]);
-      });
+    setProductMenuItems([]);
+    setCivilProductMenuItems([]);
+    productMenuLoadedLanguageRef.current = null;
+    civilProductMenuLoadedLanguageRef.current = null;
+    productMenuLoadingRef.current = false;
+    civilProductMenuLoadingRef.current = false;
+    productMenuAbortRef.current?.abort();
+    civilProductMenuAbortRef.current?.abort();
+    productMenuAbortRef.current = null;
+    civilProductMenuAbortRef.current = null;
+  }, [currentLanguage]);
 
-    return () => controller.abort();
-  }, [API_BASE, currentLanguage]);
+  useEffect(() => {
+    return () => {
+      productMenuAbortRef.current?.abort();
+      civilProductMenuAbortRef.current?.abort();
+    };
+  }, []);
+
+  const handleDesktopDropdownEnter = (name: MenuKey) => {
+    if (name === "products") {
+      void loadProductMenuItems();
+    } else if (name === "civilProducts") {
+      void loadCivilProductMenuItems();
+    }
+
+    handleMouseEnter(name);
+  };
 
   const handleMobileMenuToggle = () =>
     setMobileMenuIsOpen((prevState) => !prevState);
@@ -377,6 +438,12 @@ export default function Header() {
 
   // toggle mobile dropdown expansion (click-to-open under the link)
   const toggleMobileDropdown = (name: string) => {
+    if (name === "products") {
+      void loadProductMenuItems();
+    } else if (name === "civilProducts") {
+      void loadCivilProductMenuItems();
+    }
+
     setMobileExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
@@ -580,7 +647,7 @@ export default function Header() {
                     className="relative"
                     onMouseEnter={() =>
                       link.hasDropdown
-                        ? handleMouseEnter(link.key as MenuKey)
+                        ? handleDesktopDropdownEnter(link.key as MenuKey)
                         : setActiveDropdown(null)
                     }
                     onMouseLeave={handleMouseLeave}

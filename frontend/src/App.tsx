@@ -7,6 +7,7 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
+import Home from "./pages/Home";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ui/scroll-to-top";
@@ -18,8 +19,6 @@ import i18n, {
   resolveLanguage,
 } from "./i18n";
 import { ga4PageView } from "./analytics/ga4";
-
-const Home = lazy(() => import("./pages/Home"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const CivilProductDetail = lazy(() => import("./pages/CivilProductDetail"));
 const Technology = lazy(() => import("./pages/Technology"));
@@ -90,7 +89,8 @@ function LanguageLayout() {
             src="/site-bg-top.png"
             className="w-full select-none"
             alt=""
-            fetchPriority="high"
+            fetchPriority="low"
+            decoding="async"
           />
         </div>
         <Suspense fallback={<RouteFallback />}>

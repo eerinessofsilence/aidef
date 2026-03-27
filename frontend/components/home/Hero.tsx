@@ -14,6 +14,7 @@ const backgroundImages = [
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { t } = useTranslation();
+  const currentImage = backgroundImages[currentSlide] ?? backgroundImages[0];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,24 +24,26 @@ export default function Hero() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const nextSlideIndex = (currentSlide + 1) % backgroundImages.length;
+    const preloadImage = new Image();
+    preloadImage.src = backgroundImages[nextSlideIndex];
+  }, [currentSlide]);
+
   return (
     <section className="relative flex h-screen items-center max-lg:h-[75vh] max-sm:h-screen">
       <div className="absolute inset-0 overflow-hidden">
-        {backgroundImages.map((image, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <img
-              src={image || "/placeholder.svg"}
-              alt={t("main.hero.slideAlt", { index: index + 1 })}
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/50" />
-          </div>
-        ))}
+        <div key={currentImage} className="absolute inset-0">
+          <img
+            src={currentImage || "/placeholder.svg"}
+            alt={t("main.hero.slideAlt", { index: currentSlide + 1 })}
+            className="h-full w-full object-cover"
+            loading="eager"
+            fetchPriority={currentSlide === 0 ? "high" : "auto"}
+            decoding="async"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
       </div>
 
       <div className="relative z-10 container mx-auto max-md:mt-20">
