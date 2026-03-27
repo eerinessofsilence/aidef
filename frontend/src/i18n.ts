@@ -1,12 +1,5 @@
-import i18n from "i18next";
+import i18n, { type ResourceLanguage } from "i18next";
 import { initReactI18next } from "react-i18next";
-
-import enCommon from "./locales/en/common.json";
-import deCommon from "./locales/de/common.json";
-import skCommon from "./locales/sk/common.json";
-import esCommon from "./locales/es/common.json";
-import frCommon from "./locales/fr/common.json";
-import itCommon from "./locales/it/common.json";
 
 export const SUPPORTED_LANGUAGES = [
   "en",
@@ -27,6 +20,29 @@ export const isSupportedLanguage = (
 export const resolveLanguage = (value?: string): SupportedLanguage =>
   isSupportedLanguage(value) ? value : DEFAULT_LANGUAGE;
 
+const localeLoaders: Record<
+  SupportedLanguage,
+  () => Promise<{ default: ResourceLanguage }>
+> = {
+  en: () => import("./locales/en/common.json"),
+  de: () => import("./locales/de/common.json"),
+  sk: () => import("./locales/sk/common.json"),
+  es: () => import("./locales/es/common.json"),
+  fr: () => import("./locales/fr/common.json"),
+  it: () => import("./locales/it/common.json"),
+};
+
+const loadedLanguages = new Set<SupportedLanguage>();
+
+const detectInitialLanguage = (): SupportedLanguage => {
+  if (typeof window === "undefined") {
+    return DEFAULT_LANGUAGE;
+  }
+
+  const [, maybeLanguage] = window.location.pathname.split("/");
+  return resolveLanguage(maybeLanguage);
+};
+
 export const buildLocalizedPath = (lng: SupportedLanguage, path: string) => {
   if (!path.startsWith("/")) return path;
   if (path === "/") return `/${lng}`;
@@ -44,20 +60,37 @@ export const replaceLanguageInPath = (
   return `/${nextSegments.join("/")}`;
 };
 
-i18n.use(initReactI18next).init({
-  resources: {
-    en: { common: enCommon },
-    de: { common: deCommon },
-    sk: { common: skCommon },
-    es: { common: esCommon },
-    fr: { common: frCommon },
-    it: { common: itCommon },
-  },
-  lng: DEFAULT_LANGUAGE,
-  fallbackLng: DEFAULT_LANGUAGE,
-  supportedLngs: SUPPORTED_LANGUAGES,
-  defaultNS: "common",
-  interpolation: { escapeValue: false },
-});
+export const ensureLanguageResources = async (value?: string) => {
+  const language = resolveLanguage(value);
+
+  if (loadedLanguages.has(language)) {
+    return;
+  }
+
+  const messages = (await localeLoaders[language]()).default;
+  i18n.addResourceBundle(language, "common", messages, true, true);
+  loadedLanguages.add(language);
+};
+
+const initialLanguage = detectInitialLanguage();
+
+i18n.use(initReactI18next);
+
+export const i18nReady = i18n
+  .init({
+    resources: {},
+    lng: initialLanguage,
+    fallbackLng: DEFAULT_LANGUAGE,
+    supportedLngs: SUPPORTED_LANGUAGES,
+    defaultNS: "common",
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+  })
+  .then(async () => {
+    await ensureLanguageResources(initialLanguage);
+    if (i18n.language !== initialLanguage) {
+      await i18n.changeLanguage(initialLanguage);
+    }
+  });
 
 export default i18n;

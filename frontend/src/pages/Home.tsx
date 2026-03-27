@@ -19,22 +19,25 @@ export default function Home() {
   const [showDeferredSections, setShowDeferredSections] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (showDeferredSections || typeof window === "undefined") {
       return;
     }
 
     const revealSections = () => setShowDeferredSections(true);
+    const revealThreshold = Math.max(96, Math.round(window.innerHeight * 0.2));
+    const handleScroll = () => {
+      if (window.scrollY >= revealThreshold) {
+        revealSections();
+      }
+    };
 
-    if ("requestIdleCallback" in window) {
-      const idleCallbackId = window.requestIdleCallback(revealSections, {
-        timeout: 1200,
-      });
-      return () => window.cancelIdleCallback(idleCallbackId);
-    }
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-    const timeoutId = setTimeout(revealSections, 400);
-    return () => clearTimeout(timeoutId);
-  }, []);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [showDeferredSections]);
 
   return (
     <main className="relative min-h-screen">

@@ -25,6 +25,10 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
+    if (currentSlide === 0) {
+      return;
+    }
+
     const nextSlideIndex = (currentSlide + 1) % backgroundImages.length;
     const preloadImage = new Image();
     preloadImage.src = backgroundImages[nextSlideIndex];

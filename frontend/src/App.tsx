@@ -14,6 +14,7 @@ import ScrollToTop from "../components/ui/scroll-to-top";
 import { CookieConsent } from "../components/ui/cookie-consent";
 import i18n, {
   DEFAULT_LANGUAGE,
+  ensureLanguageResources,
   isSupportedLanguage,
   replaceLanguageInPath,
   resolveLanguage,
@@ -49,15 +50,30 @@ function LanguageLayout() {
   const location = useLocation();
   const activeLanguage = resolveLanguage(lng);
   const isValidLanguage = isSupportedLanguage(lng);
+  const normalizedPathname = location.pathname.replace(/\/+$/, "") || "/";
+  const isHomeRoute = normalizedPathname === `/${activeLanguage}`;
 
   // i18n
   useEffect(() => {
-    if (i18n.language !== activeLanguage) {
-      void i18n.changeLanguage(activeLanguage);
-    }
+    let isCancelled = false;
+
+    const syncLanguage = async () => {
+      await ensureLanguageResources(activeLanguage);
+
+      if (!isCancelled && i18n.language !== activeLanguage) {
+        await i18n.changeLanguage(activeLanguage);
+      }
+    };
+
+    void syncLanguage();
+
     if (typeof document !== "undefined") {
       document.documentElement.lang = activeLanguage;
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [activeLanguage]);
 
   if (!isValidLanguage) {
@@ -109,15 +125,19 @@ function LanguageLayout() {
       <CookieConsent />
       <Header />
       <div className="relative min-h-screen">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-1">
-          <img
-            src="/site-bg-top.png"
-            className="w-full select-none"
-            alt=""
-            fetchPriority="low"
-            decoding="async"
-          />
-        </div>
+        {!isHomeRoute ? (
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-1">
+            <img
+              src="/site-bg-top.png"
+              className="w-full select-none"
+              alt=""
+              width={3280}
+              height={1050}
+              fetchPriority="low"
+              decoding="async"
+            />
+          </div>
+        ) : null}
         <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>
@@ -126,6 +146,8 @@ function LanguageLayout() {
             src="/site-bg-bottom.png"
             className="w-full select-none"
             alt=""
+            width={1640}
+            height={443}
           />
         </div>
       </div>

@@ -806,8 +806,10 @@ export default function Header() {
               >
                 <img
                   src={item.imageUrl}
-                  className="max-h-30 w-full rounded-t-xl object-cover"
+                  className="h-30 w-full rounded-t-xl object-cover"
                   alt={item.imageAlt}
+                  width={170}
+                  height={120}
                 />
                 <div className="flex h-full items-center">
                   <h3 className="text-sm font-semibold text-black">
@@ -836,8 +838,10 @@ export default function Header() {
               >
                 <img
                   src={item.imageUrl}
-                  className="max-h-30 w-full rounded-t-xl object-cover"
+                  className="h-30 w-full rounded-t-xl object-cover"
                   alt={item.imageAlt}
+                  width={170}
+                  height={120}
                 />
                 <div className="flex h-full items-center">
                   <h3 className="text-sm font-semibold text-black">
@@ -864,7 +868,13 @@ export default function Header() {
                 className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
               >
                 <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                  <img src={item.icon} className="h-8.5 w-8.5" alt="" />
+                  <img
+                    src={item.icon}
+                    className="h-8.5 w-8.5"
+                    alt=""
+                    width={34}
+                    height={34}
+                  />
                 </div>
                 <h3 className="text-lg font-semibold text-black">
                   {t(item.titleKey)}
@@ -898,7 +908,13 @@ export default function Header() {
                   }`}
                 >
                   <div className="flex h-15 w-15 items-center justify-center rounded-2xl bg-transparent shadow-md shadow-black/25 backdrop-blur-lg">
-                    <img src={item.img} className="h-7.5 w-7.5" alt="" />
+                    <img
+                      src={item.img}
+                      className="h-7.5 w-7.5"
+                      alt=""
+                      width={30}
+                      height={30}
+                    />
                   </div>
                   <div className="flex items-center gap-3">
                     <h3 className="text-sm font-semibold text-black">
@@ -969,6 +985,8 @@ export default function Header() {
                               src={product.iconUrl}
                               className="h-6 w-6 rounded-sm object-cover"
                               alt={product.iconAlt}
+                              width={24}
+                              height={24}
                             />
                             {product.name}
                           </Link>
@@ -1016,6 +1034,8 @@ export default function Header() {
                               src={product.iconUrl}
                               className="h-6 w-6 rounded-sm object-cover"
                               alt={product.iconAlt}
+                              width={24}
+                              height={24}
                             />
                             {product.name}
                           </Link>
@@ -1063,6 +1083,8 @@ export default function Header() {
                               src={`/company-white-${subIdx + 1}.svg`}
                               className="h-6 w-6"
                               alt=""
+                              width={24}
+                              height={24}
                             />
                             {t(item.titleKey)}
                           </Link>

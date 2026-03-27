@@ -263,12 +263,14 @@ export const Card = ({
             src={card.bg}
             alt={t("carousel.cardPreviewAlt", { title: card.title })}
             className="h-full w-full object-cover"
+            loading="lazy"
+            fetchPriority="low"
+            decoding="async"
           />
           {card.video && (
             <video
               ref={videoRef}
               src={card.video}
-              poster={card.bg}
               muted
               loop
               playsInline
