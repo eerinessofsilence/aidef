@@ -1,30 +1,24 @@
 import { useEffect, useState } from "react";
 import { Cookie } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-const STORAGE_KEY = "aidef-cookie-consent";
+import {
+  getStoredCookieConsent,
+  persistCookieConsent,
+  type CookieConsentValue,
+} from "../../lib/cookie-consent";
 
 export function CookieConsent() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      const storedChoice = localStorage.getItem(STORAGE_KEY);
-      if (!storedChoice) {
-        setIsOpen(true);
-      }
-    } catch (error) {
+    if (!getStoredCookieConsent()) {
       setIsOpen(true);
     }
   }, []);
 
-  const handleChoice = (value: "accepted" | "declined") => {
-    try {
-      localStorage.setItem(STORAGE_KEY, value);
-    } catch (error) {
-      // Ignore storage errors; modal will still close.
-    }
+  const handleChoice = (value: CookieConsentValue) => {
+    persistCookieConsent(value);
     setIsOpen(false);
   };
 

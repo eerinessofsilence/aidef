@@ -19,6 +19,10 @@ import i18n, {
   resolveLanguage,
 } from "./i18n";
 import { ga4PageView } from "./analytics/ga4";
+import {
+  COOKIE_CONSENT_EVENT,
+  type CookieConsentValue,
+} from "../lib/cookie-consent";
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const CivilProductDetail = lazy(() => import("./pages/CivilProductDetail"));
 const Technology = lazy(() => import("./pages/Technology"));
@@ -78,6 +82,27 @@ function LanguageLayout() {
     if (!isValidLanguage) return;
     ga4PageView(location.pathname + location.search + location.hash);
   }, [isValidLanguage, location.pathname, location.search, location.hash]);
+
+  useEffect(() => {
+    if (!isValidLanguage || typeof window === "undefined") return;
+
+    const currentPagePath = location.pathname + location.search + location.hash;
+    const handleConsentChange = (event: Event) => {
+      const consentValue = (event as CustomEvent<CookieConsentValue>).detail;
+      if (consentValue === "accepted") {
+        ga4PageView(currentPagePath);
+      }
+    };
+
+    window.addEventListener(COOKIE_CONSENT_EVENT, handleConsentChange);
+    return () =>
+      window.removeEventListener(COOKIE_CONSENT_EVENT, handleConsentChange);
+  }, [
+    isValidLanguage,
+    location.pathname,
+    location.search,
+    location.hash,
+  ]);
   return (
     <>
       <ScrollToTop />
