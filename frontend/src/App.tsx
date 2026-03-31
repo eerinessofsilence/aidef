@@ -24,13 +24,13 @@ import {
 } from "../lib/cookie-consent";
 import { useInViewOnce } from "../hooks/use-in-view-once";
 import Home from "./pages/Home";
+import ProductDetail from "./pages/ProductDetail";
 const Footer = lazy(() => import("../components/Footer"));
 const CookieConsent = lazy(() =>
   import("../components/ui/cookie-consent").then((module) => ({
     default: module.CookieConsent,
   })),
 );
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const CivilProductDetail = lazy(() => import("./pages/CivilProductDetail"));
 const Technology = lazy(() => import("./pages/Technology"));
 const TermsOfCondition = lazy(() => import("./pages/TermsOfCondition"));

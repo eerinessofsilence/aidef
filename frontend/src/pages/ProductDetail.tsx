@@ -7,6 +7,7 @@ import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import Gallery from "../../components/Gallery";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
+import { useInViewOnce } from "../../hooks/use-in-view-once";
 import { resolveLanguage } from "../i18n";
 
 interface Product {
@@ -121,6 +122,112 @@ interface ProductDetail extends Product {
   final_cta_block?: ProductFinalCTABlock | null;
 }
 
+const PRODUCT_HERO_WIDTH = 1600;
+const PRODUCT_HERO_HEIGHT = 900;
+const PRODUCT_HERO_IMAGE_PROPS = {
+  width: PRODUCT_HERO_WIDTH,
+  height: PRODUCT_HERO_HEIGHT,
+  sizes: "100vw",
+  style: { aspectRatio: `${PRODUCT_HERO_WIDTH} / ${PRODUCT_HERO_HEIGHT}` },
+} as const;
+
+function ProductHeroFallback() {
+  return (
+    <>
+      <div className="absolute inset-0 animate-pulse bg-white/10" />
+      <div className="absolute top-1/2 left-1/2 z-20 flex w-full max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-4 max-md:max-w-[90%]">
+        <div className="h-4 w-28 animate-pulse rounded-full bg-white/15 max-lg:hidden" />
+        <div className="h-12 w-full max-w-xl animate-pulse rounded-full bg-white/18 max-md:h-10" />
+      </div>
+    </>
+  );
+}
+
+function ProductOverviewFallback() {
+  return (
+    <section
+      aria-hidden="true"
+      className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5"
+    >
+      <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-4 max-lg:col-span-2">
+          <div className="h-3 w-32 animate-pulse rounded-full bg-white/12" />
+          <div className="h-10 w-full max-w-md animate-pulse rounded-full bg-white/16 max-md:h-8" />
+          <div className="h-4 w-full max-w-2xl animate-pulse rounded-full bg-white/10" />
+          <div className="h-4 w-5/6 animate-pulse rounded-full bg-white/10" />
+          <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div
+                key={index}
+                className="border-border/25 bg-foreground/5 space-y-3 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
+              >
+                <div className="h-3 w-24 animate-pulse rounded-full bg-white/12" />
+                <div className="h-8 w-2/3 animate-pulse rounded-full bg-white/16" />
+                <div className="h-4 w-full animate-pulse rounded-full bg-white/10" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="relative max-lg:col-span-2">
+          <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
+          <div className="relative grid grid-cols-2 gap-4 rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl max-md:grid-cols-1 max-md:gap-2">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div
+                key={index}
+                className="bg-foreground/5 border-border/25 space-y-3 rounded-xl border p-5 max-md:p-2.5"
+              >
+                <div className="h-5 w-2/3 animate-pulse rounded-full bg-white/12" />
+                <div className="h-4 w-full animate-pulse rounded-full bg-white/10" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProductDeferredFallback() {
+  return (
+    <div aria-hidden="true" className="space-y-10 py-12 max-sm:py-8">
+      <div className="h-72 animate-pulse rounded-3xl border border-white/10 bg-white/6 max-md:h-56" />
+      <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+        <div className="h-8 w-56 animate-pulse rounded-full bg-white/14" />
+        <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div
+              key={index}
+              className="h-44 animate-pulse rounded-3xl border border-white/10 bg-white/6"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RelatedProductsFallback() {
+  return (
+    <div aria-hidden="true" className="space-y-4">
+      <div className="h-10 w-64 animate-pulse rounded-full bg-white/14 max-md:h-8" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div
+            key={index}
+            className="overflow-hidden rounded-[28px] border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.24)] backdrop-blur-sm"
+          >
+            <div className="aspect-5/7 animate-pulse bg-white/10" />
+            <div className="space-y-3 p-5">
+              <div className="h-6 w-3/4 animate-pulse rounded-full bg-white/12" />
+              <div className="h-4 w-full animate-pulse rounded-full bg-white/8" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ProductDetail() {
   const { slug, lng } = useParams<{ slug?: string; lng?: string }>();
   const activeLanguage = resolveLanguage(lng);
@@ -138,9 +245,18 @@ export default function ProductDetail() {
   >("idle");
   const [detailError, setDetailError] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [hasActivatedCarousel, setHasActivatedCarousel] = useState(false);
+  const { ref: deferredSectionsRef, inView: shouldRenderDeferredSections } =
+    useInViewOnce({ rootMargin: "0px" });
+  const { ref: relatedProductsRef, inView: shouldLoadRelatedProducts } =
+    useInViewOnce({ rootMargin: "240px 0px 0px 0px" });
   const openContactModal = () => dispatchOpenContactModal();
 
   useEffect(() => {
+    if (!shouldLoadRelatedProducts) {
+      return;
+    }
+
     const controller = new AbortController();
     setStatus("loading");
     setErrorMessage(null);
@@ -163,7 +279,7 @@ export default function ProductDetail() {
       });
 
     return () => controller.abort();
-  }, [activeLanguage, t]);
+  }, [activeLanguage, shouldLoadRelatedProducts, t]);
 
   useEffect(() => {
     if (!slug) {
@@ -196,10 +312,7 @@ export default function ProductDetail() {
     return () => controller.abort();
   }, [activeLanguage, slug, t]);
 
-  const heroProduct = useMemo(
-    () => productDetail ?? items[0] ?? null,
-    [productDetail, items],
-  );
+  const heroProduct = productDetail;
 
   const productImages = useMemo(() => {
     const images = productDetail?.images ?? [];
@@ -307,12 +420,23 @@ export default function ProductDetail() {
       );
   }, [items, productDetail?.slug, slug]);
 
+  const activeImage = productImages[activeSlide] ?? null;
+  const shouldRenderOverview =
+    detailStatus === "loading" ||
+    Boolean(
+      productDetail?.description?.trim() ||
+        productFeatures.length ||
+        productSubFeatures.length,
+    );
+
   useEffect(() => {
     setActiveSlide(0);
+    setHasActivatedCarousel(false);
   }, [productImages.length, productDetail?.slug]);
 
   const handlePrevSlide = () => {
     if (productImages.length < 2) return;
+    setHasActivatedCarousel(true);
     setActiveSlide(
       (prev) => (prev - 1 + productImages.length) % productImages.length,
     );
@@ -320,482 +444,520 @@ export default function ProductDetail() {
 
   const handleNextSlide = () => {
     if (productImages.length < 2) return;
+    setHasActivatedCarousel(true);
     setActiveSlide((prev) => (prev + 1) % productImages.length);
   };
 
   return (
     <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
-      <ScrollReveal className="w-full">
-        <div>
-          <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
-            {detailStatus === "loading" ? (
-              <div className="absolute inset-0 animate-pulse bg-white/10" />
-            ) : productImages.length > 0 ? (
-              <>
-                {productImages.map((image, index) => (
-                  <div
-                    key={image.id}
-                    className={`pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-600 ${
-                      activeSlide === index ? "z-10 opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    <img
-                      src={image.url ?? ""}
-                      alt={
-                        image.alt ??
-                        heroProduct?.name ??
-                        t("productDetail.hero.imageAlt")
-                      }
-                      className={`h-full w-full object-cover ${
-                        activeSlide === index ? "animate-kenburns-slow" : ""
-                      }`}
-                    />
-                    <div
-                      className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/30 via-black/5 to-black/50 ${
-                        activeSlide === index ? "animate-slide-glow" : ""
-                      }`}
-                    />
-                    <div
-                      className={`pointer-events-none absolute inset-10 ${
-                        activeSlide === index ? "animate-slide-glow" : ""
-                      }`}
-                    />
-                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                      <div
-                        className={`absolute top-0 -left-1/3 h-full w-1/3 skew-x-12 bg-linear-to-r from-white/0 via-white/30 to-white/0 ${
-                          activeSlide === index
-                            ? "animate-sweep-shimmer opacity-70"
-                            : "opacity-0"
-                        }`}
-                      />
-                    </div>
-                  </div>
-                ))}
-                <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col text-center drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
-                  <p className="text-foreground/70 hidden text-xl tracking-widest uppercase lg:inline">
-                    {productDetail?.category}
-                  </p>
-                  <h1 className="max-md:text-foreground/50 text-5xl leading-18 font-bold max-lg:text-4xl max-lg:leading-14 max-md:text-3xl max-md:leading-10 max-sm:text-2xl">
-                    {productDetail?.name}
-                  </h1>
-                </div>
-                {productImages.length > 1 ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={handlePrevSlide}
-                      className="absolute top-1/2 left-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:left-10 max-md:left-5 max-md:h-10 max-md:w-10"
-                      aria-label={t("productDetail.hero.previousImage")}
-                    >
-                      <ChevronLeft className="h-5 w-5 max-md:h-4 max-md:w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNextSlide}
-                      className="absolute top-1/2 right-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:right-10 max-md:right-5 max-md:h-10 max-md:w-10"
-                      aria-label={t("productDetail.hero.nextImage")}
-                    >
-                      <ChevronRight className="h-5 w-5 max-md:h-4 max-md:w-4" />
-                    </button>
-                  </>
-                ) : null}
-              </>
-            ) : (
-              <img
-                src="/hero-bg-1.png"
-                className="absolute inset-0 h-full w-full object-cover"
-                alt={heroProduct?.name ?? t("productDetail.hero.heroAlt")}
-              />
-            )}
-          </div>
-          {productImages.length > 1 ? (
-            <div className="mt-5 flex items-center justify-center gap-2">
-              {productImages.map((image, index) => (
-                <button
-                  key={image.id}
-                  type="button"
-                  onClick={() => setActiveSlide(index)}
-                  aria-label={t("productDetail.hero.goToImage", {
-                    index: index + 1,
-                  })}
-                  className={`h-2.5 w-2.5 rounded-full border border-white/35 transition ${
-                    activeSlide === index
-                      ? "bg-white"
-                      : "bg-white/30 hover:bg-white/60"
+      <div>
+        <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
+          {detailStatus === "loading" ? (
+            <ProductHeroFallback />
+          ) : activeImage ? (
+            <>
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <img
+                  src={activeImage.url}
+                  alt={
+                    activeImage.alt ??
+                    heroProduct?.name ??
+                    t("productDetail.hero.imageAlt")
+                  }
+                  className={`h-full w-full object-cover ${
+                    hasActivatedCarousel ? "animate-kenburns-slow" : ""
+                  }`}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  {...PRODUCT_HERO_IMAGE_PROPS}
+                />
+                <div
+                  className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/30 via-black/5 to-black/50 ${
+                    hasActivatedCarousel ? "animate-slide-glow" : ""
                   }`}
                 />
-              ))}
-            </div>
-          ) : null}
-          {detailStatus === "error" && detailError ? (
-            <p className="mt-3 px-5 text-lg font-medium text-red-300">
-              {detailError}
-            </p>
-          ) : null}
-        </div>
-      </ScrollReveal>
-      <div className="container">
-        {productDetail && productDetail.description ? (
-          <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
-            <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-            <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-            <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <ScrollReveal className="h-full max-lg:col-span-2">
-                <p className="text-sm tracking-wide text-white/50 uppercase">
-                  {t("productDetail.overview.kicker")}
-                </p>
-                <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                  {t("productDetail.overview.title")}
-                </h1>
-                <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                  {heroProduct?.description ??
-                    t("productDetail.overview.descriptionFallback")}
-                </p>
-                <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                  {productFeatures.map((feature) => (
-                    <div
-                      key={feature.id}
-                      className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
-                    >
-                      <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                        {feature.name}
-                      </p>
-                      <p className="text-3xl font-semibold max-md:text-2xl">
-                        {feature.value}
-                      </p>
-                      {feature.description ? (
-                        <p className="text-foreground/70">
-                          {feature.description}
-                        </p>
-                      ) : null}
-                    </div>
-                  ))}
+                <div
+                  className={`pointer-events-none absolute inset-10 ${
+                    hasActivatedCarousel ? "animate-slide-glow" : ""
+                  }`}
+                />
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                  <div
+                    className={`absolute top-0 -left-1/3 h-full w-1/3 skew-x-12 bg-linear-to-r from-white/0 via-white/30 to-white/0 ${
+                      hasActivatedCarousel
+                        ? "animate-sweep-shimmer opacity-70"
+                        : "opacity-0"
+                    }`}
+                  />
                 </div>
-                <div className="max-lg:hidden">
+              </div>
+              <div className="absolute top-1/2 left-1/2 z-20 flex max-w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col text-center drop-shadow-[0_6px_18px_rgba(0,0,0,0.6)] max-md:max-w-[90%]">
+                {productDetail?.category ? (
+                  <p className="text-foreground/70 hidden text-xl tracking-widest uppercase lg:inline">
+                    {productDetail.category}
+                  </p>
+                ) : null}
+                {productDetail?.name ? (
+                  <h1 className="max-md:text-foreground/50 text-5xl leading-18 font-bold max-lg:text-4xl max-lg:leading-14 max-md:text-3xl max-md:leading-10 max-sm:text-2xl">
+                    {productDetail.name}
+                  </h1>
+                ) : null}
+              </div>
+              {productImages.length > 1 ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrevSlide}
+                    className="absolute top-1/2 left-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:left-10 max-md:left-5 max-md:h-10 max-md:w-10"
+                    aria-label={t("productDetail.hero.previousImage")}
+                  >
+                    <ChevronLeft className="h-5 w-5 max-md:h-4 max-md:w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextSlide}
+                    className="absolute top-1/2 right-20 z-20 inline-flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-black/60 text-white shadow-lg transition hover:border-white/50 hover:bg-black/80 max-xl:right-10 max-md:right-5 max-md:h-10 max-md:w-10"
+                    aria-label={t("productDetail.hero.nextImage")}
+                  >
+                    <ChevronRight className="h-5 w-5 max-md:h-4 max-md:w-4" />
+                  </button>
+                </>
+              ) : null}
+            </>
+          ) : detailStatus === "error" ? (
+            <img
+              src="/hero-bg-1.jpg"
+              className="absolute inset-0 h-full w-full object-cover"
+              alt={heroProduct?.name ?? t("productDetail.hero.heroAlt")}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              {...PRODUCT_HERO_IMAGE_PROPS}
+            />
+          ) : (
+            <ProductHeroFallback />
+          )}
+        </div>
+        {productImages.length > 1 ? (
+          <div className="mt-5 flex items-center justify-center gap-2">
+            {productImages.map((image, index) => (
+              <button
+                key={image.id}
+                type="button"
+                onClick={() => {
+                  setHasActivatedCarousel(true);
+                  setActiveSlide(index);
+                }}
+                aria-label={t("productDetail.hero.goToImage", {
+                  index: index + 1,
+                })}
+                className={`h-2.5 w-2.5 rounded-full border border-white/35 transition ${
+                  activeSlide === index
+                    ? "bg-white"
+                    : "bg-white/30 hover:bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        ) : null}
+        {detailStatus === "error" && detailError ? (
+          <p className="mt-3 px-5 text-lg font-medium text-red-300">
+            {detailError}
+          </p>
+        ) : null}
+      </div>
+      <div className="container">
+        {shouldRenderOverview ? (
+          detailStatus === "loading" ? (
+            <ProductOverviewFallback />
+          ) : (
+            <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
+              <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
+              <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
+              <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+                <ScrollReveal className="h-full max-lg:col-span-2">
+                  <p className="text-sm tracking-wide text-white/50 uppercase">
+                    {t("productDetail.overview.kicker")}
+                  </p>
+                  <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
+                    {t("productDetail.overview.title")}
+                  </h1>
+                  <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
+                    {heroProduct?.description ??
+                      t("productDetail.overview.descriptionFallback")}
+                  </p>
+                  <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                    {productFeatures.map((feature) => (
+                      <div
+                        key={feature.id}
+                        className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
+                      >
+                        <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                          {feature.name}
+                        </p>
+                        <p className="text-3xl font-semibold max-md:text-2xl">
+                          {feature.value}
+                        </p>
+                        {feature.description ? (
+                          <p className="text-foreground/70">
+                            {feature.description}
+                          </p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="max-lg:hidden">
+                    <a
+                      onClick={openContactModal}
+                      className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                    >
+                      {t("productDetail.actions.contact")}
+                    </a>
+                  </div>
+                </ScrollReveal>
+                <ScrollReveal className="relative max-lg:col-span-2">
+                  <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
+                  {productSubFeatures.length > 0 ? (
+                    <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
+                      <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
+                        {productSubFeatures.map((sub_feature) => (
+                          <div
+                            key={sub_feature.id}
+                            className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
+                          >
+                            <h3 className="text-lg font-semibold">
+                              {sub_feature.name}
+                            </h3>
+                            {sub_feature.description ? (
+                              <p className="text-foreground/70">
+                                {sub_feature.description}
+                              </p>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </ScrollReveal>
+                <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
                   <a
                     onClick={openContactModal}
-                    className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                    className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
                   >
                     {t("productDetail.actions.contact")}
                   </a>
                 </div>
-              </ScrollReveal>
-              <ScrollReveal className="relative max-lg:col-span-2">
-                <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
-                {productSubFeatures.length > 0 && (
-                  <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                    <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                      {productSubFeatures.map((sub_feature) => (
-                        <div
-                          key={sub_feature.id}
-                          className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
-                        >
-                          <h3 className="text-lg font-semibold">
-                            {sub_feature.name}
+              </div>
+            </section>
+          )
+        ) : null}
+        <div ref={deferredSectionsRef} className="h-px w-full" aria-hidden="true" />
+        {shouldRenderDeferredSections ? (
+          <>
+            {productGallery.length > 0 ? (
+              <Gallery
+                images={productGallery.map((item) => ({
+                  src: item.url,
+                  alt: item.alt ?? productDetail?.name ?? heroProduct?.name,
+                }))}
+              />
+            ) : null}
+
+            {productTechnologies.length > 0 ? (
+              <section className="space-y-8 py-16 max-sm:py-12">
+                <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                  <ScrollReveal>
+                    <div>
+                      <p className="text-foreground/50 text-sm tracking-wider uppercase">
+                        {t("productDetail.technology.kicker")}
+                      </p>
+                      <h2 className="text-3xl font-semibold">
+                        {t("productDetail.technology.title")}
+                      </h2>
+                      <p className="text-foreground/70 mt-2 max-w-2xl">
+                        {t("productDetail.technology.description")}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                </header>
+                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+                  {productTechnologies.map((technology) => {
+                    const tags = technology.tags ?? [];
+                    return (
+                      <ScrollReveal
+                        key={technology.id}
+                        delay={0.06 * technology.id}
+                      >
+                        <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
+                          <h3 className="text-2xl font-semibold">
+                            {technology.name}
                           </h3>
-                          {sub_feature.description ? (
-                            <p className="text-foreground/70">
-                              {sub_feature.description}
+                          {technology.description ? (
+                            <p className="text-foreground/70 mt-3 text-sm">
+                              {technology.description}
                             </p>
                           ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </ScrollReveal>
-              <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-                <a
-                  onClick={openContactModal}
-                  className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
-                >
-                  {t("productDetail.actions.contact")}
-                </a>
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        {productGallery.length > 0 ? (
-          <Gallery
-            images={productGallery.map((item) => ({
-              src: item.url,
-              alt: item.alt ?? productDetail?.name ?? heroProduct?.name,
-            }))}
-          />
-        ) : null}
-
-        {productTechnologies.length > 0 ? (
-          <section className="space-y-8 py-16 max-sm:py-12">
-            <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <ScrollReveal>
-                <div>
-                  <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                    {t("productDetail.technology.kicker")}
-                  </p>
-                  <h2 className="text-3xl font-semibold">
-                    {t("productDetail.technology.title")}
-                  </h2>
-                  <p className="text-foreground/70 mt-2 max-w-2xl">
-                    {t("productDetail.technology.description")}
-                  </p>
-                </div>
-              </ScrollReveal>
-            </header>
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {productTechnologies.map((technology) => {
-                const tags = technology.tags ?? [];
-                return (
-                  <ScrollReveal
-                    key={technology.id}
-                    delay={0.06 * technology.id}
-                  >
-                    <article className="bg-secondary/30 text-foreground h-full rounded-3xl border border-white/10 p-5 shadow-inner shadow-black/50">
-                      <h3 className="text-2xl font-semibold">
-                        {technology.name}
-                      </h3>
-                      {technology.description ? (
-                        <p className="text-foreground/70 mt-3 text-sm">
-                          {technology.description}
-                        </p>
-                      ) : null}
-                      {tags.length > 0 ? (
-                        <div className="mt-6 flex flex-wrap gap-2">
-                          {tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </article>
-                  </ScrollReveal>
-                );
-              })}
-            </div>
-          </section>
-        ) : null}
-        {productFeatureBlocks.length > 0
-          ? productFeatureBlocks.map((block) =>
-              !block.with_logo ? (
-                <section
-                  key={block.id}
-                  className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end ${
-                    block.background_image
-                      ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
-                      : ""
-                  }`}
-                  style={
-                    block.background_image
-                      ? { backgroundImage: `url(${block.background_image})` }
-                      : undefined
-                  }
-                >
-                  <ScrollReveal className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25">
-                    <div>
-                      <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                        {block.name}
-                      </span>
-                    </div>
-                    <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                      {block.title}
-                    </h1>
-                    <p className="text-foreground/70 text-lg max-md:text-base">
-                      {block.description}
-                    </p>
-                  </ScrollReveal>
-                </section>
-              ) : (
-                <section className="py-16 max-sm:py-12">
-                  <ScrollReveal className="flex items-center justify-between max-md:flex-col max-md:space-y-10">
-                    <div className="max-md:text-center">
-                      <p className="tracking-wider uppercase">{block.name}</p>
-                      <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
-                        {block.title}
-                      </h1>
-                      <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
-                        {block.description}
-                      </p>
-                    </div>
-                    <div>
-                      <img
-                        src="/focus-areas-core.svg"
-                        className="mx-10 w-60 max-md:w-50 max-sm:w-40"
-                        alt=""
-                      />
-                    </div>
-                  </ScrollReveal>
-                </section>
-              ),
-            )
-          : null}
-        {productInfoBlocks.length > 0
-          ? productInfoBlocks.map((block) => {
-              const description1 = block.description_1 ?? [];
-              const description2 = block.description_2 ?? [];
-              return (
-                <section className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white">
-                  <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
-                    <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-                      <ScrollReveal className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]">
-                        <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
-                          {block.title_1}
-                        </h1>
-                        <ul className="space-y-3 text-black">
-                          {description1.map((tag) => (
-                            <li className="flex max-w-[420px] items-center gap-3">
-                              <span className="text-lg max-md:text-base">
-                                {tag}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
+                          {tags.length > 0 ? (
+                            <div className="mt-6 flex flex-wrap gap-2">
+                              {tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="rounded-full border border-white/10 px-3 py-1 text-xs tracking-wide text-white/50 uppercase shadow-sm shadow-black/15 backdrop-blur-lg"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
+                        </article>
                       </ScrollReveal>
-                      <ScrollReveal className="w-full max-w-150 max-lg:max-w-100 lg:w-auto">
-                        <img
-                          src={block.image_1}
-                          alt=""
-                          className="w-full object-contain"
-                        />
-                      </ScrollReveal>
-                    </div>
-                    <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
-                      <ScrollReveal
-                        delay={0.06}
-                        className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
-                      >
-                        <img
-                          src={block.image_2}
-                          alt=""
-                          className="w-full object-contain"
-                        />
-                      </ScrollReveal>
-                      <ScrollReveal
-                        delay={0.12}
-                        className="flex flex-col justify-center gap-4 text-left"
-                      >
-                        <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
-                          {block.title_2}
-                        </h1>
-                        <ul className="space-y-3 text-black">
-                          {description2.map((tag) => (
-                            <li className="flex max-w-[420px] items-center gap-3">
-                              <span className="text-lg max-md:text-base">
-                                {tag}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollReveal>
-                    </div>
-                  </div>
-                </section>
-              );
-            })
-          : null}
-        {productCTABlocks.length > 0
-          ? productCTABlocks.map((block) => (
-              <section
-                key={block.id}
-                className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 max-h-[90vh] w-screen items-end bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
-                style={{
-                  backgroundImage: block.background_image
-                    ? `url(${block.background_image})`
-                    : undefined,
-                }}
-              >
-                <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
-                  <ScrollReveal className="space-y-5 max-md:space-y-4 max-md:text-center">
-                    <div>
-                      <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
-                        {block.name}
-                      </span>
-                    </div>
-                    <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
-                      {block.title}
-                    </h1>
-                    {block.has_button ? (
-                      <ScrollReveal
-                        delay={0.1}
-                        className="flex max-md:justify-center"
-                      >
-                        <a
-                          onClick={openContactModal}
-                          className="group :ring-[#0A84FF] relative mt-3 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
-                        >
-                          {t("productDetail.actions.contact")}
-                        </a>
-                      </ScrollReveal>
-                    ) : null}
-                  </ScrollReveal>
+                    );
+                  })}
                 </div>
               </section>
-            ))
-          : null}
-        <section className="space-y-6 py-10 max-sm:py-8">
-          <ScrollReveal delay={0.12}>
-            <Carousel
-              carouselTitle={t("productDetail.carousel.title")}
-              items={carouselProducts.map((product, index) => (
-                <Card
-                  key={product.id}
-                  card={{
-                    category: product.category ?? "",
-                    title: product.name,
-                    description: product.description?.trim() ?? "",
-                    href: `/products/${product.slug}`,
-                    bg:
-                      product.drone_slider?.image ??
-                      product.first_image?.url ??
-                      product.icon?.url ??
-                      "/placeholder.svg",
-                    video: product.drone_slider?.video ?? undefined,
-                  }}
-                  index={index}
-                />
-              ))}
-            />
-          </ScrollReveal>
-          {status === "error" ? (
-            <div className="rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
-              {errorMessage ?? t("productDetail.errors.catalogFallback")}
-            </div>
-          ) : null}
-        </section>
-        {productFinalCTABlock ? (
-          <section className="container mx-auto flex flex-col items-center justify-center space-y-25 px-5 py-25 max-lg:space-y-15 max-lg:py-12.5">
-            <ScrollReveal
-              className="flex w-full max-w-4xl flex-col items-center gap-y-8 text-center max-md:gap-y-4"
-              from="down"
-              duration={0.5}
-              distance={0}
-            >
-              {productFinalCTABlock.title ? (
-                <h1 className="text-center text-5xl font-bold max-lg:text-4xl">
-                  {productFinalCTABlock.title}
-                </h1>
-              ) : null}
-              {productFinalCTABlock.paragraph ? (
-                <p className="max-w-3xl text-center text-lg max-md:text-base max-md:text-balance">
-                  {productFinalCTABlock.paragraph}
-                </p>
-              ) : null}
-              {productFinalCTABlock.has_button ? (
-                <div>
-                  <a
-                    onClick={openContactModal}
-                    className="group relative inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-42 max-md:text-base"
+            ) : null}
+
+            {productFeatureBlocks.length > 0
+              ? productFeatureBlocks.map((block) =>
+                  !block.with_logo ? (
+                    <section
+                      key={block.id}
+                      className={`relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end ${
+                        block.background_image
+                          ? "aspect-1440/960 h-[70vh] bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                          : ""
+                      }`}
+                      style={
+                        block.background_image
+                          ? { backgroundImage: `url(${block.background_image})` }
+                          : undefined
+                      }
+                    >
+                      <ScrollReveal className="container space-y-5 pb-12.5 max-md:space-y-4 max-md:text-center lg:pb-25">
+                        <div>
+                          <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                            {block.name}
+                          </span>
+                        </div>
+                        <h1 className="text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+                          {block.title}
+                        </h1>
+                        <p className="text-foreground/70 text-lg max-md:text-base">
+                          {block.description}
+                        </p>
+                      </ScrollReveal>
+                    </section>
+                  ) : (
+                    <section key={block.id} className="py-16 max-sm:py-12">
+                      <ScrollReveal className="flex items-center justify-between max-md:flex-col max-md:space-y-10">
+                        <div className="max-md:text-center">
+                          <p className="tracking-wider uppercase">{block.name}</p>
+                          <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
+                            {block.title}
+                          </h1>
+                          <p className="text-foreground/70 mt-2 max-w-lg text-lg leading-relaxed max-md:text-base">
+                            {block.description}
+                          </p>
+                        </div>
+                        <div>
+                          <img
+                            src="/focus-areas-core.svg"
+                            className="mx-10 w-60 max-md:w-50 max-sm:w-40"
+                            alt=""
+                          />
+                        </div>
+                      </ScrollReveal>
+                    </section>
+                  ),
+                )
+              : null}
+
+            {productInfoBlocks.length > 0
+              ? productInfoBlocks.map((block) => {
+                  const description1 = block.description_1 ?? [];
+                  const description2 = block.description_2 ?? [];
+                  return (
+                    <section
+                      key={block.id}
+                      className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex w-screen items-end bg-white"
+                    >
+                      <div className="container m-auto grid grid-cols-1 gap-12 px-5 py-12 max-sm:py-10">
+                        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                          <ScrollReveal className="flex flex-col items-start justify-center gap-4 text-left lg:max-w-[480px]">
+                            <h1 className="text-5xl font-bold text-black max-lg:text-4xl max-md:text-3xl">
+                              {block.title_1}
+                            </h1>
+                            <ul className="space-y-3 text-black">
+                              {description1.map((tag) => (
+                                <li key={tag} className="flex max-w-[420px] items-center gap-3">
+                                  <span className="text-lg max-md:text-base">
+                                    {tag}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </ScrollReveal>
+                          <ScrollReveal className="w-full max-w-150 max-lg:max-w-100 lg:w-auto">
+                            <img
+                              src={block.image_1}
+                              alt=""
+                              className="w-full object-contain"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </ScrollReveal>
+                        </div>
+                        <div className="flex flex-col-reverse gap-8 lg:flex-row lg:items-center lg:justify-between">
+                          <ScrollReveal
+                            delay={0.06}
+                            className="w-full max-w-175 max-lg:max-w-125 lg:w-auto"
+                          >
+                            <img
+                              src={block.image_2}
+                              alt=""
+                              className="w-full object-contain"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </ScrollReveal>
+                          <ScrollReveal
+                            delay={0.12}
+                            className="flex flex-col justify-center gap-4 text-left"
+                          >
+                            <h1 className="max-w-lg text-5xl font-bold text-balance text-black max-lg:text-4xl max-md:text-3xl">
+                              {block.title_2}
+                            </h1>
+                            <ul className="space-y-3 text-black">
+                              {description2.map((tag) => (
+                                <li key={tag} className="flex max-w-[420px] items-center gap-3">
+                                  <span className="text-lg max-md:text-base">
+                                    {tag}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </ScrollReveal>
+                        </div>
+                      </div>
+                    </section>
+                  );
+                })
+              : null}
+
+            {productCTABlocks.length > 0
+              ? productCTABlocks.map((block) => (
+                  <section
+                    key={block.id}
+                    className="relative right-1/2 left-1/2 -mr-[50vw] -ml-[50vw] flex aspect-1440/960 max-h-[90vh] w-screen items-end bg-cover bg-center max-lg:aspect-auto max-lg:min-h-[360px] max-md:min-h-[300px]"
+                    style={{
+                      backgroundImage: block.background_image
+                        ? `url(${block.background_image})`
+                        : undefined,
+                    }}
                   >
-                    {t("productDetail.actions.contact")}
-                  </a>
+                    <div className="container mx-auto px-6 pb-12.5 max-xl:px-5 max-sm:px-4 lg:pb-25">
+                      <ScrollReveal className="space-y-5 max-md:space-y-4 max-md:text-center">
+                        <div>
+                          <span className="border-border/10 rounded-[30px] border bg-white/20 px-4 py-2 uppercase backdrop-blur-xs">
+                            {block.name}
+                          </span>
+                        </div>
+                        <h1 className="text-5xl font-bold max-lg:text-4xl max-sm:text-2xl">
+                          {block.title}
+                        </h1>
+                        {block.has_button ? (
+                          <ScrollReveal
+                            delay={0.1}
+                            className="flex max-md:justify-center"
+                          >
+                            <a
+                              onClick={openContactModal}
+                              className="group :ring-[#0A84FF] relative mt-3 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:text-base"
+                            >
+                              {t("productDetail.actions.contact")}
+                            </a>
+                          </ScrollReveal>
+                        ) : null}
+                      </ScrollReveal>
+                    </div>
+                  </section>
+                ))
+              : null}
+
+            <section
+              ref={relatedProductsRef}
+              className="space-y-6 py-10 max-sm:py-8"
+            >
+              {shouldLoadRelatedProducts && status === "ready" ? (
+                <ScrollReveal delay={0.12}>
+                  <Carousel
+                    carouselTitle={t("productDetail.carousel.title")}
+                    items={carouselProducts.map((product, index) => (
+                      <Card
+                        key={product.id}
+                        card={{
+                          category: product.category ?? "",
+                          title: product.name,
+                          description: product.description?.trim() ?? "",
+                          href: `/products/${product.slug}`,
+                          bg:
+                            product.drone_slider?.image ??
+                            product.first_image?.url ??
+                            product.icon?.url ??
+                            "/placeholder.svg",
+                          video: product.drone_slider?.video ?? undefined,
+                        }}
+                        index={index}
+                      />
+                    ))}
+                  />
+                </ScrollReveal>
+              ) : (
+                <RelatedProductsFallback />
+              )}
+              {status === "error" ? (
+                <div className="rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
+                  {errorMessage ?? t("productDetail.errors.catalogFallback")}
                 </div>
               ) : null}
-            </ScrollReveal>
-          </section>
-        ) : null}
+            </section>
+
+            {productFinalCTABlock ? (
+              <section className="container mx-auto flex flex-col items-center justify-center space-y-25 px-5 py-25 max-lg:space-y-15 max-lg:py-12.5">
+                <ScrollReveal
+                  className="flex w-full max-w-4xl flex-col items-center gap-y-8 text-center max-md:gap-y-4"
+                  from="down"
+                  duration={0.5}
+                  distance={0}
+                >
+                  {productFinalCTABlock.title ? (
+                    <h1 className="text-center text-5xl font-bold max-lg:text-4xl">
+                      {productFinalCTABlock.title}
+                    </h1>
+                  ) : null}
+                  {productFinalCTABlock.paragraph ? (
+                    <p className="max-w-3xl text-center text-lg max-md:text-base max-md:text-balance">
+                      {productFinalCTABlock.paragraph}
+                    </p>
+                  ) : null}
+                  {productFinalCTABlock.has_button ? (
+                    <div>
+                      <a
+                        onClick={openContactModal}
+                        className="group relative inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-42 max-md:text-base"
+                      >
+                        {t("productDetail.actions.contact")}
+                      </a>
+                    </div>
+                  ) : null}
+                </ScrollReveal>
+              </section>
+            ) : null}
+          </>
+        ) : (
+          <ProductDeferredFallback />
+        )}
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ function HomeSectionsFallback() {
             {Array.from({ length: 6 }, (_, index) => (
               <div
                 key={index}
-                className="rounded-[24px] border border-white/10 bg-white/5 p-5"
+                className="rounded-3xl border border-white/10 bg-white/5 p-5"
               >
                 <div className="h-11 w-11 animate-pulse rounded-2xl bg-white/12" />
                 <div className="mt-4 h-5 w-2/3 animate-pulse rounded-full bg-white/12" />
@@ -84,7 +84,11 @@ export default function Home() {
   return (
     <main className="relative min-h-screen">
       <Hero />
-      <div ref={deferredSectionsRef} className="h-px w-full" aria-hidden="true" />
+      <div
+        ref={deferredSectionsRef}
+        className="h-px w-full"
+        aria-hidden="true"
+      />
       {shouldLoadDeferredSections ? (
         <Suspense fallback={<HomeSectionsFallback />}>
           <DroneCarousel />
