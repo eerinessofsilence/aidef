@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
+from .image_variants import build_menu_image_url
 from .models import (
     BlogPost,
     BlogPostBlock,
@@ -150,6 +151,11 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     first_image = next((image for image in product.images.all() if image.image), None)
     icon_url = _absolute_media_url(request, product.icon)
     dropdown_image_url = _absolute_media_url(request, product.dropdown_image)
+    dropdown_menu_url = build_menu_image_url(request, product.dropdown_image)
+    first_image_url = _absolute_media_url(request, first_image.image) if first_image else None
+    first_image_menu_url = (
+        build_menu_image_url(request, first_image.image) if first_image else None
+    )
     data["icon"] = (
         {
             "url": icon_url,
@@ -161,6 +167,7 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     data["dropdown_image"] = (
         {
             "url": dropdown_image_url,
+            "menu_url": dropdown_menu_url,
             "alt": (product.name or "").strip(),
         }
         if dropdown_image_url
@@ -169,7 +176,8 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     data["first_image"] = (
         {
             "id": first_image.id,
-            "url": _absolute_media_url(request, first_image.image),
+            "url": first_image_url,
+            "menu_url": first_image_menu_url,
             "alt": _get_image_alt(first_image, language),
             "order": first_image.order,
         }
@@ -356,6 +364,10 @@ def _serialize_civil_product_list(request, product: CivilProduct) -> Dict[str, A
     language = _get_request_language(request)
     first_image = next((image for image in product.images.all() if image.image), None)
     icon_url = _absolute_media_url(request, product.icon)
+    first_image_url = _absolute_media_url(request, first_image.image) if first_image else None
+    first_image_menu_url = (
+        build_menu_image_url(request, first_image.image) if first_image else None
+    )
     data["icon"] = (
         {
             "url": icon_url,
@@ -367,7 +379,8 @@ def _serialize_civil_product_list(request, product: CivilProduct) -> Dict[str, A
     data["first_image"] = (
         {
             "id": first_image.id,
-            "url": _absolute_media_url(request, first_image.image),
+            "url": first_image_url,
+            "menu_url": first_image_menu_url,
             "alt": _get_civil_image_alt(first_image, language),
             "order": first_image.order,
         }

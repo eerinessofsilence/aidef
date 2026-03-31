@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from io import BytesIO
 import shutil
 import tempfile
 from unittest.mock import patch
@@ -9,6 +10,7 @@ from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from PIL import Image
 
 from .models import (
     BlogAuthor,
@@ -26,6 +28,19 @@ from .models import (
 )
 
 TEST_MEDIA_ROOT = tempfile.mkdtemp(prefix="aidef-main-admin-tests-")
+
+
+def _make_test_image_upload(
+    name: str,
+    *,
+    size: tuple[int, int] = (1200, 675),
+    color: tuple[int, int, int] = (12, 24, 48),
+) -> SimpleUploadedFile:
+    buffer = BytesIO()
+    image = Image.new("RGB", size, color)
+    image.save(buffer, format="JPEG", quality=90)
+    buffer.seek(0)
+    return SimpleUploadedFile(name, buffer.getvalue(), content_type="image/jpeg")
 
 
 @override_settings(MEDIA_ROOT=TEST_MEDIA_ROOT)
@@ -189,6 +204,21 @@ class MainAdminSmokeTests(TestCase):
         self.assertIsNotNone(item["dropdown_image"])
         self.assertIn("menu-card.jpg", item["dropdown_image"]["url"])
         self.assertEqual(item["dropdown_image"]["alt"], self.product.name)
+
+    def test_item_list_api_generates_menu_variant_for_dropdown_image(self):
+        self.product.dropdown_image = _make_test_image_upload("menu-card-large.jpg")
+        self.product.save()
+
+        response = self.client.get(reverse("main:item-list"))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        item = next(entry for entry in payload if entry["id"] == self.product.id)
+
+        self.assertIn("dropdown_image", item)
+        self.assertIsNotNone(item["dropdown_image"])
+        self.assertIn("menu_url", item["dropdown_image"])
+        self.assertTrue(item["dropdown_image"]["menu_url"].endswith(".webp"))
+        self.assertIn("/_variants/", item["dropdown_image"]["menu_url"])
 
     def test_blog_post_admin_change_form_renders_blocks_inline(self):
         blog_category = BlogCategory.objects.create(name="Resume Tips")

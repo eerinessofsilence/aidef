@@ -102,6 +102,7 @@ type CompanyMenuItem = {
 
 type ProductImagePreview = {
   url: string | null;
+  menu_url?: string | null;
   alt?: string | null;
 };
 
@@ -296,7 +297,9 @@ export default function Header() {
           name: product.name,
           href: `/products/${product.slug}`,
           imageUrl:
+            product.dropdown_image?.menu_url ??
             product.dropdown_image?.url ??
+            product.first_image?.menu_url ??
             product.first_image?.url ??
             product.icon?.url ??
             "/placeholder.svg",
@@ -306,7 +309,10 @@ export default function Header() {
             product.icon?.alt?.trim() ||
             product.name,
           iconUrl:
-            product.icon?.url ?? product.first_image?.url ?? "/placeholder.svg",
+            product.icon?.url ??
+            product.first_image?.menu_url ??
+            product.first_image?.url ??
+            "/placeholder.svg",
           iconAlt:
             product.icon?.alt?.trim() ||
             product.first_image?.alt?.trim() ||
@@ -368,13 +374,19 @@ export default function Header() {
           name: product.name,
           href: `/civil-products/${product.slug}`,
           imageUrl:
-            product.first_image?.url ?? product.icon?.url ?? "/placeholder.svg",
+            product.first_image?.menu_url ??
+            product.first_image?.url ??
+            product.icon?.url ??
+            "/placeholder.svg",
           imageAlt:
             product.first_image?.alt?.trim() ||
             product.icon?.alt?.trim() ||
             product.name,
           iconUrl:
-            product.icon?.url ?? product.first_image?.url ?? "/placeholder.svg",
+            product.icon?.url ??
+            product.first_image?.menu_url ??
+            product.first_image?.url ??
+            "/placeholder.svg",
           iconAlt:
             product.icon?.alt?.trim() ||
             product.first_image?.alt?.trim() ||
@@ -825,6 +837,8 @@ export default function Header() {
                   alt={item.imageAlt}
                   width={170}
                   height={120}
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="flex h-full items-center">
                   <h3 className="text-sm font-semibold text-black">
@@ -856,6 +870,8 @@ export default function Header() {
                   alt={item.imageAlt}
                   width={170}
                   height={120}
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="flex h-full items-center">
                   <h3 className="text-sm font-semibold text-black">
@@ -999,6 +1015,8 @@ export default function Header() {
                               alt={product.iconAlt}
                               width={24}
                               height={24}
+                              loading="lazy"
+                              decoding="async"
                             />
                             {product.name}
                           </Link>
@@ -1047,6 +1065,8 @@ export default function Header() {
                               alt={product.iconAlt}
                               width={24}
                               height={24}
+                              loading="lazy"
+                              decoding="async"
                             />
                             {product.name}
                           </Link>
