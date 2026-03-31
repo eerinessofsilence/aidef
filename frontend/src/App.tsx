@@ -59,7 +59,7 @@ function LanguageLayout() {
   const [shouldRenderCookieConsent, setShouldRenderCookieConsent] =
     useState(false);
   const { ref: footerSentinelRef, inView: shouldRenderFooter } = useInViewOnce({
-    rootMargin: "1200px 0px 0px 0px",
+    rootMargin: "240px 0px 0px 0px",
   });
   const normalizedPathname = location.pathname.replace(/\/+$/, "") || "/";
   const isHomeRoute = normalizedPathname === `/${activeLanguage}`;
@@ -147,24 +147,36 @@ function LanguageLayout() {
         ) => number;
         cancelIdleCallback?: (handle: number) => void;
       };
-    let idleId: number | null = null;
     let timeoutId: number | null = null;
+    let revealed = false;
 
     const revealCookieConsent = () => {
+      if (revealed) {
+        return;
+      }
+      revealed = true;
       startTransition(() => {
         setShouldRenderCookieConsent(true);
       });
     };
 
-    const scheduleCookieConsent = () => {
-      if (typeof deferredWindow.requestIdleCallback === "function") {
-        idleId = deferredWindow.requestIdleCallback(revealCookieConsent, {
-          timeout: 2800,
-        });
-        return;
-      }
+    const handleFirstInteraction = () => {
+      revealCookieConsent();
+    };
 
-      timeoutId = deferredWindow.setTimeout(revealCookieConsent, 1800);
+    const scheduleCookieConsent = () => {
+      timeoutId = deferredWindow.setTimeout(revealCookieConsent, 5000);
+      deferredWindow.addEventListener("pointerdown", handleFirstInteraction, {
+        once: true,
+        passive: true,
+      });
+      deferredWindow.addEventListener("keydown", handleFirstInteraction, {
+        once: true,
+      });
+      deferredWindow.addEventListener("scroll", handleFirstInteraction, {
+        once: true,
+        passive: true,
+      });
     };
 
     const handleLoad = () => {
@@ -179,9 +191,9 @@ function LanguageLayout() {
 
     return () => {
       deferredWindow.removeEventListener("load", handleLoad);
-      if (idleId !== null) {
-        deferredWindow.cancelIdleCallback?.(idleId);
-      }
+      deferredWindow.removeEventListener("pointerdown", handleFirstInteraction);
+      deferredWindow.removeEventListener("keydown", handleFirstInteraction);
+      deferredWindow.removeEventListener("scroll", handleFirstInteraction);
       if (timeoutId !== null) {
         deferredWindow.clearTimeout(timeoutId);
       }
@@ -222,7 +234,7 @@ function LanguageLayout() {
         <div ref={footerSentinelRef} aria-hidden="true" className="h-px w-full" />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 -z-1 w-full overflow-hidden"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-1 hidden w-full overflow-hidden md:block"
         >
           <img
             src="/site-bg-bottom.png"

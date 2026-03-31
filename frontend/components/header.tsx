@@ -186,6 +186,7 @@ export default function Header() {
   const civilProductMenuLoadedLanguageRef = useRef<string | null>(null);
   const productMenuLoadingRef = useRef(false);
   const civilProductMenuLoadingRef = useRef(false);
+  const desktopMenuPrefetchReadyRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { lng } = useParams();
@@ -410,6 +411,17 @@ export default function Header() {
   }, [API_BASE, currentLanguage]);
 
   useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      desktopMenuPrefetchReadyRef.current = true;
+    }, 1800);
+
+    return () => {
+      window.clearTimeout(timeout);
+      desktopMenuPrefetchReadyRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     setProductMenuItems([]);
     setCivilProductMenuItems([]);
     productMenuLoadedLanguageRef.current = null;
@@ -430,6 +442,11 @@ export default function Header() {
   }, []);
 
   const handleDesktopDropdownEnter = (name: MenuKey) => {
+    if (!desktopMenuPrefetchReadyRef.current) {
+      handleMouseEnter(name);
+      return;
+    }
+
     if (name === "products") {
       void loadProductMenuItems();
     } else if (name === "civilProducts") {
@@ -437,6 +454,16 @@ export default function Header() {
     }
 
     handleMouseEnter(name);
+  };
+
+  const handleDesktopDropdownClick = (name: MenuKey) => {
+    if (name === "products") {
+      void loadProductMenuItems();
+    } else if (name === "civilProducts") {
+      void loadCivilProductMenuItems();
+    }
+
+    setActiveDropdown((current) => (current === name ? null : name));
   };
 
   const handleMobileMenuToggle = () =>
@@ -668,7 +695,13 @@ export default function Header() {
               to={withLanguage("/")}
               className="flex items-center space-x-2"
             >
-              <img src="/logo-ai-def.svg" className="w-35" alt="AI DEF" />
+              <img
+                src="/logo-ai-def.svg"
+                className="w-35"
+                alt="AI DEF"
+                width={140}
+                height={38}
+              />
             </Link>
 
             <div className="flex items-center gap-4 max-xl:hidden">
@@ -686,7 +719,14 @@ export default function Header() {
                     onMouseLeave={handleMouseLeave}
                   >
                     {link.hasDropdown ? (
-                      <button className="group text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-1 font-medium transition-colors">
+                      <button
+                        type="button"
+                        aria-expanded={activeDropdown === link.key}
+                        onClick={() =>
+                          handleDesktopDropdownClick(link.key as MenuKey)
+                        }
+                        className="group text-foreground hover:text-foreground/75 flex cursor-pointer items-center gap-1 font-medium transition-colors"
+                      >
                         {label}
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-300 ${
@@ -713,7 +753,13 @@ export default function Header() {
                 onMouseLeave={handleLanguageMouseLeave}
                 className="border-border/25 active:translate-y-2px relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border bg-linear-to-br from-black/20 via-black/10 to-black/0 backdrop-blur-lg transition-all duration-300 will-change-transform hover:shadow-[inset_0_2px_6px_rgba(255,255,255,0.25)] active:scale-[0.93] max-xl:hidden"
               >
-                <img src="/language-icon.svg" className="h-4.5 w-4.5" alt="" />
+                <img
+                  src="/language-icon.svg"
+                  className="h-4.5 w-4.5"
+                  alt=""
+                  width={18}
+                  height={18}
+                />
                 <span className="absolute -right-1.5 -bottom-1.5 rounded-full bg-white px-1.5 py-0.5 text-[10px] leading-none font-bold text-black shadow-sm">
                   {currentLanguageLabel}
                 </span>
@@ -1184,7 +1230,13 @@ export default function Header() {
                         }`}
                       >
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-black/10 shadow-inner shadow-black/75">
-                          <img src={language.img} className="h-7 w-7" alt="" />
+                          <img
+                            src={language.img}
+                            className="h-7 w-7"
+                            alt=""
+                            width={28}
+                            height={28}
+                          />
                         </div>
                         <span className="flex items-center gap-2 font-medium">
                           {language.label}
