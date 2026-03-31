@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   useState,
-  createContext,
   type JSX,
 } from "react";
 import { useParams } from "react-router-dom";
@@ -22,7 +21,6 @@ interface CarouselProps {
 }
 
 const SCROLL_STEP = 300;
-const SCROLL_EDGE_TOLERANCE = 2;
 
 type Card = {
   bg: string;
@@ -56,14 +54,6 @@ const buildProductHref = (card: Card) => {
   return slug ? `/products/${slug}` : "#";
 };
 
-const CarouselContext = createContext<{
-  onCardClose: (index: number) => void;
-  currentIndex: number;
-}>({
-  onCardClose: () => {},
-  currentIndex: 0,
-});
-
 export const Carousel = ({
   paragraph,
   carouselTitle,
@@ -72,131 +62,135 @@ export const Carousel = ({
 }: CarouselProps) => {
   const { t } = useTranslation();
   const carouselRef = React.useRef<HTMLDivElement>(null);
+  const startSentinelRef = useRef<HTMLDivElement>(null);
+  const endSentinelRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
-  const [canScrollRight, setCanScrollRight] = React.useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [canScrollRight, setCanScrollRight] = React.useState(items.length > 0);
 
   useEffect(() => {
     if (carouselRef.current) {
       carouselRef.current.scrollLeft = initialScroll;
-      checkScrollability();
     }
   }, [initialScroll]);
 
-  const checkScrollability = React.useCallback(() => {
-    if (carouselRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-      const maxScrollLeft = Math.max(scrollWidth - clientWidth, 0);
-      setCanScrollLeft(scrollLeft > SCROLL_EDGE_TOLERANCE);
-      setCanScrollRight(scrollLeft < maxScrollLeft - SCROLL_EDGE_TOLERANCE);
-    }
-  }, []);
-
-  const scheduleScrollabilityCheck = React.useCallback(() => {
-    window.requestAnimationFrame(checkScrollability);
-    window.setTimeout(checkScrollability, 350);
-  }, [checkScrollability]);
-
   useEffect(() => {
-    const handleResize = () => checkScrollability();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [checkScrollability]);
+    if (
+      !carouselRef.current ||
+      !startSentinelRef.current ||
+      !endSentinelRef.current
+    ) {
+      return;
+    }
+
+    if (!items.length) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target === startSentinelRef.current) {
+            setCanScrollLeft(!entry.isIntersecting);
+          }
+
+          if (entry.target === endSentinelRef.current) {
+            setCanScrollRight(!entry.isIntersecting);
+          }
+        }
+      },
+      {
+        root: carouselRef.current,
+        threshold: 0.95,
+      },
+    );
+
+    observer.observe(startSentinelRef.current);
+    observer.observe(endSentinelRef.current);
+
+    return () => observer.disconnect();
+  }, [items.length]);
 
   const scrollLeft = () => {
     if (carouselRef.current) {
       carouselRef.current.scrollBy({ left: -SCROLL_STEP, behavior: "smooth" });
-      scheduleScrollabilityCheck();
     }
   };
 
   const scrollRight = () => {
     if (carouselRef.current) {
       carouselRef.current.scrollBy({ left: SCROLL_STEP, behavior: "smooth" });
-      scheduleScrollabilityCheck();
     }
-  };
-
-  const handleCardClose = (index: number) => {
-    if (carouselRef.current) {
-      const cardWidth = isMobile() ? 230 : 384; // (md:w-96)
-      const gap = isMobile() ? 4 : 8;
-      const scrollPosition = (cardWidth + gap) * (index + 1);
-      carouselRef.current.scrollTo({
-        left: scrollPosition,
-        behavior: "smooth",
-      });
-      setCurrentIndex(index);
-      scheduleScrollabilityCheck();
-    }
-  };
-
-  const isMobile = () => {
-    return window && window.innerWidth < 768;
   };
 
   return (
-    <CarouselContext.Provider
-      value={{ onCardClose: handleCardClose, currentIndex }}
-    >
-      <div className="relative w-full">
-        <div className="space-y-2">
-          {carouselTitle ? (
-            <div>
-              <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
-                {carouselTitle}
-              </h2>
-            </div>
-          ) : null}
-          {paragraph ? (
-            <div className="text-foreground/70 lg:max-w-[90%]">
-              <p>{paragraph}</p>
-            </div>
-          ) : null}
-        </div>
-        <div className="relative">
-          <button
-            className="absolute top-1/2 left-2 z-1100 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 shadow-sm shadow-black/20 backdrop-blur-sm disabled:opacity-50 max-md:h-10 max-md:w-10"
-            onClick={scrollLeft}
-            disabled={!canScrollLeft}
-            aria-label={t("carousel.previous")}
-          >
-            <IconArrowNarrowLeft className="h-8 w-8 text-[#333333] max-md:h-7 max-md:w-7" />
-          </button>
-          <button
-            className="absolute top-1/2 right-2 z-1100 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100/95 shadow-sm shadow-black/20 backdrop-blur-sm disabled:opacity-50 max-md:h-10 max-md:w-10"
-            onClick={scrollRight}
-            disabled={!canScrollRight}
-            aria-label={t("carousel.next")}
-          >
-            <IconArrowNarrowRight className="h-8 w-8 text-[#515151] max-md:h-7 max-md:w-7" />
-          </button>
+    <div className="relative w-full">
+      <div className="space-y-2">
+        {carouselTitle ? (
+          <div>
+            <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+              {carouselTitle}
+            </h2>
+          </div>
+        ) : null}
+        {paragraph ? (
+          <div className="text-foreground/70 lg:max-w-[90%]">
+            <p>{paragraph}</p>
+          </div>
+        ) : null}
+      </div>
+      <div className="relative">
+        <button
+          className="absolute top-1/2 left-2 z-1100 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 shadow-sm shadow-black/20 backdrop-blur-sm disabled:opacity-50 max-md:h-10 max-md:w-10"
+          onClick={scrollLeft}
+          disabled={!canScrollLeft}
+          aria-label={t("carousel.previous")}
+        >
+          <IconArrowNarrowLeft className="h-8 w-8 text-[#333333] max-md:h-7 max-md:w-7" />
+        </button>
+        <button
+          className="absolute top-1/2 right-2 z-1100 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100/95 shadow-sm shadow-black/20 backdrop-blur-sm disabled:opacity-50 max-md:h-10 max-md:w-10"
+          onClick={scrollRight}
+          disabled={!canScrollRight}
+          aria-label={t("carousel.next")}
+        >
+          <IconArrowNarrowRight className="h-8 w-8 text-[#515151] max-md:h-7 max-md:w-7" />
+        </button>
+
+        <div
+          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]"
+          ref={carouselRef}
+        >
+          <div
+            className={cn(
+              "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-linear-to-l",
+            )}
+          ></div>
 
           <div
-            className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]"
-            ref={carouselRef}
-            onScroll={checkScrollability}
-          >
-            <div
-              className={cn(
-                "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-linear-to-l",
-              )}
-            ></div>
-
-            <div className="inline-flex flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
-              {items.map((item, index) => (
-                <div
-                  key={"card" + index}
-                  className="aspect-5/7 w-81 shrink-0 max-lg:w-72 max-md:w-63"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
+            ref={startSentinelRef}
+            aria-hidden="true"
+            className="h-px w-px shrink-0 self-center"
+          />
+          <div className="inline-flex flex-row flex-nowrap justify-start gap-6 max-lg:gap-3">
+            {items.map((item, index) => (
+              <div
+                key={"card" + index}
+                className="aspect-5/7 w-81 shrink-0 max-lg:w-72 max-md:w-63"
+              >
+                {item}
+              </div>
+            ))}
           </div>
+          <div
+            ref={endSentinelRef}
+            aria-hidden="true"
+            className="h-px w-px shrink-0 self-center"
+          />
         </div>
       </div>
-    </CarouselContext.Provider>
+    </div>
   );
 };
 

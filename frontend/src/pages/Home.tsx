@@ -1,5 +1,6 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense } from "react";
 import Hero from "../../components/home/Hero";
+import { useInViewOnce } from "../../hooks/use-in-view-once";
 
 const DroneCarousel = lazy(() => import("../../components/home/DroneCarousel"));
 const FocusAreas = lazy(() => import("../../components/home/FocusAreas"));
@@ -16,32 +17,15 @@ function HomeSectionsFallback() {
 }
 
 export default function Home() {
-  const [showDeferredSections, setShowDeferredSections] = useState(false);
-
-  useEffect(() => {
-    if (showDeferredSections || typeof window === "undefined") {
-      return;
-    }
-
-    const revealSections = () => setShowDeferredSections(true);
-    const revealThreshold = Math.max(96, Math.round(window.innerHeight * 0.2));
-    const handleScroll = () => {
-      if (window.scrollY >= revealThreshold) {
-        revealSections();
-      }
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [showDeferredSections]);
+  const { ref: deferredSectionsRef, inView: showDeferredSections } =
+    useInViewOnce({
+      rootMargin: "0px 0px -35% 0px",
+    });
 
   return (
     <main className="relative min-h-screen">
       <Hero />
+      <div ref={deferredSectionsRef} className="h-px w-full" aria-hidden="true" />
       {showDeferredSections ? (
         <Suspense fallback={<HomeSectionsFallback />}>
           <DroneCarousel />

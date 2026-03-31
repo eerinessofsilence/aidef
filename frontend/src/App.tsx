@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, startTransition, Suspense, useEffect, useState } from "react";
 import {
   Navigate,
   Outlet,
@@ -9,9 +9,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 import ScrollToTop from "../components/ui/scroll-to-top";
-import { CookieConsent } from "../components/ui/cookie-consent";
 import i18n, {
   DEFAULT_LANGUAGE,
   ensureLanguageResources,
@@ -22,8 +20,15 @@ import i18n, {
 import { ga4PageView } from "./analytics/ga4";
 import {
   COOKIE_CONSENT_EVENT,
+  getStoredCookieConsent,
   type CookieConsentValue,
 } from "../lib/cookie-consent";
+const Footer = lazy(() => import("../components/Footer"));
+const CookieConsent = lazy(() =>
+  import("../components/ui/cookie-consent").then((module) => ({
+    default: module.CookieConsent,
+  })),
+);
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const CivilProductDetail = lazy(() => import("./pages/CivilProductDetail"));
 const Technology = lazy(() => import("./pages/Technology"));
@@ -50,6 +55,9 @@ function LanguageLayout() {
   const location = useLocation();
   const activeLanguage = resolveLanguage(lng);
   const isValidLanguage = isSupportedLanguage(lng);
+  const [shouldRenderFooter, setShouldRenderFooter] = useState(false);
+  const [shouldRenderCookieConsent, setShouldRenderCookieConsent] =
+    useState(false);
   const normalizedPathname = location.pathname.replace(/\/+$/, "") || "/";
   const isHomeRoute = normalizedPathname === `/${activeLanguage}`;
 
@@ -119,10 +127,49 @@ function LanguageLayout() {
     location.search,
     location.hash,
   ]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const deferredWindow = window as Window &
+      typeof globalThis & {
+        requestIdleCallback?: (
+          callback: IdleRequestCallback,
+          options?: IdleRequestOptions,
+        ) => number;
+        cancelIdleCallback?: (handle: number) => void;
+      };
+
+    const revealDeferredChrome = () => {
+      startTransition(() => {
+        setShouldRenderFooter(true);
+        if (!getStoredCookieConsent()) {
+          setShouldRenderCookieConsent(true);
+        }
+      });
+    };
+
+    if (typeof deferredWindow.requestIdleCallback === "function") {
+      const idleId = deferredWindow.requestIdleCallback(revealDeferredChrome, {
+        timeout: 1200,
+      });
+
+      return () => deferredWindow.cancelIdleCallback?.(idleId);
+    }
+
+    const timeoutId = deferredWindow.setTimeout(revealDeferredChrome, 250);
+    return () => deferredWindow.clearTimeout(timeoutId);
+  }, []);
   return (
     <>
       <ScrollToTop />
-      <CookieConsent />
+      {shouldRenderCookieConsent ? (
+        <Suspense fallback={null}>
+          <CookieConsent />
+        </Suspense>
+      ) : null}
       <Header />
       <div className="relative min-h-screen">
         {!isHomeRoute ? (
@@ -151,7 +198,11 @@ function LanguageLayout() {
           />
         </div>
       </div>
-      <Footer />
+      {shouldRenderFooter ? (
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      ) : null}
     </>
   );
 }

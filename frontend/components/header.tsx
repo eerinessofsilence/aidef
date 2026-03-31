@@ -1,6 +1,13 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -12,7 +19,6 @@ import {
   X,
   LayoutDashboard,
 } from "lucide-react";
-import { ContactForm } from "./ui/contact-form";
 import { CONTACT_MODAL_EVENT } from "../lib/contact-modal";
 import {
   buildLocalizedPath,
@@ -132,6 +138,15 @@ const COMPANY_MENU_ITEMS: CompanyMenuItem[] = [
     icon: "/company-2.svg",
   },
 ];
+
+const LazyContactForm = lazy(() =>
+  import("./ui/contact-form").then((module) => ({
+    default: module.ContactForm,
+  })),
+);
+
+const isAbortError = (error: unknown) =>
+  error instanceof DOMException && error.name === "AbortError";
 
 export default function Header() {
   const { t } = useTranslation();
@@ -261,11 +276,15 @@ export default function Header() {
     productMenuAbortRef.current = controller;
 
     try {
-      const res = await axios.get<ProductListApiItem[]>(`${API_BASE}/items/`, {
+      const response = await fetch(`${API_BASE}/items/?lang=${currentLanguage}`, {
         signal: controller.signal,
-        params: { lang: currentLanguage },
       });
-      const items = [...res.data]
+      if (!response.ok) {
+        throw new Error(`Unable to load header products: ${response.status}`);
+      }
+
+      const payload = (await response.json()) as ProductListApiItem[];
+      const items = [...payload]
         .filter((product) => Boolean(product.slug))
         .sort(
           (a, b) =>
@@ -297,7 +316,7 @@ export default function Header() {
       setProductMenuItems(items);
       productMenuLoadedLanguageRef.current = currentLanguage;
     } catch (error) {
-      if (axios.isCancel(error)) {
+      if (isAbortError(error)) {
         return;
       }
       console.error("Unable to load header products", error);
@@ -324,14 +343,20 @@ export default function Header() {
     civilProductMenuAbortRef.current = controller;
 
     try {
-      const res = await axios.get<ProductListApiItem[]>(
-        `${API_BASE}/civil-items/`,
+      const response = await fetch(
+        `${API_BASE}/civil-items/?lang=${currentLanguage}`,
         {
           signal: controller.signal,
-          params: { lang: currentLanguage },
         },
       );
-      const items = [...res.data]
+      if (!response.ok) {
+        throw new Error(
+          `Unable to load header civil products: ${response.status}`,
+        );
+      }
+
+      const payload = (await response.json()) as ProductListApiItem[];
+      const items = [...payload]
         .filter((product) => Boolean(product.slug))
         .sort(
           (a, b) =>
@@ -359,7 +384,7 @@ export default function Header() {
       setCivilProductMenuItems(items);
       civilProductMenuLoadedLanguageRef.current = currentLanguage;
     } catch (error) {
-      if (axios.isCancel(error)) {
+      if (isAbortError(error)) {
         return;
       }
       console.error("Unable to load header civil products", error);
@@ -628,7 +653,6 @@ export default function Header() {
         <header className="border-border/50 rounded-[20px] border bg-linear-to-b from-black/50 via-black/40 to-black/30 p-6 px-4 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <Link
-              reloadDocument
               to={withLanguage("/")}
               className="flex items-center space-x-2"
             >
@@ -660,7 +684,6 @@ export default function Header() {
                       </button>
                     ) : (
                       <Link
-                        reloadDocument
                         to={withLanguage(link.href)}
                         className="text-foreground hover:text-foreground/75 cursor-pointer font-medium transition-colors"
                       >
@@ -726,7 +749,6 @@ export default function Header() {
                         ) : null}
                       </div>
                       <Link
-                        reloadDocument
                         to={withLanguage("/client-portal")}
                         className={accountActionClass}
                       >
@@ -754,7 +776,6 @@ export default function Header() {
                 </div>
               ) : (
                 <Link
-                  reloadDocument
                   to={clientPortalHref}
                   className="group relative inline-flex h-10 items-center justify-center overflow-hidden rounded-xl bg-white px-2 text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
                 >
@@ -792,9 +813,9 @@ export default function Header() {
         >
           <div className="grid grid-cols-3 gap-5 p-5">
             {productMenuItems.map((item) => (
-              <a
+              <Link
                 key={item.id}
-                href={withLanguage(item.href)}
+                to={withLanguage(item.href)}
                 className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
                 onClick={() => setActiveDropdown(null)}
               >
@@ -810,7 +831,7 @@ export default function Header() {
                     {item.name}
                   </h3>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -824,7 +845,6 @@ export default function Header() {
           <div className="grid grid-cols-3 gap-5 p-5">
             {civilProductMenuItems.map((item) => (
               <Link
-                reloadDocument
                 key={item.id}
                 to={withLanguage(item.href)}
                 className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
@@ -856,7 +876,6 @@ export default function Header() {
           <div className="grid grid-cols-2 gap-x-10 gap-y-5 p-4.5">
             {COMPANY_MENU_ITEMS.map((item) => (
               <Link
-                reloadDocument
                 key={item.titleKey}
                 to={withLanguage(item.href)}
                 className="group flex items-center gap-5 rounded-xl p-3 transition-colors duration-300 hover:bg-[#c4c4c4]/35"
@@ -969,7 +988,6 @@ export default function Header() {
                       >
                         {productMenuItems.map((product) => (
                           <Link
-                            reloadDocument
                             key={product.id}
                             to={withLanguage(product.href)}
                             onClick={handleMobileMenuLinkClick}
@@ -1018,7 +1036,6 @@ export default function Header() {
                       >
                         {civilProductMenuItems.map((product) => (
                           <Link
-                            reloadDocument
                             key={product.id}
                             to={withLanguage(product.href)}
                             onClick={handleMobileMenuLinkClick}
@@ -1067,7 +1084,6 @@ export default function Header() {
                       >
                         {COMPANY_MENU_ITEMS.map((item, subIdx) => (
                           <Link
-                            reloadDocument
                             key={item.titleKey}
                             to={withLanguage(item.href)}
                             onClick={handleMobileMenuLinkClick}
@@ -1091,7 +1107,6 @@ export default function Header() {
                 return (
                   <div key={link.key} className="relative">
                     <Link
-                      reloadDocument
                       to={withLanguage(link.href)}
                       onClick={handleMobileMenuLinkClick}
                       className="text-foreground hover:text-foreground/75 block cursor-pointer text-lg font-medium transition-colors"
@@ -1212,7 +1227,6 @@ export default function Header() {
                       ) : null}
                     </div>
                     <Link
-                      reloadDocument
                       to={withLanguage("/client-portal")}
                       className={accountActionClass}
                     >
@@ -1240,7 +1254,6 @@ export default function Header() {
               </div>
             ) : (
               <Link
-                reloadDocument
                 to={clientPortalHref}
                 onClick={handleMobileMenuLinkClick}
                 className="group relative inline-flex h-11 w-full items-center justify-center rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
@@ -1259,6 +1272,7 @@ export default function Header() {
             onClick={closeContactModal}
           />
           <div
+            role="dialog"
             className="relative z-10 max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl md:p-10 dark:bg-neutral-900"
             aria-modal="true"
             aria-label={t("header.contactModal.ariaLabel")}
@@ -1271,7 +1285,16 @@ export default function Header() {
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
-            <ContactForm />
+            <Suspense
+              fallback={
+                <div
+                  aria-hidden="true"
+                  className="min-h-[380px] animate-pulse rounded-3xl bg-neutral-200/70 dark:bg-neutral-800/70"
+                />
+              }
+            >
+              <LazyContactForm />
+            </Suspense>
           </div>
         </div>
       )}
