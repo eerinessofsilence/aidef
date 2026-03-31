@@ -10,6 +10,22 @@
     />
     <title>AI-DEF - We create the future</title>
     <link rel="preload" as="image" href="/hero-bg-1.jpg" />
+    <script>
+        (() => {
+            const path = window.location.pathname.replace(/\/+$/, "") || "/";
+            const isLanguageHome = /^\/(?:en|de|sk|es|fr|it)$/.test(path);
+            if (path === "/" || isLanguageHome) {
+                return;
+            }
+
+            const preload = document.createElement("link");
+            preload.rel = "preload";
+            preload.as = "image";
+            preload.href = "/site-bg-top.png";
+            preload.fetchPriority = "high";
+            document.head.appendChild(preload);
+        })();
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/icon-32x.png" />

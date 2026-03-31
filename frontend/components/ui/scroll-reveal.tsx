@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, type Easing } from "motion/react";
-import { type PropsWithChildren } from "react";
+import { type CSSProperties, type PropsWithChildren } from "react";
 import { useInViewOnce } from "../../hooks/use-in-view-once";
 import { cn } from "../../lib/utils";
 
@@ -22,8 +21,17 @@ type ScrollRevealProps = PropsWithChildren<{
   amount?: number;
   rootMargin?: string;
   distance?: number;
-  ease?: Easing | Easing[];
+  ease?: string | number[];
 }>;
+
+const resolveTimingFunction = (ease: string | number[]) => {
+  if (Array.isArray(ease)) {
+    const [x1 = 0.22, y1 = 1, x2 = 0.36, y2 = 1] = ease;
+    return `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
+  }
+
+  return ease;
+};
 
 export function ScrollReveal({
   children,
@@ -34,7 +42,7 @@ export function ScrollReveal({
   amount,
   rootMargin,
   distance,
-  ease = [0.22, 1, 0.36, 1],
+  ease = [0.22, 1, 0.36, 1] as number[],
 }: ScrollRevealProps) {
   const threshold =
     typeof amount === "number" ? Math.min(Math.max(amount, 0), 1) : undefined;
@@ -52,31 +60,27 @@ export function ScrollReveal({
         : baseOffset.y,
   };
   const blurDuration = Math.min(0.24, duration * 0.45);
+  const timingFunction = resolveTimingFunction(ease);
+  const style: CSSProperties = {
+    willChange: inView ? undefined : "transform, opacity, filter",
+    opacity: inView ? 1 : 0,
+    transform: inView
+      ? "translate3d(0, 0, 0)"
+      : `translate3d(${appliedOffset.x}px, ${appliedOffset.y}px, 0)`,
+    filter: inView ? "blur(0px)" : "blur(6px)",
+    transitionProperty: "opacity, transform, filter",
+    transitionDuration: `${duration}s, ${duration}s, ${blurDuration}s`,
+    transitionDelay: `${delay}s, ${delay}s, ${delay}s`,
+    transitionTimingFunction: `${timingFunction}, ${timingFunction}, ${timingFunction}`,
+  };
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={cn("will-change-transform", className)}
-      style={{ willChange: "transform, opacity, filter" }}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      variants={{
-        hidden: {
-          opacity: 0,
-          x: appliedOffset.x,
-          y: appliedOffset.y,
-          filter: "blur(6px)",
-        },
-        visible: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
-      }}
-      transition={{
-        opacity: { duration, delay, ease },
-        x: { duration, delay, ease },
-        y: { duration, delay, ease },
-        filter: { duration: blurDuration, delay, ease },
-      }}
+      style={style}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

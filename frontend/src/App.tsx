@@ -7,7 +7,6 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import Home from "./pages/Home";
 import Header from "../components/Header";
 import ScrollToTop from "../components/ui/scroll-to-top";
 import i18n, {
@@ -23,6 +22,8 @@ import {
   getStoredCookieConsent,
   type CookieConsentValue,
 } from "../lib/cookie-consent";
+import { useInViewOnce } from "../hooks/use-in-view-once";
+const Home = lazy(() => import("./pages/Home"));
 const Footer = lazy(() => import("../components/Footer"));
 const CookieConsent = lazy(() =>
   import("../components/ui/cookie-consent").then((module) => ({
@@ -55,9 +56,11 @@ function LanguageLayout() {
   const location = useLocation();
   const activeLanguage = resolveLanguage(lng);
   const isValidLanguage = isSupportedLanguage(lng);
-  const [shouldRenderFooter, setShouldRenderFooter] = useState(false);
   const [shouldRenderCookieConsent, setShouldRenderCookieConsent] =
     useState(false);
+  const { ref: footerSentinelRef, inView: shouldRenderFooter } = useInViewOnce({
+    rootMargin: "1200px 0px 0px 0px",
+  });
   const normalizedPathname = location.pathname.replace(/\/+$/, "") || "/";
   const isHomeRoute = normalizedPathname === `/${activeLanguage}`;
 
@@ -129,7 +132,10 @@ function LanguageLayout() {
   ]);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (
+      typeof window === "undefined" ||
+      getStoredCookieConsent()
+    ) {
       return;
     }
 
@@ -141,26 +147,45 @@ function LanguageLayout() {
         ) => number;
         cancelIdleCallback?: (handle: number) => void;
       };
+    let idleId: number | null = null;
+    let timeoutId: number | null = null;
 
-    const revealDeferredChrome = () => {
+    const revealCookieConsent = () => {
       startTransition(() => {
-        setShouldRenderFooter(true);
-        if (!getStoredCookieConsent()) {
-          setShouldRenderCookieConsent(true);
-        }
+        setShouldRenderCookieConsent(true);
       });
     };
 
-    if (typeof deferredWindow.requestIdleCallback === "function") {
-      const idleId = deferredWindow.requestIdleCallback(revealDeferredChrome, {
-        timeout: 1200,
-      });
+    const scheduleCookieConsent = () => {
+      if (typeof deferredWindow.requestIdleCallback === "function") {
+        idleId = deferredWindow.requestIdleCallback(revealCookieConsent, {
+          timeout: 2800,
+        });
+        return;
+      }
 
-      return () => deferredWindow.cancelIdleCallback?.(idleId);
+      timeoutId = deferredWindow.setTimeout(revealCookieConsent, 1800);
+    };
+
+    const handleLoad = () => {
+      scheduleCookieConsent();
+    };
+
+    if (document.readyState === "complete") {
+      scheduleCookieConsent();
+    } else {
+      deferredWindow.addEventListener("load", handleLoad, { once: true });
     }
 
-    const timeoutId = deferredWindow.setTimeout(revealDeferredChrome, 250);
-    return () => deferredWindow.clearTimeout(timeoutId);
+    return () => {
+      deferredWindow.removeEventListener("load", handleLoad);
+      if (idleId !== null) {
+        deferredWindow.cancelIdleCallback?.(idleId);
+      }
+      if (timeoutId !== null) {
+        deferredWindow.clearTimeout(timeoutId);
+      }
+    };
   }, []);
   return (
     <>
@@ -173,28 +198,42 @@ function LanguageLayout() {
       <Header />
       <div className="relative min-h-screen">
         {!isHomeRoute ? (
-          <div className="pointer-events-none absolute inset-x-0 top-0 -z-1">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-1 w-full overflow-hidden"
+          >
             <img
               src="/site-bg-top.png"
-              className="w-full select-none"
+              className="block h-auto w-full select-none"
               alt=""
               width={3280}
               height={1050}
-              fetchPriority="low"
+              sizes="100vw"
+              loading="eager"
+              fetchPriority="high"
               decoding="async"
+              style={{ aspectRatio: "3280 / 1050" }}
             />
           </div>
         ) : null}
         <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-1">
+        <div ref={footerSentinelRef} aria-hidden="true" className="h-px w-full" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-1 w-full overflow-hidden"
+        >
           <img
             src="/site-bg-bottom.png"
-            className="w-full select-none"
+            className="block h-auto w-full select-none"
             alt=""
             width={1640}
             height={443}
+            sizes="100vw"
+            loading="lazy"
+            decoding="async"
+            style={{ aspectRatio: "1640 / 443" }}
           />
         </div>
       </div>

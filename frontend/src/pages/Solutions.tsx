@@ -1,5 +1,20 @@
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 
+function SolutionIllustration({ src }: { src: string }) {
+  return (
+    <img
+      src={src}
+      className="h-auto w-full rounded-2xl"
+      alt=""
+      width={500}
+      height={410}
+      sizes="(min-width: 1024px) 500px, min(100vw - 2rem, 500px)"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
 export default function Solutions() {
   return (
     <main>
@@ -116,11 +131,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125">
-              <img
-                src="/solutions-page-1.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-1.png" />
             </ScrollReveal>
           </div>
 
@@ -164,11 +175,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125 lg:order-0">
-              <img
-                src="/solutions-page-2.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-2.png" />
             </ScrollReveal>
           </div>
 
@@ -227,11 +234,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125">
-              <img
-                src="/solutions-page-3.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-3.png" />
             </ScrollReveal>
           </div>
 
@@ -279,11 +282,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125 lg:order-0">
-              <img
-                src="/solutions-page-1.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-1.png" />
             </ScrollReveal>
           </div>
 
@@ -323,11 +322,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125">
-              <img
-                src="/solutions-page-2.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-2.png" />
             </ScrollReveal>
           </div>
 
@@ -375,11 +370,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125 lg:order-0">
-              <img
-                src="/solutions-page-3.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-3.png" />
             </ScrollReveal>
           </div>
 
@@ -425,11 +416,7 @@ export default function Solutions() {
               </div>
             </ScrollReveal>
             <ScrollReveal className="max-w-125">
-              <img
-                src="/solutions-page-1.png"
-                className="w-full rounded-2xl"
-                alt=""
-              />
+              <SolutionIllustration src="/solutions-page-1.png" />
             </ScrollReveal>
           </div>
         </div>
