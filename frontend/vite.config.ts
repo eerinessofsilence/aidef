@@ -41,8 +41,6 @@ function inlineEntryCss(): Plugin {
           match[0],
           `<style>${cssSource.replace(/<\/style/gi, "<\\/style")}</style>`,
         );
-
-        delete bundle[assetPath];
       }
 
       indexHtml.source = html;
