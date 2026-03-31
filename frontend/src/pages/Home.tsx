@@ -12,15 +12,6 @@ const CustomerBenefits = lazy(
 );
 const BlogPosts = lazy(() => import("../../components/home/BlogPosts"));
 
-type IdleWindow = Window &
-  typeof globalThis & {
-    requestIdleCallback?: (
-      callback: IdleRequestCallback,
-      options?: IdleRequestOptions,
-    ) => number;
-    cancelIdleCallback?: (handle: number) => void;
-  };
-
 function HomeSectionsFallback() {
   return (
     <div aria-hidden="true" className="space-y-10 pb-20 max-md:space-y-8">
@@ -89,53 +80,6 @@ export default function Home() {
       setShouldLoadDeferredSections(true);
     });
   }, [inView]);
-
-  useEffect(() => {
-    if (shouldLoadDeferredSections || typeof window === "undefined") {
-      return;
-    }
-
-    const idleWindow = window as IdleWindow;
-    let idleId: number | null = null;
-    let timeoutId: number | null = null;
-
-    const revealDeferredSections = () => {
-      startTransition(() => {
-        setShouldLoadDeferredSections(true);
-      });
-    };
-
-    const scheduleDeferredSections = () => {
-      if (typeof idleWindow.requestIdleCallback === "function") {
-        idleId = idleWindow.requestIdleCallback(revealDeferredSections, {
-          timeout: 1600,
-        });
-        return;
-      }
-
-      timeoutId = idleWindow.setTimeout(revealDeferredSections, 900);
-    };
-
-    const handleLoad = () => {
-      scheduleDeferredSections();
-    };
-
-    if (document.readyState === "complete") {
-      scheduleDeferredSections();
-    } else {
-      idleWindow.addEventListener("load", handleLoad, { once: true });
-    }
-
-    return () => {
-      idleWindow.removeEventListener("load", handleLoad);
-      if (idleId !== null) {
-        idleWindow.cancelIdleCallback?.(idleId);
-      }
-      if (timeoutId !== null) {
-        idleWindow.clearTimeout(timeoutId);
-      }
-    };
-  }, [shouldLoadDeferredSections]);
 
   return (
     <main className="relative min-h-screen">

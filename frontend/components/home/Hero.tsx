@@ -12,11 +12,20 @@ const backgroundImages = [
 ];
 
 const FADE_DURATION_MS = 1000;
+const HERO_IMAGE_WIDTH = 1440;
+const HERO_IMAGE_HEIGHT = 900;
+const HERO_IMAGE_PROPS = {
+  width: HERO_IMAGE_WIDTH,
+  height: HERO_IMAGE_HEIGHT,
+  sizes: "100vw",
+  style: { aspectRatio: `${HERO_IMAGE_WIDTH} / ${HERO_IMAGE_HEIGHT}` },
+} as const;
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [nextSlide, setNextSlide] = useState<number | null>(null);
   const [isFading, setIsFading] = useState(false);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const { t } = useTranslation();
   const currentImage = backgroundImages[currentSlide] ?? backgroundImages[0];
   const nextSlideAltIndex = nextSlide !== null ? nextSlide + 1 : 1;
@@ -24,7 +33,40 @@ export default function Hero() {
     nextSlide !== null ? (backgroundImages[nextSlide] ?? backgroundImages[0]) : null;
 
   useEffect(() => {
-    if (nextSlide !== null) {
+    if (hasUserInteracted || typeof window === "undefined") {
+      return;
+    }
+
+    const handleFirstInteraction = () => {
+      setHasUserInteracted(true);
+    };
+
+    window.addEventListener("pointerdown", handleFirstInteraction, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("touchstart", handleFirstInteraction, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("keydown", handleFirstInteraction, {
+      once: true,
+    });
+    window.addEventListener("scroll", handleFirstInteraction, {
+      once: true,
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("pointerdown", handleFirstInteraction);
+      window.removeEventListener("touchstart", handleFirstInteraction);
+      window.removeEventListener("keydown", handleFirstInteraction);
+      window.removeEventListener("scroll", handleFirstInteraction);
+    };
+  }, [hasUserInteracted]);
+
+  useEffect(() => {
+    if (!hasUserInteracted || nextSlide !== null) {
       return;
     }
 
@@ -33,7 +75,7 @@ export default function Hero() {
     }, 5000);
 
     return () => window.clearTimeout(timer);
-  }, [currentSlide, nextSlide]);
+  }, [currentSlide, hasUserInteracted, nextSlide]);
 
   useEffect(() => {
     if (nextSlide === null || nextSlide === currentSlide) {
@@ -56,11 +98,15 @@ export default function Hero() {
   }, [currentSlide, nextSlide]);
 
   useEffect(() => {
+    if (!hasUserInteracted) {
+      return;
+    }
+
     const baseSlide = nextSlide ?? currentSlide;
     const nextSlideIndex = (baseSlide + 1) % backgroundImages.length;
     const preloadImage = new Image();
     preloadImage.src = backgroundImages[nextSlideIndex];
-  }, [currentSlide, nextSlide]);
+  }, [currentSlide, hasUserInteracted, nextSlide]);
 
   return (
     <section className="relative flex h-screen items-center max-lg:h-[75vh] max-sm:h-screen">
@@ -73,6 +119,7 @@ export default function Hero() {
               className="h-full w-full object-cover"
               loading="eager"
               decoding="async"
+              {...HERO_IMAGE_PROPS}
             />
             <div className="absolute inset-0 bg-black/50" />
           </div>
@@ -93,6 +140,7 @@ export default function Hero() {
             loading="eager"
             fetchPriority={currentSlide === 0 ? "high" : "auto"}
             decoding="async"
+            {...HERO_IMAGE_PROPS}
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>

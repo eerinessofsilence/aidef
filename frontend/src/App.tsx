@@ -23,7 +23,7 @@ import {
   type CookieConsentValue,
 } from "../lib/cookie-consent";
 import { useInViewOnce } from "../hooks/use-in-view-once";
-const Home = lazy(() => import("./pages/Home"));
+import Home from "./pages/Home";
 const Footer = lazy(() => import("../components/Footer"));
 const CookieConsent = lazy(() =>
   import("../components/ui/cookie-consent").then((module) => ({
