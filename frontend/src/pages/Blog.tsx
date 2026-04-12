@@ -770,7 +770,7 @@ export default function Blog() {
       <div className="container mx-auto">
         <div className="relative rounded-[28px] bg-white p-3 shadow-inner shadow-black/50 backdrop-blur-md max-lg:rounded-3xl">
           <div className="overflow-hidden rounded-[22px] bg-white">
-            <section className="relative min-h-[520px] overflow-hidden rounded-t-[22px] max-md:min-h-[460px]">
+            <section className="relative min-h-[520x] overflow-hidden rounded-t-[22px] md:min-h-[580px]">
               {displayHeroSlides.map((slide, index) => (
                 <div
                   key={slide.id}
@@ -794,7 +794,7 @@ export default function Blog() {
                   <button
                     type="button"
                     onClick={goToPreviousHeroSlide}
-                    className="inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+                    className="border-border/25 inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-black/50 text-white backdrop-blur-md transition-all duration-300 hover:bg-black/75 active:scale-95 max-md:h-10 max-md:w-10"
                     aria-label={t("blog.page.hero.previousSlideAria")}
                   >
                     <ChevronLeft className="mr-1 h-6 w-6" />
@@ -802,7 +802,7 @@ export default function Blog() {
                   <button
                     type="button"
                     onClick={goToNextHeroSlide}
-                    className="inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-[0_18px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-md transition-all hover:bg-black/45 active:scale-95 max-md:h-10 max-md:w-10"
+                    className="border-border/25 inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-black/50 text-white backdrop-blur-md transition-all duration-300 hover:bg-black/75 active:scale-95 max-md:h-10 max-md:w-10"
                     aria-label={t("blog.page.hero.nextSlideAria")}
                   >
                     <ChevronRight className="ml-1 h-6 w-6" />
@@ -810,28 +810,22 @@ export default function Blog() {
                 </div>
               ) : null}
 
-              <div className="relative z-10 flex min-h-[520px] flex-col p-6 max-md:min-h-[460px] max-md:p-4">
-                <div className="mt-auto grid items-end gap-8 pt-16 lg:grid-cols-[1.1fr_auto]">
-                  <ScrollReveal
-                    key={currentHero.id}
-                    from="up"
-                    duration={0.45}
-                    distance={16}
-                    className="max-w-2xl space-y-4"
-                  >
-                    <span className="inline-flex items-center rounded-full border border-white/20 bg-black/25 px-4 py-2 text-sm font-medium text-white backdrop-blur">
-                      {currentHero.category}
-                    </span>
-                    <div className="space-y-3">
-                      <h1 className="text-4xl leading-tight font-semibold text-white max-lg:text-3xl max-md:text-2xl">
-                        {currentHero.title}
-                      </h1>
-                      <p className="max-w-xl text-base leading-7 text-white/85 max-md:text-sm max-md:leading-6">
-                        {truncateText(currentHero.description, 200)}
-                      </p>
-                    </div>
-                  </ScrollReveal>
-
+              <div className="relative z-10 flex min-h-[520px] flex-col p-5 md:min-h-[580px]">
+                <ScrollReveal
+                  key={currentHero.id}
+                  from="up"
+                  duration={0.45}
+                  distance={16}
+                  className="mt-auto flex max-w-2xl flex-col justify-end gap-4 pt-16"
+                >
+                  <div className="space-y-2">
+                    <h1 className="text-2xl leading-7 font-semibold text-white md:text-3xl xl:text-4xl xl:leading-9">
+                      {currentHero.title}
+                    </h1>
+                    <p className="text-text/75 max-w-xl text-sm leading-5 text-pretty md:text-base md:leading-6">
+                      {truncateText(currentHero.description, 150)}
+                    </p>
+                  </div>
                   <a
                     href={currentHeroHref}
                     className="group relative inline-flex h-14 w-48 shrink-0 items-center justify-center justify-self-end overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-lg:justify-self-start max-md:h-12 max-md:w-42 max-md:text-base"
@@ -841,32 +835,7 @@ export default function Blog() {
                   >
                     <span>{t("blog.page.hero.viewPost")}</span>
                   </a>
-                </div>
-
-                <div className="mt-5 flex items-center gap-2">
-                  {displayHeroSlides.map((slide, index) => (
-                    <button
-                      key={slide.id}
-                      type="button"
-                      onClick={() => setActiveHeroSlide(index)}
-                      className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
-                      aria-label={t("blog.page.hero.showSlideAria", {
-                        index: index + 1,
-                      })}
-                      aria-pressed={index === activeHeroSlide}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={cn(
-                          "h-2.5 rounded-full transition-all",
-                          index === activeHeroSlide
-                            ? "w-8 bg-white"
-                            : "w-2.5 bg-white/50 hover:bg-white/80",
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
+                </ScrollReveal>
               </div>
             </section>
 

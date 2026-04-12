@@ -4,13 +4,13 @@ import React, {
   useRef,
   useState,
   type JSX,
+  type ImgHTMLAttributes,
 } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { IconArrowNarrowLeft, IconArrowNarrowRight } from "@tabler/icons-react";
 import { cn } from "../../lib/utils";
 import { motion } from "motion/react";
-import { type ImageProps } from "next/image";
 import { buildLocalizedPath, resolveLanguage } from "../../src/i18n";
 
 interface CarouselProps {
@@ -296,7 +296,7 @@ export const BlurImage = ({
   className,
   alt,
   ...rest
-}: ImageProps) => {
+}: ImgHTMLAttributes<HTMLImageElement>) => {
   const [isLoading, setLoading] = useState(true);
   return (
     <img
@@ -311,7 +311,6 @@ export const BlurImage = ({
       height={height}
       loading="lazy"
       decoding="async"
-      blurDataURL={typeof src === "string" ? src : undefined}
       alt={alt ? alt : "Background of a beautiful view"}
       {...rest}
     />
