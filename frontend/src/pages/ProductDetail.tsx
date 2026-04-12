@@ -397,11 +397,7 @@ export default function ProductDetail() {
     if (!block) {
       return null;
     }
-    if (
-      !block.title?.trim() &&
-      !block.paragraph?.trim() &&
-      !block.has_button
-    ) {
+    if (!block.title?.trim() && !block.paragraph?.trim() && !block.has_button) {
       return null;
     }
     return block;
@@ -450,7 +446,7 @@ export default function ProductDetail() {
 
   return (
     <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
-      <div>
+      <div className="relative">
         <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
           {detailStatus === "loading" ? (
             <ProductHeroFallback />
@@ -540,25 +536,27 @@ export default function ProductDetail() {
           )}
         </div>
         {productImages.length > 1 ? (
-          <div className="mt-5 flex items-center justify-center gap-2">
-            {productImages.map((image, index) => (
-              <button
-                key={image.id}
-                type="button"
-                onClick={() => {
-                  setHasActivatedCarousel(true);
-                  setActiveSlide(index);
-                }}
-                aria-label={t("productDetail.hero.goToImage", {
-                  index: index + 1,
-                })}
-                className={`h-2.5 w-2.5 rounded-full border border-white/35 transition ${
-                  activeSlide === index
-                    ? "bg-white"
-                    : "bg-white/30 hover:bg-white/60"
-                }`}
-              />
-            ))}
+          <div className="absolute right-0 bottom-5 left-0">
+            <div className="flex items-center justify-center gap-2">
+              {productImages.map((image, index) => (
+                <button
+                  key={image.id}
+                  type="button"
+                  onClick={() => {
+                    setHasActivatedCarousel(true);
+                    setActiveSlide(index);
+                  }}
+                  aria-label={t("productDetail.hero.goToImage", {
+                    index: index + 1,
+                  })}
+                  className={`h-2.5 w-2.5 rounded-full border border-white/35 transition ${
+                    activeSlide === index
+                      ? "bg-white"
+                      : "bg-white/30 hover:bg-white/60"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         ) : null}
         {detailStatus === "error" && detailError ? (
@@ -652,7 +650,11 @@ export default function ProductDetail() {
             </section>
           )
         ) : null}
-        <div ref={deferredSectionsRef} className="h-px w-full" aria-hidden="true" />
+        <div
+          ref={deferredSectionsRef}
+          className="h-px w-full"
+          aria-hidden="true"
+        />
         {shouldRenderDeferredSections ? (
           <>
             {productGallery.length > 0 ? (
@@ -730,7 +732,9 @@ export default function ProductDetail() {
                       }`}
                       style={
                         block.background_image
-                          ? { backgroundImage: `url(${block.background_image})` }
+                          ? {
+                              backgroundImage: `url(${block.background_image})`,
+                            }
                           : undefined
                       }
                     >
@@ -752,7 +756,9 @@ export default function ProductDetail() {
                     <section key={block.id} className="py-16 max-sm:py-12">
                       <ScrollReveal className="flex items-center justify-between max-md:flex-col max-md:space-y-10">
                         <div className="max-md:text-center">
-                          <p className="tracking-wider uppercase">{block.name}</p>
+                          <p className="tracking-wider uppercase">
+                            {block.name}
+                          </p>
                           <h1 className="text-5xl leading-tight font-bold max-lg:text-4xl max-md:text-3xl">
                             {block.title}
                           </h1>
@@ -790,7 +796,10 @@ export default function ProductDetail() {
                             </h1>
                             <ul className="space-y-3 text-black">
                               {description1.map((tag) => (
-                                <li key={tag} className="flex max-w-[420px] items-center gap-3">
+                                <li
+                                  key={tag}
+                                  className="flex max-w-[420px] items-center gap-3"
+                                >
                                   <span className="text-lg max-md:text-base">
                                     {tag}
                                   </span>
@@ -830,7 +839,10 @@ export default function ProductDetail() {
                             </h1>
                             <ul className="space-y-3 text-black">
                               {description2.map((tag) => (
-                                <li key={tag} className="flex max-w-[420px] items-center gap-3">
+                                <li
+                                  key={tag}
+                                  className="flex max-w-[420px] items-center gap-3"
+                                >
                                   <span className="text-lg max-md:text-base">
                                     {tag}
                                   </span>
