@@ -165,6 +165,9 @@ export default function Header() {
   const [languageDropdownTimeout, setLanguageDropdownTimeout] = useState<
     number | null
   >(null);
+  const [productMenuIsLoading, setProductMenuIsLoading] = useState(false);
+  const [civilProductMenuIsLoading, setCivilProductMenuIsLoading] =
+    useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>(
     {},
   );
@@ -186,7 +189,6 @@ export default function Header() {
   const civilProductMenuLoadedLanguageRef = useRef<string | null>(null);
   const productMenuLoadingRef = useRef(false);
   const civilProductMenuLoadingRef = useRef(false);
-  const desktopMenuPrefetchReadyRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { lng } = useParams();
@@ -273,6 +275,7 @@ export default function Header() {
     }
 
     productMenuLoadingRef.current = true;
+    setProductMenuIsLoading(true);
     productMenuAbortRef.current?.abort();
     const controller = new AbortController();
     productMenuAbortRef.current = controller;
@@ -333,6 +336,7 @@ export default function Header() {
       setProductMenuItems([]);
     } finally {
       productMenuLoadingRef.current = false;
+      setProductMenuIsLoading(false);
       if (productMenuAbortRef.current === controller) {
         productMenuAbortRef.current = null;
       }
@@ -348,6 +352,7 @@ export default function Header() {
     }
 
     civilProductMenuLoadingRef.current = true;
+    setCivilProductMenuIsLoading(true);
     civilProductMenuAbortRef.current?.abort();
     const controller = new AbortController();
     civilProductMenuAbortRef.current = controller;
@@ -407,6 +412,7 @@ export default function Header() {
       setCivilProductMenuItems([]);
     } finally {
       civilProductMenuLoadingRef.current = false;
+      setCivilProductMenuIsLoading(false);
       if (civilProductMenuAbortRef.current === controller) {
         civilProductMenuAbortRef.current = null;
       }
@@ -414,19 +420,10 @@ export default function Header() {
   }, [API_BASE, currentLanguage]);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      desktopMenuPrefetchReadyRef.current = true;
-    }, 1800);
-
-    return () => {
-      window.clearTimeout(timeout);
-      desktopMenuPrefetchReadyRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
     setProductMenuItems([]);
     setCivilProductMenuItems([]);
+    setProductMenuIsLoading(false);
+    setCivilProductMenuIsLoading(false);
     productMenuLoadedLanguageRef.current = null;
     civilProductMenuLoadedLanguageRef.current = null;
     productMenuLoadingRef.current = false;
@@ -438,6 +435,15 @@ export default function Header() {
   }, [currentLanguage]);
 
   useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      void loadProductMenuItems();
+      void loadCivilProductMenuItems();
+    }, 250);
+
+    return () => window.clearTimeout(timeout);
+  }, [loadCivilProductMenuItems, loadProductMenuItems]);
+
+  useEffect(() => {
     return () => {
       productMenuAbortRef.current?.abort();
       civilProductMenuAbortRef.current?.abort();
@@ -445,11 +451,6 @@ export default function Header() {
   }, []);
 
   const handleDesktopDropdownEnter = (name: MenuKey) => {
-    if (!desktopMenuPrefetchReadyRef.current) {
-      handleMouseEnter(name);
-      return;
-    }
-
     if (name === "products") {
       void loadProductMenuItems();
     } else if (name === "civilProducts") {
@@ -873,29 +874,41 @@ export default function Header() {
           className={`absolute top-full left-1/4 max-h-[464px] max-w-152.5 -translate-x-1/4 overflow-y-auto overscroll-contain rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "products")}`}
         >
           <div className="grid grid-cols-3 gap-5 p-5">
-            {productMenuItems.map((item) => (
-              <Link
-                key={item.id}
-                to={withLanguage(item.href)}
-                className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
-                onClick={() => setActiveDropdown(null)}
-              >
-                <img
-                  src={item.imageUrl}
-                  className="h-30 w-full rounded-t-xl object-cover"
-                  alt={item.imageAlt}
-                  width={170}
-                  height={120}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="flex h-full items-center">
-                  <h3 className="text-sm font-semibold text-black">
-                    {item.name}
-                  </h3>
-                </div>
-              </Link>
-            ))}
+            {productMenuIsLoading && productMenuItems.length === 0
+              ? Array.from({ length: 6 }, (_, index) => (
+                  <div
+                    key={`product-menu-skeleton-${index}`}
+                    className="flex h-[202px] w-[170px] flex-col overflow-hidden rounded-xl bg-white"
+                  >
+                    <div className="h-30 animate-pulse bg-black/10" />
+                    <div className="flex h-full items-center justify-center px-4">
+                      <div className="h-4 w-24 animate-pulse rounded-full bg-black/10" />
+                    </div>
+                  </div>
+                ))
+              : productMenuItems.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={withLanguage(item.href)}
+                    className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
+                    onClick={() => setActiveDropdown(null)}
+                  >
+                    <img
+                      src={item.imageUrl}
+                      className="h-30 w-full rounded-t-xl object-cover"
+                      alt={item.imageAlt}
+                      width={170}
+                      height={120}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="flex h-full items-center">
+                      <h3 className="text-sm font-semibold text-black">
+                        {item.name}
+                      </h3>
+                    </div>
+                  </Link>
+                ))}
           </div>
         </div>
 
@@ -906,29 +919,41 @@ export default function Header() {
           className={`absolute top-full left-1/3 max-h-[464px] max-w-152.5 -translate-x-1/4 overflow-y-auto overscroll-contain rounded-[20px] bg-[#ececec] shadow-sm shadow-black/25 ${dropdownTransitionClasses} ${getDropdownVisibilityClasses(activeDropdown === "civilProducts")}`}
         >
           <div className="grid grid-cols-3 gap-5 p-5">
-            {civilProductMenuItems.map((item) => (
-              <Link
-                key={item.id}
-                to={withLanguage(item.href)}
-                className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
-                onClick={() => setActiveDropdown(null)}
-              >
-                <img
-                  src={item.imageUrl}
-                  className="h-30 w-full rounded-t-xl object-cover"
-                  alt={item.imageAlt}
-                  width={170}
-                  height={120}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="flex h-full items-center">
-                  <h3 className="text-sm font-semibold text-black">
-                    {item.name}
-                  </h3>
-                </div>
-              </Link>
-            ))}
+            {civilProductMenuIsLoading && civilProductMenuItems.length === 0
+              ? Array.from({ length: 6 }, (_, index) => (
+                  <div
+                    key={`civil-menu-skeleton-${index}`}
+                    className="flex h-[202px] w-[170px] flex-col overflow-hidden rounded-xl bg-white"
+                  >
+                    <div className="h-30 animate-pulse bg-black/10" />
+                    <div className="flex h-full items-center justify-center px-4">
+                      <div className="h-4 w-24 animate-pulse rounded-full bg-black/10" />
+                    </div>
+                  </div>
+                ))
+              : civilProductMenuItems.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={withLanguage(item.href)}
+                    className="group flex h-[202px] w-[170px] flex-col items-center rounded-xl bg-white text-center transition-all duration-300 hover:scale-107 hover:shadow-sm hover:shadow-black/25"
+                    onClick={() => setActiveDropdown(null)}
+                  >
+                    <img
+                      src={item.imageUrl}
+                      className="h-30 w-full rounded-t-xl object-cover"
+                      alt={item.imageAlt}
+                      width={170}
+                      height={120}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="flex h-full items-center">
+                      <h3 className="text-sm font-semibold text-black">
+                        {item.name}
+                      </h3>
+                    </div>
+                  </Link>
+                ))}
           </div>
         </div>
 
