@@ -3,6 +3,7 @@
     "hero": {
       "title": "Autonomous combat UAV & Robotic systems",
       "description": "We are a system integrator delivering kamikaze UAV, UGV and GCS, integrated into military vehicle systems via open C2 APIs and third-party system integration.",
+      "cta": "Request a demo",
       "slideAlt": "Background {{index}}",
       "slideAria": "Go to slide {{index}}"
     },

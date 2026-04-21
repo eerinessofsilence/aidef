@@ -3,6 +3,7 @@
     "hero": {
       "title": "Autonómne bojové bezpilotné lietadlá a robotické systémy",
       "description": "Sme systémový integrátor dodávajúci kamikadze UAV, UGV a GCS, integrované do systémov vojenských vozidiel prostredníctvom otvorených C2 API a integrácie systémov tretích strán.",
+      "cta": "Vyžiadajte si ukážku",
       "slideAlt": "Pozadie {{index}}",
       "slideAria": "Prejsť na snímku {{index}}"
     },

@@ -813,12 +813,14 @@ class ProductFeatureInline(TranslationStackedInline):
     model = ProductFeature
     extra = 0
     ordering = ("order",)
+    fields = ("name", "value", "description", "icon_lucide", "icon_file", "order")
     verbose_name_plural = "Key features"
     
 class ProductSubFeatureInline(TranslationStackedInline):
     model = ProductSubFeature
     extra = 0
     ordering = ("order",)
+    fields = ("name", "description", "icon_lucide", "icon_file", "order")
     classes = ("collapse",)
     verbose_name_plural = "Sub-features"
     
@@ -1090,6 +1092,7 @@ class CivilProductFeatureInline(TranslationStackedInline):
     model = CivilProductFeature
     extra = 0
     ordering = ("order",)
+    fields = ("name", "value", "description", "icon_lucide", "icon_file", "order")
     verbose_name_plural = "Key features"
 
 
@@ -1097,6 +1100,7 @@ class CivilProductSubFeatureInline(TranslationStackedInline):
     model = CivilProductSubFeature
     extra = 0
     ordering = ("order",)
+    fields = ("name", "description", "icon_lucide", "icon_file", "order")
     classes = ("collapse",)
     verbose_name_plural = "Sub-features"
 

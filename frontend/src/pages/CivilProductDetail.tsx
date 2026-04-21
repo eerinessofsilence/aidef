@@ -3,6 +3,7 @@ import axios from "axios";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import ProductOverviewSection from "../../components/product/OverviewSection";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import Gallery from "../../components/Gallery";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
@@ -25,11 +26,23 @@ interface ProductImage {
   order?: number | null;
 }
 
+type OverviewIconApi =
+  | {
+      type: "lucide";
+      name?: string | null;
+    }
+  | {
+      type: "upload";
+      url?: string | null;
+    }
+  | null;
+
 interface ProductFeature {
   id: number;
   name: string;
   value: string;
   description?: string;
+  icon?: OverviewIconApi;
   order?: number | null;
 }
 
@@ -44,6 +57,7 @@ interface ProductSubFeature {
   id: number;
   name: string;
   description?: string;
+  icon?: OverviewIconApi;
   order?: number | null;
 }
 
@@ -332,10 +346,10 @@ export default function CivilProductDetail() {
   };
 
   return (
-    <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
+    <div className="relative min-h-screen max-md:pb-7">
       <ScrollReveal className="w-full">
         <div>
-          <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
+          <div className="relative aspect-8/9 w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent lg:aspect-video">
             {detailStatus === "loading" ? (
               <div className="absolute inset-0 animate-pulse bg-white/10" />
             ) : productImages.length > 0 ? (
@@ -359,7 +373,7 @@ export default function CivilProductDetail() {
                       }`}
                     />
                     <div
-                      className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/30 via-black/5 to-black/50 ${
+                      className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/70 via-black/45 to-black/75 ${
                         activeSlide === index ? "animate-slide-glow" : ""
                       }`}
                     />
@@ -444,93 +458,17 @@ export default function CivilProductDetail() {
       </ScrollReveal>
       <div className="container space-y-8 py-16">
         {productDetail && hasOverviewSection ? (
-          <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
-            <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-            <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-            <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <ScrollReveal className="h-full max-lg:col-span-2">
-                <p className="text-sm tracking-wide text-white/50 uppercase">
-                  {t("productDetail.overview.kicker")}
-                </p>
-                <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                  {t("productDetail.overview.title")}
-                </h1>
-                {overviewDescription ? (
-                  <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                    {overviewDescription}
-                  </p>
-                ) : null}
-                {productFeatures.length > 0 ? (
-                  <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                    {productFeatures.map((feature) => (
-                      <div
-                        key={feature.id}
-                        className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
-                      >
-                        {hasText(feature.name) ? (
-                          <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                            {feature.name}
-                          </p>
-                        ) : null}
-                        {hasText(feature.value) ? (
-                          <p className="text-3xl font-semibold max-md:text-2xl">
-                            {feature.value}
-                          </p>
-                        ) : null}
-                        {hasText(feature.description) ? (
-                          <p className="text-foreground/70">
-                            {feature.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-                <div className="max-lg:hidden">
-                  <a
-                    onClick={openContactModal}
-                    className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-                  >
-                    {t("productDetail.actions.contact")}
-                  </a>
-                </div>
-              </ScrollReveal>
-              <ScrollReveal className="relative max-lg:col-span-2">
-                <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
-                {productSubFeatures.length > 0 && (
-                  <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                    <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                      {productSubFeatures.map((sub_feature) => (
-                        <div
-                          key={sub_feature.id}
-                          className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
-                        >
-                          {hasText(sub_feature.name) ? (
-                            <h3 className="text-lg font-semibold">
-                              {sub_feature.name}
-                            </h3>
-                          ) : null}
-                          {hasText(sub_feature.description) ? (
-                            <p className="text-foreground/70">
-                              {sub_feature.description}
-                            </p>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </ScrollReveal>
-              <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-                <a
-                  onClick={openContactModal}
-                  className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
-                >
-                  {t("productDetail.actions.contact")}
-                </a>
-              </div>
-            </div>
-          </section>
+          <ProductOverviewSection
+            title={t("productDetail.overview.title")}
+            description={
+              overviewDescription ??
+              t("productDetail.overview.descriptionFallback")
+            }
+            features={productFeatures}
+            subFeatures={productSubFeatures}
+            contactLabel={t("productDetail.actions.contact")}
+            onContactClick={openContactModal}
+          />
         ) : null}
 
         {productGallery.length > 0 ? (

@@ -278,9 +278,12 @@ export default function Header() {
     productMenuAbortRef.current = controller;
 
     try {
-      const response = await fetch(`${API_BASE}/items/?lang=${currentLanguage}`, {
-        signal: controller.signal,
-      });
+      const response = await fetch(
+        `${API_BASE}/items/?lang=${currentLanguage}`,
+        {
+          signal: controller.signal,
+        },
+      );
       if (!response.ok) {
         throw new Error(`Unable to load header products: ${response.status}`);
       }
@@ -689,7 +692,7 @@ export default function Header() {
   return (
     <>
       <div className="fixed left-1/2 z-50 container -translate-x-1/2 py-5">
-        <header className="border-border/50 rounded-[20px] border bg-linear-to-b from-black/50 via-black/40 to-black/30 p-6 px-4 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-xl">
+        <header className="border-border/50 rounded-[20px] border bg-linear-to-b from-black/50 via-black/40 to-black/30 px-4 py-6 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <Link
               to={withLanguage("/")}

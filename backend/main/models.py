@@ -223,7 +223,29 @@ class ProductImageTranslation(models.Model):
         return f"{self.image_id} ({self.lang})"
 
 
-class ProductFeature(models.Model):
+class OptionalOverviewIconMixin(models.Model):
+    icon_lucide = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="Optional Lucide icon name, e.g. ShieldCheck.",
+    )
+    icon_file = models.FileField(
+        upload_to="overview_icons/%Y/%m/",
+        blank=True,
+        null=True,
+        validators=[validate_svg_file],
+        help_text="Optional uploaded icon file. If set, it takes precedence.",
+    )
+
+    class Meta:
+        abstract = True
+
+    def clean(self):
+        super().clean()
+        self.icon_lucide = (self.icon_lucide or "").strip()
+
+
+class ProductFeature(OptionalOverviewIconMixin):
     product = models.ForeignKey(
         Product,
         related_name="features",
@@ -242,7 +264,8 @@ class ProductFeature(models.Model):
     def __str__(self):
         return f"{self.product.name} — feature {self.pk}"
     
-class ProductSubFeature(models.Model):
+
+class ProductSubFeature(OptionalOverviewIconMixin):
     product = models.ForeignKey(
         Product,
         related_name="sub_features",
@@ -513,8 +536,7 @@ class CivilProductImageTranslation(models.Model):
     def __str__(self):
         return f"{self.image_id} ({self.lang})"
 
-
-class CivilProductFeature(models.Model):
+class CivilProductFeature(OptionalOverviewIconMixin):
     product = models.ForeignKey(
         CivilProduct,
         related_name='features',
@@ -534,7 +556,7 @@ class CivilProductFeature(models.Model):
         return f"{self.product.name} — feature {self.pk}"
 
 
-class CivilProductSubFeature(models.Model):
+class CivilProductSubFeature(OptionalOverviewIconMixin):
     product = models.ForeignKey(
         CivilProduct,
         related_name='sub_features',

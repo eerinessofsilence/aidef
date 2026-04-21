@@ -76,6 +76,18 @@ def _absolute_media_url(request, image_field) -> str | None:
     return request.build_absolute_uri(url)
 
 
+def _serialize_optional_icon(request, lucide_name: str | None, icon_file) -> Dict[str, str] | None:
+    file_url = _absolute_media_url(request, icon_file)
+    if file_url:
+        return {"type": "upload", "url": file_url}
+
+    normalized_name = (lucide_name or "").strip()
+    if normalized_name:
+        return {"type": "lucide", "name": normalized_name}
+
+    return None
+
+
 SUPPORTED_LANGUAGES = {code.lower() for code, _ in settings.LANGUAGES}
 DEFAULT_LANGUAGE = "en"
 STRATEGIC_PARTNERSHIP_PRODUCT = "strategic-partnership"
@@ -232,6 +244,9 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
             'name': feature.name,
             'value': feature.value,
             'description': feature.description,
+            'icon': _serialize_optional_icon(
+                request, feature.icon_lucide, feature.icon_file
+            ),
             'order': feature.order,
         }
         for feature in features
@@ -243,6 +258,9 @@ def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
             'id': sub_feature.id,
             'name': sub_feature.name,
             'description': sub_feature.description,
+            'icon': _serialize_optional_icon(
+                request, sub_feature.icon_lucide, sub_feature.icon_file
+            ),
             'order': sub_feature.order,
         }
         for sub_feature in sub_features
@@ -420,6 +438,9 @@ def _serialize_civil_product_detail(request, product: CivilProduct) -> Dict[str,
             'name': feature.name,
             'value': feature.value,
             'description': feature.description,
+            'icon': _serialize_optional_icon(
+                request, feature.icon_lucide, feature.icon_file
+            ),
             'order': feature.order,
         }
         for feature in features
@@ -431,6 +452,9 @@ def _serialize_civil_product_detail(request, product: CivilProduct) -> Dict[str,
             'id': sub_feature.id,
             'name': sub_feature.name,
             'description': sub_feature.description,
+            'icon': _serialize_optional_icon(
+                request, sub_feature.icon_lucide, sub_feature.icon_file
+            ),
             'order': sub_feature.order,
         }
         for sub_feature in sub_features

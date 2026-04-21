@@ -18,7 +18,11 @@ export default function Footer() {
           <div className="space-y-6.5">
             <div>
               <Link to={withLanguage("/")}>
-                <img src="/logo-for-footer.svg" className="w-42.5" alt="AI DEF" />
+                <img
+                  src="/logo-for-footer.svg"
+                  className="w-42.5"
+                  alt="AI DEF"
+                />
               </Link>
             </div>
             <div>
@@ -90,15 +94,30 @@ export default function Footer() {
                 >
                   <img src="/linkedin-logo.svg" alt="" aria-hidden="true" />
                 </a>
-                <span aria-hidden="true">
+                <a
+                  href="https://www.instagram.com/ai_def_?igsh=MTh6aWx1emc2enE3Yg=="
+                  aria-label="Instagram"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <img src="/instagram-logo.svg" alt="" />
-                </span>
-                <span aria-hidden="true">
+                </a>
+                {/* <a
+                  href="#"
+                  aria-label="LinkedIn"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <img src="/facebook-logo.svg" alt="" />
-                </span>
-                <span aria-hidden="true">
+                </a> */}
+                <a
+                  href="https://x.com/ai_def_?s=21"
+                  aria-label="X"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <img src="/twitter-logo.svg" alt="" />
-                </span>
+                </a>
               </div>
             </div>
           </div>

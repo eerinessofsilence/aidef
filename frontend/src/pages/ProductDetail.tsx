@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { Carousel, Card } from "../../components/ui/apple-cards-carousel";
 import { ScrollReveal } from "../../components/ui/scroll-reveal";
 import Gallery from "../../components/Gallery";
+import ProductOverviewSection from "../../components/product/OverviewSection";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
 import { useInViewOnce } from "../../hooks/use-in-view-once";
 import { resolveLanguage } from "../i18n";
@@ -40,11 +41,23 @@ interface ProductImage {
   order?: number | null;
 }
 
+type OverviewIconApi =
+  | {
+      type: "lucide";
+      name?: string | null;
+    }
+  | {
+      type: "upload";
+      url?: string | null;
+    }
+  | null;
+
 interface ProductFeature {
   id: number;
   name: string;
   value: string;
   description?: string;
+  icon?: OverviewIconApi;
   order?: number | null;
 }
 
@@ -59,6 +72,7 @@ interface ProductSubFeature {
   id: number;
   name: string;
   description?: string;
+  icon?: OverviewIconApi;
   order?: number | null;
 }
 
@@ -147,40 +161,54 @@ function ProductOverviewFallback() {
   return (
     <section
       aria-hidden="true"
-      className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5"
+      className="relative my-16 overflow-hidden rounded-4xl border border-white/10 bg-[linear-gradient(180deg,#1c2c46_0%,#14233a_100%)] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.28)] md:p-6 lg:p-8"
     >
-      <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-4 max-lg:col-span-2">
-          <div className="h-3 w-32 animate-pulse rounded-full bg-white/12" />
-          <div className="h-10 w-full max-w-md animate-pulse rounded-full bg-white/16 max-md:h-8" />
-          <div className="h-4 w-full max-w-2xl animate-pulse rounded-full bg-white/10" />
-          <div className="h-4 w-5/6 animate-pulse rounded-full bg-white/10" />
-          <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-            {Array.from({ length: 4 }, (_, index) => (
-              <div
-                key={index}
-                className="border-border/25 bg-foreground/5 space-y-3 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
-              >
-                <div className="h-3 w-24 animate-pulse rounded-full bg-white/12" />
-                <div className="h-8 w-2/3 animate-pulse rounded-full bg-white/16" />
-                <div className="h-4 w-full animate-pulse rounded-full bg-white/10" />
-              </div>
-            ))}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-size-[40px_40px] opacity-30" />
+      <div className="relative space-y-5 lg:space-y-6">
+        <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#151f31_0%,#111a2a_100%)] px-6 py-7 md:px-8 md:py-9">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:gap-8 xl:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.82fr)]">
+            <div className="order-2 space-y-4 lg:order-1 lg:max-w-3xl">
+              <div className="h-10 w-full max-w-xl animate-pulse rounded-full bg-white/16 max-md:h-8" />
+              <div className="h-4 w-full max-w-3xl animate-pulse rounded-full bg-white/10" />
+              <div className="h-4 w-5/6 animate-pulse rounded-full bg-white/10" />
+              <div className="h-14 w-48 animate-pulse rounded-2xl bg-[#9be3ff]/30 max-md:w-full" />
+            </div>
+            <div className="order-1 grid gap-3 sm:grid-cols-2 lg:order-2 lg:self-start">
+              {Array.from({ length: 4 }, (_, index) => (
+                <div
+                  key={index}
+                  className="overflow-hidden rounded-[20px] border border-white/10 bg-[linear-gradient(180deg,#18263d_0%,#152136_100%)] p-3.5"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 animate-pulse rounded-xl bg-white/12" />
+                    <div className="h-3 w-2/3 animate-pulse rounded-full bg-white/10" />
+                  </div>
+                  <div className="mt-3 space-y-1.5">
+                    <div className="h-7 w-3/4 animate-pulse rounded-full bg-white/14" />
+                    <div className="h-3.5 w-full animate-pulse rounded-full bg-white/10" />
+                    <div className="h-3.5 w-4/5 animate-pulse rounded-full bg-white/10" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="relative max-lg:col-span-2">
-          <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
-          <div className="relative grid grid-cols-2 gap-4 rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl max-md:grid-cols-1 max-md:gap-2">
-            {Array.from({ length: 4 }, (_, index) => (
-              <div
-                key={index}
-                className="bg-foreground/5 border-border/25 space-y-3 rounded-xl border p-5 max-md:p-2.5"
-              >
-                <div className="h-5 w-2/3 animate-pulse rounded-full bg-white/12" />
-                <div className="h-4 w-full animate-pulse rounded-full bg-white/10" />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div
+              key={index}
+              className="overflow-hidden rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,#1b2a44_0%,#18253d_100%)] p-5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="h-12 w-12 animate-pulse rounded-2xl bg-white/12" />
+                <div className="mt-1 h-8 flex-1 animate-pulse rounded-full bg-white/14" />
               </div>
-            ))}
-          </div>
+              <div className="mt-3 space-y-3">
+                <div className="h-4 w-full animate-pulse rounded-full bg-white/10" />
+                <div className="h-4 w-4/5 animate-pulse rounded-full bg-white/10" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -445,9 +473,9 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="relative min-h-screen max-lg:pt-28 max-md:pb-7">
+    <div className="relative min-h-screen max-md:pb-7">
       <div className="relative">
-        <div className="relative aspect-video w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent">
+        <div className="relative aspect-8/9 w-full overflow-hidden bg-linear-to-br from-white/10 via-white/5 to-transparent lg:aspect-video">
           {detailStatus === "loading" ? (
             <ProductHeroFallback />
           ) : activeImage ? (
@@ -469,7 +497,7 @@ export default function ProductDetail() {
                   {...PRODUCT_HERO_IMAGE_PROPS}
                 />
                 <div
-                  className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/30 via-black/5 to-black/50 ${
+                  className={`pointer-events-none absolute inset-0 bg-linear-to-b from-black/70 via-black/45 to-black/75 ${
                     hasActivatedCarousel ? "animate-slide-glow" : ""
                   }`}
                 />
@@ -495,7 +523,7 @@ export default function ProductDetail() {
                   </p>
                 ) : null}
                 {productDetail?.name ? (
-                  <h1 className="max-md:text-foreground/50 text-5xl leading-18 font-bold max-lg:text-4xl max-lg:leading-14 max-md:text-3xl max-md:leading-10 max-sm:text-2xl">
+                  <h1 className="text-foreground/75 md:text-text text-2xl leading-8 font-bold text-pretty md:text-3xl md:leading-12 lg:text-4xl lg:leading-14 xl:text-5xl">
                     {productDetail.name}
                   </h1>
                 ) : null}
@@ -570,84 +598,17 @@ export default function ProductDetail() {
           detailStatus === "loading" ? (
             <ProductOverviewFallback />
           ) : (
-            <section className="relative my-16 overflow-hidden rounded-3xl border border-white/10 bg-linear-to-b from-white/10 via-white/5 to-transparent p-10 text-white shadow-[0_20px_120px_rgba(0,0,0,0.35)] max-xl:p-5">
-              <div className="absolute top-0 -right-24 h-72 w-72 rounded-full bg-[#6ad1ff]/30 blur-3xl" />
-              <div className="absolute -bottom-16 -left-10 h-56 w-72 rounded-full bg-[#7b5bff]/30 blur-3xl" />
-              <div className="relative grid grid-cols-1 gap-12 max-lg:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-                <ScrollReveal className="h-full max-lg:col-span-2">
-                  <p className="text-sm tracking-wide text-white/50 uppercase">
-                    {t("productDetail.overview.kicker")}
-                  </p>
-                  <h1 className="mt-2 text-4xl font-semibold tracking-tight max-sm:text-3xl md:text-5xl">
-                    {t("productDetail.overview.title")}
-                  </h1>
-                  <p className="mt-4 max-w-2xl text-base text-white/70 max-sm:text-sm">
-                    {heroProduct?.description ??
-                      t("productDetail.overview.descriptionFallback")}
-                  </p>
-                  <div className="mt-5 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                    {productFeatures.map((feature) => (
-                      <div
-                        key={feature.id}
-                        className="border-border/25 bg-foreground/5 w-full space-y-2 rounded-2xl border p-5 backdrop-blur-md max-md:p-2.5"
-                      >
-                        <p className="text-foreground/50 text-sm tracking-wider uppercase">
-                          {feature.name}
-                        </p>
-                        <p className="text-3xl font-semibold max-md:text-2xl">
-                          {feature.value}
-                        </p>
-                        {feature.description ? (
-                          <p className="text-foreground/70">
-                            {feature.description}
-                          </p>
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="max-lg:hidden">
-                    <a
-                      onClick={openContactModal}
-                      className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-                    >
-                      {t("productDetail.actions.contact")}
-                    </a>
-                  </div>
-                </ScrollReveal>
-                <ScrollReveal className="relative max-lg:col-span-2">
-                  <div className="absolute inset-0 top-5 rounded-4xl bg-linear-to-br from-white/15 via-white/10 blur-3xl" />
-                  {productSubFeatures.length > 0 ? (
-                    <div className="relative flex flex-col justify-between rounded-4xl border border-white/15 bg-black/40 p-5 backdrop-blur-2xl">
-                      <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-2">
-                        {productSubFeatures.map((sub_feature) => (
-                          <div
-                            key={sub_feature.id}
-                            className="bg-foreground/5 border-border/25 rounded-xl border p-5 max-md:p-2.5"
-                          >
-                            <h3 className="text-lg font-semibold">
-                              {sub_feature.name}
-                            </h3>
-                            {sub_feature.description ? (
-                              <p className="text-foreground/70">
-                                {sub_feature.description}
-                              </p>
-                            ) : null}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
-                </ScrollReveal>
-                <div className="flex max-lg:col-span-2 md:justify-center lg:hidden">
-                  <a
-                    onClick={openContactModal}
-                    className="group relative inline-flex h-16 w-64 items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-full max-md:text-base"
-                  >
-                    {t("productDetail.actions.contact")}
-                  </a>
-                </div>
-              </div>
-            </section>
+            <ProductOverviewSection
+              title={t("productDetail.overview.title")}
+              description={
+                heroProduct?.description ??
+                t("productDetail.overview.descriptionFallback")
+              }
+              features={productFeatures}
+              subFeatures={productSubFeatures}
+              contactLabel={t("productDetail.actions.contact")}
+              onContactClick={openContactModal}
+            />
           )
         ) : null}
         <div
@@ -677,7 +638,7 @@ export default function ProductDetail() {
                       <h2 className="text-3xl font-semibold">
                         {t("productDetail.technology.title")}
                       </h2>
-                      <p className="text-foreground/70 mt-2 max-w-2xl">
+                      <p className="text-foreground/75 mt-2 max-w-2xl">
                         {t("productDetail.technology.description")}
                       </p>
                     </div>

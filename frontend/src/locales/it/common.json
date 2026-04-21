@@ -3,6 +3,7 @@
     "hero": {
       "title": "UAV da combattimento autonomi e sistemi robotici",
       "description": "Siamo un integratore di sistemi che fornisce UAV kamikaze, UGV e GCS, integrati nei sistemi dei veicoli militari tramite API C2 aperte e integrazione con sistemi di terze parti.",
+      "cta": "Richiedi una demo",
       "slideAlt": "Sfondo {{index}}",
       "slideAria": "Vai alla slide {{index}}"
     },
