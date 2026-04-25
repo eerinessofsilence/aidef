@@ -154,6 +154,28 @@ class ProductDroneSliderMedia(models.Model):
         return f"{self.product.name} — DroneSlider media"
 
 
+class CivilProductDroneSliderMedia(models.Model):
+    product = models.OneToOneField(
+        "CivilProduct",
+        on_delete=models.CASCADE,
+        related_name="drone_slider_media",
+    )
+    image = models.ImageField(upload_to="civil_products/drone_slider/%Y/%m/", blank=True)
+    video = models.FileField(
+        upload_to="civil_products/drone_slider/%Y/%m/",
+        blank=True,
+        validators=[_drone_slider_video_extension_validator],
+        help_text="Optional preview video played on card hover.",
+    )
+
+    class Meta:
+        verbose_name = "Civil product DroneSlider media"
+        verbose_name_plural = "Civil product DroneSlider media"
+
+    def __str__(self):
+        return f"{self.product.name} — DroneSlider media"
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='products/%Y/%m/')

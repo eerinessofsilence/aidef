@@ -23,6 +23,7 @@ from .models import (
     BlogPostSection,
     CivilProduct,
     CivilProductCTABlock,
+    CivilProductDroneSliderMedia,
     CivilProductFeature,
     CivilProductFeatureBlock,
     CivilProductGallery,
@@ -157,6 +158,20 @@ def _serialize_product_base(product: Product) -> Dict[str, Any]:
         'order': product.order,
     }
 
+
+def _serialize_drone_slider_media(request, media) -> Dict[str, str | None] | None:
+    if media is None:
+        return None
+    image_url = _absolute_media_url(request, media.image)
+    video_url = _absolute_media_url(request, media.video)
+    if not image_url and not video_url:
+        return None
+    return {
+        "image": image_url,
+        "video": video_url,
+    }
+
+
 def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     data = _serialize_product_base(product)
     language = _get_request_language(request)
@@ -199,19 +214,10 @@ def _serialize_product_list(request, product: Product) -> Dict[str, Any]:
     drone_slider_media: ProductDroneSliderMedia | None = getattr(
         product, "drone_slider_media", None
     )
-    if drone_slider_media is not None:
-        image_url = _absolute_media_url(request, drone_slider_media.image)
-        video_url = _absolute_media_url(request, drone_slider_media.video)
-        data["drone_slider"] = (
-            {
-                "image": image_url,
-                "video": video_url,
-            }
-            if image_url or video_url
-            else None
-        )
-    else:
-        data["drone_slider"] = None
+    data["drone_slider"] = _serialize_drone_slider_media(
+        request,
+        drone_slider_media,
+    )
     return data
 
 def _serialize_product_detail(request, product: Product) -> Dict[str, Any]:
@@ -415,6 +421,13 @@ def _serialize_civil_product_list(request, product: CivilProduct) -> Dict[str, A
         }
         if first_image
         else None
+    )
+    drone_slider_media: CivilProductDroneSliderMedia | None = getattr(
+        product, "drone_slider_media", None
+    )
+    data["drone_slider"] = _serialize_drone_slider_media(
+        request,
+        drone_slider_media,
     )
     return data
 
@@ -765,7 +778,7 @@ def item_detail_api(request, slug: str):
 def civil_item_list_api(request):
     products = (
         CivilProduct.objects.filter(available=True)
-        .select_related('category')
+        .select_related('category', 'drone_slider_media')
         .prefetch_related('features', 'sub_features', 'images__translations')
         .order_by('order', 'name')
     )
@@ -779,7 +792,7 @@ def civil_item_detail_api(request, slug: str):
     try:
         product = (
             CivilProduct.objects
-            .select_related('category')
+            .select_related('category', 'drone_slider_media')
             .prefetch_related(
                 'features',
                 'sub_features',

@@ -12,7 +12,7 @@ export default function DroneCarouselSection() {
   const { lng } = useParams<{ lng?: string }>();
   const activeLanguage = resolveLanguage(lng);
   const { t } = useTranslation();
-  const [items, setItems] = useState<ProductListApiItem[]>([]);
+  const [items, setItems] = useState<CarouselProductItem[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(
     "idle",
   );
@@ -22,13 +22,36 @@ export default function DroneCarouselSection() {
     const controller = new AbortController();
     setStatus("loading");
     setErrorMessage(null);
-    axios
-      .get<ProductListApiItem[]>(`${import.meta.env.VITE_API_URL}/items/`, {
-        signal: controller.signal,
-        params: { lang: activeLanguage },
-      })
-      .then((response) => {
-        setItems(response.data);
+    const requestConfig = {
+      signal: controller.signal,
+      params: { lang: activeLanguage },
+    };
+
+    Promise.all([
+      axios.get<ProductListApiItem[]>(
+        `${import.meta.env.VITE_API_URL}/items/`,
+        requestConfig,
+      ),
+      axios.get<ProductListApiItem[]>(
+        `${import.meta.env.VITE_API_URL}/civil-items/`,
+        requestConfig,
+      ),
+    ])
+      .then(([productResponse, civilProductResponse]) => {
+        setItems([
+          ...productResponse.data.map((product) => ({
+            ...product,
+            productType: "product" as const,
+            href: `/products/${product.slug}`,
+            sourceOrder: 0,
+          })),
+          ...civilProductResponse.data.map((product) => ({
+            ...product,
+            productType: "civilProduct" as const,
+            href: `/civil-products/${product.slug}`,
+            sourceOrder: 1,
+          })),
+        ]);
         setStatus("ready");
       })
       .catch((error) => {
@@ -49,17 +72,19 @@ export default function DroneCarouselSection() {
         .filter((product) => Boolean(product.slug))
         .sort(
           (a, b) =>
+            a.sourceOrder - b.sourceOrder ||
             (a.order ?? Number.MAX_SAFE_INTEGER) -
-              (b.order ?? Number.MAX_SAFE_INTEGER) || a.id - b.id,
+              (b.order ?? Number.MAX_SAFE_INTEGER) ||
+            a.id - b.id,
         )
         .map((product, index) => (
           <Card
-            key={product.id}
+            key={`${product.productType}-${product.id}`}
             card={{
               category: product.category ?? "",
               title: product.name,
               description: product.description?.trim() ?? "",
-              href: `/products/${product.slug}`,
+              href: product.href,
               bg:
                 product.drone_slider?.image ??
                 product.first_image?.url ??
@@ -74,17 +99,20 @@ export default function DroneCarouselSection() {
   );
 
   return (
-    <div className="container mx-auto h-full w-full px-5 py-16 max-lg:py-12">
+    <div className="h-full w-full py-16 max-lg:py-12">
       <ScrollReveal delay={0.12}>
         <Carousel
           paragraph={t("main.droneCarousel.description")}
           carouselTitle={t("main.droneCarousel.title")}
           items={cards}
+          variant="fullBleed"
         />
       </ScrollReveal>
       {status === "error" ? (
-        <div className="mt-2 rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
-          {errorMessage ?? t("productDetail.errors.catalogFallback")}
+        <div className="container mx-auto px-5">
+          <div className="mt-2 rounded-3xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-200">
+            {errorMessage ?? t("productDetail.errors.catalogFallback")}
+          </div>
         </div>
       ) : null}
     </div>
@@ -111,4 +139,10 @@ type ProductListApiItem = {
   icon?: ProductImagePreview | null;
   first_image?: ProductImagePreview | null;
   drone_slider?: ProductDroneSliderMedia | null;
+};
+
+type CarouselProductItem = ProductListApiItem & {
+  productType: "product" | "civilProduct";
+  href: string;
+  sourceOrder: number;
 };

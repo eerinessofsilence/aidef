@@ -18,9 +18,11 @@ interface CarouselProps {
   carouselTitle?: string;
   items?: JSX.Element[];
   initialScroll?: number;
+  variant?: "default" | "fullBleed";
 }
 
 const SCROLL_STEP = 300;
+const FULL_BLEED_SCROLL_STEP = 380;
 
 type Card = {
   bg: string;
@@ -59,6 +61,7 @@ export const Carousel = ({
   carouselTitle,
   items = [],
   initialScroll = 0,
+  variant = "default",
 }: CarouselProps) => {
   const { t } = useTranslation();
   const carouselRef = React.useRef<HTMLDivElement>(null);
@@ -66,6 +69,8 @@ export const Carousel = ({
   const endSentinelRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(items.length > 0);
+  const isFullBleed = variant === "fullBleed";
+  const scrollStep = isFullBleed ? FULL_BLEED_SCROLL_STEP : SCROLL_STEP;
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -114,19 +119,19 @@ export const Carousel = ({
 
   const scrollLeft = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -SCROLL_STEP, behavior: "smooth" });
+      carouselRef.current.scrollBy({ left: -scrollStep, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: SCROLL_STEP, behavior: "smooth" });
+      carouselRef.current.scrollBy({ left: scrollStep, behavior: "smooth" });
     }
   };
 
   return (
     <div className="relative w-full">
-      <div className="space-y-2">
+      <div className={cn("space-y-2", isFullBleed && "container mx-auto px-5")}>
         {carouselTitle ? (
           <div>
             <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
@@ -159,7 +164,10 @@ export const Carousel = ({
         </button>
 
         <div
-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]"
+          className={cn(
+            "flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none]",
+            isFullBleed && "px-5",
+          )}
           ref={carouselRef}
         >
           <div
@@ -177,7 +185,12 @@ export const Carousel = ({
             {items.map((item, index) => (
               <div
                 key={"card" + index}
-                className="aspect-5/7 w-81 shrink-0 max-lg:w-72 max-md:w-63"
+                className={cn(
+                  "aspect-5/7 shrink-0",
+                  isFullBleed
+                    ? "w-90 max-lg:w-78 max-md:w-66"
+                    : "w-81 max-lg:w-72 max-md:w-63",
+                )}
               >
                 {item}
               </div>

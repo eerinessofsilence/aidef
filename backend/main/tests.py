@@ -21,6 +21,7 @@ from .models import (
     BlogPostSection,
     Category,
     CivilProduct,
+    CivilProductDroneSliderMedia,
     ContactRequest,
     Product,
     ProductFinalCTABlock,
@@ -257,6 +258,49 @@ class MainAdminSmokeTests(TestCase):
         self.assertIn("menu_url", item["dropdown_image"])
         self.assertTrue(item["dropdown_image"]["menu_url"].endswith(".webp"))
         self.assertIn("/_variants/", item["dropdown_image"]["menu_url"])
+
+    def test_civil_item_list_api_includes_drone_slider_media(self):
+        civil_product = CivilProduct.objects.create(name="Swift X8")
+        CivilProductDroneSliderMedia.objects.create(
+            product=civil_product,
+            image=SimpleUploadedFile(
+                "civil-slider-preview.jpg",
+                b"civil-slider-preview-image",
+                content_type="image/jpeg",
+            ),
+            video=SimpleUploadedFile(
+                "civil-slider-preview.mp4",
+                b"civil-slider-preview-video",
+                content_type="video/mp4",
+            ),
+        )
+
+        response = self.client.get(reverse("main:civil-item-list"))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        item = next(entry for entry in payload if entry["id"] == civil_product.id)
+
+        self.assertIn("civil-slider-preview", item["drone_slider"]["image"])
+        self.assertIn("civil-slider-preview", item["drone_slider"]["video"])
+        self.assertTrue(
+            item["drone_slider"]["image"].startswith(
+                "http://testserver/media/civil_products/drone_slider/"
+            )
+        )
+        self.assertTrue(item["drone_slider"]["image"].endswith(".jpg"))
+        self.assertTrue(item["drone_slider"]["video"].endswith(".mp4"))
+
+    def test_civil_product_admin_change_form_renders_drone_slider_inline(self):
+        civil_product = CivilProduct.objects.create(name="Swift X8")
+
+        response = self.client.get(
+            reverse("admin:main_civilproduct_change", args=[civil_product.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Drone slider media")
+        self.assertContains(response, "drone_slider_media-0-image")
+        self.assertContains(response, "drone_slider_media-0-video")
 
     def test_blog_post_admin_change_form_renders_blocks_inline(self):
         blog_category = BlogCategory.objects.create(name="Resume Tips")

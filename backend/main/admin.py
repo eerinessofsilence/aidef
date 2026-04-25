@@ -23,6 +23,7 @@ from .models import (
     CivilCategory,
     CivilProduct,
     CivilProductCTABlock,
+    CivilProductDroneSliderMedia,
     CivilProductFeature,
     CivilProductFeatureBlock,
     CivilProductGallery,
@@ -808,6 +809,15 @@ class ProductDroneSliderMediaInline(admin.StackedInline):
     verbose_name_plural = "Drone slider media"
 
 
+class CivilProductDroneSliderMediaInline(admin.StackedInline):
+    model = CivilProductDroneSliderMedia
+    extra = 0
+    max_num = 1
+    fields = ("image", "video")
+    classes = ("collapse",)
+    verbose_name_plural = "Drone slider media"
+
+
 # Stacked translation inlines keep translated fields readable without horizontal scrolling.
 class ProductFeatureInline(TranslationStackedInline):
     model = ProductFeature
@@ -1213,6 +1223,7 @@ class CivilProductAdmin(HiddenModelTranslationTabsAdmin):
     )
     inlines = [
         CivilProductImageInline,
+        CivilProductDroneSliderMediaInline,
         CivilProductFeatureInline,
         CivilProductSubFeatureInline,
         CivilProductGalleryInline,
