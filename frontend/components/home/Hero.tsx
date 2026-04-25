@@ -196,14 +196,14 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="relative z-10 container mx-auto max-md:mt-20">
+      <div className="relative z-10 container mx-auto mt-22.5">
         <div className="flex justify-center">
-          <div className="flex max-w-4xl flex-col items-center justify-center gap-y-6">
-            <div className="flex flex-col items-center">
-              <h1 className="text-text text-center text-4xl font-bold text-balance max-lg:mb-3 max-md:leading-11 md:text-5xl lg:text-6xl lg:leading-22 xl:text-7xl">
+          <div className="flex max-w-4xl flex-col items-center justify-center gap-10">
+            <div className="flex flex-col items-center gap-2 md:gap-4 lg:gap-6">
+              <h1 className="text-text text-center text-4xl font-bold text-balance max-md:leading-11 md:text-5xl lg:text-6xl lg:leading-22 xl:text-7xl">
                 {t("main.hero.title")}
               </h1>
-              <p className="text-text/75 max-w-xs text-center leading-6.5 text-pretty md:max-w-3xl md:text-lg md:leading-8 lg:text-xl">
+              <p className="text-text/75 max-w-sm text-center leading-6.5 text-pretty md:max-w-3xl md:text-lg md:leading-8 lg:text-xl">
                 {t("main.hero.description")}
               </p>
             </div>
