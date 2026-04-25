@@ -4,12 +4,18 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { dispatchOpenContactModal } from "../../lib/contact-modal";
 
-const backgroundImages = [
-  "/hero-bg-1.jpg",
-  "/hero-bg-2.jpg",
-  "/hero-bg-3.jpg",
-  "/hero-bg-4.jpg",
-  "/hero-bg-5.jpg",
+type HeroMediaSlide = {
+  src: string;
+  type: "image" | "video";
+};
+
+const backgroundSlides: HeroMediaSlide[] = [
+  { src: "/hero-bg-video.mov", type: "video" },
+  { src: "/hero-bg-1.jpg", type: "image" },
+  { src: "/hero-bg-2.jpg", type: "image" },
+  { src: "/hero-bg-3.jpg", type: "image" },
+  { src: "/hero-bg-4.jpg", type: "image" },
+  { src: "/hero-bg-5.jpg", type: "image" },
 ];
 
 const FADE_DURATION_MS = 1000;
@@ -22,6 +28,45 @@ const HERO_IMAGE_PROPS = {
   style: { aspectRatio: `${HERO_IMAGE_WIDTH} / ${HERO_IMAGE_HEIGHT}` },
 } as const;
 
+type HeroMediaProps = {
+  fetchPriority?: "auto" | "high" | "low";
+  index: number;
+  isActive: boolean;
+  slide: HeroMediaSlide;
+};
+
+function HeroMedia({ fetchPriority, index, isActive, slide }: HeroMediaProps) {
+  const { t } = useTranslation();
+  const altText = t("main.hero.slideAlt", { index: index + 1 });
+
+  if (slide.type === "video") {
+    return (
+      <video
+        src={slide.src}
+        aria-label={altText}
+        className="h-full w-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload={isActive ? "auto" : "metadata"}
+      />
+    );
+  }
+
+  return (
+    <img
+      src={slide.src}
+      alt={altText}
+      className="h-full w-full object-cover"
+      loading="eager"
+      fetchPriority={fetchPriority}
+      decoding="async"
+      {...HERO_IMAGE_PROPS}
+    />
+  );
+}
+
 export default function Hero() {
   const openContactModal = () => dispatchOpenContactModal();
 
@@ -30,11 +75,11 @@ export default function Hero() {
   const [isFading, setIsFading] = useState(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const { t } = useTranslation();
-  const currentImage = backgroundImages[currentSlide] ?? backgroundImages[0];
+  const currentMedia = backgroundSlides[currentSlide] ?? backgroundSlides[0];
   const nextSlideAltIndex = nextSlide !== null ? nextSlide + 1 : 1;
-  const nextImage =
+  const nextMedia =
     nextSlide !== null
-      ? (backgroundImages[nextSlide] ?? backgroundImages[0])
+      ? (backgroundSlides[nextSlide] ?? backgroundSlides[0])
       : null;
 
   useEffect(() => {
@@ -76,7 +121,7 @@ export default function Hero() {
     }
 
     const timer = window.setTimeout(() => {
-      setNextSlide((currentSlide + 1) % backgroundImages.length);
+      setNextSlide((currentSlide + 1) % backgroundSlides.length);
     }, 5000);
 
     return () => window.clearTimeout(timer);
@@ -108,23 +153,28 @@ export default function Hero() {
     }
 
     const baseSlide = nextSlide ?? currentSlide;
-    const nextSlideIndex = (baseSlide + 1) % backgroundImages.length;
-    const preloadImage = new Image();
-    preloadImage.src = backgroundImages[nextSlideIndex];
+    const nextSlideIndex = (baseSlide + 1) % backgroundSlides.length;
+    const nextMediaToPreload = backgroundSlides[nextSlideIndex];
+
+    if (nextMediaToPreload?.type === "image") {
+      const preloadImage = new Image();
+      preloadImage.src = nextMediaToPreload.src;
+    } else if (nextMediaToPreload?.type === "video") {
+      const preloadVideo = document.createElement("video");
+      preloadVideo.preload = "metadata";
+      preloadVideo.src = nextMediaToPreload.src;
+    }
   }, [currentSlide, hasUserInteracted, nextSlide]);
 
   return (
     <section className="relative flex h-screen items-center max-lg:h-[75vh] max-sm:h-screen">
       <div className="absolute inset-0 overflow-hidden">
-        {nextImage ? (
+        {nextMedia ? (
           <div className="absolute inset-0">
-            <img
-              src={nextImage}
-              alt={t("main.hero.slideAlt", { index: nextSlideAltIndex })}
-              className="h-full w-full object-cover"
-              loading="eager"
-              decoding="async"
-              {...HERO_IMAGE_PROPS}
+            <HeroMedia
+              index={nextSlideAltIndex - 1}
+              isActive={false}
+              slide={nextMedia}
             />
             <div className="absolute inset-0 bg-black/50" />
           </div>
@@ -132,18 +182,15 @@ export default function Hero() {
 
         <div
           className={`absolute inset-0 ${
-            nextImage ? "transition-opacity duration-1000" : ""
-          } ${nextImage && isFading ? "opacity-0" : "opacity-100"}`}
-          aria-hidden={nextImage ? "true" : undefined}
+            nextMedia ? "transition-opacity duration-1000" : ""
+          } ${nextMedia && isFading ? "opacity-0" : "opacity-100"}`}
+          aria-hidden={nextMedia ? "true" : undefined}
         >
-          <img
-            src={currentImage || "/placeholder.svg"}
-            alt={t("main.hero.slideAlt", { index: currentSlide + 1 })}
-            className="h-full w-full object-cover"
-            loading="eager"
+          <HeroMedia
+            index={currentSlide}
+            isActive
+            slide={currentMedia}
             fetchPriority={currentSlide === 0 ? "high" : "auto"}
-            decoding="async"
-            {...HERO_IMAGE_PROPS}
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
