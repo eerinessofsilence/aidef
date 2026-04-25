@@ -383,11 +383,14 @@ export default function Header() {
           name: product.name,
           href: `/civil-products/${product.slug}`,
           imageUrl:
+            product.dropdown_image?.menu_url ??
+            product.dropdown_image?.url ??
             product.first_image?.menu_url ??
             product.first_image?.url ??
             product.icon?.url ??
             "/placeholder.svg",
           imageAlt:
+            product.dropdown_image?.alt?.trim() ||
             product.first_image?.alt?.trim() ||
             product.icon?.alt?.trim() ||
             product.name,

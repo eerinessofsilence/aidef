@@ -20,6 +20,7 @@ from .models import (
     BlogPostHeroImage,
     BlogPostSection,
     Category,
+    CivilProduct,
     ContactRequest,
     Product,
     ProductFinalCTABlock,
@@ -213,6 +214,43 @@ class MainAdminSmokeTests(TestCase):
         self.assertEqual(response.status_code, 200)
         payload = response.json()
         item = next(entry for entry in payload if entry["id"] == self.product.id)
+
+        self.assertIn("dropdown_image", item)
+        self.assertIsNotNone(item["dropdown_image"])
+        self.assertIn("menu_url", item["dropdown_image"])
+        self.assertTrue(item["dropdown_image"]["menu_url"].endswith(".webp"))
+        self.assertIn("/_variants/", item["dropdown_image"]["menu_url"])
+
+    def test_civil_item_list_api_includes_dropdown_image(self):
+        civil_product = CivilProduct.objects.create(name="Swift X8")
+        civil_product.dropdown_image = SimpleUploadedFile(
+            "civil-menu-card.jpg",
+            b"civil-menu-card-image",
+            content_type="image/jpeg",
+        )
+        civil_product.save()
+
+        response = self.client.get(reverse("main:civil-item-list"))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        item = next(entry for entry in payload if entry["id"] == civil_product.id)
+
+        self.assertIn("dropdown_image", item)
+        self.assertIsNotNone(item["dropdown_image"])
+        self.assertIn("civil-menu-card.jpg", item["dropdown_image"]["url"])
+        self.assertEqual(item["dropdown_image"]["alt"], civil_product.name)
+
+    def test_civil_item_list_api_generates_menu_variant_for_dropdown_image(self):
+        civil_product = CivilProduct.objects.create(name="Swift X8")
+        civil_product.dropdown_image = _make_test_image_upload(
+            "civil-menu-card-large.jpg"
+        )
+        civil_product.save()
+
+        response = self.client.get(reverse("main:civil-item-list"))
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        item = next(entry for entry in payload if entry["id"] == civil_product.id)
 
         self.assertIn("dropdown_image", item)
         self.assertIsNotNone(item["dropdown_image"])

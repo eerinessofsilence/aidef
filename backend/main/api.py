@@ -382,6 +382,8 @@ def _serialize_civil_product_list(request, product: CivilProduct) -> Dict[str, A
     language = _get_request_language(request)
     first_image = next((image for image in product.images.all() if image.image), None)
     icon_url = _absolute_media_url(request, product.icon)
+    dropdown_image_url = _absolute_media_url(request, product.dropdown_image)
+    dropdown_menu_url = build_menu_image_url(request, product.dropdown_image)
     first_image_url = _absolute_media_url(request, first_image.image) if first_image else None
     first_image_menu_url = (
         build_menu_image_url(request, first_image.image) if first_image else None
@@ -392,6 +394,15 @@ def _serialize_civil_product_list(request, product: CivilProduct) -> Dict[str, A
             "alt": (product.name or "").strip(),
         }
         if icon_url
+        else None
+    )
+    data["dropdown_image"] = (
+        {
+            "url": dropdown_image_url,
+            "menu_url": dropdown_menu_url,
+            "alt": (product.name or "").strip(),
+        }
+        if dropdown_image_url
         else None
     )
     data["first_image"] = (
