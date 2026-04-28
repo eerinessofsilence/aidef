@@ -43,21 +43,32 @@ const detectInitialLanguage = (): SupportedLanguage => {
   return resolveLanguage(maybeLanguage);
 };
 
+export const stripSupportedLanguageFromPath = (path: string) => {
+  if (!path.startsWith("/")) return path;
+
+  const segments = path.split("/").filter(Boolean);
+  if (segments.length === 0 || !isSupportedLanguage(segments[0])) {
+    return path || "/";
+  }
+
+  const pathWithoutLanguage = `/${segments.slice(1).join("/")}`;
+  return pathWithoutLanguage === "/" ? "/" : pathWithoutLanguage;
+};
+
 export const buildLocalizedPath = (lng: SupportedLanguage, path: string) => {
   if (!path.startsWith("/")) return path;
-  if (path === "/") return `/${lng}`;
-  return `/${lng}${path}`;
+
+  const pathWithoutLanguage = stripSupportedLanguageFromPath(path);
+  if (lng === DEFAULT_LANGUAGE) return pathWithoutLanguage;
+  if (pathWithoutLanguage === "/") return `/${lng}`;
+  return `/${lng}${pathWithoutLanguage}`;
 };
 
 export const replaceLanguageInPath = (
   pathname: string,
   nextLng: SupportedLanguage,
 ) => {
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 0) return `/${nextLng}`;
-  const nextSegments = [...segments];
-  nextSegments[0] = nextLng;
-  return `/${nextSegments.join("/")}`;
+  return buildLocalizedPath(nextLng, stripSupportedLanguageFromPath(pathname));
 };
 
 export const ensureLanguageResources = async (value?: string) => {

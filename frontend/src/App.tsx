@@ -10,11 +10,12 @@ import {
 import Header from "../components/Header";
 import ScrollToTop from "../components/ui/scroll-to-top";
 import i18n, {
+  buildLocalizedPath,
   DEFAULT_LANGUAGE,
   ensureLanguageResources,
   isSupportedLanguage,
-  replaceLanguageInPath,
   resolveLanguage,
+  stripSupportedLanguageFromPath,
 } from "./i18n";
 import { ga4PageView } from "./analytics/ga4";
 import {
@@ -55,17 +56,21 @@ function LanguageLayout() {
   const { lng } = useParams();
   const location = useLocation();
   const activeLanguage = resolveLanguage(lng);
-  const isValidLanguage = isSupportedLanguage(lng);
+  const isValidLanguage = lng === undefined || isSupportedLanguage(lng);
+  const shouldRedirectDefaultLanguage = lng === DEFAULT_LANGUAGE;
   const [shouldRenderCookieConsent, setShouldRenderCookieConsent] =
     useState(false);
   const { ref: footerSentinelRef, inView: shouldRenderFooter } = useInViewOnce({
     rootMargin: "240px 0px 0px 0px",
   });
   const normalizedPathname = location.pathname.replace(/\/+$/, "") || "/";
-  const isHomeRoute = normalizedPathname === `/${activeLanguage}`;
+  const isHomeRoute =
+    stripSupportedLanguageFromPath(normalizedPathname) === "/";
 
   // i18n
   useEffect(() => {
+    if (!isValidLanguage || shouldRedirectDefaultLanguage) return;
+
     let isCancelled = false;
 
     const syncLanguage = async () => {
@@ -85,36 +90,28 @@ function LanguageLayout() {
     return () => {
       isCancelled = true;
     };
-  }, [activeLanguage]);
-
-  if (!isValidLanguage) {
-    const segments = location.pathname.split("/").filter(Boolean);
-    const targetPath = replaceLanguageInPath(
-      location.pathname,
-      DEFAULT_LANGUAGE,
-    );
-    const fallbackPath =
-      segments.length > 1 ? targetPath : `/${DEFAULT_LANGUAGE}/404`;
-    return (
-      <Navigate
-        to={{
-          pathname: fallbackPath,
-          search: location.search,
-          hash: location.hash,
-        }}
-        replace
-      />
-    );
-  }
+  }, [activeLanguage, isValidLanguage, shouldRedirectDefaultLanguage]);
 
   // GA4
   useEffect(() => {
-    if (!isValidLanguage) return;
+    if (!isValidLanguage || shouldRedirectDefaultLanguage) return;
     ga4PageView(location.pathname + location.search + location.hash);
-  }, [isValidLanguage, location.pathname, location.search, location.hash]);
+  }, [
+    isValidLanguage,
+    shouldRedirectDefaultLanguage,
+    location.pathname,
+    location.search,
+    location.hash,
+  ]);
 
   useEffect(() => {
-    if (!isValidLanguage || typeof window === "undefined") return;
+    if (
+      !isValidLanguage ||
+      shouldRedirectDefaultLanguage ||
+      typeof window === "undefined"
+    ) {
+      return;
+    }
 
     const currentPagePath = location.pathname + location.search + location.hash;
     const handleConsentChange = (event: Event) => {
@@ -127,10 +124,21 @@ function LanguageLayout() {
     window.addEventListener(COOKIE_CONSENT_EVENT, handleConsentChange);
     return () =>
       window.removeEventListener(COOKIE_CONSENT_EVENT, handleConsentChange);
-  }, [isValidLanguage, location.pathname, location.search, location.hash]);
+  }, [
+    isValidLanguage,
+    shouldRedirectDefaultLanguage,
+    location.pathname,
+    location.search,
+    location.hash,
+  ]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || getStoredCookieConsent()) {
+    if (
+      !isValidLanguage ||
+      shouldRedirectDefaultLanguage ||
+      typeof window === "undefined" ||
+      getStoredCookieConsent()
+    ) {
       return;
     }
 
@@ -193,7 +201,42 @@ function LanguageLayout() {
         deferredWindow.clearTimeout(timeoutId);
       }
     };
-  }, []);
+  }, [isValidLanguage, shouldRedirectDefaultLanguage]);
+
+  if (!isValidLanguage) {
+    const segments = location.pathname.split("/").filter(Boolean);
+    const fallbackPath =
+      segments.length > 1
+        ? buildLocalizedPath(
+            DEFAULT_LANGUAGE,
+            `/${segments.slice(1).join("/")}`,
+          )
+        : buildLocalizedPath(DEFAULT_LANGUAGE, "/404");
+    return (
+      <Navigate
+        to={{
+          pathname: fallbackPath,
+          search: location.search,
+          hash: location.hash,
+        }}
+        replace
+      />
+    );
+  }
+
+  if (shouldRedirectDefaultLanguage) {
+    return (
+      <Navigate
+        to={{
+          pathname: stripSupportedLanguageFromPath(location.pathname),
+          search: location.search,
+          hash: location.hash,
+        }}
+        replace
+      />
+    );
+  }
+
   return (
     <>
       <ScrollToTop />
@@ -259,27 +302,34 @@ function LanguageLayout() {
   );
 }
 
+function PageRoutes() {
+  return (
+    <>
+      <Route index element={<Home />} />
+      <Route path="solutions" element={<Solutions />} />
+      <Route path="products/:slug" element={<ProductDetail />} />
+      <Route path="civil-products/:slug" element={<CivilProductDetail />} />
+      <Route path="technology" element={<Technology />} />
+      <Route path="blog" element={<Blog />} />
+      <Route path="blog/:post" element={<BlogPost />} />
+      <Route path="about-us" element={<AboutUs />} />
+      <Route path="terms-of-condition" element={<TermsOfCondition />} />
+      <Route path="support" element={<Support />} />
+      <Route path="auth" element={<Auth />} />
+      <Route path="client-portal" element={<ClientPortal />} />
+      <Route path="*" element={<NotFound />} />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<Navigate to={`/${DEFAULT_LANGUAGE}`} replace />}
-      />
+      <Route path="/" element={<LanguageLayout />}>
+        {PageRoutes()}
+      </Route>
       <Route path="/:lng" element={<LanguageLayout />}>
-        <Route index element={<Home />} />
-        <Route path="solutions" element={<Solutions />} />
-        <Route path="products/:slug" element={<ProductDetail />} />
-        <Route path="civil-products/:slug" element={<CivilProductDetail />} />
-        <Route path="technology" element={<Technology />} />
-        <Route path="blog" element={<Blog />} />
-        <Route path="blog/:post" element={<BlogPost />} />
-        <Route path="about-us" element={<AboutUs />} />
-        <Route path="terms-of-condition" element={<TermsOfCondition />} />
-        <Route path="support" element={<Support />} />
-        <Route path="auth" element={<Auth />} />
-        <Route path="client-portal" element={<ClientPortal />} />
-        <Route path="*" element={<NotFound />} />
+        {PageRoutes()}
       </Route>
     </Routes>
   );

@@ -8,6 +8,7 @@ from main.models import BlogPost, CivilProduct, Product
 
 
 SUPPORTED_LANGUAGES = tuple(language for language, _ in settings.LANGUAGES)
+DEFAULT_LANGUAGE = settings.LANGUAGE_CODE
 
 STATIC_ROUTES = (
     ("", "weekly", 1.0),
@@ -21,6 +22,10 @@ STATIC_ROUTES = (
 
 
 def _build_localized_path(language: str, path: str) -> str:
+    if language == DEFAULT_LANGUAGE:
+        if not path:
+            return "/"
+        return f"/{path}"
     if not path:
         return f"/{language}"
     return f"/{language}/{path}"
