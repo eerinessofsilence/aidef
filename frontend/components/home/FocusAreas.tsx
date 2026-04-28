@@ -52,7 +52,7 @@ const defaultItems = [
 const getRadialPositions = (count: number) => {
   const positions: { x: number; y: number }[] = [];
   const angleStep = 360 / count;
-  const radius = 42.75;
+  const radius = 37;
   for (let i = 0; i < count; i++) {
     const angle = (i * angleStep - 90) * (Math.PI / 180);
     const x = 50 + radius * Math.cos(angle);
@@ -78,10 +78,12 @@ const RadialCard = ({
         transform: "translate(-50%, -50%)",
       }}
     >
-      <div className="border-border/15 h-57.5 w-80 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:scale-105 hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
-        <img src={item.icon} className="mb-4 h-12.5 w-12.5" alt="" />
-        <h3 className="mb-2 text-xl font-bold text-white">{item.title}</h3>
-        <p className="text-white/75 capitalize">{item.description}</p>
+      <div className="border-border/15 min-h-48 w-72 rounded-[18px] border-2 bg-white/5 p-4 shadow-lg backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+        <img src={item.icon} className="mb-3 h-10 w-10" alt="" />
+        <h3 className="mb-1.5 text-lg font-bold text-white">{item.title}</h3>
+        <p className="text-sm leading-6 text-white/75 capitalize">
+          {item.description}
+        </p>
       </div>
     </div>
   );
@@ -128,30 +130,30 @@ export default function FocusAreas({ items }: FocusAreasProps) {
   return (
     <section
       ref={containerRef}
-      className={`relative overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat px-5 py-16 max-lg:py-12 lg:pt-48`}
+      className={`relative overflow-hidden bg-[url('/site-bg.png')] bg-cover bg-center bg-no-repeat px-5 py-16 max-lg:py-12`}
     >
-      <div aria-hidden="true" className="absolute inset-0 z-0 bg-black/35" />
+      <div
+        aria-hidden="true"
+        className="bg-background/75 absolute inset-0 z-0"
+      />
 
-      <div className="relative z-10 container mx-auto w-full py-37.5 max-xl:py-30 max-lg:pb-0">
+      <div className="relative z-10 container mx-auto w-full">
         <div className="pointer-events-none absolute inset-y-0 left-1/2 mt-60 h-190 w-px -translate-x-1/2 bg-linear-to-b from-transparent via-white/75 to-transparent max-md:h-360 lg:hidden" />
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.6 }}
           transition={{ duration: 0.65, ease: "easeOut" }}
-          className="pointer-events-none absolute top-8 right-0 left-0 text-center lg:-top-16"
+          className="pointer-events-none relative z-20 text-center"
         >
-          <p className="text-foreground/70 text-sm font-medium tracking-widest uppercase">
-            {t("main.focusAreas.kicker")}
-          </p>
-          <h1 className="text-foreground text-5xl font-bold capitalize max-lg:text-4xl">
+          <h1 className="text-foreground text-4xl font-semibold capitalize lg:text-5xl">
             {t("main.focusAreas.title")}
           </h1>
         </motion.div>
 
         <motion.div
           style={{ y: floatLayer }}
-          className="relative hidden h-screen w-full lg:block"
+          className="relative hidden w-full lg:mt-10 lg:block lg:h-[78vh] lg:max-h-[700px] lg:min-h-[620px]"
         >
           {resolvedItems.length ? (
             <RadialConnectors itemCount={resolvedItems.length} />
@@ -185,13 +187,13 @@ export default function FocusAreas({ items }: FocusAreasProps) {
             {resolvedItems.map((item, idx) => (
               <div
                 key={idx}
-                className="border-border/15 rounded-[20px] border-2 bg-white/5 p-5 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
+                className="border-border/15 rounded-[18px] border-2 bg-white/5 p-4 shadow-lg backdrop-blur-xl transition-all hover:border-white/30 hover:bg-white/15 hover:shadow-xl"
               >
-                <img src={item.icon} className="mb-4 h-10 w-10" alt="" />
-                <h3 className="mb-2 text-lg font-bold text-white">
+                <img src={item.icon} className="mb-3 h-8 w-8" alt="" />
+                <h3 className="mb-1.5 text-base font-bold text-white">
                   {item.title}
                 </h3>
-                <p className="text-sm text-white/75 capitalize">
+                <p className="text-[13px] leading-5 text-white/75 capitalize">
                   {item.description}
                 </p>
               </div>
