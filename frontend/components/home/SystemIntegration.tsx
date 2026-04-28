@@ -31,10 +31,10 @@ export default function SystemIntegration() {
         duration={0.5}
         distance={0}
       >
-        <h1 className="text-center text-5xl font-bold max-lg:text-4xl">
+        <h1 className="text-center text-4xl font-semibold lg:text-5xl">
           {t("main.systemIntegration.title")}
         </h1>
-        <p className="text-center text-lg max-md:text-base max-md:text-balance">
+        <p className="text-text/75 max-w-4xl text-center text-base text-pretty md:text-lg lg:leading-7.5">
           {t("main.systemIntegration.description")}
         </p>
       </ScrollReveal>

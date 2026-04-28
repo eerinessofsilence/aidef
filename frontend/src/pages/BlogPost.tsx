@@ -1162,13 +1162,15 @@ export default function BlogPost() {
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={dispatchOpenContactModal}
-                  className="group relative inline-flex h-14 w-48 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:w-42 max-md:text-base"
-                >
-                  {t("blog.post.cta.button")}
-                </button>
+                <div className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={dispatchOpenContactModal}
+                    className="group relative inline-flex h-14 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white px-8 text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:text-base"
+                  >
+                    {t("blog.post.cta.button")}
+                  </button>
+                </div>
               </div>
             </section>
           </div>

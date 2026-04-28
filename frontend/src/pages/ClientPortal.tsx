@@ -1517,12 +1517,14 @@ export default function ClientPortal() {
               {t("clientPortal.empty.title")} <br />
               {t("clientPortal.empty.subtitle")}
             </h1>
-            <a
-              onClick={openContactModal}
-              className="group relative mt-12 inline-flex h-14 w-48 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-            >
-              {t("clientPortal.actions.contact")}
-            </a>
+            <div className="mt-12">
+              <a
+                onClick={openContactModal}
+                className="group relative inline-flex h-14 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white px-8 text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-md:h-12 max-md:text-base"
+              >
+                {t("clientPortal.actions.contact")}
+              </a>
+            </div>
           </div>
         )}
         {upgrades.length ? (

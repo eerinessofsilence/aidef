@@ -134,13 +134,13 @@ export const Carousel = ({
       <div className={cn("space-y-2", isFullBleed && "container mx-auto px-5")}>
         {carouselTitle ? (
           <div>
-            <h2 className="text-text text-5xl font-bold max-lg:text-4xl max-md:text-3xl">
+            <h2 className="text-text text-4xl font-semibold md:text-5xl">
               {carouselTitle}
             </h2>
           </div>
         ) : null}
         {paragraph ? (
-          <div className="text-foreground/70 lg:max-w-[90%]">
+          <div className="text-text/75 lg:max-w-[90%]">
             <p>{paragraph}</p>
           </div>
         ) : null}

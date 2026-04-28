@@ -194,10 +194,10 @@ export default function LatestBlogPosts() {
     <section className="container space-y-8 py-16 max-lg:py-12">
       <div className="flex justify-center">
         <div className="space-y-2 text-center">
-          <h2 className="text-5xl font-bold max-md:text-4xl">
+          <h2 className="text-4xl font-semibold md:text-5xl">
             {t("blog.home.title")}
           </h2>
-          <p className="text-foreground/70 max-w-2xl text-base max-md:text-sm">
+          <p className="text-text/75 max-w-4xl text-center text-base text-pretty md:text-lg lg:leading-7.5">
             {t("blog.home.description")}
           </p>
         </div>

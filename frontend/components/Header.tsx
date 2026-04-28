@@ -754,7 +754,7 @@ export default function Header() {
               })}
             </div>
 
-            <div className="flex items-center gap-2 max-lg:gap-3">
+            <div className="flex items-center gap-4">
               <div
                 onMouseEnter={handleLanguageMouseEnter}
                 onMouseLeave={handleLanguageMouseLeave}
@@ -842,7 +842,7 @@ export default function Header() {
               ) : (
                 <Link
                   to={clientPortalHref}
-                  className="group relative inline-flex h-10 items-center justify-center overflow-hidden rounded-xl bg-white px-2 text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden"
+                  className="group relative inline-flex h-10 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-white px-4 font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)] max-xl:hidden max-md:h-12 max-md:text-base"
                 >
                   {t("header.actions.clientPortal")}
                 </Link>
@@ -1359,7 +1359,7 @@ export default function Header() {
               <Link
                 to={clientPortalHref}
                 onClick={handleMobileMenuLinkClick}
-                className="group relative inline-flex h-11 w-full items-center justify-center rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+                className="group relative inline-flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white text-lg font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
               >
                 {t("header.actions.clientPortal")}
               </Link>
