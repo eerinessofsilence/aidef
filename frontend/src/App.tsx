@@ -89,7 +89,10 @@ function LanguageLayout() {
 
   if (!isValidLanguage) {
     const segments = location.pathname.split("/").filter(Boolean);
-    const targetPath = replaceLanguageInPath(location.pathname, DEFAULT_LANGUAGE);
+    const targetPath = replaceLanguageInPath(
+      location.pathname,
+      DEFAULT_LANGUAGE,
+    );
     const fallbackPath =
       segments.length > 1 ? targetPath : `/${DEFAULT_LANGUAGE}/404`;
     return (
@@ -124,18 +127,10 @@ function LanguageLayout() {
     window.addEventListener(COOKIE_CONSENT_EVENT, handleConsentChange);
     return () =>
       window.removeEventListener(COOKIE_CONSENT_EVENT, handleConsentChange);
-  }, [
-    isValidLanguage,
-    location.pathname,
-    location.search,
-    location.hash,
-  ]);
+  }, [isValidLanguage, location.pathname, location.search, location.hash]);
 
   useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      getStoredCookieConsent()
-    ) {
+    if (typeof window === "undefined" || getStoredCookieConsent()) {
       return;
     }
 
@@ -226,12 +221,17 @@ function LanguageLayout() {
               decoding="async"
               style={{ aspectRatio: "3280 / 1050" }}
             />
+            <div className="absolute inset-0 bg-background/30" />
           </div>
         ) : null}
         <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>
-        <div ref={footerSentinelRef} aria-hidden="true" className="h-px w-full" />
+        <div
+          ref={footerSentinelRef}
+          aria-hidden="true"
+          className="h-px w-full"
+        />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 -z-1 hidden w-full overflow-hidden md:block"
@@ -247,6 +247,7 @@ function LanguageLayout() {
             decoding="async"
             style={{ aspectRatio: "1640 / 443" }}
           />
+          <div className="absolute inset-0 bg-background/30" />
         </div>
       </div>
       {shouldRenderFooter ? (
