@@ -134,7 +134,7 @@ export default function Gallery({ images }: GallerySectionProps) {
                 key={`${image.src}-${index}`}
                 type="button"
                 onClick={() => openModal(index)}
-                className="group flex w-full flex-col gap-3 text-left text-[#ffffff] transition-transform duration-300 hover:-translate-y-1"
+                className="group flex w-full cursor-pointer flex-col gap-3 text-left text-[#ffffff] transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-[#3a414d] transition-transform duration-500 group-hover:scale-[1.02]">
                   <img

@@ -11,7 +11,7 @@ export default function Footer() {
   return (
     <footer
       id="footer"
-      className="border-t-4 border-[#0A1A34] bg-[#16243B] py-16"
+      className="border-t-4 border-[#0A1A34] bg-[#16243B] py-24"
     >
       <div className="container-big">
         <div className="mb-5 flex gap-6 max-lg:flex-col lg:justify-between">
@@ -70,7 +70,7 @@ export default function Footer() {
             </h1>
             <div className="grid grid-cols-2 gap-5">
               <div className="max-w-90">
-                <h1 className="text-foreground/50 font-bold uppercase">
+                <h1 className="text-foreground/75 font-medium uppercase">
                   {t("footer.addresses.managementTitle")}
                 </h1>
                 <p className="text-foreground/50 text-[15px]">
@@ -78,7 +78,7 @@ export default function Footer() {
                 </p>
               </div>
               <div className="max-w-90">
-                <h1 className="text-foreground/50 font-bold uppercase">
+                <h1 className="text-foreground/75 font-medium uppercase">
                   {t("footer.addresses.hqTitle")}
                 </h1>
                 <p className="text-foreground/50 text-[15px]">
@@ -122,8 +122,8 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div>
-          <p className="text-foreground/50 text-center uppercase">
+        <div className="mt-8">
+          <p className="text-foreground/25 text-center text-[13px] uppercase">
             {t("footer.legal.notice")}
           </p>
         </div>
