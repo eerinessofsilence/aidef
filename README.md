@@ -1,196 +1,67 @@
-# AI DEF — Military & Drone Gear Marketplace
+# AI DEF
 
-**Tagline:** A military-themed e-commerce platform for drones, tactical gear, and collectible hardware — built with modern web stack and AI features.
+**AI DEF** is a full-stack, multilingual web platform for presenting legal drone, defense-adjacent, and civilian technology products. It pairs a cinematic React interface with a Django API, editorial content, product detail pages, contact flows, and an authenticated client portal.
 
-> **Straight talk:** this is a themed online store for legal gear, collectibles, and drone hardware. **It does not provide instructions for creating weapons or illegal modifications.** Use the platform responsibly and comply with local laws.
+> The project is designed for lawful commercial, educational, and portfolio use. It does not provide weapon-building instructions or support illegal modifications.
 
----
+## Highlights
 
-## Table of contents
+- Product and solution catalogues with rich detail pages and media galleries
+- Technology, blog, support, company, and terms pages managed through Django
+- Localized public API and content in English, German, Slovak, Spanish, and French
+- Contact and strategic partnership requests with configurable email notifications
+- Token-authenticated client portal with protected API endpoints
+- Django admin for managing products, content, images, and requests
 
-1. [Project overview](#project-overview)
-2. [Key features](#key-features)
-3. [Tech stack](#tech-stack)
-4. [Getting started (developer)](#getting-started-developer)
-5. [Environment variables](#environment-variables)
-6. [Translations (modeltranslation)](#translations-modeltranslation)
-7. [Architecture & data model (brief)](#architecture--data-model-brief)
-8. [Security & compliance notes](#security--compliance-notes)
-9. [Deployment](#deployment)
-10. [Contributing](#contributing)
-11. [License & contact](#license--contact)
+## Stack
 
----
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, i18next
+- **Backend:** Django, Django REST Framework, django-modeltranslation
+- **Data:** PostgreSQL
+- **Deployment:** Docker Compose, Nginx, Gunicorn
 
-## Project overview
+## Run Locally
 
-AI DEF is an e-commerce application themed around military, tactical, and drone hardware. It’s built as a realistic storefront supporting product listings, cart/checkout, admin management, and AI-driven features like recommendation and image tagging for product images.
+### Docker
 
-Main purpose:
+```bash
+cp .env.example .env
+docker compose up --build
+```
 
-- demo a full-stack marketplace with modern UX,
-- provide an admin/merchant flow for product management,
-- showcase AI features (recommendations, search, auto-tagging),
-- act as a portfolio / prototype for further productization.
+### Development servers
 
-**Not permitted**: instructions or content that enable weapon construction, evasion of regulations, or illegal activities. The platform is for legal products, simulation, and collectibles only.
-
----
-
-## Key features
-
-- **Product catalog** (categories: drones, optics, tactical gear, accessories, collectibles)
-- **Search & filters** (by spec, price, tags)
-- **Shopping cart & checkout** (mock or real payment providers configurable)
-- **Admin dashboard** (CRUD for products, orders, inventory)
-- **User accounts** (orders, wishlists, role-based access)
-- **Inventory & pricing rules** (bulk discounts, dynamic pricing examples)
-- **Audit & logging** for orders and admin actions
-- **I18n ready** (English primary; structure to add locales)
-
----
-
-## Tech stack
-
-- Frontend: **Vite ** + **React** + **Tailwind CSS**
-- Backend: **Django**
-- Database: **PostgreSQL**
-- Cache / Queue: **Redis**, background workers for AI tasks
-- Payments: Stripe (demo mode) or other provider integrations
-- Containerization: Docker / docker-compose
-
----
-
-## Getting started (developer)
-
-Clone the repo, install dependencies, run dev servers.
+Start PostgreSQL first, then run the frontend and backend in separate terminals:
 
 ```bash
 # frontend
-git clone https://github.com/your-org/ai-def.git
-cd ai-def/frontend
+cd frontend
 npm install
-npm dev
+npm run dev
+```
 
+```bash
 # backend
-cd ../backend
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+python manage.py migrate
 python manage.py runserver
 ```
 
-Start services with docker-compose (example):
+Copy `.env.example` to `.env` and configure the database, allowed hosts, and mail settings before deploying. Never commit real credentials.
+
+## Quality Checks
 
 ```bash
-docker-compose up -d --build
+# frontend
+cd frontend && npm run build && npm run lint
+
+# backend
+cd backend && python manage.py test
 ```
 
----
+## License
 
-## Environment variables
-
-Create `.env` from `.env.example`. Example keys:
-
-```env
-# Backend
-DJANGO_SECRET=supersecretdjangokey
-DJANGO_DEBUG=True
-DJANGO_ALLOWED_HOSTS=ai-def.com,www.ai-def.com,127.0.0.1,localhost
-DJANGO_CORS_ALLOWED_ORIGINS=https://ai-def.com,https://www.ai-def.com,http://ai-def.com,http://www.ai-def.com,http://127.0.0.1:5173,http://localhost:5173
-DJANGO_CSRF_TRUSTED_ORIGINS=https://ai-def.com,https://www.ai-def.com,http://ai-def.com,http://www.ai-def.com
-POSTGRES_DB_NAME=aidef
-POSTGRES_USER=aidef
-POSTGRES_PASSWORD=aidef
-POSTGRES_HOST=localhost
-DOCKER_POSTGRES_HOST=db
-POSTGRES_PORT=5432
-```
-
-`docker compose` reads the root `.env` automatically. The backend service also loads it via `env_file`, while `DOCKER_POSTGRES_HOST` lets the container use `db` without breaking local runs that still use `localhost`.
-
-**Do not commit secrets.** Use environment management for production (Vault, cloud secret manager).
-
-## HTTPS
-
-For manual TLS in Docker, place these files on the server:
-
-```text
-./certs/fullchain.pem
-./certs/privkey.pem
-```
-
-They are mounted into the `web` container at `/etc/nginx/certs/`. The Nginx config serves `https://ai-def.com` and redirects `https://www.ai-def.com` to the apex domain.
-
----
-
-## Translations (modeltranslation)
-
-This project uses `django-modeltranslation` for database-backed translations.
-
-How to translate a model field:
-
-- Add the field name to `<app>/translation.py` for the model (CharField/TextField only).
-- Run `python manage.py makemigrations` and `python manage.py migrate` to add `_<lang>` columns.
-- Use the admin to fill `*_de` and `*_sk` values; the base field remains English.
-
-Add a new language later:
-
-- Extend `LANGUAGES` and `MODELTRANSLATION_LANGUAGES` in `backend/aidef/settings.py`.
-- Add new `TranslationOptions` fields if needed.
-- Run migrations to create the new columns.
-
-API language selection:
-
-1. `?lang=de|sk|en` query param (highest priority)
-2. `Accept-Language` header
-3. Default `en`
-
-Manual verification:
-
-```bash
-curl -H "Accept-Language: de" http://localhost:8000/api/products/
-curl "http://localhost:8000/api/products/?lang=sk"
-```
-
----
-
-## Architecture & data model (brief)
-
-- **Users**: id, email, hashed_password, role (customer/admin), profile
-- **Products**: id, title, sku, category, specs (json), price, stock, tags, images[]
-- **Orders**: id, user_id, items[], totals, payment_status, shipping_status
-- **Reviews**: id, product_id, user_id, rating, comment, created_at
-
----
-
-## Security & compliance notes
-
-- Uses HTTPS and CORS protection by default
-- Sanitizes all inputs and file uploads
-- Logs admin actions (read/write) for traceability
-- Does **not** sell or promote real weapons
-- Compliant with EU and US trade content policies (for demo/educational use)
-
----
-
-## Deployment
-
-Deploy via Docker Compose or directly on Vercel (frontend) and Render/Heroku (backend).
-
-```bash
-# Docker
-docker-compose up -d
-
-# or manual
-npm build
-npm start
-```
-
----
-
-## Contributing
-
-Pull requests are welcome. Open an issue for major changes or discussions.  
-Before submitting PRs:
-
-- Run linters and formatters (Prettier, ESLint)
-- Keep commits clean and descriptive (`feat:`, `fix:`, `refactor:`)
+Private project. All rights reserved.
