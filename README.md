@@ -1,67 +1,58 @@
 # AI DEF
 
-**AI DEF** is a full-stack, multilingual web platform for presenting legal drone, defense-adjacent, and civilian technology products. It pairs a cinematic React interface with a Django API, editorial content, product detail pages, contact flows, and an authenticated client portal.
+**A multilingual product and client platform that helps a defense-adjacent technology company present lawful solutions, manage editorial content, and turn international interest into structured enquiries.**
 
-> The project is designed for lawful commercial, educational, and portfolio use. It does not provide weapon-building instructions or support illegal modifications.
+[Live Website](https://www.ai-def.com) · [Source](https://github.com/eerinessofsilence/aidef) · [Local Admin](http://localhost:8000/admin/)
 
-## Highlights
+![AI DEF website](docs/images/overview.jpg)
 
-- Product and solution catalogues with rich detail pages and media galleries
-- Technology, blog, support, company, and terms pages managed through Django
-- Localized public API and content in English, German, Slovak, Spanish, and French
-- Contact and strategic partnership requests with configurable email notifications
-- Token-authenticated client portal with protected API endpoints
-- Django admin for managing products, content, images, and requests
+> **Status:** deployed portfolio project. Public content and enquiry flows are implemented; integrations and operational controls should be reviewed before production reuse.
 
-## Stack
+## What it delivers
 
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS, i18next
-- **Backend:** Django, Django REST Framework, django-modeltranslation
-- **Data:** PostgreSQL
-- **Deployment:** Docker Compose, Nginx, Gunicorn
+- Organizes products, solutions, technology, articles, support, and legal content into one editorial system.
+- Serves localized content in English, German, Slovak, Spanish, and French.
+- Lets staff manage products, media, and requests through Django admin.
+- Routes contact and strategic-partnership enquiries with configurable email notifications.
+- Protects client-portal endpoints with token authentication.
+- Packages React, Django, PostgreSQL, Nginx, and Gunicorn for repeatable deployment.
 
-## Run Locally
+## Architecture
 
-### Docker
+```mermaid
+flowchart LR
+    V[Visitor / client] --> R[React + i18next]
+    R --> D[Django REST API]
+    D --> P[(PostgreSQL)]
+    D --> A[Django admin]
+    D --> E[Email notifications]
+    N[Nginx] --> R
+    N --> D
+```
+
+## Quick start
 
 ```bash
+git clone https://github.com/eerinessofsilence/aidef.git
+cd aidef
 cp .env.example .env
 docker compose up --build
 ```
 
-### Development servers
+After migrations complete, open the frontend on the port defined by the Compose stack and the admin at `http://localhost:8000/admin/`.
 
-Start PostgreSQL first, then run the frontend and backend in separate terminals:
-
-```bash
-# frontend
-cd frontend
-npm install
-npm run dev
-```
+## Tests, security, and limits
 
 ```bash
-# backend
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+cd frontend && npm run lint && npm run build
+cd ../backend && python manage.py test
 ```
 
-Copy `.env.example` to `.env` and configure the database, allowed hosts, and mail settings before deploying. Never commit real credentials.
-
-## Quality Checks
-
-```bash
-# frontend
-cd frontend && npm run build && npm run lint
-
-# backend
-cd backend && python manage.py test
-```
+- Keep Django, database, mail, and token secrets outside Git and rotate production credentials.
+- The platform is intended for lawful commercial, educational, and portfolio use; it contains no weapon-building instructions.
+- Authentication, authorization, uploaded media, email delivery, backups, and audit logging need deployment-specific review.
+- No independent security assessment is included.
 
 ## License
 
-Private project. All rights reserved.
+Private portfolio project. All rights reserved.
