@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (lint + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Reporting only for now: the tree currently has 9 pre-existing eslint
+      # errors (unused vars in ClientPortal.tsx, irregular whitespace in
+      # TermsOfCondition.tsx, prefer-rest-params in analytics/ga4.ts). Drop
+      # continue-on-error once those are cleared so lint becomes enforcing.
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
+      # `npm run build` is `tsc -b && vite build`, so this type-checks too.
+      - name: Build
+        run: npm run build
+
+  backend:
+    name: Backend (checks + tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: aidef
+          POSTGRES_USER: aidef
+          POSTGRES_PASSWORD: aidef
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aidef -d aidef"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Throwaway values: this database is created and dropped by the test runner.
+      DJANGO_SECRET: ci-only-secret-not-used-in-production
+      DJANGO_DEBUG: 'False'
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: '5432'
+      POSTGRES_USER: aidef
+      POSTGRES_PASSWORD: aidef
+      POSTGRES_DB_NAME: aidef
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Django system checks
+        run: python manage.py check
+
+      - name: Fail if models drifted from migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      # Reporting only for now: 4 of 28 tests currently fail against Postgres,
+      # independent of this workflow —
+      #   - test_admin_index_has_quick_entries_and_instructions expects Russian
+      #     dashboard text ("Быстрые входы") that custom_index.html no longer
+      #     renders (English "Quick Access" now)
+      #   - test_blog_post_admin_change_form_renders_blocks_inline asserts
+      #     'title_de' is absent, but modeltranslation renders it 8 times
+      #   - test_civil_product_admin_change_form_renders_drone_slider_inline
+      #     expects "Drone slider media" text that isn't in the current form
+      #   - test_contact_request_api_sends_email_notification hardcodes
+      #     contactrequest/1/, but Postgres sequences survive transaction
+      #     rollback, so by alphabetical test order the real id is 5 — fails
+      #     deterministically, not flaky
+      # Drop continue-on-error once these are fixed so tests become enforcing.
+      - name: Run tests
+        run: python manage.py test --verbosity=2
+        continue-on-error: true

@@ -1,0 +1,19 @@
+# Traefik access/error log rotation.
+#
+# Traefik keeps its log file handles open, so copytruncate is required — a plain
+# rename would leave it writing to the rotated (unlinked) file forever.
+#
+# Install on the server, adjusting the path to match ${DATA_DIR} in .env:
+#   sudo cp deploy/logrotate.d/traefik /etc/logrotate.d/traefik
+#   sudo chmod 644 /etc/logrotate.d/traefik
+#   sudo logrotate --debug /etc/logrotate.d/traefik   # dry run
+
+/data/web/traefik/logs/*.log {
+    daily
+    rotate 30
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
