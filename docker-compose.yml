@@ -58,8 +58,8 @@ services:
     volumes:
       - static_volume:/static
       - ./backend/media:/media
-      - ./certs:/etc/nginx/certs:ro
-    
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
 volumes:
   postgres_data:
   static_volume:
