@@ -674,6 +674,7 @@
       "products": "Produits",
       "civilProducts": "Jets sportifs",
       "technology": "Technologie",
+      "store": "Boutique",
       "company": "Entreprise",
       "support": "Assistance",
       "contact": "Contact"
@@ -742,6 +743,14 @@
     "legal": {
       "notice": "© AI DEF A.S. 2026. Tous droits réservés."
     }
+  },
+  "permitsCertificates": {
+    "title": "Autorisations et certificats",
+    "description": "Consultez et téléchargez les autorisations, licences et certificats de sécurité d’AI DEF.",
+    "view": "Voir le document",
+    "download": "Télécharger",
+    "viewDocument": "Voir {{document}}",
+    "downloadDocument": "Télécharger {{document}}"
   },
   "gallery": {
     "kicker": "Caractéristiques",
@@ -998,6 +1007,170 @@
           }
         }
       }
+    }
+  },
+  "store": {
+    "brand": "Showcase",
+    "details": {
+      "backToCatalog": "Retour au catalogue",
+      "galleryLabel": "Galerie de photos du produit",
+      "previousPhoto": "Photo précédente",
+      "nextPhoto": "Photo suivante",
+      "openFullscreen": "Afficher la photo en plein écran",
+      "closeFullscreen": "Fermer la photo en plein écran",
+      "selectPhoto": "Afficher la photo {{current}}",
+      "photoCredit": "Photo de {{artist}} · {{license}}",
+      "characteristics": "Détails du modèle",
+      "model": "Modèle",
+      "manufacturer": "Fabricant",
+      "category": "Catégorie",
+      "unavailable": "Ce modèle est introuvable.",
+      "relatedKicker": "À découvrir aussi",
+      "relatedTitle": "Autres modèles",
+      "viewAll": "Tout voir",
+      "gameConfig": {
+        "title": "Configurez votre modèle de jeu",
+        "description": "Choisissez un modèle de jeu et découvrez ses accessoires visuels avec leurs détails.",
+        "none": "Aucun choix",
+        "request": "Demander",
+        "sight": "Optique",
+        "muzzle": "Accessoire de bouche",
+        "utility": "Accessoire supplémentaire",
+        "redDot": "Viseur à point rouge",
+        "holographic": "Viseur holographique",
+        "magnified": "Optique grossissante",
+        "suppressor": "Silencieux",
+        "flashHider": "Cache-flamme",
+        "compensator": "Compensateur",
+        "light": "Lampe tactique",
+        "laser": "Module laser"
+      }
+    },
+    "demoNotice": "Collection illustrative. Les modèles présentés ne confirment ni les stocks ni la disponibilité.",
+    "photo": "Photo",
+    "credits": "Photographies et crédits",
+    "navigation": {
+      "top": "Retour en haut",
+      "label": "Navigation de la collection",
+      "language": "Langue",
+      "openMenu": "Ouvrir le menu",
+      "home": "Accueil",
+      "permitsCertificates": "Autorisations et certificats"
+    },
+    "actions": {
+      "enquire": "Demander des informations",
+      "addToList": "Ajouter à la liste de demandes",
+      "alreadyAdded": "Déjà dans la liste de demandes",
+      "details": "Découvrir le produit",
+      "exploreFeatured": "Voir notre sélection",
+      "viewNamed": "Découvrir {{name}}",
+      "close": "Fermer"
+    },
+    "cart": {
+      "open": "Panier ({{count}})",
+      "kicker": "Votre sélection",
+      "title": "Votre panier",
+      "empty": "Votre panier est vide. Ajoutez un modèle de jeu ou un accessoire.",
+      "browse": "Parcourir les produits",
+      "remove": "Retirer",
+      "submit": "Demander des informations",
+      "baseModel": "Modèle de base"
+    },
+    "footer": {
+      "title": "Vitrine de produits",
+      "description": "Découvrez une sélection de modèles et envoyez une demande à notre équipe.",
+      "collection": "Collection"
+    },
+    "stats": {
+      "models": "Modèles à découvrir",
+      "categories": "Catégories de produits",
+      "brands": "Fabricants"
+    },
+    "categories": {
+      "pistols": "Pistolets",
+      "automatic": "Modèles automatiques",
+      "accessories": "Accessoires"
+    },
+    "categoryDescriptions": {
+      "pistols": "Découvrez les modèles de pistolet de la collection de jeu.",
+      "automatic": "Parcourez les modèles automatiques et choisissez leurs accessoires.",
+      "accessories": "Choisissez des viseurs, silencieux et autres accessoires pour votre configuration."
+    },
+    "accessories": {
+      "all": "Tous les accessoires",
+      "suppressors": "Silencieux",
+      "sights": "Viseurs et optiques",
+      "other": "Autres accessoires",
+      "viewDetails": "Voir les détails",
+      "addToCart": "Ajouter au panier",
+      "addModelToCart": "Ajouter le modèle au panier",
+      "addSetupToCart": "Ajouter la configuration au panier",
+      "updateSetupInCart": "Mettre à jour la configuration du panier",
+      "alreadyInCart": "Déjà dans le panier",
+      "compatibilityNote": "Ce sont des ressources numériques pour le jeu. La compatibilité sera confirmée lors de la demande."
+    },
+    "accessoryNames": {
+      "arcReflex": "ARC Reflex",
+      "orbitHolo": "ORBIT Holo",
+      "veilSuppressor": "VEIL Suppressor",
+      "lumaLight": "LUMA Light"
+    },
+    "accessoryDescriptions": {
+      "arc-reflex": "Un viseur réflex compact qui donne un style net et moderne au modèle de jeu.",
+      "orbit-holo": "Une optique de style holographique avec une fenêtre large et lisible.",
+      "veil-suppressor": "Un accessoire de type silencieux au profil élégant pour une configuration épurée.",
+      "luma-light": "Un module d’éclairage compact pour un style prêt pour la mission."
+    },
+    "featured": {
+      "kicker": "Accueil",
+      "title": "Trois modèles. Regardez de plus près.",
+      "description": "Une sélection de la collection, avec la place pour découvrir chaque modèle en détail.",
+      "badge": "À la une"
+    },
+    "contact": {
+      "kicker": "Contact",
+      "title": "Se renseigner sur un produit",
+      "ctaTitle": "Un modèle a retenu votre attention ?",
+      "description": "Choisissez un modèle et dites-nous ce que vous souhaitez savoir. Envoyez votre demande directement à l’équipe.",
+      "product": "Produit",
+      "productCategory": "Choisissez une catégorie",
+      "searchProduct": "Rechercher des modèles et accessoires",
+      "noProductsFound": "Aucun modèle ou accessoire correspondant trouvé.",
+      "success": "Merci. Votre demande sur le produit a été envoyée.",
+      "sent": "Demande envoyée",
+      "loading": "Chargement du formulaire"
+    },
+    "descriptions": {
+      "g36": "Un modèle de la famille G36, avec sa poignée de transport caractéristique et sa crosse à cadre ouvert.",
+      "mp7": "Un modèle compact de la famille MP7. Cette photographie présente un exemplaire de la Bundeswehr.",
+      "usp": "Un modèle de la famille USP. La photographie présente un USP9 ancien avec une poignée texturée.",
+      "hk416n": "Le modèle norvégien HK416N. Cette photographie présente une configuration précise de la famille HK416.",
+      "g27": "Un G27 de la famille HK417, photographié dans une configuration d’exposition avec ses accessoires.",
+      "g3": "Un G3 ancien avec crosse et garde-main en bois. L’image présente deux vues du modèle.",
+      "mp5-a3": "Le modèle MP5 A3, avec sa crosse rétractable et la silhouette reconnaissable du MP5.",
+      "p30l": "Le modèle P30L de la famille P30, vu de profil avec une silhouette allongée et une poignée texturée.",
+      "p99": "Un Walther P99 ancien avec un cadre en polymère vert. Cette image présente cette version précise.",
+      "ppk-l": "Le modèle Walther PPK-L. La photographie présente cette variante particulière de la famille PPK."
+    },
+    "hero": {
+      "kicker": "Modèles et équipement de jeu",
+      "title": "Des modèles distincts dans une collection",
+      "description": "Découvrez des modèles de jeu, comparez les accessoires visuels et composez une collection adaptée à votre projet.",
+      "cta": "Voir le catalogue"
+    },
+    "catalog": {
+      "kicker": "Catalogue",
+      "title": "Acheter par catégorie",
+      "count": "{{count}} / {{total}} modèles",
+      "filters": "Filtrer par catégorie de produit",
+      "modelCount": "{{count}} articles",
+      "openCategory": "Voir la catégorie",
+      "accessoryFilters": "Filtrer les accessoires",
+      "sortBy": "Trier par",
+      "sortRelevance": "Pertinence",
+      "sortName": "Nom : A–Z",
+      "accessoriesComingSoon": "Aucun article dans cette catégorie pour le moment.",
+      "categoryNotFound": "Cette catégorie est introuvable."
     }
   },
   "notFound": {

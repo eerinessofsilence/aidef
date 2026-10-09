@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" fill="none">
+  <defs>
+    <linearGradient id="body" x1="270" x2="620" y1="190" y2="430" gradientUnits="userSpaceOnUse"><stop stop-color="#AEBBC8"/><stop offset=".24" stop-color="#596A7B"/><stop offset=".62" stop-color="#2A3949"/><stop offset="1" stop-color="#A5B1BB"/></linearGradient>
+    <linearGradient id="lens" x1="350" x2="540" y1="245" y2="340" gradientUnits="userSpaceOnUse"><stop stop-color="#A7D9FF" stop-opacity=".48"/><stop offset=".5" stop-color="#355D7A" stop-opacity=".22"/><stop offset="1" stop-color="#D3F0FF" stop-opacity=".58"/></linearGradient>
+    <filter id="shadow" x="130" y="140" width="650" height="390" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="17"/></filter>
+  </defs>
+  <ellipse cx="450" cy="434" fill="#000" fill-opacity=".42" filter="url(#shadow)" rx="275" ry="35"/>
+  <path d="M245 382h410v36H245z" fill="#202D3A" stroke="#96A2AD" stroke-width="8"/>
+  <path d="M305 364v-33h62v33m176 0v-33h62v33" stroke="#718292" stroke-width="15"/>
+  <path d="M300 205c0-19 15-34 34-34h233c19 0 34 15 34 34v150H300V205Z" fill="url(#body)" stroke="#C1CCD5" stroke-width="10"/>
+  <path d="M354 221h193v104H354z" fill="url(#lens)" stroke="#202D3A" stroke-width="13"/>
+  <path d="M370 239h161" stroke="#E0F4FF" stroke-opacity=".38" stroke-width="5"/>
+  <path d="M335 186h230" stroke="#D5DFE7" stroke-opacity=".5" stroke-width="5"/>
+  <circle cx="325" cy="360" r="7" fill="#D5E0E8"/><circle cx="583" cy="360" r="7" fill="#D5E0E8"/>
+</svg>

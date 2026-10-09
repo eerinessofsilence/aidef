@@ -673,6 +673,7 @@
       "products": "Produkty",
       "civilProducts": "Športové tryskáče",
       "technology": "Technológie",
+      "store": "Obchod",
       "company": "Spoločnosť",
       "support": "Podpora",
       "contact": "Kontakt"
@@ -741,6 +742,14 @@
     "legal": {
       "notice": "© AI DEF A.S. 2026. Všetky práva vyhradené."
     }
+  },
+  "permitsCertificates": {
+    "title": "Povolenia a certifikáty",
+    "description": "Prezrite si alebo stiahnite povolenia, licencie a bezpečnostné certifikáty spoločnosti AI DEF.",
+    "view": "Zobraziť dokument",
+    "download": "Stiahnuť",
+    "viewDocument": "Zobraziť dokument: {{document}}",
+    "downloadDocument": "Stiahnuť dokument: {{document}}"
   },
   "gallery": {
     "kicker": "Vlastnosti",
@@ -997,6 +1006,170 @@
           }
         }
       }
+    }
+  },
+  "store": {
+    "brand": "Showcase",
+    "details": {
+      "backToCatalog": "Späť do katalógu",
+      "galleryLabel": "Fotogaléria produktu",
+      "previousPhoto": "Predchádzajúca fotografia",
+      "nextPhoto": "Nasledujúca fotografia",
+      "openFullscreen": "Otvoriť fotografiu na celú obrazovku",
+      "closeFullscreen": "Zavrieť fotografiu na celú obrazovku",
+      "selectPhoto": "Zobraziť fotografiu {{current}}",
+      "photoCredit": "Autor fotografie: {{artist}} · {{license}}",
+      "characteristics": "Informácie o modeli",
+      "model": "Model",
+      "manufacturer": "Výrobca",
+      "category": "Kategória",
+      "unavailable": "Tento model sa nenašiel.",
+      "relatedKicker": "Ďalšie modely",
+      "relatedTitle": "Ostatné modely",
+      "viewAll": "Zobraziť všetky",
+      "gameConfig": {
+        "title": "Zostavte si herný model",
+        "description": "Vyberte herný model a preskúmajte kompatibilné vizuálne doplnky aj ich popisy.",
+        "none": "Bez výberu",
+        "request": "Požiadať",
+        "sight": "Mieridlo",
+        "muzzle": "Nadstavec na ústie",
+        "utility": "Doplnkový prvok",
+        "redDot": "Kolimátor",
+        "holographic": "Holografické mieridlo",
+        "magnified": "Optika so zväčšením",
+        "suppressor": "Tlmič",
+        "flashHider": "Tlmič záblesku",
+        "compensator": "Kompenzátor",
+        "light": "Taktické svetlo",
+        "laser": "Laserový modul"
+      }
+    },
+    "demoNotice": "Kolekcia herných prvkov. Modely a doplnky sú digitálne ukážky, nie fyzické produkty.",
+    "photo": "Fotografia",
+    "credits": "Fotografie a autori",
+    "navigation": {
+      "top": "Späť hore",
+      "label": "Navigácia vitríny",
+      "language": "Jazyk",
+      "openMenu": "Otvoriť menu",
+      "home": "Domov",
+      "permitsCertificates": "Povolenia a certifikáty"
+    },
+    "actions": {
+      "enquire": "Vyžiadať informácie",
+      "addToList": "Pridať do zoznamu dopytov",
+      "alreadyAdded": "Už je v zozname dopytov",
+      "details": "Preskúmať produkt",
+      "exploreFeatured": "Pozrieť náš výber",
+      "viewNamed": "Preskúmať {{name}}",
+      "close": "Zavrieť"
+    },
+    "cart": {
+      "open": "Košík ({{count}})",
+      "kicker": "Váš výber",
+      "title": "Váš košík",
+      "empty": "Košík je prázdny. Pridajte herný model alebo doplnok.",
+      "browse": "Prehliadať produkty",
+      "remove": "Odstrániť",
+      "submit": "Vyžiadať informácie",
+      "baseModel": "Základný model"
+    },
+    "footer": {
+      "title": "Prehliadka produktov",
+      "description": "Preskúmajte vybrané modely a pošlite dopyt nášmu tímu.",
+      "collection": "Kolekcia"
+    },
+    "stats": {
+      "models": "Modely na preskúmanie",
+      "categories": "Kategórie produktov",
+      "brands": "Výrobcovia"
+    },
+    "categories": {
+      "pistols": "Pištole",
+      "automatic": "Automatické modely",
+      "accessories": "Doplnky"
+    },
+    "categoryDescriptions": {
+      "pistols": "Prezrite si pištoľové modely z hernej kolekcie.",
+      "automatic": "Preskúmajte automatické modely a vyberte si k nim doplnky.",
+      "accessories": "Vyberte si mieridlá, tlmiče a ďalšie doplnky pre svoju zostavu."
+    },
+    "accessories": {
+      "all": "Všetky doplnky",
+      "suppressors": "Tlmiče",
+      "sights": "Mieridlá a optika",
+      "other": "Ostatné doplnky",
+      "viewDetails": "Zobraziť podrobnosti",
+      "addToCart": "Pridať do košíka",
+      "addModelToCart": "Pridať model do košíka",
+      "addSetupToCart": "Pridať zostavu do košíka",
+      "updateSetupInCart": "Aktualizovať zostavu v košíku",
+      "alreadyInCart": "Už je v košíku",
+      "compatibilityNote": "Ide o digitálne herné prvky. Cieľový model a kompatibilitu potvrdíme pri odoslaní dopytu."
+    },
+    "accessoryNames": {
+      "arcReflex": "ARC Reflex",
+      "orbitHolo": "ORBIT Holo",
+      "veilSuppressor": "VEIL Suppressor",
+      "lumaLight": "LUMA Light"
+    },
+    "accessoryDescriptions": {
+      "arc-reflex": "Kompaktný reflexný zameriavač dodá hernému modelu čistý moderný vzhľad.",
+      "orbit-holo": "Optika v holografickom štýle so širokým a dobre čitateľným oknom.",
+      "veil-suppressor": "Elegantný doplnok v štýle tlmiča pre uhladenú hernú zostavu.",
+      "luma-light": "Kompaktný svetelný modul pre vzhľad pripravený na akciu."
+    },
+    "featured": {
+      "kicker": "Domov",
+      "title": "Tri modely. Bližší pohľad.",
+      "description": "Výber z kolekcie s priestorom na podrobnejšie preskúmanie každého modelu.",
+      "badge": "Vybrané"
+    },
+    "contact": {
+      "kicker": "Kontakt",
+      "title": "Opýtajte sa na produkt",
+      "ctaTitle": "Zaujal vás niektorý model?",
+      "description": "Vyberte model a napíšte, čo by ste chceli vedieť. Pošlite svoj dopyt priamo nášmu tímu.",
+      "product": "Produkt",
+      "productCategory": "Vyberte kategóriu",
+      "searchProduct": "Hľadať modely a príslušenstvo",
+      "noProductsFound": "Nenašli sa žiadne zodpovedajúce modely ani príslušenstvo.",
+      "success": "Ďakujeme. Váš dopyt k produktu bol odoslaný.",
+      "sent": "Dopyt odoslaný",
+      "loading": "Načítava sa formulár dopytu"
+    },
+    "descriptions": {
+      "g36": "Model z rodiny G36 s charakteristickou rukoväťou na prenášanie a otvorenou rámovou pažbou.",
+      "mp7": "Kompaktný model z rodiny MP7. Fotografia zobrazuje exemplár Bundeswehru.",
+      "usp": "Model z rodiny USP. Fotografia zobrazuje skorý USP9 s textúrovanou rukoväťou.",
+      "hk416n": "Nórsky model HK416N. Fotografia zobrazuje konkrétnu konfiguráciu rodiny HK416.",
+      "g27": "G27 z rodiny HK417, fotografovaný vo výstavnej konfigurácii s namontovaným príslušenstvom.",
+      "g3": "Skorý G3 s drevenou pažbou a predpažbím. Obrázok zobrazuje dva pohľady na model.",
+      "mp5-a3": "Model MP5 A3 s výsuvnou pažbou a rozpoznateľnou siluetou MP5.",
+      "p30l": "Model P30L z rodiny P30 v bočnom pohľade s predĺženým profilom a textúrovanou rukoväťou.",
+      "p99": "Skorý Walther P99 so zeleným polymérovým rámom. Obrázok zobrazuje túto konkrétnu verziu.",
+      "ppk-l": "Model Walther PPK-L. Fotografia zobrazuje tento konkrétny variant rodiny PPK."
+    },
+    "hero": {
+      "kicker": "Herné modely a výbava",
+      "title": "Osobité modely v jednej kolekcii",
+      "description": "Objavte herné modely, porovnajte vizuálne doplnky a zostavte kolekciu pre svoj projekt.",
+      "cta": "Zobraziť katalóg"
+    },
+    "catalog": {
+      "kicker": "Katalóg",
+      "title": "Nakupovať podľa kategórie",
+      "count": "{{count}} / {{total}} modelov",
+      "filters": "Filtrovať podľa kategórie produktu",
+      "modelCount": "{{count}} položiek",
+      "openCategory": "Otvoriť kategóriu",
+      "accessoryFilters": "Filtrovať doplnky",
+      "sortBy": "Zoradiť podľa",
+      "sortRelevance": "Relevantnosť",
+      "sortName": "Názov: A–Z",
+      "accessoriesComingSoon": "V tejto kategórii zatiaľ nie sú žiadne položky.",
+      "categoryNotFound": "Táto kategória sa nenašla."
     }
   },
   "notFound": {

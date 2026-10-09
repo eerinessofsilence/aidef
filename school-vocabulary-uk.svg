@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="School objects with English names and Ukrainian translations">
+<defs>
+  <linearGradient id="bag" x2="1" y2="1"><stop stop-color="#54a7d8"/><stop offset="1" stop-color="#216997"/></linearGradient>
+  <linearGradient id="red" x2="0" y2="1"><stop stop-color="#f07860"/><stop offset="1" stop-color="#c9473c"/></linearGradient>
+  <linearGradient id="pen" x2="1" y2="1"><stop stop-color="#72c5ed"/><stop offset=".55" stop-color="#2888c7"/><stop offset="1" stop-color="#165589"/></linearGradient>
+  <linearGradient id="wood" x2="1" y2="0"><stop stop-color="#f5d27e"/><stop offset=".55" stop-color="#e4ad4d"/><stop offset="1" stop-color="#c88338"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#5e4d3d" flood-opacity=".18"/></filter>
+  <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#e9ddcc" opacity=".55"/></pattern>
+  <style>
+    .eng{font:800 28px 'Trebuchet MS',system-ui,sans-serif;fill:#29364a;text-anchor:middle}
+    .ukr{font:700 24px 'Trebuchet MS',system-ui,sans-serif;fill:#b85e34;text-anchor:middle}
+    .bubbleText{font:800 32px 'Trebuchet MS',system-ui,sans-serif;fill:#29364a;text-anchor:middle}
+    .cloud{fill:#f7d3a3}
+  </style>
+</defs>
+<rect width="1600" height="900" rx="34" fill="#fffdf8"/>
+<rect width="1600" height="900" rx="34" fill="url(#dots)"/>
+<path d="M0 0h1600v14H0z" fill="#e9a95a"/>
+
+<!-- Separate two-line word clouds -->
+<g class="cloud">
+  <path d="M93 153c-24 0-39-15-39-35 0-17 12-30 31-34 5-24 25-38 52-35 14-23 49-27 70-10 21-19 59-15 74 9 27-2 46 13 46 36 21 8 29 26 20 45-8 17-25 24-49 24H99Z"/>
+  <path d="M597 153c-24 0-39-15-39-35 0-17 12-30 31-34 5-24 25-38 52-35 14-23 49-27 70-10 21-19 59-15 74 9 27-2 46 13 46 36 21 8 29 26 20 45-8 17-25 24-49 24H603Z"/>
+  <g transform="translate(340 0)"><path d="M106 582c-24 0-39-15-39-35 0-17 12-30 31-34 5-24 25-38 52-35 14-23 49-27 70-10 21-19 59-15 74 9 27-2 46 13 46 36 21 8 29 26 20 45-8 17-25 24-49 24H112Z"/></g>
+  <g transform="translate(300 0)"><path d="M596 582c-24 0-39-15-39-35 0-17 12-30 31-34 5-24 25-38 52-35 14-23 49-27 70-10 21-19 59-15 74 9 27-2 46 13 46 36 21 8 29 26 20 45-8 17-25 24-49 24H602Z"/></g>
+</g>
+<text x="205" y="99" class="eng">It's a bag</text><text x="205" y="133" class="ukr">Це сумка</text>
+<text x="709" y="99" class="eng">It's a pen</text><text x="709" y="133" class="ukr">Це ручка</text>
+<text x="558" y="528" class="eng">It's a book</text><text x="558" y="562" class="ukr">Це книжка</text>
+<text x="1008" y="528" class="eng">It's a pencil</text><text x="1008" y="562" class="ukr">Це олівець</text>
+
+<!-- Backpack -->
+<g transform="translate(112 226)" filter="url(#shadow)">
+  <path d="M67 26c-37 7-55 31-58 72L5 277c-1 25 13 40 38 42l146 10c28 2 43-12 44-40l4-170c1-50-20-78-56-89-28-8-85-10-114-4Z" fill="url(#bag)" stroke="#205d86" stroke-width="8"/>
+  <path d="M59 49C32 67 22 90 21 126l-3 88c27-17 63-23 108-18l5-143c-20-9-48-10-72-4Z" fill="#397fad" stroke="#255f88" stroke-width="6"/>
+  <path d="M144 51c31 15 43 36 43 72v108c-25-21-57-32-94-34l2-140c16-8 33-10 49-6Z" fill="#2c74a6" stroke="#205d86" stroke-width="6"/>
+  <path d="M18 170c39-24 107-24 169-4l-2 73c-1 25-17 38-43 36l-98-8c-23-2-34-16-33-38l7-59Z" fill="url(#red)" stroke="#a53c32" stroke-width="7"/>
+  <path d="M63 169c27-8 65-7 97 2v72c-1 16-10 24-28 22l-66-5c-17-2-24-11-23-27l3-64Z" fill="#da5547"/>
+  <path d="M37 64c-4-21 5-34 23-37l44-7" fill="none" stroke="#f4b64d" stroke-width="9" stroke-linecap="round"/>
+  <path d="M24 151c-8-25-7-49 2-69" fill="none" stroke="#f3b34a" stroke-width="7" stroke-linecap="round"/>
+</g>
+
+<!-- Blue pen, deliberately apart from its label -->
+<g transform="translate(635 224) rotate(34 90 120)" filter="url(#shadow)">
+  <rect x="78" y="4" width="35" height="210" rx="17" fill="url(#pen)" stroke="#175c8d" stroke-width="5"/>
+  <path d="M79 30h33" stroke="#b9e6f7" stroke-width="6"/><path d="M79 189h33l-16 56Z" fill="#d5d9da" stroke="#777f86" stroke-width="4"/><path d="m96 241 4 18 5-18" fill="#353e49"/>
+  <path d="m108 33 19-22c7-8 17-5 16 5l-6 59-29-5Z" fill="#2876b0" stroke="#175c8d" stroke-width="4"/><path d="m113 26 23-17" stroke="#d6eff9" stroke-width="5" stroke-linecap="round"/>
+</g>
+
+<!-- Book -->
+<g transform="translate(150 625) rotate(-5 100 100)" filter="url(#shadow)">
+  <path d="M31 12h190c12 0 20 9 20 21v191c0 12-8 20-20 20H34c-13 0-21-9-21-21V33c0-13 7-21 18-21Z" fill="#e4d8c4" stroke="#bcae98" stroke-width="7"/>
+  <path d="M20 6h166c13 0 22 9 22 22v207H31c-13 0-21-9-21-22V27C10 14 13 6 20 6Z" fill="#ad594b" stroke="#793d37" stroke-width="8"/>
+  <path d="M34 27h142v181H34Z" fill="#b96655"/><path d="M188 27v201" stroke="#f0e6d5" stroke-width="7"/><path d="M197 27v200" stroke="#887d6f" stroke-width="3"/>
+  <path d="M38 38h123" stroke="#d79582" stroke-width="3"/>
+</g>
+
+<!-- Yellow pencil -->
+<g transform="translate(632 626) rotate(43 105 85)" filter="url(#shadow)">
+  <rect x="88" y="0" width="38" height="211" rx="8" fill="url(#wood)" stroke="#bd833d" stroke-width="5"/>
+  <path d="M88 191h38l-19 52Z" fill="#e8c58a" stroke="#b58a51" stroke-width="4"/><path d="m107 239-7 20 7-7 8 7-8-20Z" fill="#34383d"/>
+  <path d="M88 12h38v22H88Z" fill="#e47773" stroke="#b94e50" stroke-width="4"/><path d="M97 13v20m9-20v20m9-20v20" stroke="#f4aaa0" stroke-width="3"/>
+</g>
+
+<!-- Teacher's instruction bubble -->
+<g filter="url(#shadow)">
+  <path d="M1064 198c0-23 18-40 41-40h345c23 0 41 17 41 40v133c0 23-18 40-41 40h-115l34 39-67-39h-197c-23 0-41-17-41-40Z" fill="#fff" stroke="#344256" stroke-width="6"/>
+  <text x="1290" y="226" class="bubbleText">Listen and repeat.</text>
+  <text x="1290" y="273" class="ukr" style="font-size:23px">Слухай і повторюй</text>
+</g>
+
+<!-- Friendly teacher icon, with both arms attached and hands visible -->
+<g transform="translate(1140 407)" filter="url(#shadow)">
+  <!-- Hair behind the face -->
+  <path d="M82 100C78 38 111 4 163 8c57 4 79 52 65 115l-13 54-135-3Z" fill="#704b39"/>
+  <path d="M137 154h40v58c0 10-40 10-40 0Z" fill="#e5aa83"/>
+  <!-- Face and hair -->
+  <ellipse cx="157" cy="113" rx="61" ry="73" fill="#e5aa83"/>
+  <path d="M96 106C91 47 124 19 168 20c34 1 55 23 59 59-21-6-42-20-55-37-16 25-41 39-76 42Z" fill="#684536"/>
+  <path d="M107 110h39m22 0h37m-59 2 10 1" fill="none" stroke="#4c5b6b" stroke-width="4"/>
+  <circle cx="126" cy="111" r="21" fill="none" stroke="#4c5b6b" stroke-width="4"/><circle cx="178" cy="111" r="21" fill="none" stroke="#4c5b6b" stroke-width="4"/>
+  <circle cx="127" cy="113" r="4" fill="#293649"/><circle cx="178" cy="113" r="4" fill="#293649"/>
+  <path d="M143 145c9 7 19 7 28 0" fill="none" stroke="#a74e4a" stroke-width="5" stroke-linecap="round"/>
+  <!-- Torso -->
+  <path d="M101 194c-33 7-51 29-56 67L32 455h250l-14-194c-4-38-23-60-56-67l-55 45Z" fill="#72513f"/>
+  <path d="M117 203c21-13 58-13 80 0l24 252H95Z" fill="#f4eee5"/>
+  <path d="m126 221 31 30 32-30-5 234h-57Z" fill="#a66b49"/>
+  <!-- Left sleeve and connected forearm -->
+  <path d="M88 211c-29 5-45 23-53 51l-21 65 39 15 42-58 25-50Z" fill="#72513f"/>
+  <path d="m26 316-26 30c-7 8-4 18 4 20l18-9-8 18c-3 8 5 13 12 8l15-16 4 15c2 8 12 7 14-1l2-30-14-25Z" fill="#e5aa83" stroke="#c58768" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Right sleeve, forearm and open hand -->
+  <path d="M207 211c29 5 45 23 53 51l21 65-39 15-42-58-25-50Z" fill="#72513f"/>
+  <path d="m270 316 27 25c8 7 7 17-1 21l-18-7 10 17c4 7-3 14-10 10l-17-14-1 15c0 9-10 10-14 2l-7-29 10-27Z" fill="#e5aa83" stroke="#c58768" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M57 455h198" stroke="#4a3b35" stroke-width="10" stroke-linecap="round"/>
+</g>
+
+<!-- Little classroom mascot -->
+<g transform="translate(1470 35) rotate(7 43 52)">
+  <rect x="8" y="8" width="70" height="98" rx="12" fill="#d6b88e" stroke="#816d58" stroke-width="5"/><rect x="15" y="19" width="56" height="77" rx="8" fill="#fff8e9" stroke="#b29a79" stroke-width="3"/><rect x="29" y="1" width="28" height="14" rx="6" fill="#9d8769"/>
+  <circle cx="34" cy="51" r="4.5" fill="#293649"/><circle cx="53" cy="51" r="4.5" fill="#293649"/><path d="M34 68c6 8 14 8 20 0" fill="none" stroke="#d86f57" stroke-width="4" stroke-linecap="round"/><path d="M7 56C-5 49-8 39-4 30m84 24c10-7 12-16 8-25" fill="none" stroke="#816d58" stroke-width="5" stroke-linecap="round"/>
+</g>
+</svg>

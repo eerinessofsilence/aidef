@@ -1,0 +1,43 @@
+.store-tech-text {
+  display: block;
+  position: relative;
+  width: calc(100% + 48px);
+  margin-left: -24px;
+  padding: 24px;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.store-tech-text .tech-text-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+
+.store-tech-text-fallback {
+  display: block;
+  line-height: 1.15;
+  text-wrap: wrap;
+}
+
+.store-tech-text-word {
+  white-space: nowrap;
+}
+
+.store-tech-text-baseline {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: baseline;
+}
+
+.store-tech-text[data-ready='true'] .tech-text-canvas {
+  visibility: visible;
+}
+
+.store-tech-text[data-ready='true'] .store-tech-text-fallback {
+  visibility: hidden;
+}

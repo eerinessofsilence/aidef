@@ -32,6 +32,7 @@ type NavKey =
   | "products"
   | "civilProducts"
   | "technology"
+  | "store"
   | "company"
   | "support"
   | "contact";
@@ -46,6 +47,7 @@ const NAV_LINKS: Array<{
   { key: "products", href: "#", hasDropdown: true },
   { key: "civilProducts", href: "#", hasDropdown: true },
   { key: "technology", href: "/technology" },
+  { key: "store", href: "/store" },
   { key: "company", href: "#", hasDropdown: true },
   { key: "support", href: "/support" },
   { key: "contact", href: "/support#contact" },
@@ -149,7 +151,7 @@ const LazyContactForm = lazy(() =>
 const isAbortError = (error: unknown) =>
   error instanceof DOMException && error.name === "AbortError";
 
-export default function Header() {
+export default function Header({ hideChrome = false }: { hideChrome?: boolean } = {}) {
   const { t } = useTranslation();
   const [productMenuItems, setProductMenuItems] = useState<ProductMenuItem[]>(
     [],
@@ -695,7 +697,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="fixed left-1/2 z-50 container -translate-x-1/2 py-5">
+      <div className={`fixed left-1/2 z-50 container -translate-x-1/2 py-5 ${hideChrome ? "hidden" : ""}`}>
         <header className="border-border/50 rounded-[20px] border bg-linear-to-b from-black/50 via-black/40 to-black/30 px-4 py-6 shadow-[inset_0_2px_8px_rgba(255,255,255,0.25)] backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <Link

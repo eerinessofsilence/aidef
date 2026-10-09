@@ -674,6 +674,7 @@
       "products": "Produkte",
       "civilProducts": "Sportjets",
       "technology": "Technologie",
+      "store": "Shop",
       "company": "Unternehmen",
       "support": "Support",
       "contact": "Kontakt"
@@ -742,6 +743,14 @@
     "legal": {
       "notice": "© AI DEF A.S. 2026. Alle Rechte vorbehalten."
     }
+  },
+  "permitsCertificates": {
+    "title": "Genehmigungen & Zertifikate",
+    "description": "Sehen Sie sich Genehmigungen, Lizenzen und Sicherheitszertifikate von AI DEF an oder laden Sie sie herunter.",
+    "view": "Dokument ansehen",
+    "download": "Herunterladen",
+    "viewDocument": "{{document}} ansehen",
+    "downloadDocument": "{{document}} herunterladen"
   },
   "gallery": {
     "kicker": "Merkmale",
@@ -998,6 +1007,170 @@
           }
         }
       }
+    }
+  },
+  "store": {
+    "brand": "Showcase",
+    "details": {
+      "backToCatalog": "Zurück zum Katalog",
+      "galleryLabel": "Produktfotogalerie",
+      "previousPhoto": "Vorheriges Foto",
+      "nextPhoto": "Nächstes Foto",
+      "openFullscreen": "Foto im Vollbild öffnen",
+      "closeFullscreen": "Vollbildfoto schließen",
+      "selectPhoto": "Foto {{current}} anzeigen",
+      "photoCredit": "Foto von {{artist}} · {{license}}",
+      "characteristics": "Modelldetails",
+      "model": "Modell",
+      "manufacturer": "Hersteller",
+      "category": "Kategorie",
+      "unavailable": "Dieses Modell wurde nicht gefunden.",
+      "relatedKicker": "Weitere Modelle",
+      "relatedTitle": "Andere Modelle",
+      "viewAll": "Alle ansehen",
+      "gameConfig": {
+        "title": "In-Game-Setup erstellen",
+        "description": "Wähle ein Spielmodell und entdecke passende visuelle Erweiterungen mit eigenen Details.",
+        "none": "Keine Auswahl",
+        "request": "Anfragen",
+        "sight": "Visier",
+        "muzzle": "Mündungsaufsatz",
+        "utility": "Zusatzteil",
+        "redDot": "Rotpunktvisier",
+        "holographic": "Holografisches Visier",
+        "magnified": "Vergrößerndes Visier",
+        "suppressor": "Schalldämpfer",
+        "flashHider": "Mündungsfeuerdämpfer",
+        "compensator": "Kompensator",
+        "light": "Taktisches Licht",
+        "laser": "Lasermodul"
+      }
+    },
+    "demoNotice": "Beispielhafte Kollektion. Die gezeigten Modelle bestätigen weder Lagerbestand noch Verfügbarkeit.",
+    "photo": "Foto",
+    "credits": "Fotografie & Bildnachweise",
+    "navigation": {
+      "top": "Nach oben",
+      "label": "Showcase-Navigation",
+      "language": "Sprache",
+      "openMenu": "Menü öffnen",
+      "home": "Home",
+      "permitsCertificates": "Genehmigungen & Zertifikate"
+    },
+    "actions": {
+      "enquire": "Informationen anfragen",
+      "addToList": "Zur Anfrageliste hinzufügen",
+      "alreadyAdded": "Bereits in der Anfrageliste",
+      "details": "Produkt entdecken",
+      "exploreFeatured": "Unsere Auswahl",
+      "viewNamed": "{{name}} entdecken",
+      "close": "Schließen"
+    },
+    "cart": {
+      "open": "Warenkorb ({{count}})",
+      "kicker": "Ihre Auswahl",
+      "title": "Ihr Warenkorb",
+      "empty": "Ihr Warenkorb ist leer. Fügen Sie ein Spielmodell oder Zubehör hinzu.",
+      "browse": "Produkte ansehen",
+      "remove": "Entfernen",
+      "submit": "Informationen anfragen",
+      "baseModel": "Basismodell"
+    },
+    "footer": {
+      "title": "Produkt-Showcase",
+      "description": "Entdecken Sie ausgewählte Modelle und senden Sie eine Anfrage an unser Team.",
+      "collection": "Kollektion"
+    },
+    "stats": {
+      "models": "Modelle entdecken",
+      "categories": "Produktkategorien",
+      "brands": "Hersteller"
+    },
+    "categories": {
+      "pistols": "Pistolen",
+      "automatic": "Automatische Modelle",
+      "accessories": "Zubehör"
+    },
+    "categoryDescriptions": {
+      "pistols": "Spielmodelle aus der Pistolen-Kollektion entdecken.",
+      "automatic": "Automatische Spielmodelle ansehen und Erweiterungen auswählen.",
+      "accessories": "Visiere, Schalldämpfer und weitere Spiel-Add-ons auswählen."
+    },
+    "accessories": {
+      "all": "Alle Add-ons",
+      "suppressors": "Schalldämpfer",
+      "sights": "Visiere & Optiken",
+      "other": "Weiteres Zubehör",
+      "viewDetails": "Details ansehen",
+      "addToCart": "In den Warenkorb",
+      "addModelToCart": "Modell in den Warenkorb",
+      "addSetupToCart": "Konfiguration in den Warenkorb",
+      "updateSetupInCart": "Konfiguration aktualisieren",
+      "alreadyInCart": "Bereits im Warenkorb",
+      "compatibilityNote": "Dies sind digitale Spielobjekte. Zielmodell und Kompatibilität werden bei der Anfrage bestätigt."
+    },
+    "accessoryNames": {
+      "arcReflex": "ARC Reflex",
+      "orbitHolo": "ORBIT Holo",
+      "veilSuppressor": "VEIL Suppressor",
+      "lumaLight": "LUMA Light"
+    },
+    "accessoryDescriptions": {
+      "arc-reflex": "Ein kompaktes Reflexvisier für einen klaren, modernen Look im Spiel.",
+      "orbit-holo": "Eine holografische Optik mit breitem, gut lesbarem Sichtfenster.",
+      "veil-suppressor": "Ein schlankes Schalldämpfer-Add-on für ein reduziertes Spiel-Setup.",
+      "luma-light": "Ein kompaktes Lichtmodul für einen einsatzbereiten Look."
+    },
+    "featured": {
+      "kicker": "Home",
+      "title": "Drei Modelle. Ein genauerer Blick.",
+      "description": "Eine Auswahl aus der Kollektion, mit Raum für die Details jedes Modells.",
+      "badge": "Highlight"
+    },
+    "contact": {
+      "kicker": "Kontakt",
+      "title": "Ein Produkt anfragen",
+      "ctaTitle": "Ein Modell hat Ihr Interesse geweckt?",
+      "description": "Wählen Sie ein Modell und teilen Sie uns mit, was Sie wissen möchten. Senden Sie Ihre Produktanfrage direkt an das Team.",
+      "product": "Produkt",
+      "productCategory": "Kategorie auswählen",
+      "searchProduct": "Modelle und Zubehör suchen",
+      "noProductsFound": "Keine passenden Modelle oder Zubehörteile gefunden.",
+      "success": "Vielen Dank. Ihre Produktanfrage wurde gesendet.",
+      "sent": "Anfrage gesendet",
+      "loading": "Anfrageformular wird geladen"
+    },
+    "descriptions": {
+      "g36": "Ein Modell der G36-Familie mit charakteristischem Tragegriff und offenem Rahmenschaft.",
+      "mp7": "Ein kompaktes Modell der MP7-Familie. Das Foto zeigt ein Exemplar der Bundeswehr.",
+      "usp": "Ein Modell der USP-Familie. Das Foto zeigt eine frühe USP9 mit strukturiertem Griff.",
+      "hk416n": "Das norwegische Modell HK416N. Das Foto zeigt eine bestimmte Konfiguration der HK416-Familie.",
+      "g27": "Ein G27 der HK417-Familie, fotografiert in einer Ausstellungskonfiguration mit montiertem Zubehör.",
+      "g3": "Ein frühes G3 mit Holzschaft und Holzvorderschaft. Das Bild zeigt zwei Ansichten des Modells.",
+      "mp5-a3": "Das Modell MP5 A3 mit ausziehbarem Schaft und der bekannten MP5-Silhouette.",
+      "p30l": "Das Modell P30L der P30-Familie in Seitenansicht mit verlängertem Profil und strukturiertem Griff.",
+      "p99": "Eine frühe Walther P99 mit grünem Polymerrahmen. Das Bild zeigt genau diese Ausführung.",
+      "ppk-l": "Das Modell Walther PPK-L. Das Foto zeigt diese besondere Variante der PPK-Familie."
+    },
+    "hero": {
+      "kicker": "Spielmodelle & Ausrüstung",
+      "title": "Markante Modelle in einer Kollektion",
+      "description": "Entdecken Sie Spielmodelle, vergleichen Sie Add-ons und stellen Sie eine passende Sammlung zusammen.",
+      "cta": "Katalog ansehen"
+    },
+    "catalog": {
+      "kicker": "Katalog",
+      "title": "Nach Kategorie stöbern",
+      "count": "{{count}} / {{total}} Modelle",
+      "filters": "Nach Produktkategorie filtern",
+      "modelCount": "{{count}} Artikel",
+      "openCategory": "Kategorie ansehen",
+      "accessoryFilters": "Zubehör filtern",
+      "sortBy": "Sortieren nach",
+      "sortRelevance": "Relevanz",
+      "sortName": "Name: A–Z",
+      "accessoriesComingSoon": "In dieser Kategorie sind noch keine Artikel.",
+      "categoryNotFound": "Diese Kategorie wurde nicht gefunden."
     }
   },
   "notFound": {

@@ -35,6 +35,7 @@ const CookieConsent = lazy(() =>
 const CivilProductDetail = lazy(() => import("./pages/CivilProductDetail"));
 const Technology = lazy(() => import("./pages/Technology"));
 const TermsOfCondition = lazy(() => import("./pages/TermsOfCondition"));
+const PermitsCertificates = lazy(() => import("./pages/PermitsCertificates"));
 const Support = lazy(() => import("./pages/Support"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
 const Solutions = lazy(() => import("./pages/Solutions"));
@@ -42,6 +43,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const ClientPortal = lazy(() => import("./pages/ClientPortal"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Store = lazy(() => import("./pages/Store"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 function RouteFallback() {
@@ -66,6 +68,11 @@ function LanguageLayout() {
   const normalizedPathname = location.pathname.replace(/\/+$/, "") || "/";
   const isHomeRoute =
     stripSupportedLanguageFromPath(normalizedPathname) === "/";
+  const normalizedRoutePath = stripSupportedLanguageFromPath(normalizedPathname);
+  const isStoreRoute =
+    normalizedRoutePath === "/store" ||
+    normalizedRoutePath.startsWith("/store/") ||
+    normalizedRoutePath === "/permits-certificates";
 
   // i18n
   useEffect(() => {
@@ -245,9 +252,9 @@ function LanguageLayout() {
           <CookieConsent />
         </Suspense>
       ) : null}
-      <Header />
+      <Header hideChrome={isStoreRoute} />
       <div className="relative min-h-screen">
-        {!isHomeRoute ? (
+        {!isHomeRoute && !isStoreRoute ? (
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-1 w-full overflow-hidden"
@@ -275,25 +282,27 @@ function LanguageLayout() {
           aria-hidden="true"
           className="h-px w-full"
         />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 -z-1 hidden w-full overflow-hidden md:block"
-        >
-          <img
-            src="/site-bg-bottom.png"
-            className="block h-auto w-full select-none"
-            alt=""
-            width={1640}
-            height={443}
-            sizes="100vw"
-            loading="lazy"
-            decoding="async"
-            style={{ aspectRatio: "1640 / 443" }}
-          />
-          <div className="absolute inset-0 bg-background/30" />
-        </div>
+        {!isStoreRoute ? (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 -z-1 hidden w-full overflow-hidden md:block"
+          >
+            <img
+              src="/site-bg-bottom.png"
+              className="block h-auto w-full select-none"
+              alt=""
+              width={1640}
+              height={443}
+              sizes="100vw"
+              loading="lazy"
+              decoding="async"
+              style={{ aspectRatio: "1640 / 443" }}
+            />
+            <div className="absolute inset-0 bg-background/30" />
+          </div>
+        ) : null}
       </div>
-      {shouldRenderFooter ? (
+      {shouldRenderFooter && !isStoreRoute ? (
         <Suspense fallback={null}>
           <Footer />
         </Suspense>
@@ -308,12 +317,19 @@ function PageRoutes() {
       <Route index element={<Home />} />
       <Route path="solutions" element={<Solutions />} />
       <Route path="products/:slug" element={<ProductDetail />} />
+      <Route path="store" element={<Store />} />
+      <Route path="store/category/:categoryId" element={<Store />} />
+      <Route path="store/:productId" element={<Store />} />
       <Route path="civil-products/:slug" element={<CivilProductDetail />} />
       <Route path="technology" element={<Technology />} />
       <Route path="blog" element={<Blog />} />
       <Route path="blog/:post" element={<BlogPost />} />
       <Route path="about-us" element={<AboutUs />} />
       <Route path="terms-of-condition" element={<TermsOfCondition />} />
+      <Route
+        path="permits-certificates"
+        element={<PermitsCertificates />}
+      />
       <Route path="support" element={<Support />} />
       <Route path="auth" element={<Auth />} />
       <Route path="client-portal" element={<ClientPortal />} />

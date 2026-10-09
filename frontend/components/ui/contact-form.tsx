@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown, LoaderCircle, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { buildLocalizedPath, resolveLanguage } from "../../src/i18n";
@@ -10,6 +10,9 @@ type ContactFormProps = {
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   showDetails?: boolean;
   variant?: "default" | "support";
+  catalogProducts?: ProductOption[];
+  initialProduct?: string;
+  productSelections?: ProductOption[];
 };
 
 type CountryOption = {
@@ -20,6 +23,7 @@ type CountryOption = {
 type ProductOption = {
   value: string;
   label: string;
+  category?: string;
 };
 
 type SubmissionStatus = "idle" | "submitting" | "success" | "error";
@@ -102,12 +106,17 @@ export const ContactForm = ({
   onSubmit,
   showDetails = true,
   variant = "default",
+  catalogProducts,
+  initialProduct = "",
+  productSelections,
 }: ContactFormProps) => {
   const { t, i18n } = useTranslation();
   const { lng } = useParams();
   const currentLanguage = resolveLanguage(lng);
   const isSupportForm = variant === "support";
+  const isStoreForm = catalogProducts !== undefined;
   const countryDatalistId = React.useId();
+  const productSuggestionsId = React.useId();
   const solutionsLink = buildLocalizedPath(currentLanguage, "/solutions");
   const technologyLink = buildLocalizedPath(currentLanguage, "/technology");
   const supportLink = buildLocalizedPath(currentLanguage, "/support");
@@ -125,7 +134,10 @@ export const ContactForm = ({
   const [submitError, setSubmitError] = React.useState<string | null>(null);
 
   const [cityQuery, setCityQuery] = React.useState("");
-  const [selectedProduct, setSelectedProduct] = React.useState("");
+  const [selectedProduct, setSelectedProduct] = React.useState(initialProduct);
+  const [selectedProductCategory, setSelectedProductCategory] = React.useState("");
+  const [productQuery, setProductQuery] = React.useState("");
+  const [isProductSuggestionsOpen, setIsProductSuggestionsOpen] = React.useState(false);
 
   const filteredCountries = React.useMemo(() => {
     if (!countryQuery) {
@@ -216,12 +228,16 @@ export const ContactForm = ({
     ? "text-foreground placeholder:text-foreground/50 focus:border-foreground/50 focus:ring-foreground/40 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base transition focus:ring-2 focus:outline-none"
     : "w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 shadow-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-900/10 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:focus:border-neutral-500 dark:focus:ring-neutral-50/10";
   const selectClass = `${inputClass} appearance-none pr-12`;
-  const formKicker = isSupportForm
-    ? t("contactForm.support.kicker")
-    : t("contactForm.default.kicker");
-  const formTitle = isSupportForm
-    ? t("contactForm.support.title")
-    : t("contactForm.default.title");
+  const formKicker = isStoreForm
+    ? t("store.contact.kicker")
+    : isSupportForm
+      ? t("contactForm.support.kicker")
+      : t("contactForm.default.kicker");
+  const formTitle = isStoreForm
+    ? t("store.contact.title")
+    : isSupportForm
+      ? t("contactForm.support.title")
+      : t("contactForm.default.title");
   const messageLabel = isSupportForm
     ? t("contactForm.support.messageLabel")
     : t("contactForm.default.messageLabel");
@@ -244,9 +260,11 @@ export const ContactForm = ({
   const descriptionClass = isSupportForm
     ? "mt-2 text-foreground/70 leading-relaxed"
     : "mt-2 text-sm text-neutral-600 dark:text-neutral-400";
-  const submitButtonClass = isSupportForm
-    ? "cursor-pointer group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
-    : "cursor-pointer rounded-2xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none max-md:w-full dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus-visible:ring-neutral-50/30";
+  const submitButtonClass = isStoreForm
+    ? "store-button store-submit-button max-md:w-full"
+    : isSupportForm
+      ? "cursor-pointer group relative inline-flex h-11 w-full items-center justify-center overflow-hidden rounded-2xl bg-white text-sm font-bold text-black uppercase transition-all duration-300 ease-out will-change-transform hover:shadow-[inset_0_3px_12px_rgba(255,255,255,0.35),inset_0_-6px_20px_rgba(0,0,0,0.45)] focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:outline-none active:scale-[0.93] active:shadow-[inset_0_1px_6px_rgba(255,255,255,0.5),inset_0_-8px_22px_rgba(0,0,0,0.65)]"
+      : "cursor-pointer rounded-2xl bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-neutral-900/20 focus-visible:outline-none max-md:w-full dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 dark:focus-visible:ring-neutral-50/30";
   const submitNoteClass = isSupportForm
     ? "text-foreground/60 text-xs"
     : "text-xs text-neutral-500 dark:text-neutral-400";
@@ -259,8 +277,11 @@ export const ContactForm = ({
   const submitLabel =
     submitStatus === "submitting"
       ? t("contactForm.status.submitting")
-      : t("contactForm.actions.send");
-  const submitButtonDisabled = submitStatus === "submitting";
+      : isStoreForm && submitStatus === "success"
+        ? t("store.contact.sent")
+        : t("contactForm.actions.send");
+  const submitButtonDisabled =
+    submitStatus === "submitting" || (isStoreForm && submitStatus === "success");
 
   const handleCountryInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -283,10 +304,21 @@ export const ContactForm = ({
 
   const handleProductChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedProduct(event.target.value);
+    setProductQuery("");
+  };
+
+  const handleStoreProductCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedProductCategory(event.target.value);
+    setSelectedProduct("");
+    setProductQuery("");
+    setIsProductSuggestionsOpen(Boolean(event.target.value));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitButtonDisabled) {
+      return;
+    }
     let resolvedCountry: CountryOption | null = null;
     if (!isSupportForm) {
       resolvedCountry = selectedCountry ?? findCountryFromInput(countryQuery);
@@ -296,10 +328,6 @@ export const ContactForm = ({
       }
       setSelectedCountry(resolvedCountry);
     }
-    if (submitStatus === "submitting") {
-      return;
-    }
-
     setSubmitError(null);
     setSubmitStatus("submitting");
 
@@ -371,7 +399,7 @@ export const ContactForm = ({
     }
   };
 
-  const productOptions: ProductOption[] = [
+  const productOptions: ProductOption[] = catalogProducts ?? [
     { value: "all-products", label: t("contactForm.products.all") },
     { value: "ax2ng-krakatit", label: "AX2NG KRAKATIT" },
     { value: "av-1-vtol", label: "AV-1 VTOL" },
@@ -383,13 +411,25 @@ export const ContactForm = ({
       label: t("contactForm.products.partnership"),
     },
   ];
+  const visibleProductOptions = productOptions.filter((product) => {
+    const matchesCategory = !isStoreForm || product.category === selectedProductCategory;
+    const matchesQuery = product.label.toLowerCase().includes(productQuery.trim().toLowerCase());
+    return matchesCategory && matchesQuery;
+  });
+  const storeProductCategories = isStoreForm
+    ? ["pistols", "automatic", "accessories"].filter((category) =>
+        productOptions.some((product) => product.category === category),
+      )
+    : [];
 
   return (
     <div className="w-full space-y-6">
       <div>
         <p className={kickerClass}>{formKicker}</p>
         <h3 className={titleClass}>{formTitle}</h3>
-        <p className={descriptionClass}>{t("contactForm.description")}</p>
+        <p className={descriptionClass}>
+          {t(isStoreForm ? "store.contact.description" : "contactForm.description")}
+        </p>
       </div>
       <form
         className={formClass}
@@ -515,28 +555,106 @@ export const ContactForm = ({
               </label>
               <label className={`col-span-2 ${labelClass}`}>
                 <span className={labelSpanClass}>
-                  {t("contactForm.fields.product")}
+                  {t(isStoreForm ? "store.contact.product" : "contactForm.fields.product")}
                   <span className="text-red-500">*</span>
                 </span>
-                <div className="relative">
-                  <select
-                    className={selectClass}
-                    name="product"
-                    value={selectedProduct}
-                    onChange={handleProductChange}
-                    required
-                  >
-                    <option value="" disabled>
-                      {t("contactForm.placeholders.selectProduct")}
-                    </option>
-                    {productOptions.map((product) => (
-                      <option key={product.value} value={product.value}>
-                        {product.label}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
-                </div>
+                {productSelections?.length ? (
+                  <>
+                    <input type="hidden" name="product" value={productSelections.map((product) => product.label).join(", ")} />
+                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100">
+                      {productSelections.map((product) => <p key={product.value}>{product.label}</p>)}
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    {isStoreForm ? (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <div className="relative">
+                          <select
+                            className={selectClass}
+                            aria-label={t("store.contact.productCategory")}
+                            value={selectedProductCategory}
+                            onChange={handleStoreProductCategoryChange}
+                            required
+                          >
+                            <option value="" disabled>{t("store.contact.productCategory")}</option>
+                            {storeProductCategories.map((category) => (
+                              <option key={category} value={category}>{t(`store.categories.${category}`)}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
+                        </div>
+                        <input type="hidden" name="product" value={selectedProduct} />
+                        <div className="relative">
+                          <input
+                            type="search"
+                            className={inputClass}
+                            role="combobox"
+                            aria-haspopup="listbox"
+                            aria-label={t("store.contact.searchProduct")}
+                            aria-autocomplete="list"
+                            aria-expanded={isProductSuggestionsOpen && Boolean(selectedProductCategory)}
+                            aria-controls={productSuggestionsId}
+                            autoComplete="off"
+                            placeholder={t("store.contact.searchProduct")}
+                            value={productQuery}
+                            disabled={!selectedProductCategory}
+                            required
+                            onFocus={() => setIsProductSuggestionsOpen(true)}
+                            onBlur={() => setIsProductSuggestionsOpen(false)}
+                            onChange={(event) => {
+                              setSelectedProduct("");
+                              setProductQuery(event.target.value);
+                              setIsProductSuggestionsOpen(true);
+                            }}
+                          />
+                          {isProductSuggestionsOpen && selectedProductCategory ? (
+                            <div id={productSuggestionsId} role="listbox" className="absolute z-20 mt-2 max-h-52 w-full overflow-y-auto rounded-xl border border-neutral-200 bg-white p-1 shadow-xl dark:border-neutral-700 dark:bg-neutral-900">
+                              {visibleProductOptions.length ? visibleProductOptions.map((product) => (
+                                <button
+                                  key={product.value}
+                                  type="button"
+                                  role="option"
+                                  aria-selected={selectedProduct === product.value}
+                                  className="w-full rounded-lg px-3 py-2 text-left text-sm text-neutral-800 transition hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none dark:text-neutral-100 dark:hover:bg-neutral-800 dark:focus-visible:bg-neutral-800"
+                                  onPointerDown={(event) => event.preventDefault()}
+                                  onClick={() => {
+                                    setSelectedProduct(product.value);
+                                    setProductQuery(product.label);
+                                    setIsProductSuggestionsOpen(false);
+                                  }}
+                                >
+                                  {product.label}
+                                </button>
+                              )) : (
+                                <p className="px-3 py-2 text-sm text-neutral-500">{t("store.contact.noProductsFound")}</p>
+                              )}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
+                    {!isStoreForm ? <div className="relative">
+                      <select
+                        className={selectClass}
+                        name="product"
+                        value={selectedProduct}
+                        onChange={handleProductChange}
+                        required
+                      >
+                        <option value="" disabled>
+                          {t("contactForm.placeholders.selectProduct")}
+                        </option>
+                        {productOptions.map((product) => (
+                          <option key={product.value} value={product.value}>
+                            {product.label}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-neutral-400 dark:text-neutral-500" />
+                    </div> : null}
+                  </div>
+                )}
               </label>
               <label className={`col-span-2 ${labelClass}`}>
                 <span className={labelSpanClass}>
@@ -650,17 +768,40 @@ export const ContactForm = ({
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
-            className={`${submitButtonClass} ${submitButtonDisabled ? "pointer-events-none opacity-70" : ""}`}
+            className={`${submitButtonClass} ${submitStatus === "submitting" ? "pointer-events-none opacity-70" : ""}`}
             disabled={submitButtonDisabled}
-            aria-busy={submitButtonDisabled}
+            aria-busy={submitStatus === "submitting"}
+            data-status={isStoreForm ? submitStatus : undefined}
           >
-            {submitLabel}
+            {isStoreForm ? (
+              <>
+                <span className="store-submit-icon" aria-hidden="true">
+                  <Mail className="store-submit-mail" />
+                  {submitStatus === "submitting" ? (
+                    <LoaderCircle className="store-submit-spinner" />
+                  ) : null}
+                  <Check className="store-submit-check" />
+                </span>
+                <span className="store-submit-label">
+                  <span>{submitLabel}</span>
+                  <span className="invisible" aria-hidden="true">
+                    {t("contactForm.actions.send")}
+                  </span>
+                  <span className="invisible" aria-hidden="true">
+                    {t("contactForm.status.submitting")}
+                  </span>
+                  <span className="invisible" aria-hidden="true">
+                    {t("store.contact.sent")}
+                  </span>
+                </span>
+              </>
+            ) : submitLabel}
           </button>
           <p className={submitNoteClass}>{t("contactForm.disclaimer")}</p>
         </div>
         {submitStatus === "success" ? (
           <p className={successMessageClass} role="status" aria-live="polite">
-            {t("contactForm.success")}
+            {t(isStoreForm ? "store.contact.success" : "contactForm.success")}
           </p>
         ) : submitStatus === "error" ? (
           <p className={errorMessageClass} role="alert">

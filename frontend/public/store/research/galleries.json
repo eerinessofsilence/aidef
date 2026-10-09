@@ -1,0 +1,402 @@
+[
+  {
+    "id": "g36",
+    "name": "H&K G36",
+    "configuration_note": "Два полевых кадра одной серии RIMPAC 2022. Конфигурация отличается от превью.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/g36.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Gewehr_G36_noBG.png",
+        "artist": "DomoK; Auge=mit",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 1150,
+        "height": 400
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/g36-field-2.webp",
+        "source_url": "https://commons.wikimedia.org/wiki/File:RIMPAC_2022_-_German_Special_Forces_KSK_-_HK_G36_with_Rheinmetall_LLM01_and_EOTech_holographic_sights.webp",
+        "artist": "Lance Cpl. Haley Fourmetgustavsen",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1000,
+        "height": 667,
+        "modifications": "None; original Commons file"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/g36-field-3.webp",
+        "source_url": "https://commons.wikimedia.org/wiki/File:RIMPAC_2022_-_German_Special_Forces_KSK_-_HK_G36_with_Rheinmetall_LLM01_and_EOTech_holographic_sights_-_2.webp",
+        "artist": "Lance Cpl. Haley Fourmetgustavsen",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1000,
+        "height": 667,
+        "modifications": "None; original Commons file"
+      }
+    ]
+  },
+  {
+    "id": "g3",
+    "name": "H&K G3",
+    "configuration_note": "Два музейных оригинала, использованных для прозрачного превью; раннее исполнение с деревом. Студийный фон.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/g3.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Heckler_%26_Koch_G3_Holzschaft_Display_noBG.png",
+        "artist": "Armémuseum / Swedish Army Museum",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 1220,
+        "height": 600
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/g3-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Heckler_%26_Koch_G3_Swedish_trial_specimen_001.jpg",
+        "artist": "Armémuseum (Swedish Army Museum)",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0",
+        "width": 1198,
+        "height": 297,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/g3-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Heckler_%26_Koch_G3_Swedish_trial_specimen_002.jpg",
+        "artist": "Armémuseum (Swedish Army Museum)",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0",
+        "width": 1200,
+        "height": 318,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "hk416n",
+    "name": "H&K HK416N",
+    "configuration_note": "На снимках норвежские HK416; суффикс N и полное совпадение конфигурации в источниках не подтверждены.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/hk416n.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:HK416N.png",
+        "artist": "Dybdal",
+        "license": "CC BY-SA 2.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+        "width": 2143,
+        "height": 834
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/hk416n-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:HK-416_Norway.jpg",
+        "artist": "Soldatnytt",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0",
+        "width": 1280,
+        "height": 852,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/hk416n-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:NorwegiansolderHK416.jpg",
+        "artist": "PRT Meymaneh",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0",
+        "width": 1280,
+        "height": 853,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "g27",
+    "name": "H&K G27",
+    "configuration_note": "Первое дополнительное фото — исходник превью; второе показывает другой G27 с другой конфигурацией.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/g27.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Combater_G27_noBG.png",
+        "artist": "Wald-Burger8",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "width": 3000,
+        "height": 1410
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/g27-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Combater.jpg",
+        "artist": "Wald-Burger8",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "width": 1280,
+        "height": 960,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/g27-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Heckler_%26_Koch_G27_Prenzlau_2025.jpg",
+        "artist": "Boevaya mashina",
+        "license": "CC BY-SA 3.0 de",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+        "width": 1024,
+        "height": 683,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "mp5-a3",
+    "name": "H&K MP5 A3",
+    "configuration_note": "Два снимка одной полигонной серии. Подписи источника указывают MP5 без суффикса A3.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/mp5-a3.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:HK_MP5_noBG.png",
+        "artist": "Dybdal / Mattes",
+        "license": "CC BY-SA 3.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "width": 1250,
+        "height": 550
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/mp5-a3-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:150114-A-BD610-062_-_SSD_perform_CID_protective_services_qualification_with_M11_SIG_P228_and_H_and_K_MP5_(Image_4_of_15).jpg",
+        "artist": "Visual Information Specialist Pierre-Etienne Courtejoie",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1280,
+        "height": 1918,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/mp5-a3-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:150114-A-BD610-156_-_SSD_perform_CID_protective_services_qualification_with_M11_SIG_P228_and_H_and_K_MP5_(Image_15_of_15).jpg",
+        "artist": "Visual Information Specialist Pierre-Etienne Courtejoie",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1280,
+        "height": 854,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "mp7",
+    "name": "H&K MP7",
+    "configuration_note": "Фото 2 — выставочный снимок MP7A1; фото 3 — военнослужащий Bundeswehr с MP7 во время учений Swift Response 16.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/mp7.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:HK_MP7_Bundeswehr_noBG.png",
+        "artist": "KrisfromGermany",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 2040,
+        "height": 1169
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/mp7-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:BundeswehrMP7.JPG",
+        "artist": "KrisfromGermany",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1280,
+        "height": 960,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/mp7-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:2684754_A_German_Bundeswehr_soldier_of_4th_Paratrooper_Company,_31st_Paratrooper_Regiment_2016.jpg",
+        "artist": "U.S. Army photo by Staff Sgt. Nathaniel Allen, Viper Combat Camera USAREUR",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1280,
+        "height": 853,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "usp",
+    "name": "H&K USP",
+    "configuration_note": "Первое дополнительное фото — исходник превью раннего USP9; второе — военное учебное мероприятие с USP, конкретное исполнение не указано.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/usp.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:First-year_H%26K_USP_9mm_(32415150000)_modified.png",
+        "artist": "lifesizepotato",
+        "license": "CC0",
+        "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "width": 1920,
+        "height": 1280
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/usp-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:First-year_H%26K_USP_9mm_(32415150000).jpg",
+        "artist": "lifesizepotato from San Antonio, TX",
+        "license": "CC0",
+        "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "width": 1280,
+        "height": 853,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/usp-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Sgt_Thomas_Hunt_fires_a_Heckler_%26_Koch_USP_pistol_(8558617).jpg",
+        "artist": "U.S. Army photo by Spc. Christian Paredes",
+        "license": "Public domain",
+        "license_url": null,
+        "width": 1280,
+        "height": 798,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "p30l",
+    "name": "H&K P30L",
+    "configuration_note": "Два боковых ракурса одной авторской серии P30L. Конфигурация визуально одинаковая; фон студийный.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/p30l.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Koalorka_H%26K_P30L_noBG.png",
+        "artist": "Koalorka",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 1300,
+        "height": 950
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/p30l-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Heckler_%26_Koch_P30L.jpg",
+        "artist": "Marián Hubinský",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 1280,
+        "height": 880,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/p30l-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Heckler_%26_Koch_P30L_-_left_side.jpg",
+        "artist": "Marián Hubinský",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 1280,
+        "height": 898,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "p99",
+    "name": "Walther P99",
+    "configuration_note": "Другие фотографии семейства P99 с чёрной рамкой. Совпадение поколения и комплектации с зелёным превью не установлено.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/p99.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Walther_P99_9x19mm.png",
+        "artist": "Sirimiri~commonswiki (author assumed by Commons)",
+        "license": "CC BY 2.5",
+        "license_url": "https://creativecommons.org/licenses/by/2.5",
+        "width": 1740,
+        "height": 1321
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/p99-2.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Walther_P99_inside_the_carry_case.jpg",
+        "artist": "redirecTed",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0",
+        "width": 1024,
+        "height": 786,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/p99-3.jpg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Walther_P99_Flickr.jpg",
+        "artist": "absolutewade",
+        "license": "CC BY 2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0",
+        "width": 986,
+        "height": 650,
+        "modifications": "Commons 1280 px rendition; no local image edits"
+      }
+    ]
+  },
+  {
+    "id": "ppk-l",
+    "name": "Walther PPK-L",
+    "configuration_note": "Два снимка PPK-L одной журнальной авторской серии; на втором рядом Glock 19. Превью другого автора.",
+    "all_three_same_specimen_confirmed": false,
+    "images": [
+      {
+        "role": "transparent_preview",
+        "local_path": "frontend/public/store/research/ppk-l.png",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Walther_PPK-L_noBG.png",
+        "artist": "Michael Sullivan",
+        "license": "CC BY-SA 4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "width": 1100,
+        "height": 800
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/ppk-l-2.jpg",
+        "source_url": "https://waffenkultur.de/PUBLIC/Ausgaben_PDF/waffenkultur_33.pdf#page=6",
+        "artist": "Christian Väth",
+        "license": "Publisher permission with source attribution",
+        "license_url": "https://waffenkultur.de/PUBLIC/Ausgaben_PDF/waffenkultur_33.pdf#page=58",
+        "width": 1396,
+        "height": 1000,
+        "modifications": "Original embedded JPEG extracted from PDF; no pixel edits"
+      },
+      {
+        "role": "context_photo",
+        "local_path": "frontend/public/store/research/gallery/ppk-l-3.jpg",
+        "source_url": "https://waffenkultur.de/PUBLIC/Ausgaben_PDF/waffenkultur_33.pdf#page=8",
+        "artist": "Christian Väth",
+        "license": "Publisher permission with source attribution",
+        "license_url": "https://waffenkultur.de/PUBLIC/Ausgaben_PDF/waffenkultur_33.pdf#page=58",
+        "width": 932,
+        "height": 620,
+        "modifications": "Original embedded JPEG extracted from PDF; no pixel edits"
+      }
+    ]
+  }
+]

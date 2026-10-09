@@ -674,6 +674,7 @@
       "products": "Products",
       "civilProducts": "Sport jets",
       "technology": "Technology",
+      "store": "Store",
       "company": "Company",
       "support": "Support",
       "contact": "Contact"
@@ -742,6 +743,14 @@
     "legal": {
       "notice": "© AI DEF A.S. 2026. All rights reserved."
     }
+  },
+  "permitsCertificates": {
+    "title": "Permits & Certificates",
+    "description": "View and download AI DEF permits, licences and security certificates.",
+    "view": "View document",
+    "download": "Download",
+    "viewDocument": "View {{document}}",
+    "downloadDocument": "Download {{document}}"
   },
   "gallery": {
     "kicker": "Characteristics",
@@ -998,6 +1007,170 @@
           }
         }
       }
+    }
+  },
+  "store": {
+    "brand": "Showcase",
+    "details": {
+      "backToCatalog": "Back to catalog",
+      "galleryLabel": "Product photo gallery",
+      "previousPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "openFullscreen": "Open photo full screen",
+      "closeFullscreen": "Close full screen photo",
+      "selectPhoto": "Show photo {{current}}",
+      "photoCredit": "Photo by {{artist}} · {{license}}",
+      "characteristics": "Model details",
+      "model": "Model",
+      "manufacturer": "Manufacturer",
+      "category": "Category",
+      "unavailable": "This model could not be found.",
+      "relatedKicker": "More to explore",
+      "relatedTitle": "Other models",
+      "viewAll": "View all",
+      "gameConfig": {
+        "title": "Build your in-game setup",
+        "description": "Choose a game model and explore compatible visual add-ons. Each add-on opens with its own details.",
+        "none": "No selection",
+        "request": "Request",
+        "sight": "Optic",
+        "muzzle": "Muzzle item",
+        "utility": "Additional item",
+        "redDot": "Red dot sight",
+        "holographic": "Holographic sight",
+        "magnified": "Magnified optic",
+        "suppressor": "Suppressor",
+        "flashHider": "Flash hider",
+        "compensator": "Compensator",
+        "light": "Tactical light",
+        "laser": "Laser module"
+      }
+    },
+    "demoNotice": "A game asset collection. Models and add-ons are digital design examples, not physical products.",
+    "photo": "Photo",
+    "credits": "Photography & credits",
+    "navigation": {
+      "top": "Back to top",
+      "label": "Showcase navigation",
+      "language": "Language",
+      "openMenu": "Open menu",
+      "home": "Home",
+      "permitsCertificates": "Permits & Certificates"
+    },
+    "actions": {
+      "enquire": "Request information",
+      "addToList": "Add to request list",
+      "alreadyAdded": "Already in request list",
+      "details": "Explore product",
+      "exploreFeatured": "See our selection",
+      "viewNamed": "Explore {{name}}",
+      "close": "Close"
+    },
+    "cart": {
+      "open": "Cart ({{count}})",
+      "kicker": "Your selection",
+      "title": "Your cart",
+      "empty": "Your cart is empty. Add an in-game model or an accessory to build your request.",
+      "browse": "Browse products",
+      "remove": "Remove",
+      "submit": "Request selected items",
+      "baseModel": "Base model"
+    },
+    "footer": {
+      "title": "Product showcase",
+      "description": "Explore selected models and send an enquiry to our team.",
+      "collection": "Collection"
+    },
+    "stats": {
+      "models": "Models to explore",
+      "categories": "Product categories",
+      "brands": "Manufacturers"
+    },
+    "categories": {
+      "pistols": "Pistols",
+      "automatic": "Automatic models",
+      "accessories": "Accessories"
+    },
+    "categoryDescriptions": {
+      "pistols": "Browse in-game pistol models in the collection.",
+      "automatic": "Browse in-game automatic models and choose visual add-ons for each one.",
+      "accessories": "Choose sights, suppressors and other add-ons for your loadout."
+    },
+    "accessories": {
+      "all": "All accessories",
+      "suppressors": "Suppressors",
+      "sights": "Sights & optics",
+      "other": "Other accessories",
+      "viewDetails": "View details",
+      "addToCart": "Add to cart",
+      "addModelToCart": "Add model to cart",
+      "addSetupToCart": "Add setup to cart",
+      "updateSetupInCart": "Update setup in cart",
+      "alreadyInCart": "Already in cart",
+      "compatibilityNote": "These are visual game assets. Confirm the target model and compatibility when requesting the collection."
+    },
+    "accessoryNames": {
+      "arcReflex": "ARC Reflex",
+      "orbitHolo": "ORBIT Holo",
+      "veilSuppressor": "VEIL Suppressor",
+      "lumaLight": "LUMA Light"
+    },
+    "accessoryDescriptions": {
+      "arc-reflex": "A clean, compact reflex sight that gives the loadout a crisp, modern look.",
+      "orbit-holo": "A bold holographic-style optic with a wide, easy-to-read window.",
+      "veil-suppressor": "A sleek suppressor-style add-on that completes a streamlined in-game build.",
+      "luma-light": "A compact light module for a practical, mission-ready look."
+    },
+    "featured": {
+      "kicker": "Home",
+      "title": "Three models. A closer look.",
+      "description": "A selection from the collection, with room to explore each model in detail.",
+      "badge": "Featured"
+    },
+    "contact": {
+      "kicker": "Contact",
+      "title": "Ask about a product",
+      "ctaTitle": "Found something to explore?",
+      "description": "Choose a model and tell us what you would like to know. Send your product enquiry directly to the team.",
+      "product": "Product",
+      "productCategory": "Choose a category",
+      "searchProduct": "Search models and accessories",
+      "noProductsFound": "No matching models or accessories found.",
+      "success": "Thank you. Your product enquiry has been sent.",
+      "sent": "Request sent",
+      "loading": "Loading enquiry form"
+    },
+    "descriptions": {
+      "g36": "A model from the G36 family, shown with its distinctive carrying handle and open-frame stock.",
+      "mp7": "A compact model from the MP7 family. This photograph shows a Bundeswehr example.",
+      "usp": "A model from the USP family. The photograph shows an early USP9 with a textured grip.",
+      "hk416n": "The Norwegian HK416N model. This photograph represents a specific configuration of the HK416 family.",
+      "g27": "A G27 from the HK417 family, photographed in an exhibition configuration with fitted accessories.",
+      "g3": "An early G3 with a wooden stock and handguard. The image presents two views of the model.",
+      "mp5-a3": "The MP5 A3 model, shown with its retractable stock and the recognisable MP5 silhouette.",
+      "p30l": "The P30L model from the P30 family, shown in a side view with an elongated profile and textured grip.",
+      "p99": "An early Walther P99, shown with a green polymer frame. This image represents that specific version.",
+      "ppk-l": "The Walther PPK-L model. The photograph shows this particular variant of the PPK family."
+    },
+    "hero": {
+      "kicker": "In-game models & equipment",
+      "title": "Distinct models in one collection",
+      "description": "Explore game-ready models, compare visual add-ons and build a collection that fits your project.",
+      "cta": "View catalog"
+    },
+    "catalog": {
+      "kicker": "Catalog",
+      "title": "Shop by category",
+      "count": "{{count}} / {{total}} models",
+      "filters": "Browse catalog categories",
+      "modelCount": "{{count}} items",
+      "openCategory": "Explore category",
+      "accessoryFilters": "Filter accessories",
+      "sortBy": "Sort by",
+      "sortRelevance": "Relevance",
+      "sortName": "Name: A–Z",
+      "accessoriesComingSoon": "No items in this category yet.",
+      "categoryNotFound": "This category could not be found."
     }
   },
   "notFound": {
